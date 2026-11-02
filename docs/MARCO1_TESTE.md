@@ -18,6 +18,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 | **Leque** | Alterna **projétil maior** e **mais fileiras**: 3 pequenos → 3 grandes → 5 grandes → 5 maiores → 7 grandes. |
 | **Mísseis** | Cada onda **surge em anel** ao redor da nave, **mira** por 0,35 s e dispara de uma vez; a próxima onda só vem após uma pausa. 4 → 8 mísseis por onda. Bem mais fraco que antes nos níveis altos. |
 | **Órbita** | 1 → 4 orbitais e anel de 8 no nível 5. Dano por contato e **destroem tiros inimigos**. |
+| **Medkits** | Caixa branca com cruz verde, mais rara que os power-ups (1 a cada 13 inimigos destruídos, contra 8). Recupera 1 hit do corpo ativo (máx. 3), com um anel verde em volta da nave. Com a vida cheia, é gasto sem efeito. |
 | **Especial** | Botão no canto inferior esquerdo (acima de hits e nível). O anel enche com o tempo (16–20 s com o corpo ativo); cheio, fica dourado e pulsa. Cada corpo tem a própria carga. **Raio:** raio gigante por 2,5 s + anel que limpa em volta. **Leque:** rajada de 360° + anel que limpa os tiros. **Mísseis:** chuva de mísseis atrás de todos os inimigos. **Órbita:** anel de energia que cruza a tela, limpa tiros e causa dano. Funciona também na câmera lenta. |
 | **Power-ups** | Losango dourado a cada 8 inimigos destruídos. Sobe 1 nível da arma do corpo ativo (máx. 5). Perder o corpo zera o nível dele. |
 | **Inimigos** | **Drone** (vermelho, desce e atira reto). **Mirador** (magenta, losango): entra pela lateral, cruza a tela e atira mirando a nave. **Kamikaze** (amarelo, triângulo): desce um pouco e mergulha na nave. **Tanque** (grande, octógono): lento, 60 de vida, solta anéis de 12 tiros girando e tira **2 hits** se encostar. |
@@ -42,6 +43,9 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 - **Mísseis:** ficou menos "roubado"? O anel mirando é legível? A pausa entre ondas parece boa?
 - **Raio:** cada nível muda visivelmente (mais grosso, novos feixes, ângulo pequeno)? O ângulo de até 9° ficou bom?
 - **Leque:** dá para sentir a diferença entre níveis com projétil maior e níveis com mais fileiras?
+
+**Medkits**
+- A raridade (1 a cada 13 inimigos) está boa? Dá para diferenciar do power-up rapidamente?
 
 **Especial**
 - O botão fica fácil de alcançar com o polegar sem atrapalhar o arraste da nave?

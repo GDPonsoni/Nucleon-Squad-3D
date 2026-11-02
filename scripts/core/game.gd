@@ -215,7 +215,12 @@ func _on_special_pressed() -> void:
 	SpecialAttack.trigger(player.body.weapon, player, context, self)
 
 
-func _on_powerup_collected() -> void:
+func _on_powerup_collected(kind: PowerUp.Kind) -> void:
+	if kind == PowerUp.Kind.HEAL:
+		state.medkits_collected += 1
+		if state.heal_current(Params.medkit_heal):
+			player.pulse(Params.medkit_color)
+		return
 	state.powerups_collected += 1
 	if state.level_up_current() and player.weapon != null:
 		player.weapon.set_level(state.weapon_levels[state.current])

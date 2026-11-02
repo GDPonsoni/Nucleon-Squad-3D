@@ -19,6 +19,7 @@ var _build_tween: Tween
 var _invulnerable_left: float = 0.0
 var _blink_clock: float = 0.0
 var _level_pulse_left: float = 0.0
+var _pulse_color: Color
 
 
 func _ready() -> void:
@@ -63,6 +64,12 @@ func clear_body() -> void:
 
 ## Anel dourado que se expande ao subir o nível da arma.
 func pulse_level_up() -> void:
+	pulse(Params.powerup_color)
+
+
+## Anel que se expande em volta da nave (nível, cura...).
+func pulse(color: Color) -> void:
+	_pulse_color = color
 	_level_pulse_left = Params.level_up_pulse_seconds
 
 
@@ -103,7 +110,7 @@ func _draw() -> void:
 	if _level_pulse_left > 0.0:
 		var t: float = 1.0 - _level_pulse_left / Params.level_up_pulse_seconds
 		var radius: float = Params.ship_size.y * (0.4 + t * Params.level_up_pulse_growth)
-		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(Params.powerup_color, 1.0 - t), Params.level_up_pulse_width * (1.0 - t * 0.5))
+		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(_pulse_color, 1.0 - t), Params.level_up_pulse_width * (1.0 - t * 0.5))
 
 
 ## Núcleo (que também é a hitbox): anel pulsando, borda escura e miolo claro.

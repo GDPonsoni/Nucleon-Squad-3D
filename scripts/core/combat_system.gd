@@ -6,7 +6,7 @@ extends Node
 ## Fica por último na árvore para rodar depois dos movimentos.
 
 signal player_hit(damage: int)
-signal powerup_collected
+signal powerup_collected(kind: PowerUp.Kind)
 
 var _context: CombatContext
 var _player: Player
@@ -47,10 +47,11 @@ func _collect_powerups() -> void:
 	var power_ups: Array[PoolItem] = _context.power_ups.active
 	var reach: float = Params.powerup_pickup_radius + Params.powerup_radius
 	for i in range(power_ups.size() - 1, -1, -1):
-		var power_up: PoolItem = power_ups[i]
+		var power_up := power_ups[i] as PowerUp
 		if power_up.position.distance_squared_to(_player.position) <= reach * reach:
+			var kind: PowerUp.Kind = power_up.kind
 			_context.power_ups.release(power_up)
-			powerup_collected.emit()
+			powerup_collected.emit(kind)
 
 
 ## No máximo um hit por frame; a invulnerabilidade evita hits em sequência.

@@ -164,7 +164,10 @@ var special_missile_turn_degrees: float = 360.0
 
 # --- Power-ups ---
 var powerup_every_kills: int = 8  # 1 power-up a cada N inimigos destruídos
-var powerup_pool_size: int = 8
+var medkit_every_kills: int = 13  # 1 medkit a cada N inimigos destruídos (mais raro)
+var medkit_heal: int = 1  # hits recuperados
+var medkit_color: Color = Color(0.3, 0.9, 0.45)
+var powerup_pool_size: int = 12  # power-ups e medkits
 var powerup_fall_speed: float = 150.0  # px/s
 var powerup_radius: float = 30.0
 var powerup_pickup_radius: float = 60.0  # a partir do centro da nave

@@ -1,13 +1,20 @@
 class_name PowerUp
 extends PoolItem
-## Power-up que desce devagar. Ao ser coletado, sobe o nível da arma do corpo ativo.
+## Item que desce devagar e é coletado ao encostar na nave.
+## WEAPON sobe o nível da arma do corpo ativo; HEAL (medkit) recupera 1 hit.
+
+enum Kind { WEAPON, HEAL }
+
+var kind: Kind = Kind.WEAPON
 
 var _clock: float = 0.0
 
 
-func activate(pos: Vector2) -> void:
+func activate(pos: Vector2, item_kind: Kind = Kind.WEAPON) -> void:
 	position = pos
+	kind = item_kind
 	_clock = 0.0
+	queue_redraw()
 	_set_active()
 
 
@@ -16,13 +23,16 @@ func _process(delta: float) -> void:
 	if position.y - Params.powerup_radius > get_viewport_rect().end.y:
 		expire()
 		return
-	# Gira e pulsa para chamar atenção
+	# Power-up gira; ambos pulsam para chamar atenção
 	_clock += delta
-	rotation = _clock * Params.powerup_spin_speed
+	rotation = _clock * Params.powerup_spin_speed if kind == Kind.WEAPON else 0.0
 	scale = Vector2.ONE * (1.0 + Params.powerup_pulse * sin(_clock * Params.powerup_pulse_speed))
 
 
 func _draw() -> void:
+	if kind == Kind.HEAL:
+		_draw_medkit()
+		return
 	var radius: float = Params.powerup_radius
 	draw_circle(Vector2.ZERO, radius, Color(Params.powerup_color, 0.25))
 	var r: float = radius * 0.75
@@ -33,3 +43,18 @@ func _draw() -> void:
 	var arm: float = radius * 0.4
 	draw_line(Vector2(-arm, 0.0), Vector2(arm, 0.0), Color.WHITE, 5.0)
 	draw_line(Vector2(0.0, -arm), Vector2(0.0, arm), Color.WHITE, 5.0)
+
+
+## Medkit: caixa branca arredondada com cruz verde.
+func _draw_medkit() -> void:
+	var radius: float = Params.powerup_radius
+	draw_circle(Vector2.ZERO, radius, Color(Params.medkit_color, 0.25))
+	var box := StyleBoxFlat.new()
+	box.bg_color = Color.WHITE
+	box.set_corner_radius_all(int(radius * 0.3))
+	var half: float = radius * 0.72
+	draw_style_box(box, Rect2(-half, -half, half * 2.0, half * 2.0))
+	var arm: float = radius * 0.48
+	var thick: float = radius * 0.3
+	draw_rect(Rect2(-arm, -thick * 0.5, arm * 2.0, thick), Params.medkit_color)
+	draw_rect(Rect2(-thick * 0.5, -arm, thick, arm * 2.0), Params.medkit_color)

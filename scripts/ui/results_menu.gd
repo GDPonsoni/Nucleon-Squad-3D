@@ -1,7 +1,7 @@
 class_name ResultsMenu
 extends CanvasLayer
 ## Tela de resultado (fase concluída ou fim de jogo) com resumo da partida:
-## pontos, inimigos destruídos, power-ups e tempo, mais os próximos passos.
+## pontos, inimigos destruídos, power-ups, medkits e tempo, mais os próximos passos.
 
 var _overlay: ColorRect
 
@@ -47,6 +47,7 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, b
 	_add_stat(stats, "RESULT_SCORE", str(state.score))
 	_add_stat(stats, "RESULT_KILLS", str(state.kills))
 	_add_stat(stats, "RESULT_POWERUPS", str(state.powerups_collected))
+	_add_stat(stats, "RESULT_MEDKITS", str(state.medkits_collected))
 	_add_stat(stats, "RESULT_TIME", "%d:%02d" % [int(seconds) / 60, int(seconds) % 60])
 
 	if record:

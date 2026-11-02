@@ -1,9 +1,11 @@
 class_name PowerUpDropper
 extends Node
-## Solta um power-up a cada N inimigos destruídos, na posição do último.
+## Solta itens na posição do último inimigo destruído: um power-up a cada
+## powerup_every_kills e um medkit (mais raro) a cada medkit_every_kills.
 
 var _pool: NodePool
 var _kills: int = 0
+var _heal_kills: int = 0
 
 
 func setup(pool: NodePool) -> void:
@@ -12,9 +14,17 @@ func setup(pool: NodePool) -> void:
 
 func on_enemy_killed(enemy: Enemy) -> void:
 	_kills += 1
-	if _kills < Params.powerup_every_kills:
-		return
-	_kills = 0
-	var power_up := _pool.acquire() as PowerUp
-	if power_up != null:
-		power_up.activate(enemy.position)
+	_heal_kills += 1
+	if _kills >= Params.powerup_every_kills:
+		_kills = 0
+		_drop(enemy.position, PowerUp.Kind.WEAPON)
+	if _heal_kills >= Params.medkit_every_kills:
+		_heal_kills = 0
+		# Se cair junto com um power-up, sai um pouco ao lado
+		_drop(enemy.position + Vector2(Params.powerup_radius * 2.5, 0.0), PowerUp.Kind.HEAL)
+
+
+func _drop(pos: Vector2, kind: PowerUp.Kind) -> void:
+	var item := _pool.acquire() as PowerUp
+	if item != null:
+		item.activate(pos, kind)

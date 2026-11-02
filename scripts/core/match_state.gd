@@ -20,6 +20,7 @@ var current: int = 0
 var score: int = 0
 var kills: int = 0
 var powerups_collected: int = 0
+var medkits_collected: int = 0
 
 
 func _init(formation: FormationData) -> void:
@@ -71,6 +72,15 @@ func damage_current(amount: int) -> void:
 	body_destroyed.emit(current)
 	if alive_indices().is_empty():
 		game_over.emit()
+
+
+## Recupera hits do corpo ativo, até o máximo. Retorna false se já estava cheio.
+func heal_current(amount: int) -> bool:
+	if not is_alive(current) or hits_left[current] >= Params.body_max_hits:
+		return false
+	hits_left[current] = mini(hits_left[current] + amount, Params.body_max_hits)
+	hits_changed.emit(current, hits_left[current])
+	return true
 
 
 ## Sobe o nível da arma do corpo ativo. Retorna false se já estiver no máximo.
