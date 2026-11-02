@@ -18,6 +18,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 | **Leque** | Alterna **projétil maior** e **mais fileiras**: 3 pequenos → 3 grandes → 5 grandes → 5 maiores → 7 grandes. |
 | **Mísseis** | Cada onda **surge em anel** ao redor da nave, **mira** por 0,35 s e dispara de uma vez; a próxima onda só vem após uma pausa. 4 → 8 mísseis por onda. Bem mais fraco que antes nos níveis altos. |
 | **Órbita** | 1 → 4 orbitais e anel de 8 no nível 5. Dano por contato e **destroem tiros inimigos**. |
+| **Especial** | Botão no canto inferior esquerdo (acima de hits e nível). O anel enche com o tempo (16–20 s com o corpo ativo); cheio, fica dourado e pulsa. Cada corpo tem a própria carga. **Raio:** raio gigante por 2,5 s + anel que limpa em volta. **Leque:** rajada de 360° + anel que limpa os tiros. **Mísseis:** chuva de mísseis atrás de todos os inimigos. **Órbita:** anel de energia que cruza a tela, limpa tiros e causa dano. Funciona também na câmera lenta. |
 | **Power-ups** | Losango dourado a cada 8 inimigos destruídos. Sobe 1 nível da arma do corpo ativo (máx. 5). Perder o corpo zera o nível dele. |
 | **Inimigos** | **Drone** (vermelho, desce e atira reto). **Mirador** (magenta, losango): entra pela lateral, cruza a tela e atira mirando a nave. **Kamikaze** (amarelo, triângulo): desce um pouco e mergulha na nave. **Tanque** (grande, octógono): lento, 60 de vida, solta anéis de 12 tiros girando e tira **2 hits** se encostar. |
 | **Atirador** | Pentágono verde-água: desce até o alto da tela, para por 4 s disparando leques de 5 tiros mirados e depois segue descendo. Aparece no capítulo 3. |
@@ -41,6 +42,10 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 - **Mísseis:** ficou menos "roubado"? O anel mirando é legível? A pausa entre ondas parece boa?
 - **Raio:** cada nível muda visivelmente (mais grosso, novos feixes, ângulo pequeno)? O ângulo de até 9° ficou bom?
 - **Leque:** dá para sentir a diferença entre níveis com projétil maior e níveis com mais fileiras?
+
+**Especial**
+- O botão fica fácil de alcançar com o polegar sem atrapalhar o arraste da nave?
+- O tempo de recarga (16–20 s) e a força de cada especial estão bons? Algum ficou fraco ou forte demais?
 
 **Ondas e chefes**
 - As ondas de kamikaze em V são desviáveis? O mergulho em sequência fica claro?
@@ -72,7 +77,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 | Fases (duração, inimigos, pesos, frequência, ondas, chefe) | `data/stages/*.tres` (ondas como sub-recursos `WaveData`) |
 | Chefes (vida, movimento, fases e ataques) | `data/bosses/*.tres` |
 | Planetas (nome, cores, fases) e ordem da campanha | `data/planets/*.tres`, `data/campaign.tres` |
-| Valores de cada nível de arma | `data/weapons/*.tres` (um sub-recurso por nível) |
+| Valores de cada nível de arma e do especial | `data/weapons/*.tres` (um sub-recurso por nível; especial no grupo "Especial") |
 | Formato e cor dos corpos / formação | `data/bodies/*.tres`, `data/formations/default.tres` |
 | Power-ups, hits, invulnerabilidade, HUD, cores da interface | `scripts/core/params.gd` |
 | Liberar todas as fases sem tocar no save | `debug_unlock_all = true` em `params.gd` |
