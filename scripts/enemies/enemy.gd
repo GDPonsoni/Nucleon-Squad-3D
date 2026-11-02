@@ -19,13 +19,14 @@ var _ring_angle: float = 0.0
 var _flash_left: float = 0.0
 
 
-func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2) -> void:
+## extra_delay atrasa o comportamento por tempo (ex.: mergulhos em sequência numa onda).
+func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_delay: float = 0.0) -> void:
 	data = enemy_data
 	hp = data.max_hp
 	radius = data.radius
 	position = pos
 	_velocity = velocity
-	_age = 0.0
+	_age = -extra_delay
 	_entered = false
 	_fire_cooldown = data.first_shot_delay
 	_ring_angle = 0.0

@@ -2,14 +2,55 @@
 
 [ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="1_script"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="2_enemy_script"]
-[ext_resource type="Resource" path="res://data/enemies/drone.tres" id="3_drone"]
+[ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="3_wave_script"]
+[ext_resource type="Resource" path="res://data/enemies/drone.tres" id="4_drone"]
+
+[sub_resource type="Resource" id="Wave_0"]
+script = ExtResource("3_wave_script")
+time_seconds = 20.0
+enemy = ExtResource("4_drone")
+formation = 0
+count = 5
+spacing = 160.0
+interval = 0.0
+x_ratio = 0.5
+side = 2
+y_ratio = 0.25
+dive_stagger = 0.15
+
+[sub_resource type="Resource" id="Wave_1"]
+script = ExtResource("3_wave_script")
+time_seconds = 45.0
+enemy = ExtResource("4_drone")
+formation = 1
+count = 5
+spacing = 120.0
+interval = 0.0
+x_ratio = 0.5
+side = 2
+y_ratio = 0.25
+dive_stagger = 0.15
+
+[sub_resource type="Resource" id="Wave_2"]
+script = ExtResource("3_wave_script")
+time_seconds = 70.0
+enemy = ExtResource("4_drone")
+formation = 0
+count = 6
+spacing = 150.0
+interval = 0.0
+x_ratio = 0.5
+side = 2
+y_ratio = 0.25
+dive_stagger = 0.15
 
 [resource]
 script = ExtResource("1_script")
 id = &"p1_s1"
 duration_seconds = 90.0
-enemies = Array[ExtResource("2_enemy_script")]([ExtResource("3_drone")])
+enemies = Array[ExtResource("2_enemy_script")]([ExtResource("4_drone")])
 spawn_weights = PackedFloat32Array(1.0)
+waves = Array[ExtResource("3_wave_script")]([SubResource("Wave_0"), SubResource("Wave_1"), SubResource("Wave_2")])
 start_delay = 1.5
 spawn_interval_min = 1.0
 spawn_interval_max = 1.8
