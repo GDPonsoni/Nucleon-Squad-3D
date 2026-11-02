@@ -17,6 +17,7 @@ var _entered: bool = false  # já apareceu na tela (antes disso não sai por "sa
 var _fire_cooldown: float = 0.0
 var _ring_angle: float = 0.0
 var _flash_left: float = 0.0
+var _hover_left: float = -1.0  # HOVER: < 0 = ainda descendo até a altura de parada
 
 
 ## extra_delay atrasa o comportamento por tempo (ex.: mergulhos em sequência numa onda).
@@ -31,6 +32,7 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 	_fire_cooldown = data.first_shot_delay
 	_ring_angle = 0.0
 	_flash_left = 0.0
+	_hover_left = -1.0
 	rotation = 0.0
 	queue_redraw()
 	_set_active()
@@ -55,6 +57,8 @@ func _process(delta: float) -> void:
 	_age += delta
 	if data.movement == EnemyData.Movement.DIVE and _age >= data.dive_delay:
 		_dive(delta)
+	elif data.movement == EnemyData.Movement.HOVER:
+		_hover(delta)
 	position += _velocity * delta
 
 	var on_screen: bool = is_on_screen()
@@ -86,6 +90,19 @@ func _dive(delta: float) -> void:
 	rotation = angle - PI * 0.5
 
 
+## Desce até a altura de parada, fica parado um tempo e depois segue descendo.
+func _hover(delta: float) -> void:
+	if _hover_left < 0.0:
+		var stop_y: float = get_viewport_rect().position.y + get_viewport_rect().size.y * data.hover_y_ratio
+		if position.y >= stop_y:
+			_hover_left = data.hover_seconds
+			_velocity = Vector2.ZERO
+	elif _hover_left > 0.0:
+		_hover_left -= delta
+		if _hover_left <= 0.0:
+			_velocity = Vector2(0.0, data.speed)
+
+
 func _shoot() -> void:
 	match data.fire_pattern:
 		EnemyData.FirePattern.STRAIGHT:
@@ -93,6 +110,13 @@ func _shoot() -> void:
 		EnemyData.FirePattern.AIMED:
 			var player: Player = context.player
 			_fire(Vector2.DOWN if player == null else (player.position - position).normalized())
+		EnemyData.FirePattern.FAN:
+			var player: Player = context.player
+			var aim: float = PI * 0.5 if player == null else (player.position - position).angle()
+			var spread: float = deg_to_rad(data.fan_degrees)
+			for i in data.fan_count:
+				var t: float = 0.0 if data.fan_count == 1 else float(i) / (data.fan_count - 1) - 0.5
+				_fire(Vector2.from_angle(aim + spread * t))
 		EnemyData.FirePattern.RING:
 			for i in data.ring_count:
 				_fire(Vector2.from_angle(_ring_angle + TAU * i / data.ring_count))

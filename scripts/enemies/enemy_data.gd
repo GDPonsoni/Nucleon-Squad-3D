@@ -7,12 +7,14 @@ enum Movement {
 	DESCEND,  ## desce em linha reta
 	CROSS,  ## entra por uma lateral e atravessa a tela
 	DIVE,  ## desce um pouco e depois mergulha na nave
+	HOVER,  ## desce até uma altura, para por um tempo e depois segue descendo
 }
 enum FirePattern {
 	NONE,
 	STRAIGHT,  ## para baixo
 	AIMED,  ## na direção da nave
 	RING,  ## anel de tiros em 360°
+	FAN,  ## leque de tiros mirado na nave
 }
 
 @export var id: StringName
@@ -30,6 +32,8 @@ enum FirePattern {
 @export var dive_delay: float = 0.6  # DIVE: segundos descendo antes de mergulhar
 @export var dive_speed: float = 900.0
 @export var dive_turn_degrees: float = 200.0  # giro por segundo ao perseguir a nave
+@export var hover_y_ratio: float = 0.22  # HOVER: altura onde para (0 = topo, 1 = base)
+@export var hover_seconds: float = 4.0  # HOVER: tempo parado
 
 @export_group("Tiro")
 @export var fire_pattern: FirePattern = FirePattern.STRAIGHT
@@ -41,3 +45,5 @@ enum FirePattern {
 @export var bullet_color: Color = Color(1.0, 0.35, 0.75)
 @export var ring_count: int = 12  # RING: tiros por anel
 @export var ring_turn_degrees: float = 15.0  # RING: giro do anel a cada disparo
+@export var fan_count: int = 5  # FAN: tiros por leque
+@export var fan_degrees: float = 50.0  # FAN: abertura total
