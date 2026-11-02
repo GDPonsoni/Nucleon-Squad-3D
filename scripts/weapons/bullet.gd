@@ -15,10 +15,15 @@ var homing_turn_growth: float = 0.0
 var target_finder: Callable
 ## Segundos até sumir (0 = só some ao sair da tela). Evita míssil circulando o alvo para sempre.
 var life_left: float = 0.0
+## Perfuração: quantos inimigos ainda atravessa (0 = some no primeiro acerto).
+var pierce_left: int = 0
+## Explosão: raio do dano em área ao acertar (0 = sem explosão).
+var splash_radius: float = 0.0
 
 var _size: Vector2
 var _color: Color
 var _shape: Shape
+var _pierced: Dictionary = {}  # inimigos já atravessados (não acerta duas vezes)
 
 
 func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color, shape: Shape) -> void:
@@ -30,6 +35,9 @@ func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color,
 	homing_turn_growth = 0.0
 	target_finder = Callable()
 	life_left = 0.0
+	pierce_left = 0
+	splash_radius = 0.0
+	_pierced.clear()
 	_size = size
 	_color = color
 	_shape = shape
@@ -37,6 +45,20 @@ func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color,
 	rotation = vel.angle() + PI * 0.5
 	queue_redraw()
 	_set_active()
+
+
+func color() -> Color:
+	return _color
+
+
+func already_pierced(enemy: Node) -> bool:
+	return _pierced.has(enemy)
+
+
+## Atravessou um inimigo: gasta uma perfuração e não o acerta de novo.
+func pierce(enemy: Node) -> void:
+	_pierced[enemy] = true
+	pierce_left -= 1
 
 
 func _process(delta: float) -> void:

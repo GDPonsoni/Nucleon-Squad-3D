@@ -117,7 +117,7 @@ var invulnerability_alpha: float = 0.3
 # --- Troca de corpo (ícones na câmera lenta) ---
 var switch_invulnerability_seconds: float = 2.0
 var switch_icon_radius: float = 70.0
-var switch_strip_bottom: float = 300.0  # centro da faixa de troca, a partir da base da tela
+var switch_strip_bottom: float = 150.0  # centro da faixa de troca, a partir da base da tela (no lugar dos painéis do HUD)
 var switch_strip_spacing: float = 175.0  # entre ícones da faixa
 var switch_strip_side_margin: float = 30.0
 var switch_strip_padding: float = 14.0
@@ -168,6 +168,13 @@ var special_missile_speed: float = 900.0
 var special_missile_size: Vector2 = Vector2(20.0, 32.0)
 var special_missile_lifetime: float = 3.0
 var special_missile_turn_degrees: float = 360.0
+var special_lance_spread_degrees: float = 50.0
+var special_lance_length_ratio: float = 4.0  # comprimento em relação à largura
+var special_lance_speed: float = 2400.0
+var special_lance_pierce: int = 999
+var special_bombard_area: float = 0.75  # explosões caem até essa fração da altura
+var special_bombard_aim_chance: float = 0.6  # chance de mirar num inimigo
+var special_bombard_blast_seconds: float = 0.35
 
 # --- Power-ups ---
 var powerup_every_kills: int = 8  # 1 power-up a cada N inimigos destruídos

@@ -13,6 +13,8 @@ extends Resource
 @export var spread_degrees: float = 0.0  # abertura total do leque
 @export var homing_turn_degrees: float = 0.0  # giro por segundo (0 = reto)
 @export var projectile_lifetime: float = 0.0  # segundos (0 = até sair da tela)
+@export var pierce: int = 0  # Lança: inimigos atravessados além do primeiro
+@export var splash_radius: float = 0.0  # Artilharia: raio da explosão ao acertar
 
 @export_group("Mísseis em ondas")
 @export var aim_seconds: float = 0.35  # a onda surge e mira antes de disparar

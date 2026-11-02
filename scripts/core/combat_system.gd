@@ -7,6 +7,8 @@ extends Node
 
 signal player_hit(damage: int)
 signal powerup_collected(kind: PowerUp.Kind)
+## Projétil explosivo acertou: para desenhar a explosão.
+signal splashed(pos: Vector2, radius: float, color: Color)
 
 var _context: CombatContext
 var _player: Player
@@ -33,13 +35,32 @@ func _player_bullets_vs_enemies() -> void:
 		var bullet := bullets[i] as Bullet
 		for item in enemies:
 			var enemy := item as Enemy
-			if not enemy.visible:
+			if not enemy.visible or bullet.already_pierced(enemy):
 				continue
 			var reach: float = bullet.radius + enemy.radius
-			if bullet.position.distance_squared_to(enemy.position) <= reach * reach:
-				_context.player_bullets.release(bullet)
-				enemy.take_damage(bullet.damage)
-				break
+			if bullet.position.distance_squared_to(enemy.position) > reach * reach:
+				continue
+			enemy.take_damage(bullet.damage)
+			if bullet.splash_radius > 0.0:
+				_splash(bullet, enemy)
+			if bullet.pierce_left > 0:
+				# Atravessa e segue procurando outros inimigos
+				bullet.pierce(enemy)
+				continue
+			_context.player_bullets.release(bullet)
+			break
+
+
+## Dano em área em volta do acerto (o inimigo atingido já levou o dano direto).
+func _splash(bullet: Bullet, direct: Enemy) -> void:
+	var center: Vector2 = bullet.position
+	for item in _context.hostiles():
+		var enemy := item as Enemy
+		if enemy == direct or not enemy.visible:
+			continue
+		if enemy.position.distance_to(center) <= bullet.splash_radius + enemy.radius * 0.5:
+			enemy.take_damage(bullet.damage)
+	splashed.emit(center, bullet.splash_radius, bullet.color())
 
 
 ## Área de coleta generosa (maior que a hitbox), centrada na nave.

@@ -116,6 +116,7 @@ func _ready() -> void:
 	combat.setup(context, player)
 	combat.player_hit.connect(_on_player_hit)
 	combat.powerup_collected.connect(_on_powerup_collected)
+	combat.splashed.connect(func(pos: Vector2, radius: float, color: Color) -> void: _explode(pos, radius * 0.5, color))
 
 	var slow_overlay := SlowMotionOverlay.new()
 	slow_overlay.name = "SlowMotionOverlay"
@@ -150,6 +151,7 @@ func _ready() -> void:
 
 ## Fase concluída quando o tempo acaba e não sobram inimigos (ou após um limite de espera).
 func _process(delta: float) -> void:
+	hud.hide_bottom_panels = switcher.visible
 	if not _match_over and player.body != null:
 		state.charge_special(delta)
 	if not _spawning_done or _match_over:

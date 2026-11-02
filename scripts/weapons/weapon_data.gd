@@ -3,7 +3,7 @@ extends Resource
 ## Definição de uma arma: tipo, cor e um WeaponLevel por nível (1 a N).
 ## Valores em data/weapons/*.tres.
 
-enum Kind { BEAM, SPREAD, HOMING, ORBIT }
+enum Kind { BEAM, SPREAD, HOMING, ORBIT, PIERCE, BLAST }
 
 @export var id: StringName
 @export var kind: Kind = Kind.SPREAD

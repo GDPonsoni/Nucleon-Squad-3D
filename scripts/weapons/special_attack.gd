@@ -2,7 +2,8 @@ class_name SpecialAttack
 ## Dispara o especial da arma (um por tipo, valores no grupo "Especial" da WeaponData):
 ## Raio: raio gigante + anel que limpa em volta. Leque: rajada de 360° que limpa os tiros.
 ## Mísseis: chuva de mísseis atrás de todos os inimigos na tela. Órbita: anel de energia
-## que se expande pela tela, limpa os tiros e causa dano.
+## que se expande pela tela, limpa os tiros e causa dano. Lança: leque de lanças gigantes
+## que atravessam tudo. Artilharia: bombardeio de explosões pela tela.
 
 
 static func trigger(data: WeaponData, player: Player, context: CombatContext, world: Node) -> void:
@@ -19,12 +20,32 @@ static func trigger(data: WeaponData, player: Player, context: CombatContext, wo
 			_missile_rain(data, player, context)
 		WeaponData.Kind.ORBIT:
 			_shockwave(context, world, player.position, data.special_radius, data.special_duration, data.special_damage, data.color)
+		WeaponData.Kind.PIERCE:
+			_lances(data, player, context)
+		WeaponData.Kind.BLAST:
+			var bombardment := Bombardment.new()
+			bombardment.setup(context, data, world)
+			world.add_child(bombardment)
 
 
 static func _shockwave(context: CombatContext, world: Node, center: Vector2, radius: float, duration: float, damage: int, color: Color) -> void:
 	var wave := Shockwave.new()
 	wave.setup(context, center, radius, duration, damage, color)
 	world.add_child(wave)
+
+
+## Leque de lanças gigantes que atravessam todos os inimigos.
+static func _lances(data: WeaponData, player: Player, context: CombatContext) -> void:
+	var spread: float = deg_to_rad(Params.special_lance_spread_degrees)
+	var size := Vector2(data.special_width, data.special_width * Params.special_lance_length_ratio)
+	for i in data.special_count:
+		var bullet := context.player_bullets.acquire() as Bullet
+		if bullet == null:
+			return
+		var t: float = 0.0 if data.special_count == 1 else float(i) / (data.special_count - 1) - 0.5
+		var dir := Vector2.from_angle(-PI * 0.5 + spread * t)
+		bullet.activate(player.position, dir * Params.special_lance_speed, data.special_damage, size, data.color, Bullet.Shape.RECT)
+		bullet.pierce_left = Params.special_lance_pierce
 
 
 ## Anéis de projéteis em 360°, um pouco defasados entre si.

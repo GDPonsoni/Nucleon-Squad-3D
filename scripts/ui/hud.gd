@@ -19,6 +19,8 @@ var _boss: Boss
 var _boss_label: Label
 var _warning: Label
 var _special: SpecialButton
+## Faixa de troca visível: esconde os painéis da base (ela já mostra hits e níveis).
+var hide_bottom_panels: bool = false
 
 
 func _ready() -> void:
@@ -139,8 +141,9 @@ func _draw_hud() -> void:
 	else:
 		_draw_progress()
 	var bottom: float = _canvas.size.y - Params.hud_margin.y
-	_draw_hits_and_level(bottom)
-	_draw_formation(bottom)
+	if not hide_bottom_panels:
+		_draw_hits_and_level(bottom)
+		_draw_formation(bottom)
 
 
 ## Barra fina no topo, entre a margem e o botão de pausa.
