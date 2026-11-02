@@ -6,39 +6,41 @@
 [sub_resource type="Resource" id="WeaponLevel_lv1"]
 script = ExtResource("2_level")
 damage = 1
-beam_count = 1
-beam_width = 30.0
+beam_offsets = PackedFloat32Array(0.0)
+beam_angles = PackedFloat32Array(0.0)
+beam_widths = PackedFloat32Array(30.0)
 beam_tick_seconds = 0.08
 
 [sub_resource type="Resource" id="WeaponLevel_lv2"]
 script = ExtResource("2_level")
 damage = 1
-beam_count = 2
-beam_spacing = 50.0
-beam_width = 30.0
+beam_offsets = PackedFloat32Array(-25.0, 25.0)
+beam_angles = PackedFloat32Array(0.0, 0.0)
+beam_widths = PackedFloat32Array(30.0, 30.0)
 beam_tick_seconds = 0.08
 
 [sub_resource type="Resource" id="WeaponLevel_lv3"]
 script = ExtResource("2_level")
 damage = 1
-beam_count = 3
-beam_spacing = 46.0
-beam_width = 30.0
+beam_offsets = PackedFloat32Array(-20.0, 0.0, 20.0)
+beam_angles = PackedFloat32Array(-15.0, 0.0, 15.0)
+beam_widths = PackedFloat32Array(30.0, 30.0, 30.0)
 beam_tick_seconds = 0.08
 
 [sub_resource type="Resource" id="WeaponLevel_lv4"]
 script = ExtResource("2_level")
 damage = 1
-beam_count = 4
-beam_spacing = 42.0
-beam_width = 30.0
+beam_offsets = PackedFloat32Array(-36.0, -12.0, 12.0, 36.0)
+beam_angles = PackedFloat32Array(-25.0, -8.0, 8.0, 25.0)
+beam_widths = PackedFloat32Array(30.0, 30.0, 30.0, 30.0)
 beam_tick_seconds = 0.08
 
 [sub_resource type="Resource" id="WeaponLevel_lv5"]
 script = ExtResource("2_level")
-damage = 3
-beam_count = 1
-beam_width = 110.0
+damage = 2
+beam_offsets = PackedFloat32Array(-30.0, 0.0, 30.0)
+beam_angles = PackedFloat32Array(-25.0, 0.0, 25.0)
+beam_widths = PackedFloat32Array(30.0, 110.0, 30.0)
 beam_tick_seconds = 0.08
 
 [resource]

@@ -1,7 +1,9 @@
 class_name BeamWeapon
 extends Weapon
-## Raios contínuos para cima, lado a lado: cada um para no primeiro inimigo
-## da sua coluna e causa dano em intervalos.
+## Raios contínuos saindo da ponta da nave, cada um com deslocamento, ângulo e largura
+## próprios (vindos do nível). Cada raio para no primeiro inimigo e causa dano em intervalos.
+
+const MAX_LENGTH: float = 4000.0  # passa da tela em qualquer ângulo
 
 var _lengths := PackedFloat32Array()
 var _ticks := PackedFloat32Array()
@@ -9,21 +11,36 @@ var _ticks := PackedFloat32Array()
 
 func set_level(number: int) -> void:
 	super(number)
-	_lengths.resize(stats.beam_count)
-	_ticks.resize(stats.beam_count)
+	var count: int = stats.beam_angles.size()
+	_lengths.resize(count)
+	_lengths.fill(0.0)
+	_ticks.resize(count)
 	_ticks.fill(0.0)
 
 
 func _process(delta: float) -> void:
 	var tip: Vector2 = muzzle()
-	for k in stats.beam_count:
-		var origin := Vector2(tip.x + _offset_x(k), tip.y)
-		var target: Enemy = _first_enemy_above(origin)
-		var hit_y: float = get_viewport_rect().position.y
-		if target != null:
-			# O feixe termina no meio do inimigo, sem passar da nave
-			hit_y = minf(target.position.y + target.radius * 0.5, origin.y)
-		_lengths[k] = origin.y - hit_y
+	for k in stats.beam_angles.size():
+		var origin := Vector2(tip.x + stats.beam_offsets[k], tip.y)
+		var dir: Vector2 = _direction(k)
+		var half_width: float = stats.beam_widths[k] * 0.5
+		var target: Enemy = null
+		var hit: float = MAX_LENGTH
+		for item in context.enemies.active:
+			var enemy := item as Enemy
+			if not enemy.is_on_screen():
+				continue
+			var rel: Vector2 = enemy.position - origin
+			var along: float = rel.dot(dir)
+			# Atrás da ponta ou longe da linha do raio
+			if along <= 0.0 or absf(rel.cross(dir)) > half_width + enemy.radius:
+				continue
+			# O raio termina no meio do inimigo mais próximo
+			var stop: float = maxf(along - enemy.radius * 0.5, 0.0)
+			if stop < hit:
+				hit = stop
+				target = enemy
+		_lengths[k] = hit
 		_ticks[k] = maxf(_ticks[k] - delta, 0.0)
 		if target != null and _ticks[k] == 0.0:
 			_ticks[k] = stats.beam_tick_seconds
@@ -31,31 +48,20 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 
-## Inimigo visível mais próximo da nave na coluna do feixe.
-func _first_enemy_above(origin: Vector2) -> Enemy:
-	var best: Enemy = null
-	for item in context.enemies.active:
-		var enemy := item as Enemy
-		if enemy.position.y >= origin.y or not enemy.is_on_screen():
-			continue
-		if absf(enemy.position.x - origin.x) > stats.beam_width * 0.5 + enemy.radius:
-			continue
-		if best == null or enemy.position.y > best.position.y:
-			best = enemy
-	return best
-
-
-func _offset_x(index: int) -> float:
-	return (index - (stats.beam_count - 1) * 0.5) * stats.beam_spacing
+## Ângulo 0 = para cima; positivo abre para a direita.
+func _direction(index: int) -> Vector2:
+	return Vector2.from_angle(-PI * 0.5 + deg_to_rad(stats.beam_angles[index]))
 
 
 func _draw() -> void:
-	var tip_y: float = -Params.ship_size.y * 0.5
+	var tip := Vector2(0.0, -Params.ship_size.y * 0.5)
 	var glow := Color(data.color, 0.35)
 	var core: Color = data.color.lightened(0.6)
-	var core_width: float = stats.beam_width * 0.4
-	for k in stats.beam_count:
-		var x: float = _offset_x(k)
+	for k in stats.beam_angles.size():
+		var width: float = stats.beam_widths[k]
 		var length: float = _lengths[k]
-		draw_rect(Rect2(x - stats.beam_width * 0.5, tip_y - length, stats.beam_width, length), glow)
-		draw_rect(Rect2(x - core_width * 0.5, tip_y - length, core_width, length), core)
+		# Desenha em pé e gira para o ângulo do raio
+		draw_set_transform(tip + Vector2(stats.beam_offsets[k], 0.0), deg_to_rad(stats.beam_angles[k]))
+		draw_rect(Rect2(-width * 0.5, -length, width, length), glow)
+		draw_rect(Rect2(-width * 0.2, -length, width * 0.4, length), core)
+	draw_set_transform(Vector2.ZERO)

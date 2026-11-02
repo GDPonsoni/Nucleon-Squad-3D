@@ -20,10 +20,10 @@ extends Resource
 @export var launch_radius: float = 90.0  # raio do anel onde os mísseis surgem
 @export var homing_turn_growth_degrees: float = 0.0  # aumento do giro por segundo ao perseguir
 
-@export_group("Raio")
-@export var beam_count: int = 1
-@export var beam_spacing: float = 50.0  # distância entre feixes
-@export var beam_width: float = 30.0
+@export_group("Raio")  # um item por feixe nas três listas
+@export var beam_offsets: PackedFloat32Array = [0.0]  # deslocamento lateral na ponta da nave
+@export var beam_angles: PackedFloat32Array = [0.0]  # graus; 0 = para frente
+@export var beam_widths: PackedFloat32Array = [30.0]
 @export var beam_tick_seconds: float = 0.08  # aplica o dano a cada intervalo
 
 @export_group("Órbita")
