@@ -6,7 +6,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 
 **Menu inicial** (estrelas + nave alternando corpos) → **Jogar** → **Seletor de fases** (por planeta) → **Partida** → **Resultado** (fase concluída ou fim de jogo, com resumo) → próxima fase / jogar de novo / escolher fase / menu. Todas as trocas de tela têm fade.
 
-- Fases começam travadas, exceto a 1-1. Concluir uma fase libera a próxima e guarda o recorde no aparelho.
+- A **primeira fase de cada capítulo** está sempre liberada. Concluir uma fase libera a próxima do mesmo capítulo e guarda o recorde no aparelho.
 - **Atalho de debug:** no seletor, tocar **5 vezes no título** libera todas as fases (só em build de debug). Para zerar o progresso, desinstale o app ou apague `save.json` (veja abaixo).
 
 ## O que foi implementado
@@ -18,6 +18,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 | **Leque** | Alterna **projétil maior** e **mais fileiras**: 3 pequenos → 3 grandes → 5 grandes → 5 maiores → 7 grandes. |
 | **Mísseis** | Cada onda **surge em anel** ao redor da nave, **mira** por 0,35 s e dispara de uma vez; a próxima onda só vem após uma pausa. 4 → 8 mísseis por onda. Bem mais fraco que antes nos níveis altos. |
 | **Órbita** | 1 → 4 orbitais e anel de 8 no nível 5. Dano por contato e **destroem tiros inimigos**. |
+| **Continuar com anúncio** | Ao perder todos os corpos: "Continuar?" com contagem de 20 s. **Assistir anúncio** (por enquanto **simulado**, 2,5 s) faz o último corpo usado voltar com a vida cheia e o nível de arma que tinha, do ponto onde parou, invulnerável por 3 s e sem tiros inimigos na tela. Uma vez por partida. Recusar ou deixar o tempo acabar mostra o fim de jogo. |
 | **Medkits** | Caixa branca com cruz verde, mais rara que os power-ups (1 a cada 13 inimigos destruídos, contra 8). Recupera 1 hit do corpo ativo (máx. 3), com um anel verde em volta da nave. Com a vida cheia, é gasto sem efeito. |
 | **Especial** | Botão no canto inferior esquerdo (acima de hits e nível). O anel enche com o tempo (16–20 s com o corpo ativo); cheio, fica dourado e pulsa. Cada corpo tem a própria carga. **Raio:** raio gigante por 2,5 s + anel que limpa em volta. **Leque:** rajada de 360° + anel que limpa os tiros. **Mísseis:** chuva de mísseis atrás de todos os inimigos. **Órbita:** anel de energia que cruza a tela, limpa tiros e causa dano. Funciona também na câmera lenta. |
 | **Power-ups** | Losango dourado a cada 8 inimigos destruídos. Sobe 1 nível da arma do corpo ativo (máx. 5). Perder o corpo zera o nível dele. |
@@ -43,6 +44,9 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 - **Mísseis:** ficou menos "roubado"? O anel mirando é legível? A pausa entre ondas parece boa?
 - **Raio:** cada nível muda visivelmente (mais grosso, novos feixes, ângulo pequeno)? O ângulo de até 9° ficou bom?
 - **Leque:** dá para sentir a diferença entre níveis com projétil maior e níveis com mais fileiras?
+
+**Continuar com anúncio**
+- A oferta fica clara? 20 s é um bom tempo? Voltar invulnerável por 3 s e com a tela limpa parece justo?
 
 **Medkits**
 - A raridade (1 a cada 13 inimigos) está boa? Dá para diferenciar do power-up rapidamente?
