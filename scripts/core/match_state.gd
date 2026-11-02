@@ -13,6 +13,7 @@ signal score_changed(score: int)
 var bodies: Array[BodyData] = []
 var hits_left: PackedInt32Array = PackedInt32Array()
 var weapon_levels: PackedInt32Array = PackedInt32Array()  # nível da arma de cada corpo
+var special_charge: PackedFloat32Array = PackedFloat32Array()  # segundos de carga do especial por corpo
 var current: int = 0
 
 # Estatísticas da partida (HUD e telas de resultado)
@@ -27,6 +28,8 @@ func _init(formation: FormationData) -> void:
 	hits_left.fill(Params.body_max_hits)
 	weapon_levels.resize(bodies.size())
 	weapon_levels.fill(Params.debug_start_weapon_level)
+	special_charge.resize(bodies.size())
+	special_charge.fill(0.0)
 
 
 func current_body() -> BodyData:
@@ -62,8 +65,9 @@ func damage_current(amount: int) -> void:
 	hits_changed.emit(current, hits_left[current])
 	if is_alive(current):
 		return
-	# Corpo perdido leva junto os power-ups da arma
+	# Corpo perdido leva junto os power-ups da arma e a carga do especial
 	weapon_levels[current] = 1
+	special_charge[current] = 0.0
 	body_destroyed.emit(current)
 	if alive_indices().is_empty():
 		game_over.emit()
@@ -82,3 +86,22 @@ func add_kill(points: int) -> void:
 	kills += 1
 	score += points
 	score_changed.emit(score)
+
+
+## O especial do corpo ativo carrega com o tempo (de jogo) enquanto ele está ativo.
+func charge_special(delta: float) -> void:
+	if is_alive(current):
+		special_charge[current] = minf(special_charge[current] + delta, current_body().weapon.special_charge_seconds)
+
+
+## 0 a 1: quanto o especial do corpo ativo já carregou.
+func special_ratio() -> float:
+	return special_charge[current] / current_body().weapon.special_charge_seconds
+
+
+func special_ready() -> bool:
+	return is_alive(current) and special_ratio() >= 1.0
+
+
+func use_special() -> void:
+	special_charge[current] = 0.0

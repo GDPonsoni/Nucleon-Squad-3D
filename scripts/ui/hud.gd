@@ -4,6 +4,9 @@ extends CanvasLayer
 ## Topo: progresso da fase, pontuação e nome da fase.
 ## Base esquerda: nível da arma e hits do corpo ativo. Base direita: formação.
 ## Flash vermelho na tela ao levar hit. Com chefe: barra de vida dele no topo.
+## Botão do especial acima do painel da base esquerda.
+
+signal special_pressed
 
 var _state: MatchState
 var _spawner: EnemySpawner
@@ -15,6 +18,7 @@ var _panel_style: StyleBoxFlat
 var _boss: Boss
 var _boss_label: Label
 var _warning: Label
+var _special: SpecialButton
 
 
 func _ready() -> void:
@@ -55,6 +59,18 @@ func _ready() -> void:
 	_warning.add_theme_font_size_override("font_size", Params.hud_score_font_size)
 	_warning.visible = false
 	_canvas.add_child(_warning)
+
+	# Especial: canto inferior esquerdo, logo acima do painel de nível e hits
+	_special = SpecialButton.new()
+	_special.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	var panel_height: float = Params.hud_pip_size.y + Params.hud_gap + Params.hud_level_size + Params.hud_panel_padding * 2.0
+	var bottom: float = Params.hud_margin.y + panel_height + Params.special_button_gap
+	_special.offset_left = Params.hud_margin.x - Params.hud_panel_padding
+	_special.offset_right = _special.offset_left + Params.special_button_size
+	_special.offset_bottom = -bottom
+	_special.offset_top = -bottom - Params.special_button_size
+	_special.pressed.connect(special_pressed.emit)
+	_canvas.add_child(_special)
 
 	_flash = ColorRect.new()
 	_flash.color = Color(Params.hud_hit_flash_color, 0.0)
@@ -105,6 +121,10 @@ func flash_hit() -> void:
 func _process(_delta: float) -> void:
 	# Progresso muda a cada frame; o resto é barato de redesenhar junto
 	_canvas.queue_redraw()
+	if _state != null:
+		var alive: bool = _state.is_alive(_state.current)
+		_special.body = _state.current_body() if alive else null
+		_special.charge = _state.special_ratio() if alive else 0.0
 
 
 func _on_score_changed(score: int) -> void:

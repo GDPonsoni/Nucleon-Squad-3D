@@ -149,6 +149,19 @@ var explosion_flash_part: float = 0.2  # fração inicial com clarão branco
 var cross_band_top: float = 0.08  # faixa da tela (0-1) onde os inimigos laterais entram
 var cross_band_bottom: float = 0.45
 
+# --- Especial (valores de cada arma ficam em data/weapons/) ---
+var special_button_size: float = 150.0
+var special_button_gap: float = 24.0  # acima do painel de hits e nível
+var special_ring_width: float = 9.0
+var special_beam_open_seconds: float = 0.15
+var special_burst_rings: int = 3
+var special_burst_speed: float = 1300.0
+var special_burst_size: Vector2 = Vector2(22.0, 22.0)
+var special_missile_speed: float = 900.0
+var special_missile_size: Vector2 = Vector2(20.0, 32.0)
+var special_missile_lifetime: float = 3.0
+var special_missile_turn_degrees: float = 360.0
+
 # --- Power-ups ---
 var powerup_every_kills: int = 8  # 1 power-up a cada N inimigos destruídos
 var powerup_pool_size: int = 8

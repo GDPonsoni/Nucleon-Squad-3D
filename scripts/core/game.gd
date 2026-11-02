@@ -117,6 +117,7 @@ func _ready() -> void:
 	hud = Hud.new()
 	hud.name = "Hud"
 	add_child(hud)
+	hud.special_pressed.connect(_on_special_pressed)
 	hud.setup(state, spawner, "%s  %s" % [tr(planet.name_key), Session.stage_label(Session.planet_index, Session.stage_index)])
 
 	pause_menu = PauseMenu.new()
@@ -138,6 +139,8 @@ func _ready() -> void:
 
 ## Fase concluída quando o tempo acaba e não sobram inimigos (ou após um limite de espera).
 func _process(delta: float) -> void:
+	if not _match_over and player.body != null:
+		state.charge_special(delta)
 	if not _spawning_done or _match_over:
 		return
 	_clear_wait += delta
@@ -203,6 +206,13 @@ func _on_player_hit(damage: int) -> void:
 	state.damage_current(damage)
 	if state.is_alive(state.current):
 		player.start_invulnerability(Params.hit_invulnerability_seconds)
+
+
+func _on_special_pressed() -> void:
+	if _match_over or player.body == null or not state.special_ready():
+		return
+	state.use_special()
+	SpecialAttack.trigger(player.body.weapon, player, context, self)
 
 
 func _on_powerup_collected() -> void:
