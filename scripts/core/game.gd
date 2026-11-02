@@ -17,6 +17,7 @@ var dropper: PowerUpDropper
 var pause_menu: PauseMenu
 var game_over_menu: GameOverMenu
 var stage_clear_menu: StageClearMenu
+var hud: Hud
 
 var _spawning_done: bool = false
 var _clear_wait: float = 0.0
@@ -103,10 +104,10 @@ func _ready() -> void:
 	combat.player_hit.connect(_on_player_hit)
 	combat.powerup_collected.connect(_on_powerup_collected)
 
-	var hud := Hud.new()
+	hud = Hud.new()
 	hud.name = "Hud"
 	add_child(hud)
-	hud.setup(state)
+	hud.setup(state, spawner, "%s  %s" % [tr(planet.name_key), Session.stage_label(Session.planet_index, Session.stage_index)])
 
 	pause_menu = PauseMenu.new()
 	pause_menu.name = "PauseMenu"
@@ -153,6 +154,7 @@ func _on_body_chosen(index: int) -> void:
 
 
 func _on_player_hit(damage: int) -> void:
+	hud.flash_hit()
 	state.damage_current(damage)
 	if state.is_alive(state.current):
 		player.start_invulnerability(Params.hit_invulnerability_seconds)

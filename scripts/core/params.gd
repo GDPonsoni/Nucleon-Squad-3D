@@ -5,7 +5,7 @@ extends Node
 var background_color: Color = Color(0.04, 0.04, 0.08)
 var debug_overlay_enabled: bool = true
 var debug_font_size: int = 40
-var debug_margin: Vector2 = Vector2(40.0, 120.0)  # abaixo da câmera frontal
+var debug_margin: Vector2 = Vector2(40.0, 260.0)  # abaixo da pontuação do HUD
 var debug_unlock_all: bool = false  # libera todas as fases sem mexer no save
 
 # --- Interface ---
@@ -42,13 +42,24 @@ var pause_button_size: Vector2 = Vector2(130.0, 130.0)
 var pause_button_margin: Vector2 = Vector2(40.0, 100.0)  # a partir do canto superior direito
 var pause_overlay_color: Color = Color(0.0, 0.0, 0.0, 0.65)
 var hud_margin: Vector2 = Vector2(40.0, 70.0)  # a partir dos cantos inferiores
-var hud_pip_size: Vector2 = Vector2(40.0, 40.0)
+var hud_pip_size: Vector2 = Vector2(48.0, 48.0)
+var hud_pip_radius: float = 8.0
 var hud_gap: float = 14.0
 var hud_icon_radius: float = 34.0
-var hud_level_size: float = 26.0
+var hud_level_size: float = 30.0
 var hud_level_gap: float = 8.0
 var hud_dead_color: Color = Color(0.35, 0.35, 0.42)
 var hud_dead_mark_color: Color = Color(1.0, 0.3, 0.3)
+var hud_panel_color: Color = Color(0.06, 0.07, 0.12, 0.6)
+var hud_panel_padding: float = 18.0
+var hud_progress_y: float = 50.0
+var hud_progress_height: float = 14.0
+var hud_score_position: Vector2 = Vector2(40.0, 80.0)
+var hud_score_font_size: int = 64
+var hud_stage_font_size: int = 36
+var hud_hit_flash_color: Color = Color(1.0, 0.15, 0.2)
+var hud_hit_flash_alpha: float = 0.35
+var hud_hit_flash_seconds: float = 0.35
 
 # --- Fundo: estrelas em camadas (distante -> próxima) ---
 var star_layer_counts: PackedInt32Array = [70, 40, 16]
