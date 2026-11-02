@@ -15,40 +15,40 @@ spread_degrees = 24.0
 
 [sub_resource type="Resource" id="WeaponLevel_lv2"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 6.0
+damage = 2
+fire_rate = 5.0
 projectile_speed = 1800.0
-projectile_size = Vector2(10, 28)
+projectile_size = Vector2(16, 40)
 projectile_shape = 0
-projectile_count = 4
-spread_degrees = 32.0
+projectile_count = 3
+spread_degrees = 24.0
 
 [sub_resource type="Resource" id="WeaponLevel_lv3"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 6.0
+damage = 2
+fire_rate = 5.0
 projectile_speed = 1800.0
-projectile_size = Vector2(10, 28)
+projectile_size = Vector2(16, 40)
 projectile_shape = 0
 projectile_count = 5
 spread_degrees = 40.0
 
 [sub_resource type="Resource" id="WeaponLevel_lv4"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 6.0
+damage = 3
+fire_rate = 4.5
 projectile_speed = 1800.0
-projectile_size = Vector2(10, 28)
+projectile_size = Vector2(22, 52)
 projectile_shape = 0
-projectile_count = 6
-spread_degrees = 50.0
+projectile_count = 5
+spread_degrees = 44.0
 
 [sub_resource type="Resource" id="WeaponLevel_lv5"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 6.0
+damage = 3
+fire_rate = 4.5
 projectile_speed = 1800.0
-projectile_size = Vector2(10, 28)
+projectile_size = Vector2(22, 52)
 projectile_shape = 0
 projectile_count = 7
 spread_degrees = 60.0
