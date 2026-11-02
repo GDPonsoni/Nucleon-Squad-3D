@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"hunter"
+max_hp = 10
+score = 30
+contact_damage = 1
+radius = 40.0
+sides = 3
+color = Color(1, 0.3, 0.1, 1)
+movement = 1
+speed = 240.0
+cross_drift = 0.2
+fire_pattern = 2
+fire_interval = 1.6
+first_shot_delay = 0.6
+bullet_speed = 520.0
+bullet_radius = 13.0
+bullet_damage = 1
+bullet_color = Color(1, 0.6, 0.2, 1)
+bullet_homing_time = 1.2
+bullet_homing_turn_degrees = 140.0

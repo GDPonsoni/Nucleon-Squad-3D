@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"splitter"
+max_hp = 16
+score = 35
+contact_damage = 1
+radius = 50.0
+sides = 7
+color = Color(0.92, 0.92, 1, 1)
+movement = 3
+speed = 230.0
+hover_y_ratio = 0.18
+hover_seconds = 5.0
+fire_pattern = 2
+fire_interval = 2.0
+first_shot_delay = 0.8
+bullet_speed = 380.0
+bullet_radius = 20.0
+bullet_damage = 1
+bullet_color = Color(0.85, 0.6, 1, 1)
+bullet_split_time = 0.9
+bullet_split_count = 6
+bullet_split_speed = 420.0
+bullet_split_radius = 11.0
