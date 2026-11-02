@@ -1,5 +1,5 @@
 extends Node2D
-## Cena principal do Marco 0: monta os nós por código.
+## Cena da partida: monta os nós por código.
 
 var touch_input: TouchInput
 var player: Player
