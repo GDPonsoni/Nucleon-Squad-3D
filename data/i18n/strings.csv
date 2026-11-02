@@ -27,3 +27,9 @@ BOSS_3_NAME,Umbra,Umbra
 PLANET_3_NAME,Abyss,Abismo
 PAUSE_RESTART,Restart,Reiniciar
 RESULT_MEDKITS,Medkits,Medkits
+REVIVE_TITLE,Continue?,Continuar?
+REVIVE_INFO,Watch an ad and your last ship returns with full health.,Assista a um anúncio e sua última nave volta com a vida cheia.
+REVIVE_WATCH,Watch ad,Assistir anúncio
+REVIVE_SKIP,No thanks,"Não, obrigado"
+AD_PLACEHOLDER,Ad,Anúncio
+AD_PLACEHOLDER_INFO,(simulated - no ads yet),(simulado - ainda sem anúncios)

@@ -17,6 +17,8 @@ var dropper: PowerUpDropper
 var explosions: NodePool
 var pause_menu: PauseMenu
 var results_menu: ResultsMenu
+var revive_offer: ReviveOffer
+var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
 
 var _spawning_done: bool = false  # fase pode terminar (tempo acabou e não há chefe vivo)
@@ -127,6 +129,10 @@ func _ready() -> void:
 	results_menu = ResultsMenu.new()
 	results_menu.name = "ResultsMenu"
 	add_child(results_menu)
+
+	revive_offer = ReviveOffer.new()
+	revive_offer.name = "ReviveOffer"
+	add_child(revive_offer)
 
 	if Params.debug_overlay_enabled and OS.is_debug_build():
 		var overlay := DebugOverlay.new()
@@ -240,12 +246,35 @@ func _on_body_destroyed(index: int) -> void:
 		time_controller.forced_slow = true
 
 
+## Sem corpos vivos: oferece continuar com anúncio (uma vez por partida); senão, fim de jogo.
 func _on_game_over() -> void:
 	_match_over = true
 	pause_menu.disable()
-	await get_tree().create_timer(Params.game_over_delay_seconds, false).timeout
+	# Tempo real: na câmera lenta o atraso não se estende
+	await get_tree().create_timer(Params.game_over_delay_seconds, false, false, true).timeout
+	if not _revive_used and AdService.is_rewarded_available():
+		revive_offer.open()
+		var accepted: bool = await revive_offer.closed
+		if accepted:
+			AdService.show_rewarded()
+			var granted: bool = await AdService.rewarded_finished
+			if granted:
+				_revive()
+				return
 	results_menu.show_game_over(state, spawner.elapsed())
 
+
+## O último corpo usado volta com vida cheia, de onde parou, com os tiros inimigos limpos.
+func _revive() -> void:
+	_revive_used = true
+	var index: int = state.current
+	state.revive(index)
+	player.cracks = state.dead_count()
+	_switch_to(index, Params.revive_invulnerability_seconds)
+	SpecialAttack._shockwave(context, self, player.position, Params.revive_clear_radius, 0.6, 0, Params.medkit_color)
+	_match_over = false
+	pause_menu.enable()
+	get_tree().paused = false
 
 func _explode(pos: Vector2, radius: float, color: Color) -> void:
 	var explosion := explosions.acquire() as Explosion

@@ -73,6 +73,12 @@ func disable() -> void:
 	_pause_button.visible = false
 
 
+## Religa a pausa (ex.: depois de continuar com o anúncio).
+func enable() -> void:
+	_enabled = true
+	_pause_button.visible = true
+
+
 func toggle() -> void:
 	if not _enabled:
 		return

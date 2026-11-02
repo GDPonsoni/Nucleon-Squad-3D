@@ -106,6 +106,11 @@ var body_max_hits: int = 3
 var body_rebuild_seconds: float = 0.35
 var hit_invulnerability_seconds: float = 1.0  # após levar hit ([EM ABERTO] no GDD)
 var game_over_delay_seconds: float = 0.8
+var revive_offer_seconds: float = 20.0  # tempo para aceitar continuar com anúncio
+var revive_invulnerability_seconds: float = 3.0
+var revive_clear_radius: float = 2400.0  # limpa os tiros inimigos ao voltar
+var ad_simulated_seconds: float = 2.5  # duração do anúncio simulado (sem SDK)
+var ad_placeholder_color: Color = Color(0.02, 0.02, 0.05, 0.97)
 var invulnerability_blink_hz: float = 12.0
 var invulnerability_alpha: float = 0.3
 

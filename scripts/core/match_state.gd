@@ -14,6 +14,7 @@ var bodies: Array[BodyData] = []
 var hits_left: PackedInt32Array = PackedInt32Array()
 var weapon_levels: PackedInt32Array = PackedInt32Array()  # nível da arma de cada corpo
 var special_charge: PackedFloat32Array = PackedFloat32Array()  # segundos de carga do especial por corpo
+var lost_levels: PackedInt32Array = PackedInt32Array()  # nível da arma de cada corpo ao ser destruído (revive)
 var current: int = 0
 
 # Estatísticas da partida (HUD e telas de resultado)
@@ -31,6 +32,8 @@ func _init(formation: FormationData) -> void:
 	weapon_levels.fill(Params.debug_start_weapon_level)
 	special_charge.resize(bodies.size())
 	special_charge.fill(0.0)
+	lost_levels.resize(bodies.size())
+	lost_levels.fill(1)
 
 
 func current_body() -> BodyData:
@@ -67,6 +70,7 @@ func damage_current(amount: int) -> void:
 	if is_alive(current):
 		return
 	# Corpo perdido leva junto os power-ups da arma e a carga do especial
+	lost_levels[current] = weapon_levels[current]
 	weapon_levels[current] = 1
 	special_charge[current] = 0.0
 	body_destroyed.emit(current)
@@ -115,3 +119,11 @@ func special_ready() -> bool:
 
 func use_special() -> void:
 	special_charge[current] = 0.0
+
+
+## Revive (após anúncio): o corpo volta com a vida cheia e o nível de arma que tinha.
+func revive(index: int) -> void:
+	hits_left[index] = Params.body_max_hits
+	weapon_levels[index] = lost_levels[index]
+	hits_changed.emit(index, hits_left[index])
+	select(index)
