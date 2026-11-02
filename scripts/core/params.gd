@@ -51,7 +51,6 @@ var formation_path: String = "res://data/formations/default.tres"
 var body_max_hits: int = 3
 var body_rebuild_seconds: float = 0.35
 var hit_invulnerability_seconds: float = 1.0  # após levar hit ([EM ABERTO] no GDD)
-var enemy_contact_damage: int = 1
 var game_over_delay_seconds: float = 0.8
 var invulnerability_blink_hz: float = 12.0
 var invulnerability_alpha: float = 0.3
@@ -71,8 +70,10 @@ var player_bullet_pool_size: int = 128
 # --- Inimigos e fase (tipos e ondas ficam em data/) ---
 var stage_path: String = "res://data/stages/stage_01.tres"
 var enemy_pool_size: int = 24
-var enemy_bullet_pool_size: int = 160
+var enemy_bullet_pool_size: int = 240
 var enemy_hit_flash_seconds: float = 0.06
+var cross_band_top: float = 0.08  # faixa da tela (0-1) onde os inimigos laterais entram
+var cross_band_bottom: float = 0.45
 
 # --- Power-ups ---
 var powerup_every_kills: int = 8  # 1 power-up a cada N inimigos destruídos

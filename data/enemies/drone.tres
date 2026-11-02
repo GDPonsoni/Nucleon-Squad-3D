@@ -6,10 +6,14 @@
 script = ExtResource("1_script")
 id = &"drone"
 max_hp = 6
-speed = 220.0
+score = 10
+contact_damage = 1
 radius = 48.0
 sides = 6
 color = Color(0.95, 0.2, 0.35, 1)
+movement = 0
+speed = 220.0
+fire_pattern = 1
 fire_interval = 1.4
 first_shot_delay = 0.4
 bullet_speed = 700.0

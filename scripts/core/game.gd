@@ -11,6 +11,7 @@ var state: MatchState
 var time_controller: TimeController
 var switcher: BodySwitcher
 var spawner: EnemySpawner
+var combat: CombatSystem
 var power_ups: NodePool
 var dropper: PowerUpDropper
 var pause_menu: PauseMenu
@@ -62,6 +63,7 @@ func _ready() -> void:
 	player.name = "Player"
 	add_child(player)
 	player.setup(context)
+	context.player = player
 
 	# Power-ups e tiros inimigos por cima da nave e do raio, para ficarem sempre visíveis
 	add_child(power_ups)
@@ -86,7 +88,7 @@ func _ready() -> void:
 	time_controller.bind_input(touch_input)
 
 	# Por último entre os nós de lógica: roda depois dos movimentos
-	var combat := CombatSystem.new()
+	combat = CombatSystem.new()
 	combat.name = "CombatSystem"
 	add_child(combat)
 	combat.setup(context, player)
@@ -158,6 +160,7 @@ func _on_game_over() -> void:
 func _create_enemy() -> PoolItem:
 	var enemy := Enemy.new()
 	enemy.bullets = enemy_bullets
+	enemy.context = context
 	enemy.killed.connect(dropper.on_enemy_killed)
 	return enemy
 

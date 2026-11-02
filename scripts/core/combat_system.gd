@@ -68,6 +68,7 @@ func _hazards_vs_player() -> void:
 		var reach: float = enemy.radius + Params.nucleus_radius
 		if enemy.position.distance_squared_to(center) <= reach * reach:
 			# A colisão destrói o inimigo
+			var damage: int = enemy.data.contact_damage
 			enemy.take_damage(enemy.hp)
-			player_hit.emit(Params.enemy_contact_damage)
+			player_hit.emit(damage)
 			return
