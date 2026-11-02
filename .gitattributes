@@ -1,2 +1,12 @@
-# Normalize EOL for all files that Git considers text files.
+# Normaliza fim de linha para todos os arquivos de texto
 * text=auto eol=lf
+
+# Binários comuns em projetos Godot
+*.png binary
+*.jpg binary
+*.webp binary
+*.ogg binary
+*.wav binary
+*.mp3 binary
+*.ttf binary
+*.otf binary
