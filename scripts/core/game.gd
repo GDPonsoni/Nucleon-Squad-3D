@@ -3,7 +3,7 @@ extends Node2D
 
 var touch_input: TouchInput
 var player: Player
-var bullet_pool: BulletPool
+var player_bullets: NodePool
 var gun: AutoGun
 var time_controller: TimeController
 
@@ -20,9 +20,9 @@ func _ready() -> void:
 	add_child(starfield)
 
 	# Pool antes da nave para os projéteis ficarem atrás dela
-	bullet_pool = BulletPool.new()
-	bullet_pool.name = "BulletPool"
-	add_child(bullet_pool)
+	player_bullets = NodePool.new(Bullet.new, Params.player_bullet_pool_size)
+	player_bullets.name = "PlayerBullets"
+	add_child(player_bullets)
 
 	player = Player.new()
 	player.name = "Player"
@@ -32,7 +32,7 @@ func _ready() -> void:
 	gun = AutoGun.new()
 	gun.name = "AutoGun"
 	add_child(gun)
-	gun.setup(player, bullet_pool)
+	gun.setup(player, player_bullets)
 
 	time_controller = TimeController.new()
 	time_controller.name = "TimeController"

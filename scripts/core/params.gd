@@ -40,4 +40,4 @@ var fire_rate: float = 10.0  # tiros por segundo
 var bullet_speed: float = 2200.0  # px/s
 var bullet_size: Vector2 = Vector2(10.0, 36.0)
 var bullet_color: Color = Color(1.0, 0.95, 0.5)
-var bullet_pool_size: int = 64
+var player_bullet_pool_size: int = 128
