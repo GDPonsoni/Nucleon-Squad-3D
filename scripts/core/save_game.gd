@@ -3,27 +3,38 @@ extends Node
 ## pensado para migração e sincronização futuras.
 
 const PATH: String = "user://save.json"
-const VERSION: int = 1
+const VERSION: int = 2
 
-var highest_unlocked: int = 0  # índice linear da fase mais avançada liberada
+var completed: Dictionary = {}  # id da fase -> true (fases concluídas)
 var best_scores: Dictionary = {}  # id da fase -> melhor pontuação
+var unlock_everything: bool = false  # atalho de debug do seletor
+## Versão 1 do save: fase mais avançada na ordem geral. Só é lida (compatibilidade).
+var legacy_highest_unlocked: int = -1
 
 
 func _ready() -> void:
 	load_data()
 
 
-func is_unlocked(linear_index: int) -> bool:
-	return Params.debug_unlock_all or linear_index <= highest_unlocked
+## A primeira fase de cada capítulo está sempre liberada; as outras, quando a
+## anterior do mesmo capítulo foi concluída.
+func is_unlocked(planet: int, stage: int) -> bool:
+	if Params.debug_unlock_all or unlock_everything or stage == 0:
+		return true
+	if Session.campaign.linear_index(planet, stage) <= legacy_highest_unlocked:
+		return true
+	var previous: StageData = Session.campaign.planets[planet].stages[stage - 1]
+	return completed.has(String(previous.id))
 
 
 func best_score(stage_id: StringName) -> int:
 	return int(best_scores.get(String(stage_id), 0))
 
 
-## Libera a próxima fase e guarda o recorde. Retorna true se for recorde novo.
-func complete_stage(linear_index: int, stage_id: StringName, score: int) -> bool:
-	highest_unlocked = maxi(highest_unlocked, linear_index + 1)
+## Marca a fase como concluída (libera a próxima do capítulo) e guarda o recorde.
+## Retorna true se for recorde novo.
+func complete_stage(stage_id: StringName, score: int) -> bool:
+	completed[String(stage_id)] = true
 	var record: bool = score > best_score(stage_id)
 	if record:
 		best_scores[String(stage_id)] = score
@@ -32,7 +43,7 @@ func complete_stage(linear_index: int, stage_id: StringName, score: int) -> bool
 
 
 func unlock_all() -> void:
-	highest_unlocked = Session.campaign.stage_count() - 1
+	unlock_everything = true
 	save()
 
 
@@ -43,8 +54,10 @@ func save() -> void:
 		return
 	file.store_string(JSON.stringify({
 		"version": VERSION,
-		"highest_unlocked": highest_unlocked,
+		"completed": completed.keys(),
 		"best_scores": best_scores,
+		"unlock_everything": unlock_everything,
+		"legacy_highest_unlocked": legacy_highest_unlocked,
 	}, "\t"))
 
 
@@ -56,7 +69,15 @@ func load_data() -> void:
 		push_warning("Save inválido, começando do zero")
 		return
 	var data: Dictionary = parsed
-	highest_unlocked = int(data.get("highest_unlocked", 0))
+	if data.has("highest_unlocked"):
+		# Save da versão 1
+		legacy_highest_unlocked = int(data["highest_unlocked"])
+	legacy_highest_unlocked = int(data.get("legacy_highest_unlocked", legacy_highest_unlocked))
+	unlock_everything = bool(data.get("unlock_everything", false))
+	var done: Variant = data.get("completed", [])
+	if typeof(done) == TYPE_ARRAY:
+		for id in done:
+			completed[String(id)] = true
 	var scores: Variant = data.get("best_scores", {})
 	if typeof(scores) == TYPE_DICTIONARY:
 		best_scores = scores

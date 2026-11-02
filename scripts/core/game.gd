@@ -147,7 +147,7 @@ func _process(delta: float) -> void:
 	if enemies.active.is_empty() or _clear_wait >= Params.stage_clear_timeout:
 		_match_over = true
 		pause_menu.disable()
-		var record: bool = SaveGame.complete_stage(Session.linear_index(), Session.stage().id, state.score)
+		var record: bool = SaveGame.complete_stage(Session.stage().id, state.score)
 		results_menu.show_stage_clear(state, spawner.elapsed(), record)
 
 

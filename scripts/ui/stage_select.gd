@@ -58,7 +58,7 @@ func _planet_panel(planet_index: int, planet: PlanetData) -> PanelContainer:
 
 
 func _stage_button(planet_index: int, stage_index: int, stage: StageData) -> Button:
-	var unlocked: bool = SaveGame.is_unlocked(Session.campaign.linear_index(planet_index, stage_index))
+	var unlocked: bool = SaveGame.is_unlocked(planet_index, stage_index)
 	var button := UiFactory.make_button("")
 	button.custom_minimum_size = Params.stage_button_size
 	button.disabled = not unlocked
