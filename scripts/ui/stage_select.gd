@@ -3,6 +3,7 @@ extends Control
 ## Em build de debug, tocar várias vezes no título libera todas as fases.
 
 var _content: VBoxContainer
+var _scroll: ScrollContainer
 var _title_taps: int = 0
 
 
@@ -12,14 +13,22 @@ func _ready() -> void:
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())
 	_build()
-	UiFactory.animate_in(_content.get_parent())
+	UiFactory.animate_in(_scroll)
 
 
+## Conteúdo rolável na vertical: cabe qualquer quantidade de capítulos.
 func _build() -> void:
-	if _content != null:
-		_content.get_parent().queue_free()
+	if _scroll != null:
+		_scroll.queue_free()
+	_scroll = ScrollContainer.new()
+	_scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	add_child(_scroll)
+	var center := CenterContainer.new()
+	center.custom_minimum_size = get_viewport_rect().size
+	_scroll.add_child(center)
 	_content = UiFactory.make_column()
-	add_child(UiFactory.make_centered(_content))
+	center.add_child(_content)
 
 	var title := UiFactory.make_title("STAGE_SELECT_TITLE")
 	title.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -46,8 +55,13 @@ func _planet_panel(planet_index: int, planet: PlanetData) -> PanelContainer:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", Params.stage_select_spacing)
 	column.add_child(row)
+	# Botões mais estreitos quando o capítulo tem mais fases, para caber na largura
+	var gaps: float = Params.stage_select_spacing * (planet.stages.size() - 1)
+	var width: float = minf(Params.stage_button_size.x, (Params.stage_row_max_width - gaps) / planet.stages.size())
 	for s in planet.stages.size():
-		row.add_child(_stage_button(planet_index, s, planet.stages[s]))
+		var button := _stage_button(planet_index, s, planet.stages[s])
+		button.custom_minimum_size.x = width
+		row.add_child(button)
 
 	var panel := UiFactory.make_panel(column)
 	# Borda na cor do planeta
