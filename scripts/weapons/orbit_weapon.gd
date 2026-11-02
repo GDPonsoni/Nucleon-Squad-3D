@@ -8,7 +8,7 @@ var _cooldowns: Dictionary = {}  # Enemy -> segundos até poder levar dano de no
 
 
 func _process(delta: float) -> void:
-	_angle = wrapf(_angle + deg_to_rad(data.orbit_speed_degrees) * delta, 0.0, TAU)
+	_angle = wrapf(_angle + deg_to_rad(stats.orbit_speed_degrees) * delta, 0.0, TAU)
 
 	for enemy: Enemy in _cooldowns.keys():
 		_cooldowns[enemy] -= delta
@@ -16,19 +16,19 @@ func _process(delta: float) -> void:
 			_cooldowns.erase(enemy)
 
 	var enemies: Array[PoolItem] = context.enemies.active
-	for i in data.orbit_count:
+	for i in stats.orbit_count:
 		var center: Vector2 = global_position + _offset(i)
-		if data.clears_projectiles:
+		if stats.clears_projectiles:
 			_clear_projectiles(center)
 		# De trás para frente: o inimigo pode morrer e sair da lista
 		for j in range(enemies.size() - 1, -1, -1):
 			var enemy := enemies[j] as Enemy
 			if _cooldowns.has(enemy):
 				continue
-			var reach: float = enemy.radius + data.orbit_size * 0.5
+			var reach: float = enemy.radius + stats.orbit_size * 0.5
 			if center.distance_squared_to(enemy.position) <= reach * reach:
-				_cooldowns[enemy] = data.orbit_hit_seconds
-				enemy.take_damage(data.damage)
+				_cooldowns[enemy] = stats.orbit_hit_seconds
+				enemy.take_damage(stats.damage)
 	queue_redraw()
 
 
@@ -36,17 +36,17 @@ func _clear_projectiles(center: Vector2) -> void:
 	var bullets: Array[PoolItem] = context.enemy_bullets.active
 	for j in range(bullets.size() - 1, -1, -1):
 		var bullet := bullets[j] as Bullet
-		var reach: float = bullet.radius + data.orbit_size * 0.5
+		var reach: float = bullet.radius + stats.orbit_size * 0.5
 		if center.distance_squared_to(bullet.position) <= reach * reach:
 			context.enemy_bullets.release(bullet)
 
 
 func _offset(index: int) -> Vector2:
-	return Vector2.from_angle(_angle + TAU * index / data.orbit_count) * data.orbit_radius
+	return Vector2.from_angle(_angle + TAU * index / stats.orbit_count) * stats.orbit_radius
 
 
 func _draw() -> void:
-	draw_arc(Vector2.ZERO, data.orbit_radius, 0.0, TAU, 64, Color(data.color, 0.15), 3.0)
-	for i in data.orbit_count:
-		draw_circle(_offset(i), data.orbit_size * 0.5, data.color)
-		draw_circle(_offset(i), data.orbit_size * 0.2, Color.WHITE)
+	draw_arc(Vector2.ZERO, stats.orbit_radius, 0.0, TAU, 64, Color(data.color, 0.15), 3.0)
+	for i in stats.orbit_count:
+		draw_circle(_offset(i), stats.orbit_size * 0.5, data.color)
+		draw_circle(_offset(i), stats.orbit_size * 0.2, Color.WHITE)

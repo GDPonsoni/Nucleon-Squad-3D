@@ -1,12 +1,10 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3]
 
 [ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/weapons/weapon_level.gd" id="2_level"]
 
-[resource]
-script = ExtResource("1_script")
-id = &"spread"
-kind = 1
-color = Color(0.55, 1, 0.5, 1)
+[sub_resource type="Resource" id="WeaponLevel_lv1"]
+script = ExtResource("2_level")
 damage = 1
 fire_rate = 6.0
 projectile_speed = 1800.0
@@ -14,3 +12,50 @@ projectile_size = Vector2(10, 28)
 projectile_shape = 0
 projectile_count = 3
 spread_degrees = 24.0
+
+[sub_resource type="Resource" id="WeaponLevel_lv2"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 6.0
+projectile_speed = 1800.0
+projectile_size = Vector2(10, 28)
+projectile_shape = 0
+projectile_count = 4
+spread_degrees = 32.0
+
+[sub_resource type="Resource" id="WeaponLevel_lv3"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 6.0
+projectile_speed = 1800.0
+projectile_size = Vector2(10, 28)
+projectile_shape = 0
+projectile_count = 5
+spread_degrees = 40.0
+
+[sub_resource type="Resource" id="WeaponLevel_lv4"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 6.0
+projectile_speed = 1800.0
+projectile_size = Vector2(10, 28)
+projectile_shape = 0
+projectile_count = 6
+spread_degrees = 50.0
+
+[sub_resource type="Resource" id="WeaponLevel_lv5"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 6.0
+projectile_speed = 1800.0
+projectile_size = Vector2(10, 28)
+projectile_shape = 0
+projectile_count = 7
+spread_degrees = 60.0
+
+[resource]
+script = ExtResource("1_script")
+id = &"spread"
+kind = 1
+color = Color(0.55, 1, 0.5, 1)
+levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])

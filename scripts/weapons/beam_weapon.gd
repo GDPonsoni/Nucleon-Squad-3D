@@ -1,38 +1,61 @@
 class_name BeamWeapon
 extends Weapon
-## Raio contínuo para cima: para no primeiro inimigo da coluna e causa dano em intervalos.
+## Raios contínuos para cima, lado a lado: cada um para no primeiro inimigo
+## da sua coluna e causa dano em intervalos.
 
-var _length: float = 0.0
-var _tick: float = 0.0
+var _lengths := PackedFloat32Array()
+var _ticks := PackedFloat32Array()
+
+
+func set_level(number: int) -> void:
+	super(number)
+	_lengths.resize(stats.beam_count)
+	_ticks.resize(stats.beam_count)
+	_ticks.fill(0.0)
 
 
 func _process(delta: float) -> void:
-	var origin: Vector2 = muzzle()
-	var hit_y: float = get_viewport_rect().position.y
-	var target: Enemy = null
+	var tip: Vector2 = muzzle()
+	for k in stats.beam_count:
+		var origin := Vector2(tip.x + _offset_x(k), tip.y)
+		var target: Enemy = _first_enemy_above(origin)
+		var hit_y: float = get_viewport_rect().position.y
+		if target != null:
+			# O feixe termina no meio do inimigo, sem passar da nave
+			hit_y = minf(target.position.y + target.radius * 0.5, origin.y)
+		_lengths[k] = origin.y - hit_y
+		_ticks[k] = maxf(_ticks[k] - delta, 0.0)
+		if target != null and _ticks[k] == 0.0:
+			_ticks[k] = stats.beam_tick_seconds
+			target.take_damage(stats.damage)
+	queue_redraw()
+
+
+## Inimigo visível mais próximo da nave na coluna do feixe.
+func _first_enemy_above(origin: Vector2) -> Enemy:
+	var best: Enemy = null
 	for item in context.enemies.active:
 		var enemy := item as Enemy
 		if enemy.position.y >= origin.y or not enemy.is_on_screen():
 			continue
-		if absf(enemy.position.x - origin.x) > data.beam_width * 0.5 + enemy.radius:
+		if absf(enemy.position.x - origin.x) > stats.beam_width * 0.5 + enemy.radius:
 			continue
-		# O mais próximo da nave bloqueia o feixe
-		var y: float = minf(enemy.position.y + enemy.radius * 0.5, origin.y)
-		if y > hit_y:
-			hit_y = y
-			target = enemy
-	_length = origin.y - hit_y
+		if best == null or enemy.position.y > best.position.y:
+			best = enemy
+	return best
 
-	_tick = maxf(_tick - delta, 0.0)
-	if target != null and _tick == 0.0:
-		_tick = data.beam_tick_seconds
-		target.take_damage(data.damage)
-	queue_redraw()
+
+func _offset_x(index: int) -> float:
+	return (index - (stats.beam_count - 1) * 0.5) * stats.beam_spacing
 
 
 func _draw() -> void:
-	var tip := Vector2(0.0, -Params.ship_size.y * 0.5)
+	var tip_y: float = -Params.ship_size.y * 0.5
 	var glow := Color(data.color, 0.35)
-	draw_rect(Rect2(tip.x - data.beam_width * 0.5, tip.y - _length, data.beam_width, _length), glow)
-	var core_width: float = data.beam_width * 0.4
-	draw_rect(Rect2(tip.x - core_width * 0.5, tip.y - _length, core_width, _length), data.color.lightened(0.6))
+	var core: Color = data.color.lightened(0.6)
+	var core_width: float = stats.beam_width * 0.4
+	for k in stats.beam_count:
+		var x: float = _offset_x(k)
+		var length: float = _lengths[k]
+		draw_rect(Rect2(x - stats.beam_width * 0.5, tip_y - length, stats.beam_width, length), glow)
+		draw_rect(Rect2(x - core_width * 0.5, tip_y - length, core_width, length), core)

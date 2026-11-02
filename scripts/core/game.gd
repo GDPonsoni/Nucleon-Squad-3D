@@ -103,7 +103,7 @@ func _ready() -> void:
 
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
 	state.select(index)
-	player.set_body(state.current_body(), invulnerable_seconds)
+	player.set_body(state.current_body(), 1, invulnerable_seconds)
 
 
 func _on_body_chosen(index: int) -> void:

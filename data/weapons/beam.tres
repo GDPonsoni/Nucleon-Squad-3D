@@ -1,12 +1,49 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3]
 
 [ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/weapons/weapon_level.gd" id="2_level"]
+
+[sub_resource type="Resource" id="WeaponLevel_lv1"]
+script = ExtResource("2_level")
+damage = 1
+beam_count = 1
+beam_width = 30.0
+beam_tick_seconds = 0.08
+
+[sub_resource type="Resource" id="WeaponLevel_lv2"]
+script = ExtResource("2_level")
+damage = 1
+beam_count = 2
+beam_spacing = 50.0
+beam_width = 30.0
+beam_tick_seconds = 0.08
+
+[sub_resource type="Resource" id="WeaponLevel_lv3"]
+script = ExtResource("2_level")
+damage = 1
+beam_count = 3
+beam_spacing = 46.0
+beam_width = 30.0
+beam_tick_seconds = 0.08
+
+[sub_resource type="Resource" id="WeaponLevel_lv4"]
+script = ExtResource("2_level")
+damage = 1
+beam_count = 4
+beam_spacing = 42.0
+beam_width = 30.0
+beam_tick_seconds = 0.08
+
+[sub_resource type="Resource" id="WeaponLevel_lv5"]
+script = ExtResource("2_level")
+damage = 3
+beam_count = 1
+beam_width = 110.0
+beam_tick_seconds = 0.08
 
 [resource]
 script = ExtResource("1_script")
 id = &"beam"
 kind = 0
 color = Color(0.45, 0.9, 1, 1)
-damage = 1
-beam_width = 30.0
-beam_tick_seconds = 0.08
+levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])

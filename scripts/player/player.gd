@@ -36,10 +36,10 @@ func bind_input(touch: TouchInput) -> void:
 
 
 ## Monta um corpo novo: o corpo se reconstrói a partir do núcleo e a arma liga ao final.
-func set_body(data: BodyData, invulnerable_seconds: float) -> void:
+func set_body(data: BodyData, weapon_level: int, invulnerable_seconds: float) -> void:
 	clear_body()
 	body = data
-	weapon = Weapon.create(data.weapon, _context)
+	weapon = Weapon.create(data.weapon, _context, weapon_level)
 	weapon.show_behind_parent = true
 	add_child(weapon)
 	weapon.set_active(false)

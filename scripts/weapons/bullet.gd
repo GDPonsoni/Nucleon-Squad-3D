@@ -11,6 +11,8 @@ var radius: float = 0.0  # raio de colisão
 ## Teleguiado: giro máximo em rad/s (0 = reto) e função (posição) -> alvo ou null.
 var homing_turn_rate: float = 0.0
 var target_finder: Callable
+## Segundos até sumir (0 = só some ao sair da tela). Evita míssil circulando o alvo para sempre.
+var life_left: float = 0.0
 
 var _size: Vector2
 var _color: Color
@@ -24,6 +26,7 @@ func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color,
 	radius = (size.x + size.y) * 0.25
 	homing_turn_rate = 0.0
 	target_finder = Callable()
+	life_left = 0.0
 	_size = size
 	_color = color
 	_shape = shape
@@ -34,6 +37,11 @@ func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color,
 
 
 func _process(delta: float) -> void:
+	if life_left > 0.0:
+		life_left -= delta
+		if life_left <= 0.0:
+			expire()
+			return
 	if homing_turn_rate > 0.0 and target_finder.is_valid():
 		var target: Node2D = target_finder.call(position)
 		if target != null:

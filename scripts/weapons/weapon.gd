@@ -4,9 +4,11 @@ extends Node2D
 
 var data: WeaponData
 var context: CombatContext
+var level: int = 1
+var stats: WeaponLevel  # valores do nível atual
 
 
-static func create(weapon_data: WeaponData, combat_context: CombatContext) -> Weapon:
+static func create(weapon_data: WeaponData, combat_context: CombatContext, start_level: int) -> Weapon:
 	var weapon: Weapon
 	match weapon_data.kind:
 		WeaponData.Kind.BEAM:
@@ -17,7 +19,14 @@ static func create(weapon_data: WeaponData, combat_context: CombatContext) -> We
 			weapon = ProjectileWeapon.new()
 	weapon.data = weapon_data
 	weapon.context = combat_context
+	weapon.set_level(start_level)
 	return weapon
+
+
+func set_level(number: int) -> void:
+	level = clampi(number, 1, data.max_level())
+	stats = data.level(level)
+	queue_redraw()
 
 
 func set_active(active: bool) -> void:

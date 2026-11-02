@@ -1,12 +1,10 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3]
 
 [ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/weapons/weapon_level.gd" id="2_level"]
 
-[resource]
-script = ExtResource("1_script")
-id = &"orbit"
-kind = 3
-color = Color(0.75, 0.55, 1, 1)
+[sub_resource type="Resource" id="WeaponLevel_lv1"]
+script = ExtResource("2_level")
 damage = 2
 orbit_count = 1
 orbit_radius = 170.0
@@ -14,3 +12,50 @@ orbit_speed_degrees = 270.0
 orbit_size = 40.0
 orbit_hit_seconds = 0.15
 clears_projectiles = true
+
+[sub_resource type="Resource" id="WeaponLevel_lv2"]
+script = ExtResource("2_level")
+damage = 2
+orbit_count = 2
+orbit_radius = 170.0
+orbit_speed_degrees = 270.0
+orbit_size = 40.0
+orbit_hit_seconds = 0.15
+clears_projectiles = true
+
+[sub_resource type="Resource" id="WeaponLevel_lv3"]
+script = ExtResource("2_level")
+damage = 2
+orbit_count = 3
+orbit_radius = 180.0
+orbit_speed_degrees = 270.0
+orbit_size = 40.0
+orbit_hit_seconds = 0.15
+clears_projectiles = true
+
+[sub_resource type="Resource" id="WeaponLevel_lv4"]
+script = ExtResource("2_level")
+damage = 2
+orbit_count = 4
+orbit_radius = 190.0
+orbit_speed_degrees = 280.0
+orbit_size = 40.0
+orbit_hit_seconds = 0.15
+clears_projectiles = true
+
+[sub_resource type="Resource" id="WeaponLevel_lv5"]
+script = ExtResource("2_level")
+damage = 2
+orbit_count = 8
+orbit_radius = 200.0
+orbit_speed_degrees = 300.0
+orbit_size = 40.0
+orbit_hit_seconds = 0.15
+clears_projectiles = true
+
+[resource]
+script = ExtResource("1_script")
+id = &"orbit"
+kind = 3
+color = Color(0.75, 0.55, 1, 1)
+levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])
