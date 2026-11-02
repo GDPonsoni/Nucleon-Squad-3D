@@ -7,9 +7,11 @@ signal body_changed(index: int)
 signal hits_changed(index: int, hits_left: int)
 signal body_destroyed(index: int)
 signal game_over
+signal weapon_level_changed(index: int, level: int)
 
 var bodies: Array[BodyData] = []
 var hits_left: PackedInt32Array = PackedInt32Array()
+var weapon_levels: PackedInt32Array = PackedInt32Array()  # nível da arma de cada corpo
 var current: int = 0
 
 
@@ -17,6 +19,8 @@ func _init(formation: FormationData) -> void:
 	bodies = formation.bodies.duplicate()
 	hits_left.resize(bodies.size())
 	hits_left.fill(Params.body_max_hits)
+	weapon_levels.resize(bodies.size())
+	weapon_levels.fill(1)
 
 
 func current_body() -> BodyData:
@@ -52,6 +56,17 @@ func damage_current(amount: int) -> void:
 	hits_changed.emit(current, hits_left[current])
 	if is_alive(current):
 		return
+	# Corpo perdido leva junto os power-ups da arma
+	weapon_levels[current] = 1
 	body_destroyed.emit(current)
 	if alive_indices().is_empty():
 		game_over.emit()
+
+
+## Sobe o nível da arma do corpo ativo. Retorna false se já estiver no máximo.
+func level_up_current() -> bool:
+	if weapon_levels[current] >= current_body().weapon.max_level():
+		return false
+	weapon_levels[current] += 1
+	weapon_level_changed.emit(current, weapon_levels[current])
+	return true

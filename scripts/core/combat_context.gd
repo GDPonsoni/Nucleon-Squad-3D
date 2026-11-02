@@ -5,6 +5,7 @@ extends RefCounted
 var player_bullets: NodePool
 var enemy_bullets: NodePool
 var enemies: NodePool
+var power_ups: NodePool
 
 
 ## Inimigo visível mais próximo de um ponto (null se não houver).

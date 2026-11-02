@@ -2,6 +2,9 @@ class_name Enemy
 extends PoolItem
 ## Inimigo reutilizável: desce em linha reta e atira reto para baixo.
 
+## Destruído pelo jogador (não emite ao sair pela borda de baixo).
+signal killed(enemy: Enemy)
+
 var data: EnemyData
 var hp: int = 0
 var radius: float = 0.0
@@ -33,6 +36,7 @@ func take_damage(amount: int) -> void:
 	_flash_left = Params.enemy_hit_flash_seconds
 	queue_redraw()
 	if hp <= 0:
+		killed.emit(self)
 		expire()
 
 

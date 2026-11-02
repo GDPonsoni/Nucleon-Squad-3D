@@ -11,6 +11,8 @@ var state: MatchState
 var time_controller: TimeController
 var switcher: BodySwitcher
 var spawner: EnemySpawner
+var power_ups: NodePool
+var dropper: PowerUpDropper
 var pause_menu: PauseMenu
 var game_over_menu: GameOverMenu
 
@@ -41,17 +43,28 @@ func _ready() -> void:
 	enemy_bullets.name = "EnemyBullets"
 	context.enemy_bullets = enemy_bullets
 
+	# O dropper existe antes do pool de inimigos: cada inimigo se conecta a ele
+	dropper = PowerUpDropper.new()
+	dropper.name = "PowerUpDropper"
+
 	enemies = NodePool.new(_create_enemy, Params.enemy_pool_size)
 	enemies.name = "Enemies"
 	add_child(enemies)
 	context.enemies = enemies
+
+	power_ups = NodePool.new(PowerUp.new, Params.powerup_pool_size)
+	power_ups.name = "PowerUps"
+	context.power_ups = power_ups
+	dropper.setup(power_ups)
+	add_child(dropper)
 
 	player = Player.new()
 	player.name = "Player"
 	add_child(player)
 	player.setup(context)
 
-	# Tiros inimigos por cima da nave, para ficarem sempre visíveis
+	# Power-ups e tiros inimigos por cima da nave e do raio, para ficarem sempre visíveis
+	add_child(power_ups)
 	add_child(enemy_bullets)
 
 	switcher = BodySwitcher.new()
@@ -78,6 +91,7 @@ func _ready() -> void:
 	add_child(combat)
 	combat.setup(context, player)
 	combat.player_hit.connect(_on_player_hit)
+	combat.powerup_collected.connect(_on_powerup_collected)
 
 	var hud := Hud.new()
 	hud.name = "Hud"
@@ -103,7 +117,7 @@ func _ready() -> void:
 
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
 	state.select(index)
-	player.set_body(state.current_body(), 1, invulnerable_seconds)
+	player.set_body(state.current_body(), state.weapon_levels[index], invulnerable_seconds)
 
 
 func _on_body_chosen(index: int) -> void:
@@ -116,6 +130,11 @@ func _on_player_hit(damage: int) -> void:
 	state.damage_current(damage)
 	if state.is_alive(state.current):
 		player.start_invulnerability(Params.hit_invulnerability_seconds)
+
+
+func _on_powerup_collected() -> void:
+	if state.level_up_current() and player.weapon != null:
+		player.weapon.set_level(state.weapon_levels[state.current])
 
 
 ## Corpo destruído: o núcleo racha e o jogador escolhe outro corpo vivo.
@@ -139,9 +158,11 @@ func _on_game_over() -> void:
 func _create_enemy() -> PoolItem:
 	var enemy := Enemy.new()
 	enemy.bullets = enemy_bullets
+	enemy.killed.connect(dropper.on_enemy_killed)
 	return enemy
 
 
 func _debug_stats() -> String:
-	return "tiros %d | inimigos %d | tiros inimigos %d" % [
-		player_bullets.active.size(), enemies.active.size(), enemy_bullets.active.size()]
+	return "tiros %d | inimigos %d | tiros inimigos %d | nível %d" % [
+		player_bullets.active.size(), enemies.active.size(), enemy_bullets.active.size(),
+		state.weapon_levels[state.current]]

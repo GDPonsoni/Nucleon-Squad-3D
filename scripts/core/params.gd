@@ -71,3 +71,14 @@ var stage_path: String = "res://data/stages/stage_01.tres"
 var enemy_pool_size: int = 24
 var enemy_bullet_pool_size: int = 160
 var enemy_hit_flash_seconds: float = 0.06
+
+# --- Power-ups ---
+var powerup_every_kills: int = 8  # 1 power-up a cada N inimigos destruídos
+var powerup_pool_size: int = 8
+var powerup_fall_speed: float = 150.0  # px/s
+var powerup_radius: float = 30.0
+var powerup_pickup_radius: float = 60.0  # a partir do centro da nave
+var powerup_color: Color = Color(1.0, 0.85, 0.3)
+var powerup_spin_speed: float = 2.5  # rad/s
+var powerup_pulse: float = 0.12  # variação de escala
+var powerup_pulse_speed: float = 6.0
