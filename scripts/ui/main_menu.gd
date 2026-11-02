@@ -1,5 +1,5 @@
 extends Control
-## Menu inicial: entrar na partida ou sair do jogo.
+## Menu inicial: escolher a fase ou sair do jogo.
 
 
 func _ready() -> void:
@@ -33,7 +33,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_play_pressed() -> void:
-	SceneTransition.go_to(ScenePaths.GAME)
+	SceneTransition.go_to(ScenePaths.STAGE_SELECT)
 
 
 func _on_quit_pressed() -> void:

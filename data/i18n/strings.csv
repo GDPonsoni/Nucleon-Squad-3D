@@ -11,3 +11,6 @@ PLANET_1_NAME,Aurora,Aurora
 PLANET_2_NAME,Vulcania,Vulcânia
 STAGE_CLEAR_TITLE,Stage clear,Fase concluída
 STAGE_NEXT,Next stage,Próxima fase
+STAGE_SELECT_TITLE,Select stage,Escolha a fase
+STAGE_BEST,Best %d,Recorde %d
+MENU_BACK,Back,Voltar
