@@ -40,6 +40,4 @@ func _on_next_pressed() -> void:
 
 
 func _change_scene(path: String) -> void:
-	# A pausa persiste entre cenas: despausar antes de trocar
-	get_tree().paused = false
-	get_tree().change_scene_to_file(path)
+	SceneTransition.go_to(path)

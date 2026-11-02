@@ -21,6 +21,7 @@ config/quit_on_go_back=false
 Params="*res://scripts/core/params.gd"
 Session="*res://scripts/core/session.gd"
 SaveGame="*res://scripts/core/save_game.gd"
+SceneTransition="*res://scripts/ui/scene_transition.gd"
 
 [display]
 

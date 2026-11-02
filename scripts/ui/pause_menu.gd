@@ -90,6 +90,4 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _exit_to_menu() -> void:
-	# A pausa persiste entre cenas: despausar antes de trocar
-	get_tree().paused = false
-	get_tree().change_scene_to_file(ScenePaths.MENU)
+	SceneTransition.go_to(ScenePaths.MENU)
