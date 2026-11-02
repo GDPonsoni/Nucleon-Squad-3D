@@ -7,6 +7,7 @@
 [ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="5_aimer"]
 [ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="6_kamikaze"]
 [ext_resource type="Resource" path="res://data/enemies/tank.tres" id="7_tank"]
+[ext_resource type="Resource" path="res://data/bosses/boss_2.tres" id="9_boss"]
 
 [sub_resource type="Resource" id="Wave_0"]
 script = ExtResource("3_wave_script")
@@ -119,6 +120,7 @@ duration_seconds = 180.0
 enemies = Array[ExtResource("2_enemy_script")]([ExtResource("4_drone"), ExtResource("5_aimer"), ExtResource("6_kamikaze"), ExtResource("7_tank")])
 spawn_weights = PackedFloat32Array(2.0, 2.0, 2.0, 0.6)
 waves = Array[ExtResource("3_wave_script")]([SubResource("Wave_0"), SubResource("Wave_1"), SubResource("Wave_2"), SubResource("Wave_3"), SubResource("Wave_4"), SubResource("Wave_5"), SubResource("Wave_6"), SubResource("Wave_7")])
+boss = ExtResource("9_boss")
 start_delay = 1.5
 spawn_interval_min = 0.6
 spawn_interval_max = 1.1

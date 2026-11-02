@@ -1,0 +1,158 @@
+[gd_resource type="Resource" script_class="BossData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/boss_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/enemies/boss_phase.gd" id="2_phase"]
+[ext_resource type="Script" path="res://scripts/enemies/boss_attack.gd" id="3_attack"]
+[ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="4_wave"]
+[ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="5_aimer"]
+
+[sub_resource type="Resource" id="Attack_p0_a0"]
+script = ExtResource("3_attack")
+pattern = 1
+interval = 0.15
+first_delay = 1.0
+count = 3
+spread_degrees = 40.0
+aimed = true
+turn_degrees = 17.0
+burst = 1
+burst_gap = 0.12
+bullet_speed = 360.0
+bullet_radius = 14.0
+bullet_color = Color(0.85, 0.5, 1, 1)
+
+[sub_resource type="Resource" id="Attack_p0_a1"]
+script = ExtResource("3_attack")
+pattern = 0
+interval = 2.0
+first_delay = 1.2
+count = 5
+spread_degrees = 36.0
+aimed = true
+turn_degrees = 0.0
+burst = 2
+burst_gap = 0.12
+bullet_speed = 540.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+
+[sub_resource type="Resource" id="Phase_0"]
+script = ExtResource("2_phase")
+hp_ratio = 1.0
+sway_speed_scale = 1.0
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p0_a0"), SubResource("Attack_p0_a1")])
+
+[sub_resource type="Resource" id="Attack_p1_a0"]
+script = ExtResource("3_attack")
+pattern = 1
+interval = 1.2
+first_delay = 1.0
+count = 18
+spread_degrees = 40.0
+aimed = true
+turn_degrees = 10.0
+burst = 1
+burst_gap = 0.12
+bullet_speed = 340.0
+bullet_radius = 14.0
+bullet_color = Color(0.85, 0.5, 1, 1)
+
+[sub_resource type="Resource" id="Wave_p1_a1"]
+script = ExtResource("4_wave")
+enemy = ExtResource("5_aimer")
+formation = 3
+count = 4
+spacing = 110.0
+interval = 0.4
+x_ratio = 0.5
+y_ratio = 0.35
+dive_stagger = 0.2
+
+[sub_resource type="Resource" id="Attack_p1_a1"]
+script = ExtResource("3_attack")
+pattern = 2
+interval = 8.0
+first_delay = 2.0
+count = 5
+spread_degrees = 40.0
+aimed = true
+turn_degrees = 0.0
+burst = 1
+burst_gap = 0.12
+bullet_speed = 500.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+wave = SubResource("Wave_p1_a1")
+
+[sub_resource type="Resource" id="Attack_p1_a2"]
+script = ExtResource("3_attack")
+pattern = 0
+interval = 1.6
+first_delay = 0.6
+count = 7
+spread_degrees = 60.0
+aimed = true
+turn_degrees = 0.0
+burst = 1
+burst_gap = 0.12
+bullet_speed = 520.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+
+[sub_resource type="Resource" id="Phase_1"]
+script = ExtResource("2_phase")
+hp_ratio = 0.6
+sway_speed_scale = 1.2
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_p1_a2")])
+
+[sub_resource type="Resource" id="Attack_p2_a0"]
+script = ExtResource("3_attack")
+pattern = 1
+interval = 0.13
+first_delay = 1.0
+count = 4
+spread_degrees = 40.0
+aimed = true
+turn_degrees = 12.0
+burst = 1
+burst_gap = 0.12
+bullet_speed = 380.0
+bullet_radius = 14.0
+bullet_color = Color(0.85, 0.5, 1, 1)
+
+[sub_resource type="Resource" id="Attack_p2_a1"]
+script = ExtResource("3_attack")
+pattern = 1
+interval = 1.6
+first_delay = 0.8
+count = 24
+spread_degrees = 40.0
+aimed = true
+turn_degrees = 7.0
+burst = 1
+burst_gap = 0.12
+bullet_speed = 300.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+
+[sub_resource type="Resource" id="Phase_2"]
+script = ExtResource("2_phase")
+hp_ratio = 0.3
+sway_speed_scale = 1.6
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p2_a0"), SubResource("Attack_p2_a1")])
+
+[resource]
+script = ExtResource("1_script")
+id = &"boss_3"
+name_key = "BOSS_3_NAME"
+max_hp = 1400
+score = 1200
+contact_damage = 2
+radius = 135.0
+sides = 12
+color = Color(0.55, 0.2, 0.95, 1)
+entry_speed = 160.0
+hold_y_ratio = 0.2
+sway_amplitude = 300.0
+sway_speed = 0.55
+phases = Array[ExtResource("2_phase")]([SubResource("Phase_0"), SubResource("Phase_1"), SubResource("Phase_2")])
