@@ -38,7 +38,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 **O que já existe:**
 - **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
-- **Marco 1 (em teste):** 4 corpos (Raio, Leque, Mísseis, Órbita) com troca na câmera lenta, 1 inimigo que desce e atira, 3 hits por corpo, troca forçada ao perder um corpo, fim de jogo, HUD, fundo de estrelas em parallax e power-ups que sobem a arma até o nível 5. Tudo com placeholders desenhados por código.
+- **Marco 1 (em teste):** 4 corpos com 5 níveis de arma e troca na câmera lenta, power-ups, 4 tipos de inimigo (Drone, Mirador, Kamikaze, Tanque), 2 planetas com 3 fases cada, seletor de fases com desbloqueio e recordes salvos no aparelho, HUD com progresso e pontuação, telas de resultado e interface com tema próprio. Tudo com placeholders desenhados por código.
 
 ---
 
@@ -140,6 +140,7 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 | `hit_invulnerability_seconds` | 1.0 | invulnerabilidade após levar hit |
 | `star_layer_speeds` | 40 / 120 / 320 | velocidade de cada camada do fundo (px/s) |
 | `powerup_every_kills` | 8 | inimigos destruídos por power-up |
+| `debug_unlock_all` | false | libera todas as fases (testes) |
 
 **Dados (`data/`)** definem o conteúdo, editáveis no Inspector do Godot ou em texto:
 
@@ -148,8 +149,9 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 | `data/weapons/` | armas: tipo, cor e os 5 níveis (dano, cadência, leque, feixes, ondas de mísseis, orbitais) |
 | `data/bodies/` | corpos: formato (pontos), cor e arma |
 | `data/formations/` | formação usada na partida (lista de corpos, qualquer quantidade) |
-| `data/enemies/` | inimigos: vida, velocidade, tamanho, tiro |
-| `data/stages/` | fases: inimigos e intervalo entre surgimentos |
+| `data/enemies/` | inimigos: vida, pontos, movimento (descer, cruzar, mergulhar) e tiro (reto, mirado, anel) |
+| `data/stages/` | fases: duração, inimigos, pesos e intervalo entre surgimentos |
+| `data/planets/`, `data/campaign.tres` | planetas (nome, cores, fases) e ordem da campanha |
 
 ---
 
@@ -157,18 +159,20 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 
 ```
 docs/            GDD e roteiros de teste
-scenes/          cenas (.tscn) pequenas: menu.tscn (inicial) e game.tscn (partida)
+scenes/          cenas (.tscn) pequenas: menu (inicial), stage_select e game (partida)
 scripts/
-  core/          params, partida, estado, colisão, câmera lenta, pools, fundo
+  core/          params, sessão, save, partida, estado, colisão, câmera lenta, pools, fundo
   player/        nave (núcleo + corpo), toque, troca de corpo, BodyData
   weapons/       armas (raio, projéteis, órbita), projéteis, WeaponData
   enemies/       inimigos, surgimento, EnemyData e StageData
-  ui/            menu inicial, pausa, fim de jogo, HUD, overlay de debug
-data/            armas, corpos, formações, inimigos e fases (.tres)
+  ui/            tema, menus, seletor, pausa, resultados, HUD, transições, debug
+data/            campanha, planetas, fases, inimigos, armas, corpos e formações (.tres)
   i18n/          tabela de tradução strings.csv (chave, en, pt_BR)
 assets/          imagens e áudio (placeholders até o Marco 2)
 builds/          APKs exportados (não versionado)
 ```
+
+**Autoloads:** `Params` (tuning), `Session` (fase escolhida), `SaveGame` (progresso em `user://save.json`) e `SceneTransition` (fade entre telas).
 
 **Princípios:** GDScript tipado, parâmetros centralizados em `Params`, dados fora do código, pooling desde o início e suporte a N corpos. Detalhes em [`CLAUDE.md`](CLAUDE.md).
 

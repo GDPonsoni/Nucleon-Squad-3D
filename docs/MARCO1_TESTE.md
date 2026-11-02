@@ -1,59 +1,66 @@
 # Marco 1 — Como testar
 
-Corpos trocáveis, primeiro inimigo, dano, power-ups com 5 níveis de arma e fundo em movimento. Como abrir, exportar e instalar no S24: veja o [`MARCO0_TESTE.md`](MARCO0_TESTE.md).
+Corpos trocáveis com 5 níveis de arma, power-ups, 4 tipos de inimigo, 2 planetas com 3 fases cada, salvamento local e interface nova. Como abrir, exportar e instalar no S24: veja o [`MARCO0_TESTE.md`](MARCO0_TESTE.md).
+
+## Fluxo de telas
+
+**Menu inicial** (estrelas + nave alternando corpos) → **Jogar** → **Seletor de fases** (por planeta) → **Partida** → **Resultado** (fase concluída ou fim de jogo, com resumo) → próxima fase / jogar de novo / escolher fase / menu. Todas as trocas de tela têm fade.
+
+- Fases começam travadas, exceto a 1-1. Concluir uma fase libera a próxima e guarda o recorde no aparelho.
+- **Atalho de debug:** no seletor, tocar **5 vezes no título** libera todas as fases (só em build de debug). Para zerar o progresso, desinstale o app ou apague `save.json` (veja abaixo).
 
 ## O que foi implementado
 
 | Item | Como funciona |
 |---|---|
 | **4 corpos** | Raio (ciano), Leque (verde), Mísseis (laranja) e Órbita (roxo). Formato e arma vêm de `data/bodies/` e `data/weapons/`. |
-| **Armas (5 níveis)** | **Raio:** feixe contínuo que para no primeiro inimigo; 1 → 4 feixes e raio grande no nível 5. **Leque:** 3 → 7 tiros, abrindo de 24° a 60°. **Mísseis:** ondas de 2 → 8 mísseis que saem em sequência em volta da nave (espiral), se afastam por 0,3 s e depois perseguem o alvo. **Órbita:** 1 → 4 orbitais e anel de 8 no nível 5; causam dano por contato e **destroem tiros inimigos**. |
-| **Power-ups** | Losango dourado com "+" que cai a cada 8 inimigos destruídos (no lugar do último), desce devagar e é coletado encostando na nave. Sobe 1 nível da arma do **corpo ativo** (máx. 5). Perder o corpo zera o nível dele. |
-| **Troca de corpo** | Com o dedo solto (câmera lenta), os outros corpos vivos aparecem em arco ao redor da nave. Tocar num ícone troca o corpo (reconstrução + 2 s de invulnerabilidade, piscando). Tocar fora retoma com o corpo atual. |
-| **Inimigo** | Hexágono vermelho que desce reto e atira bolas rosa para baixo. 6 de vida. Surge a cada 0,9–1,8 s (`data/stages/stage_01.tres`). |
-| **Dano** | A hitbox é só o **núcleo branco** (bem menor que a nave). Tiro inimigo ou encostar num inimigo = 1 hit. Depois de um hit, 1 s de invulnerabilidade. |
-| **Perda de corpo** | No 3º hit o corpo some, o núcleo racha e o jogo **fica em câmera lenta até escolher outro corpo**, mesmo com o dedo na tela. Se só sobra um, ele é escolhido sozinho. |
-| **Fim de jogo** | Sem corpos vivos: tela "Fim de jogo" com **Jogar de novo** e **Voltar ao menu**. |
-| **HUD** | Embaixo à esquerda: nível da arma (losangos dourados) e hits do corpo ativo. Embaixo à direita: a formação (X = destruído, anel = ativo). |
-| **Fundo** | 3 camadas de estrelas descendo em velocidades diferentes. Também desacelera na câmera lenta. |
+| **Raio** | Feixes contínuos que param no primeiro inimigo. Níveis 1–2 retos (1 e 2 feixes); a partir do 3, os laterais **abrem em ângulo**; nível 5: raio grande central + 2 feixes abertos. |
+| **Leque** | Alterna **projétil maior** e **mais fileiras**: 3 pequenos → 3 grandes → 5 grandes → 5 maiores → 7 grandes. |
+| **Mísseis** | Cada onda **surge em anel** ao redor da nave, **mira** por 0,35 s e dispara de uma vez; a próxima onda só vem após uma pausa. 4 → 8 mísseis por onda. Bem mais fraco que antes nos níveis altos. |
+| **Órbita** | 1 → 4 orbitais e anel de 8 no nível 5. Dano por contato e **destroem tiros inimigos**. |
+| **Power-ups** | Losango dourado a cada 8 inimigos destruídos. Sobe 1 nível da arma do corpo ativo (máx. 5). Perder o corpo zera o nível dele. |
+| **Inimigos** | **Drone** (vermelho, desce e atira reto). **Mirador** (magenta, losango): entra pela lateral, cruza a tela e atira mirando a nave. **Kamikaze** (amarelo, triângulo): desce um pouco e mergulha na nave. **Tanque** (grande, octógono): lento, 60 de vida, solta anéis de 12 tiros girando e tira **2 hits** se encostar. |
+| **Planetas e fases** | **Aurora** (azul): 1-1 só drones, 1-2 + miradores, 1-3 + kamikazes. **Vulcânia** (fundo avermelhado): mais rápido e denso, tanques a partir da 2-2. Duração: 1:30 a 3:00. |
+| **Troca de corpo** | Com o dedo solto, os outros corpos vivos aparecem em arco ao redor da nave. Tocar num ícone troca o corpo (+2 s de invulnerabilidade). |
+| **Dano** | Hitbox = **núcleo branco**. Tiro ou encostar = 1 hit (Tanque: 2). 1 s de invulnerabilidade após o hit. **Flash vermelho** na tela. |
+| **HUD** | Topo: barra de progresso da fase, pontuação e nome da fase. Base: nível da arma e hits (esquerda), formação (direita), sobre painéis. |
+| **Interface** | Tema próprio (botões arredondados com borda ciano, painéis translúcidos), ícone de pausa desenhado, menus com entrada animada. |
 
 ## O que observar no S24
 
-**Troca de corpo**
-- Os ícones aparecem rápido e ficam fáceis de tocar com o polegar? Algum fica escondido sob o dedo ou fora da tela (teste com a nave nos cantos e no topo)?
-- A troca parece clara (corpo cresce a partir do núcleo, nave piscando)?
-- Tocar fora dos ícones retoma sem trocar?
+**Armas (nova versão)**
+- **Mísseis:** ficou menos "roubado"? O anel mirando é legível? A pausa entre ondas parece boa?
+- **Raio:** os feixes em ângulo ajudam a pegar inimigos laterais (Mirador) sem perder força na frente?
+- **Leque:** dá para sentir a diferença entre níveis com projétil maior e níveis com mais fileiras?
 
-**Armas**
-- Cada corpo parece diferente de jogar? Qual é o mais forte e qual o mais fraco?
-- **Órbita:** agora destrói os tiros inimigos que encostam nos orbitais. No nível 1 (um orbital só) isso acontece pouco; nos níveis altos vira um escudo. Ainda causa dano só por contato: anotar se ficou equilibrada.
+**Inimigos e fases**
+- A dificuldade sobe de forma sensata de 1-1 até 2-3? Alguma fase ficou injusta ou fácil demais?
+- **Kamikaze** é possível de desviar? **Mirador** atira demais? **Tanque**: os anéis ficam legíveis com outros tiros na tela?
+- A duração das fases (1:30 a 3:00) está boa para jogar no celular?
 
-**Power-ups e níveis**
-- Os power-ups aparecem bem na tela (inclusive sobre o raio) e são fáceis de pegar?
-- O ritmo (1 a cada 8 inimigos) parece bom? No teste automático, uma arma chegou ao nível 5 em ~1 min de jogo agressivo.
-- Cada nível dá uma diferença perceptível? Qual arma ficou forte demais no nível 5?
-- **Mísseis em ondas:** a espiral em volta da nave fica bonita e legível? O atraso até perseguir (0,3 s) deixou a arma menos "roubada" sem ficar fraca?
-- Pegar power-up com um corpo e trocar: cada corpo guarda o próprio nível?
+**Interface**
+- Menu, seletor, HUD e resultados ficaram claros e fáceis de tocar?
+- A barra de progresso e a pontuação atrapalham a visão do jogo (topo da tela)?
+- O flash vermelho do hit é útil ou incomoda?
 
-**Inimigos e dano**
-- Os tiros inimigos (rosa) ficam legíveis contra o fundo e os tiros da nave?
-- A hitbox no núcleo parece justa ou tolerante demais?
-- 1 s de invulnerabilidade após o hit é bom? (`hit_invulnerability_seconds`, em aberto no GDD)
-- Perder um corpo e escolher outro em câmera lenta forçada fica claro?
+**Salvamento**
+- Concluir uma fase, fechar o app e abrir de novo: a próxima continua liberada e o recorde aparece?
 
 **Desempenho**
-- O overlay mostra FPS e a contagem de tiros, inimigos e tiros inimigos. Anotar se o FPS cai com muitos objetos.
+- Na 2-3 (com tanques), o FPS se mantém? O overlay mostra a contagem de objetos (no teste automático: até ~60 tiros inimigos e 10 inimigos ao mesmo tempo).
 
 ## Onde ajustar
 
 | O quê | Onde |
 |---|---|
-| Vida, velocidade e tiro do inimigo | `data/enemies/drone.tres` |
-| Frequência de inimigos | `data/stages/stage_01.tres` |
+| Inimigos (vida, velocidade, movimento, tiro, pontos) | `data/enemies/*.tres` |
+| Fases (duração, inimigos, pesos, frequência) | `data/stages/*.tres` |
+| Planetas (nome, cores, fases) e ordem da campanha | `data/planets/*.tres`, `data/campaign.tres` |
 | Valores de cada nível de arma | `data/weapons/*.tres` (um sub-recurso por nível) |
-| Frequência e visual dos power-ups | `powerup_*` em `scripts/core/params.gd` |
-| Formato e cor dos corpos | `data/bodies/*.tres` |
-| Corpos da formação (qualquer quantidade) | `data/formations/default.tres` |
-| Hits, invulnerabilidade, hitbox, ícones de troca, HUD, fundo | `scripts/core/params.gd` |
+| Formato e cor dos corpos / formação | `data/bodies/*.tres`, `data/formations/default.tres` |
+| Power-ups, hits, invulnerabilidade, HUD, cores da interface | `scripts/core/params.gd` |
+| Liberar todas as fases sem tocar no save | `debug_unlock_all = true` em `params.gd` |
+
+**Save no aparelho:** `user://save.json` (no Android, dentro dos dados do app; no Linux, `~/.local/share/godot/app_userdata/nucleonSquad/save.json`).
 
 Os `.tres` também podem ser editados pelo **Inspector** do Godot (duplo clique no arquivo).
