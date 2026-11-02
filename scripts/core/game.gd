@@ -7,12 +7,13 @@ var player_bullets: NodePool
 var enemy_bullets: NodePool
 var enemies: NodePool
 var context: CombatContext
-var gun: AutoGun
+var state: MatchState
 var time_controller: TimeController
 
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
+	state = MatchState.new(load(Params.formation_path) as FormationData)
 
 	touch_input = TouchInput.new()
 	touch_input.name = "TouchInput"
@@ -42,15 +43,11 @@ func _ready() -> void:
 	player = Player.new()
 	player.name = "Player"
 	add_child(player)
+	player.setup(context)
 	player.bind_input(touch_input)
 
 	# Tiros inimigos por cima da nave, para ficarem sempre visíveis
 	add_child(enemy_bullets)
-
-	gun = AutoGun.new()
-	gun.name = "AutoGun"
-	add_child(gun)
-	gun.setup(player, player_bullets)
 
 	var spawner := EnemySpawner.new()
 	spawner.name = "EnemySpawner"
@@ -77,6 +74,13 @@ func _ready() -> void:
 		overlay.name = "DebugOverlay"
 		overlay.stats = _debug_stats
 		add_child(overlay)
+
+	_switch_to(0, 0.0)
+
+
+func _switch_to(index: int, invulnerable_seconds: float) -> void:
+	state.select(index)
+	player.set_body(state.current_body(), invulnerable_seconds)
 
 
 func _create_enemy() -> PoolItem:

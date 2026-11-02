@@ -31,15 +31,21 @@ var time_scale_smooth_seconds: float = 0.1  # duração da transição, em tempo
 # --- Nave ---
 var ship_speed: float = 3000.0  # px/s máximos (escalado pelo time scale)
 var drag_sensitivity: float = 1.0  # 1.0 = nave anda o mesmo que o dedo
-var ship_size: Vector2 = Vector2(90.0, 110.0)
-var ship_color: Color = Color(0.4, 0.85, 1.0)
+var ship_size: Vector2 = Vector2(90.0, 110.0)  # tamanho de referência dos corpos
 var ship_start_bottom_offset: float = 300.0  # distância da base da tela
+var nucleus_radius: float = 16.0  # também é a hitbox da nave
+var nucleus_color: Color = Color(1.0, 1.0, 1.0)
+var crack_start_angle: float = 0.8  # rad; posição da 1ª rachadura do núcleo
+var crack_angle_step: float = 2.1  # rad entre rachaduras
 
-# --- Tiro ---
-var fire_rate: float = 10.0  # tiros por segundo
-var bullet_speed: float = 2200.0  # px/s
-var bullet_size: Vector2 = Vector2(10.0, 36.0)
-var bullet_color: Color = Color(1.0, 0.95, 0.5)
+# --- Corpos (formas e armas ficam em data/) ---
+var formation_path: String = "res://data/formations/default.tres"
+var body_max_hits: int = 3
+var body_rebuild_seconds: float = 0.35
+var invulnerability_blink_hz: float = 12.0
+var invulnerability_alpha: float = 0.3
+
+# --- Projéteis do jogador ---
 var player_bullet_pool_size: int = 128
 
 # --- Inimigos e fase (tipos e ondas ficam em data/) ---

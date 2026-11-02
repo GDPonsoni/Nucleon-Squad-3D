@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BodyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/player/body_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/weapons/orbit.tres" id="2_weapon"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"orbit_body"
+color = Color(0.75, 0.55, 1, 1)
+shape = PackedVector2Array(0, -0.5, 0.42, -0.15, 0.42, 0.25, 0, 0.5, -0.42, 0.25, -0.42, -0.15)
+weapon = ExtResource("2_weapon")
