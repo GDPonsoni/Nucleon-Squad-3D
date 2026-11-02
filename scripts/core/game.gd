@@ -165,6 +165,7 @@ func _on_powerup_collected() -> void:
 	state.powerups_collected += 1
 	if state.level_up_current() and player.weapon != null:
 		player.weapon.set_level(state.weapon_levels[state.current])
+		player.pulse_level_up()
 
 
 ## Corpo destruído: explode, o núcleo racha e o jogador escolhe outro corpo vivo.

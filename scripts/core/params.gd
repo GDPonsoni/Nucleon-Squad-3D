@@ -81,6 +81,16 @@ var ship_size: Vector2 = Vector2(90.0, 110.0)  # tamanho de referência dos corp
 var ship_start_bottom_offset: float = 300.0  # distância da base da tela
 var nucleus_radius: float = 16.0  # também é a hitbox da nave
 var nucleus_color: Color = Color(1.0, 1.0, 1.0)
+var nucleus_outline_color: Color = Color(0.02, 0.02, 0.06)  # separa o núcleo da cor do corpo
+var nucleus_outline_width: float = 5.0
+var nucleus_ring_scale: float = 1.9  # anel pulsando em volta do núcleo (x raio)
+var nucleus_ring_width: float = 4.0
+var nucleus_ring_alpha: float = 0.45
+var nucleus_ring_alpha_slow: float = 1.0  # anel mais forte na câmera lenta
+var nucleus_pulse_speed: float = 6.0
+var level_up_pulse_seconds: float = 0.5
+var level_up_pulse_growth: float = 2.0
+var level_up_pulse_width: float = 10.0
 var crack_start_angle: float = 0.8  # rad; posição da 1ª rachadura do núcleo
 var crack_angle_step: float = 2.1  # rad entre rachaduras
 

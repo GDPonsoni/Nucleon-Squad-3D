@@ -18,6 +18,7 @@ var _build: float = 1.0  # 0 = só o núcleo, 1 = corpo completo
 var _build_tween: Tween
 var _invulnerable_left: float = 0.0
 var _blink_clock: float = 0.0
+var _level_pulse_left: float = 0.0
 
 
 func _ready() -> void:
@@ -60,6 +61,11 @@ func clear_body() -> void:
 	_set_build(0.0)
 
 
+## Anel dourado que se expande ao subir o nível da arma.
+func pulse_level_up() -> void:
+	_level_pulse_left = Params.level_up_pulse_seconds
+
+
 func start_invulnerability(seconds: float) -> void:
 	_invulnerable_left = maxf(_invulnerable_left, seconds)
 
@@ -80,6 +86,10 @@ func _process(delta: float) -> void:
 	elif self_modulate.a < 1.0:
 		self_modulate.a = 1.0
 
+	_level_pulse_left = maxf(_level_pulse_left - delta, 0.0)
+	# Halo do núcleo e pulso de nível são animados
+	queue_redraw()
+
 
 func _draw() -> void:
 	if body != null and _build > 0.0:
@@ -88,7 +98,26 @@ func _draw() -> void:
 			points.append(point * Params.ship_size * _build)
 		draw_colored_polygon(points, body.color)
 
-	draw_circle(Vector2.ZERO, Params.nucleus_radius, Params.nucleus_color)
+	_draw_nucleus()
+
+	if _level_pulse_left > 0.0:
+		var t: float = 1.0 - _level_pulse_left / Params.level_up_pulse_seconds
+		var radius: float = Params.ship_size.y * (0.4 + t * Params.level_up_pulse_growth)
+		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(Params.powerup_color, 1.0 - t), Params.level_up_pulse_width * (1.0 - t * 0.5))
+
+
+## Núcleo (que também é a hitbox): anel pulsando, borda escura e miolo claro.
+## O anel fica mais forte na câmera lenta, quando o jogador planeja o desvio.
+func _draw_nucleus() -> void:
+	var radius: float = Params.nucleus_radius
+	var slow: float = clampf((1.0 - Engine.time_scale) / (1.0 - Params.slow_time_scale), 0.0, 1.0)
+	# Pulso em tempo real, para continuar vivo na câmera lenta
+	var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.001 * Params.nucleus_pulse_speed)
+	var ring_alpha: float = lerpf(Params.nucleus_ring_alpha, Params.nucleus_ring_alpha_slow, slow) * (0.55 + 0.45 * pulse)
+	var ring_radius: float = radius * lerpf(Params.nucleus_ring_scale, Params.nucleus_ring_scale * 1.15, pulse)
+	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 32, Color(Params.nucleus_color, ring_alpha), Params.nucleus_ring_width)
+	draw_circle(Vector2.ZERO, radius + Params.nucleus_outline_width, Params.nucleus_outline_color)
+	draw_circle(Vector2.ZERO, radius, Params.nucleus_color)
 	for i in cracks:
 		var dir := Vector2.from_angle(Params.crack_start_angle + i * Params.crack_angle_step)
 		draw_line(dir * Params.nucleus_radius * 0.2, dir * Params.nucleus_radius, Params.background_color, 3.0)
