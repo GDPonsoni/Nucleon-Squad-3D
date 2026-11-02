@@ -1,6 +1,6 @@
 class_name BodySwitcher
 extends Node2D
-## Ícones dos outros corpos vivos ao redor da nave durante a câmera lenta.
+## Ícones dos outros corpos vivos ao lado da nave durante a câmera lenta.
 ## Tocar num ícone escolhe o corpo; tocar fora só retoma o jogo.
 ## Com o corpo destruído (forced), é preciso escolher um ícone para continuar.
 
@@ -36,20 +36,36 @@ func _process(_delta: float) -> void:
 		queue_redraw()
 
 
-## Distribui os ícones num arco acima da nave (abaixo, se ela estiver no topo).
+## Ícones em colunas ao lado da nave (fora do caminho dos tiros, que vão para cima).
+## Perto de uma borda, as colunas vão todas para o lado livre.
 func _layout() -> void:
 	var count: int = _indices.size()
 	var radius: float = Params.switch_icon_radius
-	var bounds: Rect2 = get_viewport_rect().grow(-radius)
-	var base_angle: float = -PI * 0.5
-	if _player.position.y - Params.switch_icon_distance < bounds.position.y:
-		base_angle = PI * 0.5
-	var step: float = 0.0 if count == 1 else deg_to_rad(Params.switch_icon_arc_degrees) / (count - 1)
-	var start: float = base_angle - step * (count - 1) * 0.5
+	# Fora das áreas do HUD (topo e base)
+	var bounds: Rect2 = get_viewport_rect().grow_individual(
+		-radius, -radius - Params.switch_icons_top_margin, -radius, -radius - Params.switch_icons_bottom_margin)
+	var side: float = Params.switch_icon_distance
+	var gap: float = Params.switch_icon_spacing
+	var columns: Array[float] = [-side, side]
+	if _player.position.x - side < bounds.position.x:
+		columns = [side, side + gap]
+	elif _player.position.x + side > bounds.end.x:
+		columns = [-side, -side - gap]
+
+	var per_column: int = ceili(float(count) / columns.size())
 	_positions.resize(count)
-	for k in count:
-		var pos: Vector2 = _player.position + Vector2.from_angle(start + step * k) * Params.switch_icon_distance
-		_positions[k] = pos.clamp(bounds.position, bounds.end)
+	for c in columns.size():
+		var first: int = c * per_column
+		var rows: int = mini(per_column, count - first)
+		if rows <= 0:
+			break
+		# Coluna centrada na altura da nave, deslocada inteira se sair da tela
+		var top: float = _player.position.y - (rows - 1) * gap * 0.5
+		var bottom: float = top + (rows - 1) * gap
+		var shift: float = maxf(bounds.position.y - top, 0.0) + minf(bounds.end.y - bottom, 0.0)
+		var x: float = clampf(_player.position.x + columns[c], bounds.position.x, bounds.end.x)
+		for row in rows:
+			_positions[first + row] = Vector2(x, top + shift + row * gap)
 
 
 func _on_touch_started(pos: Vector2) -> void:
@@ -70,6 +86,7 @@ func _draw() -> void:
 		var center: Vector2 = _positions[k]
 		draw_circle(center, radius, Params.switch_icon_bg_color)
 		draw_arc(center, radius, 0.0, TAU, 48, body.color, 4.0)
+		_draw_level_ring(center, radius + Params.switch_level_ring_offset, index, body)
 		var points := PackedVector2Array()
 		for point in body.shape:
 			points.append(center + point * radius * Params.switch_icon_shape_scale)
@@ -79,3 +96,16 @@ func _draw() -> void:
 		for h in hits:
 			var offset := Vector2((h - (hits - 1) * 0.5) * radius * 0.22, radius * 0.75)
 			draw_circle(center + offset, radius * 0.07, Color.WHITE)
+
+
+## Segmentos dourados em volta do ícone: quantos níveis a arma do corpo já tem.
+func _draw_level_ring(center: Vector2, ring_radius: float, index: int, body: BodyData) -> void:
+	var levels: int = body.weapon.max_level()
+	var level: int = _state.weapon_levels[index]
+	var gap: float = deg_to_rad(Params.switch_level_ring_gap_degrees)
+	var segment: float = TAU / levels
+	for i in levels:
+		# Começa no topo e segue no sentido horário
+		var start: float = -PI * 0.5 + i * segment + gap * 0.5
+		var color: Color = Params.powerup_color if i < level else Params.hud_dead_color
+		draw_arc(center, ring_radius, start, start + segment - gap, 12, color, Params.switch_level_ring_width)

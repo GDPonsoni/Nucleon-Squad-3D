@@ -107,11 +107,16 @@ var invulnerability_alpha: float = 0.3
 # --- Troca de corpo (ícones na câmera lenta) ---
 var switch_invulnerability_seconds: float = 2.0
 var switch_icon_radius: float = 70.0
-var switch_icon_distance: float = 230.0  # do centro da nave
-var switch_icon_arc_degrees: float = 120.0
+var switch_icon_distance: float = 200.0  # distância lateral da nave até a 1ª coluna
+var switch_icon_spacing: float = 195.0  # entre ícones da mesma coluna e entre colunas
+var switch_icons_top_margin: float = 200.0  # ícones não entram na área do HUD do topo
+var switch_icons_bottom_margin: float = 180.0  # nem na da base
+var switch_level_ring_offset: float = 11.0  # anel de nível da arma, fora do ícone
+var switch_level_ring_width: float = 7.0
+var switch_level_ring_gap_degrees: float = 14.0
 var switch_icon_touch_scale: float = 1.25  # área de toque maior que o ícone
 var switch_icon_shape_scale: float = 1.1
-var switch_icon_bg_color: Color = Color(0.1, 0.1, 0.16, 0.85)
+var switch_icon_bg_color: Color = Color(0.1, 0.1, 0.16, 1.0)
 
 # --- Projéteis do jogador ---
 var player_bullet_pool_size: int = 128
