@@ -8,11 +8,17 @@ signal hits_changed(index: int, hits_left: int)
 signal body_destroyed(index: int)
 signal game_over
 signal weapon_level_changed(index: int, level: int)
+signal score_changed(score: int)
 
 var bodies: Array[BodyData] = []
 var hits_left: PackedInt32Array = PackedInt32Array()
 var weapon_levels: PackedInt32Array = PackedInt32Array()  # nível da arma de cada corpo
 var current: int = 0
+
+# Estatísticas da partida (HUD e telas de resultado)
+var score: int = 0
+var kills: int = 0
+var powerups_collected: int = 0
 
 
 func _init(formation: FormationData) -> void:
@@ -70,3 +76,9 @@ func level_up_current() -> bool:
 	weapon_levels[current] += 1
 	weapon_level_changed.emit(current, weapon_levels[current])
 	return true
+
+
+func add_kill(points: int) -> void:
+	kills += 1
+	score += points
+	score_changed.emit(score)

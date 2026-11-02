@@ -137,6 +137,7 @@ func _process(delta: float) -> void:
 	if enemies.active.is_empty() or _clear_wait >= Params.stage_clear_timeout:
 		_match_over = true
 		pause_menu.disable()
+		SaveGame.complete_stage(Session.linear_index(), Session.stage().id, state.score)
 		stage_clear_menu.open()
 
 
@@ -158,6 +159,7 @@ func _on_player_hit(damage: int) -> void:
 
 
 func _on_powerup_collected() -> void:
+	state.powerups_collected += 1
 	if state.level_up_current() and player.weapon != null:
 		player.weapon.set_level(state.weapon_levels[state.current])
 
@@ -186,6 +188,7 @@ func _create_enemy() -> PoolItem:
 	enemy.bullets = enemy_bullets
 	enemy.context = context
 	enemy.killed.connect(dropper.on_enemy_killed)
+	enemy.killed.connect(func(killed: Enemy) -> void: state.add_kill(killed.data.score))
 	return enemy
 
 

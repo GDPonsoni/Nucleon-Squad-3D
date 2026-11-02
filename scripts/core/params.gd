@@ -6,6 +6,7 @@ var background_color: Color = Color(0.04, 0.04, 0.08)
 var debug_overlay_enabled: bool = true
 var debug_font_size: int = 40
 var debug_margin: Vector2 = Vector2(40.0, 120.0)  # abaixo da câmera frontal
+var debug_unlock_all: bool = false  # libera todas as fases sem mexer no save
 
 # --- Interface ---
 var ui_font_size: int = 64
