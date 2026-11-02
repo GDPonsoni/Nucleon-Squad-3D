@@ -45,6 +45,15 @@ var body_rebuild_seconds: float = 0.35
 var invulnerability_blink_hz: float = 12.0
 var invulnerability_alpha: float = 0.3
 
+# --- Troca de corpo (ícones na câmera lenta) ---
+var switch_invulnerability_seconds: float = 2.0
+var switch_icon_radius: float = 70.0
+var switch_icon_distance: float = 230.0  # do centro da nave
+var switch_icon_arc_degrees: float = 120.0
+var switch_icon_touch_scale: float = 1.25  # área de toque maior que o ícone
+var switch_icon_shape_scale: float = 1.1
+var switch_icon_bg_color: Color = Color(0.1, 0.1, 0.16, 0.85)
+
 # --- Projéteis do jogador ---
 var player_bullet_pool_size: int = 128
 

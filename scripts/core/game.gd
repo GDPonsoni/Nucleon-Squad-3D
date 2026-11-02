@@ -9,6 +9,7 @@ var enemies: NodePool
 var context: CombatContext
 var state: MatchState
 var time_controller: TimeController
+var switcher: BodySwitcher
 
 
 func _ready() -> void:
@@ -44,10 +45,17 @@ func _ready() -> void:
 	player.name = "Player"
 	add_child(player)
 	player.setup(context)
-	player.bind_input(touch_input)
 
 	# Tiros inimigos por cima da nave, para ficarem sempre visíveis
 	add_child(enemy_bullets)
+
+	switcher = BodySwitcher.new()
+	switcher.name = "BodySwitcher"
+	add_child(switcher)
+	# O switcher trata o toque antes da nave e da câmera lenta (ordem das conexões)
+	switcher.setup(state, player, touch_input)
+	switcher.body_chosen.connect(_on_body_chosen)
+	player.bind_input(touch_input)
 
 	var spawner := EnemySpawner.new()
 	spawner.name = "EnemySpawner"
@@ -81,6 +89,10 @@ func _ready() -> void:
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
 	state.select(index)
 	player.set_body(state.current_body(), invulnerable_seconds)
+
+
+func _on_body_chosen(index: int) -> void:
+	_switch_to(index, Params.switch_invulnerability_seconds)
 
 
 func _create_enemy() -> PoolItem:
