@@ -129,7 +129,7 @@ var player_bullet_pool_size: int = 128
 # --- Inimigos e fase (tipos e ondas ficam em data/) ---
 var campaign_path: String = "res://data/campaign.tres"
 var stage_clear_timeout: float = 6.0  # após o tempo da fase, espera no máximo isso pelos inimigos restantes
-var enemy_pool_size: int = 24
+var enemy_pool_size: int = 48
 var enemy_bullet_pool_size: int = 400
 var enemy_hit_flash_seconds: float = 0.06
 var explosion_pool_size: int = 24
