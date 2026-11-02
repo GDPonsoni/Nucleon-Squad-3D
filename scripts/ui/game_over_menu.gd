@@ -15,7 +15,7 @@ func _ready() -> void:
 	add_child(_overlay)
 
 	var column := UiFactory.make_column()
-	_overlay.add_child(UiFactory.make_centered(column))
+	_overlay.add_child(UiFactory.make_centered(UiFactory.make_panel(column)))
 	column.add_child(UiFactory.make_title("GAMEOVER_TITLE"))
 
 	var retry_button := UiFactory.make_button("GAMEOVER_RETRY")

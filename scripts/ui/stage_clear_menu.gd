@@ -16,7 +16,7 @@ func _ready() -> void:
 	add_child(_overlay)
 
 	var column := UiFactory.make_column()
-	_overlay.add_child(UiFactory.make_centered(column))
+	_overlay.add_child(UiFactory.make_centered(UiFactory.make_panel(column)))
 	column.add_child(UiFactory.make_title("STAGE_CLEAR_TITLE"))
 
 	_next_button = UiFactory.make_button("STAGE_NEXT")

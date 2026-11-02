@@ -12,9 +12,9 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	_pause_button = Button.new()
-	_pause_button.text = "II"  # ícone de pausa, não é texto traduzível
 	_pause_button.focus_mode = Control.FOCUS_NONE
-	_pause_button.add_theme_font_size_override("font_size", Params.ui_font_size)
+	UiFactory.apply_theme(_pause_button)
+	_pause_button.draw.connect(_draw_pause_icon)
 	_pause_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 	_pause_button.offset_left = -Params.pause_button_margin.x - Params.pause_button_size.x
 	_pause_button.offset_right = -Params.pause_button_margin.x
@@ -28,7 +28,7 @@ func _ready() -> void:
 	add_child(_overlay)
 
 	var column := UiFactory.make_column()
-	_overlay.add_child(UiFactory.make_centered(column))
+	_overlay.add_child(UiFactory.make_centered(UiFactory.make_panel(column)))
 	column.add_child(UiFactory.make_title("PAUSE_TITLE"))
 
 	var resume_button := UiFactory.make_button("PAUSE_RESUME")
@@ -38,6 +38,16 @@ func _ready() -> void:
 	var exit_button := UiFactory.make_button("PAUSE_EXIT_TO_MENU")
 	exit_button.pressed.connect(_exit_to_menu)
 	column.add_child(exit_button)
+
+
+## Duas barras verticais desenhadas sobre o botão.
+func _draw_pause_icon() -> void:
+	var size: Vector2 = _pause_button.size
+	var bar := Vector2(size.x * 0.13, size.y * 0.42)
+	var gap: float = size.x * 0.12
+	var top: float = (size.y - bar.y) * 0.5
+	for x in [size.x * 0.5 - gap * 0.5 - bar.x, size.x * 0.5 + gap * 0.5]:
+		_pause_button.draw_rect(Rect2(Vector2(x, top), bar), Params.ui_text_color)
 
 
 func open() -> void:

@@ -5,6 +5,7 @@ extends Control
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	UiFactory.apply_theme(self)
 
 	var column := UiFactory.make_column()
 	add_child(UiFactory.make_centered(column))

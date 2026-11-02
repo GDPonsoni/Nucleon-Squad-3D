@@ -9,8 +9,19 @@ var debug_margin: Vector2 = Vector2(40.0, 120.0)  # abaixo da câmera frontal
 var debug_unlock_all: bool = false  # libera todas as fases sem mexer no save
 
 # --- Interface ---
-var ui_font_size: int = 64
+var ui_font_size: int = 60
 var title_font_size: int = 120
+var title_outline_size: int = 14
+var subtitle_font_size: int = 44
+var ui_accent_color: Color = Color(0.45, 0.9, 1.0)
+var ui_panel_color: Color = Color(0.1, 0.12, 0.2, 0.92)
+var ui_panel_alpha: float = 0.8
+var ui_text_color: Color = Color(0.92, 0.95, 1.0)
+var ui_muted_text_color: Color = Color(0.6, 0.66, 0.78)
+var ui_corner_radius: int = 28
+var ui_border_width: int = 3
+var ui_button_padding: float = 24.0
+var ui_panel_padding: float = 48.0
 var button_min_size: Vector2 = Vector2(600.0, 150.0)
 var menu_spacing: int = 56
 var pause_button_size: Vector2 = Vector2(130.0, 130.0)
