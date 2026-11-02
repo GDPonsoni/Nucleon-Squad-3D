@@ -5,6 +5,7 @@ extends Node
 var background_color: Color = Color(0.04, 0.04, 0.08)
 var debug_overlay_enabled: bool = true
 var debug_font_size: int = 40
+var debug_margin: Vector2 = Vector2(40.0, 120.0)  # abaixo da câmera frontal
 
 # --- Câmera lenta ---
 var slow_time_scale: float = 0.3

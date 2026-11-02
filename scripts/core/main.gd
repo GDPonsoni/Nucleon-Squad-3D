@@ -34,3 +34,8 @@ func _ready() -> void:
 	time_controller.name = "TimeController"
 	add_child(time_controller)
 	time_controller.bind_input(touch_input)
+
+	if Params.debug_overlay_enabled and OS.is_debug_build():
+		var overlay := DebugOverlay.new()
+		overlay.name = "DebugOverlay"
+		add_child(overlay)
