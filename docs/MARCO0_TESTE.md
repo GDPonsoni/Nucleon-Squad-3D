@@ -1,6 +1,6 @@
 # Marco 0 — Como testar
 
-Protótipo mínimo: nave com controle relativo, tiro automático com pooling, câmera lenta ao soltar o dedo e overlay de FPS.
+Protótipo mínimo: menu inicial, nave com controle relativo, tiro automático com pooling, câmera lenta ao soltar o dedo, pausa e overlay de FPS.
 
 ## 1. Abrir o projeto
 
@@ -30,6 +30,14 @@ Pré-requisitos (já configurados nesta máquina): templates de exportação 4.7
 O overlay de FPS só aparece em build de **debug** (`--export-debug`).
 
 ## 3. O que observar
+
+**Menu e pausa**
+- O app abre no **menu inicial** (Jogar / Sair), em português se o celular estiver em PT-BR e em inglês nos outros idiomas.
+- **Jogar** entra na partida. O botão **II** (canto superior direito) pausa e mostra **Continuar** / **Voltar ao menu**.
+- Tocar no **II** não deve mexer a nave nem tirar a câmera lenta antes de pausar.
+- **Continuar** retoma em câmera lenta (o dedo está solto). O próximo toque volta à velocidade normal.
+- **Botão Voltar do Android:** na partida abre e fecha a pausa; no menu fecha o jogo. No PC, o **Esc** faz o mesmo.
+- Entrar e sair da partida várias vezes: a nave sempre recomeça embaixo e no centro, e o FPS não cai.
 
 **Arraste relativo**
 - Tocar em qualquer lugar (inclusive longe da nave) e arrastar: a nave deve se mover o mesmo tanto que o dedo, sem "pular" para o dedo.

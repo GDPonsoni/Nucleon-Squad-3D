@@ -36,7 +36,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 | **3** | Conteúdo: inimigos, chefes, 1º planeta, áudio, revive por anúncio | ⚪ |
 | **4** | Polimento e publicação | ⚪ |
 
-**O que já existe (Marco 0):** cena em retrato 1080×1920, nave placeholder desenhada por código, controle relativo por toque/mouse, tiro automático com pooling, câmera lenta ao soltar o dedo e overlay de FPS/time scale.
+**O que já existe (Marco 0):** cena em retrato 1080×1920, nave placeholder desenhada por código, controle relativo por toque/mouse, tiro automático com pooling, câmera lenta ao soltar o dedo, overlay de FPS/time scale, menu inicial (Jogar/Sair) e pausa com volta ao menu. Textos em PT-BR e EN.
 
 ---
 
@@ -142,14 +142,15 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 
 ```
 docs/            GDD e roteiros de teste
-scenes/          cenas (.tscn) pequenas; nós montados por código
+scenes/          cenas (.tscn) pequenas: menu.tscn (inicial) e game.tscn (partida)
 scripts/
-  core/          params, cena principal, câmera lenta
+  core/          params, partida, câmera lenta, caminhos de cenas
   player/        nave e entrada de toque
   weapons/       armas, projéteis e pooling
   enemies/       inimigos e padrões (Marco 1)
-  ui/            HUD, menus e overlay de debug
+  ui/            menu inicial, pausa, overlay de debug
 data/            dados de armas, inimigos e fases (.tres/JSON)
+  i18n/          tabela de tradução strings.csv (chave, en, pt_BR)
 assets/          imagens e áudio (placeholders até o Marco 2)
 builds/          APKs exportados (não versionado)
 ```
