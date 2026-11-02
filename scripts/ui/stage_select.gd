@@ -10,7 +10,9 @@ func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	UiFactory.apply_theme(self)
+	add_child(Starfield.new())
 	_build()
+	UiFactory.animate_in(_content.get_parent())
 
 
 func _build() -> void:

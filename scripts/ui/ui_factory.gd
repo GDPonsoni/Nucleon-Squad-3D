@@ -62,3 +62,12 @@ static func make_overlay() -> ColorRect:
 	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	apply_theme(overlay)
 	return overlay
+
+
+## Entrada suave: aparece e sobe um pouco.
+static func animate_in(node: Control) -> void:
+	node.modulate.a = 0.0
+	node.position.y += Params.ui_enter_offset
+	var tween := node.create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(node, "modulate:a", 1.0, Params.ui_enter_seconds)
+	tween.tween_property(node, "position:y", node.position.y - Params.ui_enter_offset, Params.ui_enter_seconds)

@@ -1,14 +1,22 @@
 extends Control
-## Menu inicial: escolher a fase ou sair do jogo.
+## Menu inicial: escolher a fase ou sair do jogo. Fundo de estrelas e nave animada.
 
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	UiFactory.apply_theme(self)
+	add_child(Starfield.new())
+
+	var rect: Rect2 = get_viewport_rect()
+	var ship := MenuShip.new()
+	ship.position = Vector2(rect.get_center().x, rect.position.y + rect.size.y * Params.menu_ship_y_ratio)
+	add_child(ship)
 
 	var column := UiFactory.make_column()
-	add_child(UiFactory.make_centered(column))
+	var center := UiFactory.make_centered(column)
+	add_child(center)
+	UiFactory.animate_in(center)
 
 	column.add_child(UiFactory.make_title("GAME_TITLE"))
 
