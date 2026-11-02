@@ -73,6 +73,7 @@ var star_color: Color = Color(0.8, 0.85, 1.0)
 # --- Câmera lenta ---
 var slow_time_scale: float = 0.3
 var time_scale_smooth_seconds: float = 0.1  # duração da transição, em tempo real
+var slow_motion_tint: Color = Color(0.3, 0.6, 1.0, 0.6)  # vinheta nas bordas (alfa = força máxima)
 
 # --- Nave ---
 var ship_speed: float = 3000.0  # px/s máximos (escalado pelo time scale)

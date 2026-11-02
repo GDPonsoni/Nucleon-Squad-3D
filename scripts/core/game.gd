@@ -109,6 +109,10 @@ func _ready() -> void:
 	combat.player_hit.connect(_on_player_hit)
 	combat.powerup_collected.connect(_on_powerup_collected)
 
+	var slow_overlay := SlowMotionOverlay.new()
+	slow_overlay.name = "SlowMotionOverlay"
+	add_child(slow_overlay)
+
 	hud = Hud.new()
 	hud.name = "Hud"
 	add_child(hud)
