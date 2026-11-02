@@ -26,7 +26,7 @@ func _init(formation: FormationData) -> void:
 	hits_left.resize(bodies.size())
 	hits_left.fill(Params.body_max_hits)
 	weapon_levels.resize(bodies.size())
-	weapon_levels.fill(1)
+	weapon_levels.fill(Params.debug_start_weapon_level)
 
 
 func current_body() -> BodyData:

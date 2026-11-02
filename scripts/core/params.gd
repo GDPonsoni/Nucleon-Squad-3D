@@ -7,6 +7,7 @@ var debug_overlay_enabled: bool = true
 var debug_font_size: int = 40
 var debug_margin: Vector2 = Vector2(40.0, 260.0)  # abaixo da pontuação do HUD
 var debug_unlock_all: bool = false  # libera todas as fases sem mexer no save
+var debug_start_weapon_level: int = 1  # nível inicial das armas (testes)
 
 # --- Interface ---
 var ui_font_size: int = 60
