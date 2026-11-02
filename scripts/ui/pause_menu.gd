@@ -1,6 +1,6 @@
 class_name PauseMenu
 extends CanvasLayer
-## Botão de pausa sempre visível e menu de pausa (continuar / voltar ao menu).
+## Botão de pausa sempre visível e menu de pausa (continuar / recomeçar a fase / voltar ao menu).
 
 var _pause_button: Button
 var _overlay: ColorRect
@@ -35,6 +35,10 @@ func _ready() -> void:
 	var resume_button := UiFactory.make_button("PAUSE_RESUME")
 	resume_button.pressed.connect(close)
 	column.add_child(resume_button)
+
+	var restart_button := UiFactory.make_button("PAUSE_RESTART")
+	restart_button.pressed.connect(_restart_stage)
+	column.add_child(restart_button)
 
 	var exit_button := UiFactory.make_button("PAUSE_EXIT_TO_MENU")
 	exit_button.pressed.connect(_exit_to_menu)
@@ -88,6 +92,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		toggle()
 		get_viewport().set_input_as_handled()
+
+
+## Recomeça a fase atual do zero (a fase escolhida continua em Session).
+func _restart_stage() -> void:
+	SceneTransition.go_to(ScenePaths.GAME)
 
 
 func _exit_to_menu() -> void:
