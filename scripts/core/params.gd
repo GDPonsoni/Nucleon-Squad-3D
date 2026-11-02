@@ -42,6 +42,9 @@ var crack_angle_step: float = 2.1  # rad entre rachaduras
 var formation_path: String = "res://data/formations/default.tres"
 var body_max_hits: int = 3
 var body_rebuild_seconds: float = 0.35
+var hit_invulnerability_seconds: float = 1.0  # após levar hit ([EM ABERTO] no GDD)
+var enemy_contact_damage: int = 1
+var game_over_delay_seconds: float = 0.8
 var invulnerability_blink_hz: float = 12.0
 var invulnerability_alpha: float = 0.3
 

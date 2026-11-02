@@ -5,8 +5,15 @@ extends Node
 
 const NORMAL_TIME_SCALE: float = 1.0
 
+## Corpo destruído: fica em câmera lenta até escolher outro, mesmo com o dedo na tela.
+var forced_slow: bool = false:
+	set(value):
+		forced_slow = value
+		_target = Params.slow_time_scale if value or not _touch.is_touching() else NORMAL_TIME_SCALE
+
 var _target: float = NORMAL_TIME_SCALE
 var _last_usec: int = 0
+var _touch: TouchInput
 
 
 func _ready() -> void:
@@ -14,6 +21,7 @@ func _ready() -> void:
 
 
 func bind_input(touch: TouchInput) -> void:
+	_touch = touch
 	touch.touch_started.connect(_on_touch_started)
 	touch.touch_ended.connect(_on_touch_ended)
 	# Começa sem dedo na tela: já em câmera lenta
@@ -34,7 +42,8 @@ func _exit_tree() -> void:
 
 
 func _on_touch_started(_pos: Vector2) -> void:
-	_target = NORMAL_TIME_SCALE
+	if not forced_slow:
+		_target = NORMAL_TIME_SCALE
 
 
 func _on_touch_ended() -> void:

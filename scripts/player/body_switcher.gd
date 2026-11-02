@@ -2,8 +2,12 @@ class_name BodySwitcher
 extends Node2D
 ## Ícones dos outros corpos vivos ao redor da nave durante a câmera lenta.
 ## Tocar num ícone escolhe o corpo; tocar fora só retoma o jogo.
+## Com o corpo destruído (forced), é preciso escolher um ícone para continuar.
 
 signal body_chosen(index: int)
+
+## Corpo destruído: mostra os ícones mesmo com o dedo na tela até escolher.
+var forced: bool = false
 
 var _state: MatchState
 var _player: Player
@@ -22,7 +26,7 @@ func setup(state: MatchState, player: Player, touch: TouchInput) -> void:
 
 func _process(_delta: float) -> void:
 	_indices.clear()
-	if not _touch.is_touching():
+	if forced or not _touch.is_touching():
 		for i in _state.alive_indices():
 			if i != _state.current:
 				_indices.append(i)

@@ -4,6 +4,7 @@ extends CanvasLayer
 
 var _pause_button: Button
 var _overlay: ColorRect
+var _enabled: bool = true
 
 
 func _ready() -> void:
@@ -22,9 +23,7 @@ func _ready() -> void:
 	_pause_button.pressed.connect(open)
 	add_child(_pause_button)
 
-	_overlay = ColorRect.new()
-	_overlay.color = Params.pause_overlay_color
-	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay = UiFactory.make_overlay()
 	_overlay.visible = false
 	add_child(_overlay)
 
@@ -53,7 +52,15 @@ func close() -> void:
 	_pause_button.visible = true
 
 
+## Desliga a pausa (ex.: no fim de jogo).
+func disable() -> void:
+	_enabled = false
+	_pause_button.visible = false
+
+
 func toggle() -> void:
+	if not _enabled:
+		return
 	if _overlay.visible:
 		close()
 	else:

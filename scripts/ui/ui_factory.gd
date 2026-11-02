@@ -34,3 +34,11 @@ static func make_centered(child: Control) -> CenterContainer:
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	center.add_child(child)
 	return center
+
+
+## Fundo escurecido de tela cheia que bloqueia toques no jogo.
+static func make_overlay() -> ColorRect:
+	var overlay := ColorRect.new()
+	overlay.color = Params.pause_overlay_color
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	return overlay

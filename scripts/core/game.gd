@@ -10,11 +10,15 @@ var context: CombatContext
 var state: MatchState
 var time_controller: TimeController
 var switcher: BodySwitcher
+var pause_menu: PauseMenu
+var game_over_menu: GameOverMenu
 
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
 	state = MatchState.new(load(Params.formation_path) as FormationData)
+	state.body_destroyed.connect(_on_body_destroyed)
+	state.game_over.connect(_on_game_over)
 
 	touch_input = TouchInput.new()
 	touch_input.name = "TouchInput"
@@ -71,11 +75,16 @@ func _ready() -> void:
 	var combat := CombatSystem.new()
 	combat.name = "CombatSystem"
 	add_child(combat)
-	combat.setup(context)
+	combat.setup(context, player)
+	combat.player_hit.connect(_on_player_hit)
 
-	var pause_menu := PauseMenu.new()
+	pause_menu = PauseMenu.new()
 	pause_menu.name = "PauseMenu"
 	add_child(pause_menu)
+
+	game_over_menu = GameOverMenu.new()
+	game_over_menu.name = "GameOverMenu"
+	add_child(game_over_menu)
 
 	if Params.debug_overlay_enabled and OS.is_debug_build():
 		var overlay := DebugOverlay.new()
@@ -92,7 +101,33 @@ func _switch_to(index: int, invulnerable_seconds: float) -> void:
 
 
 func _on_body_chosen(index: int) -> void:
+	switcher.forced = false
+	time_controller.forced_slow = false
 	_switch_to(index, Params.switch_invulnerability_seconds)
+
+
+func _on_player_hit(damage: int) -> void:
+	state.damage_current(damage)
+	if state.is_alive(state.current):
+		player.start_invulnerability(Params.hit_invulnerability_seconds)
+
+
+## Corpo destruído: o núcleo racha e o jogador escolhe outro corpo vivo.
+func _on_body_destroyed(_index: int) -> void:
+	player.clear_body()
+	player.cracks = state.dead_count()
+	var alive: Array[int] = state.alive_indices()
+	if alive.size() == 1:
+		_switch_to(alive[0], Params.switch_invulnerability_seconds)
+	elif alive.size() > 1:
+		switcher.forced = true
+		time_controller.forced_slow = true
+
+
+func _on_game_over() -> void:
+	pause_menu.disable()
+	await get_tree().create_timer(Params.game_over_delay_seconds, false).timeout
+	game_over_menu.open()
 
 
 func _create_enemy() -> PoolItem:

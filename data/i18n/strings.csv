@@ -5,3 +5,5 @@ MENU_QUIT,Quit,Sair
 PAUSE_TITLE,Paused,Pausado
 PAUSE_RESUME,Resume,Continuar
 PAUSE_EXIT_TO_MENU,Back to menu,Voltar ao menu
+GAMEOVER_TITLE,Game over,Fim de jogo
+GAMEOVER_RETRY,Play again,Jogar de novo

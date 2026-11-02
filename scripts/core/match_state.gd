@@ -4,6 +4,9 @@ extends RefCounted
 ## Não assume quantidade fixa de corpos.
 
 signal body_changed(index: int)
+signal hits_changed(index: int, hits_left: int)
+signal body_destroyed(index: int)
+signal game_over
 
 var bodies: Array[BodyData] = []
 var hits_left: PackedInt32Array = PackedInt32Array()
@@ -39,3 +42,16 @@ func dead_count() -> int:
 func select(index: int) -> void:
 	current = index
 	body_changed.emit(index)
+
+
+## Tira hits do corpo ativo. Emite body_destroyed e, se acabaram os corpos, game_over.
+func damage_current(amount: int) -> void:
+	if not is_alive(current):
+		return
+	hits_left[current] = maxi(hits_left[current] - amount, 0)
+	hits_changed.emit(current, hits_left[current])
+	if is_alive(current):
+		return
+	body_destroyed.emit(current)
+	if alive_indices().is_empty():
+		game_over.emit()
