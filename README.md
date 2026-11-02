@@ -120,6 +120,16 @@ adb shell monkey -p com.example.nucleonsquad 1
 
 O overlay de FPS só aparece em builds de **debug**. Roteiros de teste: [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md) e [`docs/MARCO1_TESTE.md`](docs/MARCO1_TESTE.md).
 
+### Ícone do app
+
+O ícone é desenhado em SVG (`icon.svg` e `assets/icon/*.svg`). Depois de editar um SVG, gere os PNGs usados pelo Android (legado 192, adaptativo e monocromático) com:
+
+```bash
+godot --headless --path . -s res://scripts/tools/render_icons.gd
+```
+
+Os caminhos já estão no preset Android (`launcher_icons/*` em `export_presets.cfg`).
+
 > Nunca versione keystores de release nem senhas. O Godot guarda credenciais em `.godot/export_credentials.cfg`, que já é ignorado.
 
 ---
