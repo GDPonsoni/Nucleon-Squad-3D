@@ -1,0 +1,59 @@
+class_name PauseMenu
+extends CanvasLayer
+## Botão de pausa sempre visível e menu de pausa (continuar / voltar ao menu).
+
+var _pause_button: Button
+var _overlay: ColorRect
+
+
+func _ready() -> void:
+	# Continua recebendo toques com a árvore pausada
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	_pause_button = Button.new()
+	_pause_button.text = "II"  # ícone de pausa, não é texto traduzível
+	_pause_button.focus_mode = Control.FOCUS_NONE
+	_pause_button.add_theme_font_size_override("font_size", Params.ui_font_size)
+	_pause_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	_pause_button.offset_left = -Params.pause_button_margin.x - Params.pause_button_size.x
+	_pause_button.offset_right = -Params.pause_button_margin.x
+	_pause_button.offset_top = Params.pause_button_margin.y
+	_pause_button.offset_bottom = Params.pause_button_margin.y + Params.pause_button_size.y
+	_pause_button.pressed.connect(open)
+	add_child(_pause_button)
+
+	_overlay = ColorRect.new()
+	_overlay.color = Params.pause_overlay_color
+	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay.visible = false
+	add_child(_overlay)
+
+	var column := UiFactory.make_column()
+	_overlay.add_child(UiFactory.make_centered(column))
+	column.add_child(UiFactory.make_title("PAUSE_TITLE"))
+
+	var resume_button := UiFactory.make_button("PAUSE_RESUME")
+	resume_button.pressed.connect(close)
+	column.add_child(resume_button)
+
+	var exit_button := UiFactory.make_button("PAUSE_EXIT_TO_MENU")
+	exit_button.pressed.connect(_exit_to_menu)
+	column.add_child(exit_button)
+
+
+func open() -> void:
+	get_tree().paused = true
+	_overlay.visible = true
+	_pause_button.visible = false
+
+
+func close() -> void:
+	get_tree().paused = false
+	_overlay.visible = false
+	_pause_button.visible = true
+
+
+func _exit_to_menu() -> void:
+	# A pausa persiste entre cenas: despausar antes de trocar
+	get_tree().paused = false
+	get_tree().change_scene_to_file(ScenePaths.MENU)

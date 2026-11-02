@@ -35,6 +35,10 @@ func _ready() -> void:
 	add_child(time_controller)
 	time_controller.bind_input(touch_input)
 
+	var pause_menu := PauseMenu.new()
+	pause_menu.name = "PauseMenu"
+	add_child(pause_menu)
+
 	if Params.debug_overlay_enabled and OS.is_debug_build():
 		var overlay := DebugOverlay.new()
 		overlay.name = "DebugOverlay"

@@ -31,8 +31,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _notification(what: int) -> void:
-	# Perdeu o foco (notificação, troca de app): considera o dedo solto
-	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and is_touching():
+	# Perdeu o foco ou o jogo pausou: considera o dedo solto
+	if (what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_PAUSED) and is_touching():
 		_release()
 
 
