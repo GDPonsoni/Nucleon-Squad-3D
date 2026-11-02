@@ -1,6 +1,6 @@
 class_name Hud
 extends CanvasLayer
-## HUD da partida: hits do corpo ativo (canto inferior esquerdo) e
+## HUD da partida: nível da arma e hits do corpo ativo (canto inferior esquerdo) e
 ## formação com corpos vivos, destruídos e o ativo (canto inferior direito).
 
 var _state: MatchState
@@ -21,6 +21,7 @@ func setup(state: MatchState) -> void:
 	state.body_changed.connect(_refresh.unbind(1))
 	state.hits_changed.connect(_refresh.unbind(2))
 	state.body_destroyed.connect(_refresh.unbind(1))
+	state.weapon_level_changed.connect(_refresh.unbind(2))
 
 
 func _refresh() -> void:
@@ -32,6 +33,7 @@ func _draw_hud() -> void:
 		return
 	var bottom: float = _canvas.size.y - Params.hud_margin.y
 	_draw_hits(bottom)
+	_draw_level(bottom - Params.hud_pip_size.y - Params.hud_gap)
 	_draw_formation(bottom)
 
 
@@ -45,6 +47,24 @@ func _draw_hits(bottom: float) -> void:
 			_canvas.draw_rect(rect, color)
 		else:
 			_canvas.draw_rect(rect, color, false, 3.0)
+
+
+## Losangos: preenchidos até o nível atual da arma.
+func _draw_level(bottom: float) -> void:
+	var body: BodyData = _state.current_body()
+	var level: int = _state.weapon_levels[_state.current]
+	var half: float = Params.hud_level_size * 0.5
+	for i in body.weapon.max_level():
+		var center := Vector2(Params.hud_margin.x + half + i * (Params.hud_level_size + Params.hud_level_gap), bottom - half)
+		var points := PackedVector2Array([
+			center + Vector2(0.0, -half), center + Vector2(half, 0.0),
+			center + Vector2(0.0, half), center + Vector2(-half, 0.0),
+		])
+		if i < level:
+			_canvas.draw_colored_polygon(points, Params.powerup_color)
+		else:
+			points.append(points[0])
+			_canvas.draw_polyline(points, Params.hud_dead_color, 2.0)
 
 
 func _draw_formation(bottom: float) -> void:

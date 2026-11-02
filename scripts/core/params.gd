@@ -19,6 +19,8 @@ var hud_margin: Vector2 = Vector2(40.0, 70.0)  # a partir dos cantos inferiores
 var hud_pip_size: Vector2 = Vector2(40.0, 40.0)
 var hud_gap: float = 14.0
 var hud_icon_radius: float = 34.0
+var hud_level_size: float = 26.0
+var hud_level_gap: float = 8.0
 var hud_dead_color: Color = Color(0.35, 0.35, 0.42)
 var hud_dead_mark_color: Color = Color(1.0, 0.3, 0.3)
 
