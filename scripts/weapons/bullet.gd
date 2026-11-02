@@ -19,6 +19,15 @@ var life_left: float = 0.0
 var pierce_left: int = 0
 ## Explosão: raio do dano em área ao acertar (0 = sem explosão).
 var splash_radius: float = 0.0
+## Perseguição limitada: segue o alvo só por esse tempo e depois vai reto (< 0 = sem limite).
+var homing_time_left: float = -1.0
+
+# Divisão: ao fim do tempo, vira vários tiros em anel (tiros que se multiplicam)
+var _split_left: float = 0.0
+var _split_count: int = 0
+var _split_speed: float = 0.0
+var _split_size: Vector2
+var _split_pool: NodePool
 
 var _size: Vector2
 var _color: Color
@@ -37,6 +46,8 @@ func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color,
 	life_left = 0.0
 	pierce_left = 0
 	splash_radius = 0.0
+	homing_time_left = -1.0
+	_split_count = 0
 	_pierced.clear()
 	_size = size
 	_color = color
@@ -45,6 +56,23 @@ func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color,
 	rotation = vel.angle() + PI * 0.5
 	queue_redraw()
 	_set_active()
+
+
+## Depois de seconds, o tiro se divide em count tiros em anel (do mesmo pool).
+func add_split(seconds: float, count: int, speed: float, child_radius: float, pool: NodePool) -> void:
+	_split_left = seconds
+	_split_count = count
+	_split_speed = speed
+	_split_size = Vector2.ONE * child_radius * 2.0
+	_split_pool = pool
+	queue_redraw()
+
+
+## Persegue o alvo por pouco tempo (força o jogador a se mover) e depois segue reto.
+func add_limited_homing(seconds: float, turn_degrees: float, finder: Callable) -> void:
+	homing_time_left = seconds
+	homing_turn_rate = deg_to_rad(turn_degrees)
+	target_finder = finder
 
 
 func color() -> Color:
@@ -67,6 +95,15 @@ func _process(delta: float) -> void:
 		if life_left <= 0.0:
 			expire()
 			return
+	if _split_count > 0:
+		_split_left -= delta
+		if _split_left <= 0.0:
+			_split()
+			return
+	if homing_time_left > 0.0:
+		homing_time_left -= delta
+		if homing_time_left <= 0.0:
+			homing_turn_rate = 0.0
 	if homing_turn_rate > 0.0 and target_finder.is_valid():
 		homing_turn_rate += homing_turn_growth * delta
 		var target: Node2D = target_finder.call(position)
@@ -80,6 +117,17 @@ func _process(delta: float) -> void:
 		expire()
 
 
+func _split() -> void:
+	var base: float = velocity.angle()
+	for i in _split_count:
+		var child := _split_pool.acquire() as Bullet
+		if child == null:
+			break
+		child.activate(position, Vector2.from_angle(base + TAU * i / _split_count) * _split_speed,
+			damage, _split_size, _color, Shape.CIRCLE)
+	expire()
+
+
 func _draw() -> void:
 	match _shape:
 		Shape.RECT:
@@ -88,6 +136,9 @@ func _draw() -> void:
 			# Núcleo claro para leitura em meio a muitos tiros
 			draw_circle(Vector2.ZERO, _size.x * 0.5, _color)
 			draw_circle(Vector2.ZERO, _size.x * 0.25, Color.WHITE)
+			if _split_count > 0:
+				# Orbe que vai se dividir: anel externo
+				draw_arc(Vector2.ZERO, _size.x * 0.75, 0.0, TAU, 24, Color(_color, 0.8), 3.0)
 		Shape.TRIANGLE:
 			var half: Vector2 = _size * 0.5
 			draw_colored_polygon(PackedVector2Array([

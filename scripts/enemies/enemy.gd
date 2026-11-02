@@ -151,6 +151,16 @@ func _fire(direction: Vector2) -> void:
 	var size := Vector2.ONE * data.bullet_radius * 2.0
 	bullet.activate(position + direction * radius, direction * data.bullet_speed,
 		data.bullet_damage, size, data.bullet_color, Bullet.Shape.CIRCLE)
+	if data.bullet_split_time > 0.0:
+		bullet.add_split(data.bullet_split_time, data.bullet_split_count, data.bullet_split_speed, data.bullet_split_radius, bullets)
+	if data.bullet_homing_time > 0.0:
+		bullet.add_limited_homing(data.bullet_homing_time, data.bullet_homing_turn_degrees, _find_player)
+
+
+## Alvo dos tiros perseguidores: a nave, se tiver corpo.
+func _find_player(_from: Vector2) -> Node2D:
+	var player: Player = context.player
+	return player if player != null and player.body != null else null
 
 
 func _draw() -> void:

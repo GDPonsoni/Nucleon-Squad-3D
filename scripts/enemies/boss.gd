@@ -84,7 +84,7 @@ func _process(delta: float) -> void:
 
 	_update_phase()
 	var phase: BossPhase = boss_data.phases[_phase]
-	position.x = _center_x + sin(_clock * boss_data.sway_speed * phase.sway_speed_scale) * boss_data.sway_amplitude
+	_move(phase, delta)
 	for i in phase.attacks.size():
 		_timers[i] -= delta
 		if _timers[i] > 0.0:
@@ -99,6 +99,24 @@ func _process(delta: float) -> void:
 			_bursts[i] = attack.burst
 			_timers[i] += attack.interval
 	queue_redraw()
+
+
+func _move(phase: BossPhase, delta: float) -> void:
+	var t: float = _clock * boss_data.sway_speed * phase.sway_speed_scale
+	match phase.movement:
+		BossPhase.Movement.SWAY:
+			position.x = move_toward(position.x, _center_x + sin(t) * boss_data.sway_amplitude, phase.chase_speed * 2.0 * delta)
+			position.y = move_toward(position.y, _hold_y, phase.chase_speed * delta)
+		BossPhase.Movement.FIGURE8:
+			var goal := Vector2(_center_x + sin(t) * boss_data.sway_amplitude, _hold_y + sin(t * 2.0) * boss_data.sway_amplitude * 0.3)
+			position = position.move_toward(goal, phase.chase_speed * 2.0 * delta)
+		BossPhase.Movement.CHASE:
+			var player: Player = context.player
+			var goal_x: float = player.position.x if player != null else _center_x
+			var rect: Rect2 = get_viewport_rect()
+			goal_x = clampf(goal_x, rect.position.x + radius, rect.end.x - radius)
+			position.x = move_toward(position.x, goal_x, phase.chase_speed * delta)
+			position.y = move_toward(position.y, _hold_y, phase.chase_speed * delta)
 
 
 ## A fase ativa é a última cujo hp_ratio ainda está acima da vida atual.
@@ -149,6 +167,10 @@ func _shoot_bullet(direction: Vector2, attack: BossAttack) -> void:
 	var size := Vector2.ONE * attack.bullet_radius * 2.0
 	bullet.activate(position + direction * radius * 0.8, direction * attack.bullet_speed,
 		1, size, attack.bullet_color, Bullet.Shape.CIRCLE)
+	if attack.split_time > 0.0:
+		bullet.add_split(attack.split_time, attack.split_count, attack.split_speed, attack.split_radius, bullets)
+	if attack.homing_time > 0.0:
+		bullet.add_limited_homing(attack.homing_time, attack.homing_turn_degrees, _find_player)
 
 
 func _draw() -> void:

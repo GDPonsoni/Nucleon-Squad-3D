@@ -47,3 +47,11 @@ enum FirePattern {
 @export var ring_turn_degrees: float = 15.0  # RING: giro do anel a cada disparo
 @export var fan_count: int = 5  # FAN: tiros por leque
 @export var fan_degrees: float = 50.0  # FAN: abertura total
+
+@export_group("Tiros especiais")  # valem para qualquer padrão de tiro
+@export var bullet_split_time: float = 0.0  # > 0: o tiro se divide após esse tempo
+@export var bullet_split_count: int = 6
+@export var bullet_split_speed: float = 420.0
+@export var bullet_split_radius: float = 11.0
+@export var bullet_homing_time: float = 0.0  # > 0: o tiro persegue a nave por esse tempo
+@export var bullet_homing_turn_degrees: float = 140.0
