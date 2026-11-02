@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"spread"
+kind = 1
+color = Color(0.55, 1, 0.5, 1)
+damage = 1
+fire_rate = 6.0
+projectile_speed = 1800.0
+projectile_size = Vector2(10, 28)
+projectile_shape = 0
+projectile_count = 3
+spread_degrees = 24.0
