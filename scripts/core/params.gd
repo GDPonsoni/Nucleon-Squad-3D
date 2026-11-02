@@ -7,6 +7,15 @@ var debug_overlay_enabled: bool = true
 var debug_font_size: int = 40
 var debug_margin: Vector2 = Vector2(40.0, 120.0)  # abaixo da câmera frontal
 
+# --- Interface ---
+var ui_font_size: int = 64
+var title_font_size: int = 120
+var button_min_size: Vector2 = Vector2(600.0, 150.0)
+var menu_spacing: int = 56
+var pause_button_size: Vector2 = Vector2(130.0, 130.0)
+var pause_button_margin: Vector2 = Vector2(40.0, 100.0)  # a partir do canto superior direito
+var pause_overlay_color: Color = Color(0.0, 0.0, 0.0, 0.65)
+
 # --- Câmera lenta ---
 var slow_time_scale: float = 0.3
 var time_scale_smooth_seconds: float = 0.1  # duração da transição, em tempo real
