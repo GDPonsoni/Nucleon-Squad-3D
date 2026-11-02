@@ -1,6 +1,6 @@
 class_name ProjectileWeapon
 extends Weapon
-## Dispara projéteis do pool: um ou vários em leque, retos ou teleguiados.
+## Dispara projéteis retos do pool: um ou vários em leque.
 
 var _cooldown: float = 0.0
 
@@ -27,6 +27,3 @@ func _fire() -> void:
 		bullet.activate(origin, Vector2.from_angle(angle) * stats.projectile_speed, stats.damage,
 			stats.projectile_size, data.color, stats.projectile_shape)
 		bullet.life_left = stats.projectile_lifetime
-		if stats.homing_turn_degrees > 0.0:
-			bullet.homing_turn_rate = deg_to_rad(stats.homing_turn_degrees)
-			bullet.target_finder = context.nearest_enemy

@@ -10,7 +10,12 @@ var radius: float = 0.0  # raio de colisão
 
 ## Teleguiado: giro máximo em rad/s (0 = reto) e função (posição) -> alvo ou null.
 var homing_turn_rate: float = 0.0
+## Aumento do giro por segundo enquanto persegue: fecha a curva e evita circular o alvo.
+var homing_turn_growth: float = 0.0
 var target_finder: Callable
+## Segundos até começar a perseguir; ao começar, a velocidade vira cruise_speed (0 = mantém).
+var homing_delay: float = 0.0
+var cruise_speed: float = 0.0
 ## Segundos até sumir (0 = só some ao sair da tela). Evita míssil circulando o alvo para sempre.
 var life_left: float = 0.0
 
@@ -25,7 +30,10 @@ func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color,
 	damage = dmg
 	radius = (size.x + size.y) * 0.25
 	homing_turn_rate = 0.0
+	homing_turn_growth = 0.0
 	target_finder = Callable()
+	homing_delay = 0.0
+	cruise_speed = 0.0
 	life_left = 0.0
 	_size = size
 	_color = color
@@ -42,14 +50,20 @@ func _process(delta: float) -> void:
 		if life_left <= 0.0:
 			expire()
 			return
-	if homing_turn_rate > 0.0 and target_finder.is_valid():
+	if homing_delay > 0.0:
+		homing_delay -= delta
+		if homing_delay <= 0.0 and cruise_speed > 0.0:
+			velocity = velocity.normalized() * cruise_speed
+	elif homing_turn_rate > 0.0 and target_finder.is_valid():
+		homing_turn_rate += homing_turn_growth * delta
 		var target: Node2D = target_finder.call(position)
 		if target != null:
 			var angle: float = rotate_toward(velocity.angle(), (target.position - position).angle(), homing_turn_rate * delta)
 			velocity = Vector2.from_angle(angle) * velocity.length()
 			rotation = angle + PI * 0.5
 	position += velocity * delta
-	if not get_viewport_rect().grow(_size.length()).has_point(position):
+	# Com tempo de vida, pode sair um pouco da tela (míssil fazendo a curva de volta)
+	if life_left <= 0.0 and not get_viewport_rect().grow(_size.length()).has_point(position):
 		expire()
 
 

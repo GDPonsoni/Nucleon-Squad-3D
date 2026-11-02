@@ -15,6 +15,8 @@ static func create(weapon_data: WeaponData, combat_context: CombatContext, start
 			weapon = BeamWeapon.new()
 		WeaponData.Kind.ORBIT:
 			weapon = OrbitWeapon.new()
+		WeaponData.Kind.HOMING:
+			weapon = HomingWeapon.new()
 		_:
 			weapon = ProjectileWeapon.new()
 	weapon.data = weapon_data
