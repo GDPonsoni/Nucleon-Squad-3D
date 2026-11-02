@@ -21,9 +21,11 @@ extends Resource
 @export var homing_turn_growth_degrees: float = 0.0  # aumento do giro por segundo ao perseguir
 
 @export_group("Raio")  # um item por feixe nas três listas
-@export var beam_offsets: PackedFloat32Array = [0.0]  # deslocamento lateral na ponta da nave
-@export var beam_angles: PackedFloat32Array = [0.0]  # graus; 0 = para frente
-@export var beam_widths: PackedFloat32Array = [30.0]
+# Atenção: a conversão de .tres para binário na exportação perdia estas listas
+# (o Raio não mudava no celular); por isso ela está desligada em project.godot
+@export var beam_offsets: PackedFloat32Array = PackedFloat32Array()  # deslocamento lateral na ponta da nave
+@export var beam_angles: PackedFloat32Array = PackedFloat32Array()  # graus; 0 = para frente
+@export var beam_widths: PackedFloat32Array = PackedFloat32Array()
 @export var beam_tick_seconds: float = 0.08  # aplica o dano a cada intervalo
 
 @export_group("Órbita")
