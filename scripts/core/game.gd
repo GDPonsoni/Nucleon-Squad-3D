@@ -78,6 +78,11 @@ func _ready() -> void:
 	combat.setup(context, player)
 	combat.player_hit.connect(_on_player_hit)
 
+	var hud := Hud.new()
+	hud.name = "Hud"
+	add_child(hud)
+	hud.setup(state)
+
 	pause_menu = PauseMenu.new()
 	pause_menu.name = "PauseMenu"
 	add_child(pause_menu)

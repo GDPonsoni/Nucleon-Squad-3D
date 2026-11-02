@@ -15,6 +15,12 @@ var menu_spacing: int = 56
 var pause_button_size: Vector2 = Vector2(130.0, 130.0)
 var pause_button_margin: Vector2 = Vector2(40.0, 100.0)  # a partir do canto superior direito
 var pause_overlay_color: Color = Color(0.0, 0.0, 0.0, 0.65)
+var hud_margin: Vector2 = Vector2(40.0, 70.0)  # a partir dos cantos inferiores
+var hud_pip_size: Vector2 = Vector2(40.0, 40.0)
+var hud_gap: float = 14.0
+var hud_icon_radius: float = 34.0
+var hud_dead_color: Color = Color(0.35, 0.35, 0.42)
+var hud_dead_mark_color: Color = Color(1.0, 0.3, 0.3)
 
 # --- Fundo: estrelas em camadas (distante -> próxima) ---
 var star_layer_counts: PackedInt32Array = [70, 40, 16]
