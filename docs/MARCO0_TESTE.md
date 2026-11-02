@@ -33,7 +33,7 @@ O overlay de FPS só aparece em build de **debug** (`--export-debug`).
 
 **Menu e pausa**
 - O app abre no **menu inicial** (Jogar / Sair), em português se o celular estiver em PT-BR e em inglês nos outros idiomas.
-- **Jogar** entra na partida. O botão **II** (canto superior direito) pausa e mostra **Continuar** / **Recomeçar fase** / **Voltar ao menu**.
+- **Jogar** entra na partida. O botão **II** (canto superior direito) pausa e mostra **Continuar** / **Reiniciar** / **Voltar ao menu**.
 - Tocar no **II** não deve mexer a nave nem tirar a câmera lenta antes de pausar.
 - **Continuar** retoma em câmera lenta (o dedo está solto). O próximo toque volta à velocidade normal.
 - **Botão Voltar do Android:** na partida abre e fecha a pausa; no menu fecha o jogo. No PC, o **Esc** faz o mesmo.
