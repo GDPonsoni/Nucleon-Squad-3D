@@ -6,9 +6,11 @@
 
 [resource]
 script = ExtResource("1_script")
-id = &"stage_01"
+id = &"p1_s1"
+duration_seconds = 90.0
 enemies = Array[ExtResource("2_enemy_script")]([ExtResource("3_drone")])
+spawn_weights = PackedFloat32Array(1.0)
 start_delay = 1.5
-spawn_interval_min = 0.9
+spawn_interval_min = 1.0
 spawn_interval_max = 1.8
 spawn_margin_x = 80.0

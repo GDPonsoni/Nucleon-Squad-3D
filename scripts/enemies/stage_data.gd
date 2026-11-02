@@ -4,6 +4,7 @@ extends Resource
 ## Valores em data/stages/*.tres.
 
 @export var id: StringName
+@export var duration_seconds: float = 120.0  # depois disso param de surgir inimigos
 @export var enemies: Array[EnemyData] = []
 @export var spawn_weights: PackedFloat32Array = []  # chance relativa de cada inimigo (mesma ordem)
 @export var start_delay: float = 1.5

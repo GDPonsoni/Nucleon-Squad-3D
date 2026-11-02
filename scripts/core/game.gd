@@ -1,5 +1,5 @@
 extends Node2D
-## Cena da partida: monta os nós por código.
+## Cena da partida: monta os nós por código. Joga a fase escolhida em Session.
 
 var touch_input: TouchInput
 var player: Player
@@ -16,10 +16,16 @@ var power_ups: NodePool
 var dropper: PowerUpDropper
 var pause_menu: PauseMenu
 var game_over_menu: GameOverMenu
+var stage_clear_menu: StageClearMenu
+
+var _spawning_done: bool = false
+var _clear_wait: float = 0.0
+var _match_over: bool = false
 
 
 func _ready() -> void:
-	RenderingServer.set_default_clear_color(Params.background_color)
+	var planet: PlanetData = Session.planet()
+	RenderingServer.set_default_clear_color(planet.background_color)
 	state = MatchState.new(load(Params.formation_path) as FormationData)
 	state.body_destroyed.connect(_on_body_destroyed)
 	state.game_over.connect(_on_game_over)
@@ -30,6 +36,7 @@ func _ready() -> void:
 
 	var starfield := Starfield.new()
 	starfield.name = "Starfield"
+	starfield.star_color = planet.star_color
 	add_child(starfield)
 
 	# Pool antes da nave para os projéteis ficarem atrás dela
@@ -80,7 +87,8 @@ func _ready() -> void:
 	spawner = EnemySpawner.new()
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
-	spawner.setup(load(Params.stage_path) as StageData, enemies)
+	spawner.setup(Session.stage(), enemies)
+	spawner.finished.connect(func() -> void: _spawning_done = true)
 
 	time_controller = TimeController.new()
 	time_controller.name = "TimeController"
@@ -108,6 +116,10 @@ func _ready() -> void:
 	game_over_menu.name = "GameOverMenu"
 	add_child(game_over_menu)
 
+	stage_clear_menu = StageClearMenu.new()
+	stage_clear_menu.name = "StageClearMenu"
+	add_child(stage_clear_menu)
+
 	if Params.debug_overlay_enabled and OS.is_debug_build():
 		var overlay := DebugOverlay.new()
 		overlay.name = "DebugOverlay"
@@ -115,6 +127,17 @@ func _ready() -> void:
 		add_child(overlay)
 
 	_switch_to(0, 0.0)
+
+
+## Fase concluída quando o tempo acaba e não sobram inimigos (ou após um limite de espera).
+func _process(delta: float) -> void:
+	if not _spawning_done or _match_over:
+		return
+	_clear_wait += delta
+	if enemies.active.is_empty() or _clear_wait >= Params.stage_clear_timeout:
+		_match_over = true
+		pause_menu.disable()
+		stage_clear_menu.open()
 
 
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
@@ -152,6 +175,7 @@ func _on_body_destroyed(_index: int) -> void:
 
 
 func _on_game_over() -> void:
+	_match_over = true
 	pause_menu.disable()
 	await get_tree().create_timer(Params.game_over_delay_seconds, false).timeout
 	game_over_menu.open()

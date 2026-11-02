@@ -3,6 +3,8 @@ extends Node2D
 ## Fundo de estrelas em camadas (parallax) descendo: sensação de avanço da nave.
 ## Usa o delta escalado, então também desacelera na câmera lenta.
 
+var star_color: Color = Params.star_color
+
 var _layers: Array[PackedVector2Array] = []
 
 
@@ -37,7 +39,7 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	for layer in _layers.size():
 		var size: float = Params.star_layer_sizes[layer]
-		var color: Color = Params.star_color
+		var color: Color = star_color
 		color.a = Params.star_layer_alphas[layer]
 		# Camadas próximas viram rastros curtos (mais sensação de velocidade)
 		var streak: float = size * Params.star_layer_streaks[layer]

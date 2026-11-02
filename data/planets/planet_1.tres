@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PlanetData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/planet_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="2_stage_script"]
+[ext_resource type="Resource" path="res://data/stages/p1_s1.tres" id="3_p1_s1"]
+[ext_resource type="Resource" path="res://data/stages/p1_s2.tres" id="4_p1_s2"]
+[ext_resource type="Resource" path="res://data/stages/p1_s3.tres" id="5_p1_s3"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"planet_1"
+name_key = "PLANET_1_NAME"
+background_color = Color(0.04, 0.04, 0.08, 1)
+star_color = Color(0.8, 0.85, 1, 1)
+stages = Array[ExtResource("2_stage_script")]([ExtResource("3_p1_s1"), ExtResource("4_p1_s2"), ExtResource("5_p1_s3")])

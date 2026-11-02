@@ -3,9 +3,14 @@ extends Node
 ## Faz os inimigos da fase surgirem em intervalos aleatórios: pelo topo ou,
 ## para quem atravessa a tela, por uma das laterais.
 
+## Acabou o tempo da fase: não surgem mais inimigos.
+signal finished
+
 var _stage: StageData
 var _enemies: NodePool
 var _cooldown: float = 0.0
+var _elapsed: float = 0.0
+var _finished: bool = false
 
 
 func setup(stage: StageData, enemies: NodePool) -> void:
@@ -14,7 +19,18 @@ func setup(stage: StageData, enemies: NodePool) -> void:
 	_cooldown = stage.start_delay
 
 
+## 0 a 1 ao longo da duração da fase.
+func progress() -> float:
+	return clampf(_elapsed / _stage.duration_seconds, 0.0, 1.0)
+
+
 func _process(delta: float) -> void:
+	_elapsed += delta
+	if _elapsed >= _stage.duration_seconds:
+		if not _finished:
+			_finished = true
+			finished.emit()
+		return
 	_cooldown -= delta
 	if _cooldown > 0.0:
 		return

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="StageData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="2_enemy_script"]
+[ext_resource type="Resource" path="res://data/enemies/drone.tres" id="3_drone"]
+[ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="4_aimer"]
+[ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="5_kamikaze"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"p2_s1"
+duration_seconds = 150.0
+enemies = Array[ExtResource("2_enemy_script")]([ExtResource("3_drone"), ExtResource("4_aimer"), ExtResource("5_kamikaze")])
+spawn_weights = PackedFloat32Array(2.0, 1.5, 2.0)
+start_delay = 1.5
+spawn_interval_min = 0.7
+spawn_interval_max = 1.3
+spawn_margin_x = 80.0

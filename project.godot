@@ -19,6 +19,7 @@ config/quit_on_go_back=false
 [autoload]
 
 Params="*res://scripts/core/params.gd"
+Session="*res://scripts/core/session.gd"
 
 [display]
 

@@ -68,7 +68,8 @@ var switch_icon_bg_color: Color = Color(0.1, 0.1, 0.16, 0.85)
 var player_bullet_pool_size: int = 128
 
 # --- Inimigos e fase (tipos e ondas ficam em data/) ---
-var stage_path: String = "res://data/stages/stage_01.tres"
+var campaign_path: String = "res://data/campaign.tres"
+var stage_clear_timeout: float = 6.0  # após o tempo da fase, espera no máximo isso pelos inimigos restantes
 var enemy_pool_size: int = 24
 var enemy_bullet_pool_size: int = 240
 var enemy_hit_flash_seconds: float = 0.06

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CampaignData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/campaign_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/core/planet_data.gd" id="2_planet_script"]
+[ext_resource type="Resource" path="res://data/planets/planet_1.tres" id="3_planet_1"]
+[ext_resource type="Resource" path="res://data/planets/planet_2.tres" id="4_planet_2"]
+
+[resource]
+script = ExtResource("1_script")
+planets = Array[ExtResource("2_planet_script")]([ExtResource("3_planet_1"), ExtResource("4_planet_2")])
