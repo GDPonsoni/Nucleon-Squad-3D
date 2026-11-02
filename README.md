@@ -5,7 +5,7 @@
 ![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godotengine&logoColor=white)
 ![GDScript](https://img.shields.io/badge/linguagem-GDScript-355570)
 ![Android](https://img.shields.io/badge/plataforma-Android-3DDC84?logo=android&logoColor=white)
-![Status](https://img.shields.io/badge/status-Marco%200-orange)
+![Status](https://img.shields.io/badge/status-Marco%201-orange)
 
 Shoot 'em up vertical (bullet hell) para celular, em 2D, feito em **Godot 4** com **GDScript**. O jogador controla a nave com toque relativo, e **soltar o dedo deixa o jogo em câmera lenta**: é nesse momento que se troca o corpo da nave.
 
@@ -30,13 +30,15 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 | Marco | Objetivo | Status |
 |---|---|---|
-| **0** | Protótipo: nave com controle relativo e câmera lenta no S24 | 🟡 em teste |
-| **1** | Jogável mínimo: 2 corpos, troca de corpo, 1 inimigo, 1 fase, 3 hits | ⚪ |
+| **0** | Protótipo: nave com controle relativo e câmera lenta no S24 | ✅ |
+| **1** | Jogável mínimo: 2 corpos, troca de corpo, 1 inimigo, 1 fase, 3 hits | 🟡 em teste (com 4 corpos) |
 | **2** | Núcleo completo: 4 corpos, 4 armas com 5 níveis, especial, bomba, chefe | ⚪ |
 | **3** | Conteúdo: inimigos, chefes, 1º planeta, áudio, revive por anúncio | ⚪ |
 | **4** | Polimento e publicação | ⚪ |
 
-**O que já existe (Marco 0):** cena em retrato 1080×1920, nave placeholder desenhada por código, controle relativo por toque/mouse, tiro automático com pooling, câmera lenta ao soltar o dedo, overlay de FPS/time scale, menu inicial (Jogar/Sair) e pausa com volta ao menu. Textos em PT-BR e EN.
+**O que já existe:**
+- **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
+- **Marco 1 (em teste):** 4 corpos (Raio, Leque, Mísseis, Órbita) com troca na câmera lenta, 1 inimigo que desce e atira, 3 hits por corpo, troca forçada ao perder um corpo, fim de jogo, HUD e fundo de estrelas em parallax. Tudo com placeholders desenhados por código.
 
 ---
 
@@ -116,7 +118,7 @@ adb install -r builds/nucleon-squad.apk
 adb shell monkey -p com.example.nucleonsquad 1
 ```
 
-O overlay de FPS só aparece em builds de **debug**. O roteiro de teste do marco atual está em [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md).
+O overlay de FPS só aparece em builds de **debug**. Roteiros de teste: [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md) e [`docs/MARCO1_TESTE.md`](docs/MARCO1_TESTE.md).
 
 > Nunca versione keystores de release nem senhas. O Godot guarda credenciais em `.godot/export_credentials.cfg`, que já é ignorado.
 
@@ -132,9 +134,21 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 | `time_scale_smooth_seconds` | 0.1 | duração da transição da câmera lenta (tempo real) |
 | `ship_speed` | 3000 | velocidade máxima da nave (px/s) |
 | `drag_sensitivity` | 1.0 | quanto a nave anda por pixel de dedo |
-| `fire_rate` | 10 | tiros por segundo |
-| `bullet_speed` | 2200 | velocidade do projétil (px/s) |
-| `bullet_pool_size` | 64 | projéteis pré-criados no pool |
+| `nucleus_radius` | 16 | raio do núcleo, que também é a hitbox da nave |
+| `body_max_hits` | 3 | hits que cada corpo aguenta |
+| `switch_invulnerability_seconds` | 2.0 | invulnerabilidade ao trocar de corpo |
+| `hit_invulnerability_seconds` | 1.0 | invulnerabilidade após levar hit |
+| `star_layer_speeds` | 40 / 120 / 320 | velocidade de cada camada do fundo (px/s) |
+
+**Dados (`data/`)** definem o conteúdo, editáveis no Inspector do Godot ou em texto:
+
+| Pasta | Conteúdo |
+|---|---|
+| `data/weapons/` | armas: tipo, cor, dano, cadência, leque, giro dos mísseis, órbita |
+| `data/bodies/` | corpos: formato (pontos), cor e arma |
+| `data/formations/` | formação usada na partida (lista de corpos, qualquer quantidade) |
+| `data/enemies/` | inimigos: vida, velocidade, tamanho, tiro |
+| `data/stages/` | fases: inimigos e intervalo entre surgimentos |
 
 ---
 
@@ -144,12 +158,12 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 docs/            GDD e roteiros de teste
 scenes/          cenas (.tscn) pequenas: menu.tscn (inicial) e game.tscn (partida)
 scripts/
-  core/          params, partida, câmera lenta, caminhos de cenas
-  player/        nave e entrada de toque
-  weapons/       armas, projéteis e pooling
-  enemies/       inimigos e padrões (Marco 1)
-  ui/            menu inicial, pausa, overlay de debug
-data/            dados de armas, inimigos e fases (.tres/JSON)
+  core/          params, partida, estado, colisão, câmera lenta, pools, fundo
+  player/        nave (núcleo + corpo), toque, troca de corpo, BodyData
+  weapons/       armas (raio, projéteis, órbita), projéteis, WeaponData
+  enemies/       inimigos, surgimento, EnemyData e StageData
+  ui/            menu inicial, pausa, fim de jogo, HUD, overlay de debug
+data/            armas, corpos, formações, inimigos e fases (.tres)
   i18n/          tabela de tradução strings.csv (chave, en, pt_BR)
 assets/          imagens e áudio (placeholders até o Marco 2)
 builds/          APKs exportados (não versionado)
