@@ -1,101 +1,102 @@
 class_name BodySwitcher
 extends Node2D
-## Ícones dos outros corpos vivos ao lado da nave durante a câmera lenta.
-## Tocar num ícone escolhe o corpo; tocar fora só retoma o jogo.
-## Com o corpo destruído (forced), é preciso escolher um ícone para continuar.
+## Faixa fixa na parte de baixo da tela com todos os corpos da formação, durante a
+## câmera lenta. Tocar num corpo vivo troca para ele; o atual aparece destacado e os
+## destruídos aparecem apagados com um X. Tocar fora (ou no atual) só retoma o jogo.
+## Com o corpo destruído (forced), é preciso escolher um corpo vivo para continuar.
+## Fica numa CanvasLayer própria: coordenadas de tela, acima da moldura da câmera lenta.
 
 signal body_chosen(index: int)
 
-## Corpo destruído: mostra os ícones mesmo com o dedo na tela até escolher.
+## Corpo destruído: mostra a faixa mesmo com o dedo na tela até escolher.
 var forced: bool = false
 
 var _state: MatchState
-var _player: Player
 var _touch: TouchInput
-var _indices: Array[int] = []  # corpo de cada ícone visível
 var _positions := PackedVector2Array()
+var _strip := Rect2()
+var _strip_style: StyleBoxFlat
 
 
-func setup(state: MatchState, player: Player, touch: TouchInput) -> void:
+func setup(state: MatchState, touch: TouchInput) -> void:
 	_state = state
-	_player = player
 	_touch = touch
 	# Conectar antes da nave e da câmera lenta: o toque no ícone é tratado primeiro
 	touch.touch_started.connect(_on_touch_started)
+	_strip_style = StyleBoxFlat.new()
+	_strip_style.bg_color = Params.switch_strip_color
+	_strip_style.set_corner_radius_all(Params.ui_corner_radius)
 
 
 func _process(_delta: float) -> void:
-	_indices.clear()
-	if forced or not _touch.is_touching():
-		for i in _state.alive_indices():
-			if i != _state.current:
-				_indices.append(i)
-	visible = not _indices.is_empty()
+	visible = forced or not _touch.is_touching()
 	if visible:
 		_layout()
 		queue_redraw()
 
 
-## Ícones em colunas ao lado da nave (fora do caminho dos tiros, que vão para cima).
-## Perto de uma borda, as colunas vão todas para o lado livre.
+## Ícones lado a lado, centralizados, sempre na mesma altura da tela.
 func _layout() -> void:
-	var count: int = _indices.size()
+	var count: int = _state.bodies.size()
+	var rect: Rect2 = get_viewport_rect()
 	var radius: float = Params.switch_icon_radius
-	# Fora das áreas do HUD (topo e base)
-	var bounds: Rect2 = get_viewport_rect().grow_individual(
-		-radius, -radius - Params.switch_icons_top_margin, -radius, -radius - Params.switch_icons_bottom_margin)
-	var side: float = Params.switch_icon_distance
-	var gap: float = Params.switch_icon_spacing
-	var columns: Array[float] = [-side, side]
-	if _player.position.x - side < bounds.position.x:
-		columns = [side, side + gap]
-	elif _player.position.x + side > bounds.end.x:
-		columns = [-side, -side - gap]
-
-	var per_column: int = ceili(float(count) / columns.size())
+	var spacing: float = minf(Params.switch_strip_spacing, (rect.size.x - Params.switch_strip_side_margin * 2.0) / count)
+	var y: float = rect.end.y - Params.switch_strip_bottom
 	_positions.resize(count)
-	for c in columns.size():
-		var first: int = c * per_column
-		var rows: int = mini(per_column, count - first)
-		if rows <= 0:
-			break
-		# Coluna centrada na altura da nave, deslocada inteira se sair da tela
-		var top: float = _player.position.y - (rows - 1) * gap * 0.5
-		var bottom: float = top + (rows - 1) * gap
-		var shift: float = maxf(bounds.position.y - top, 0.0) + minf(bounds.end.y - bottom, 0.0)
-		var x: float = clampf(_player.position.x + columns[c], bounds.position.x, bounds.end.x)
-		for row in rows:
-			_positions[first + row] = Vector2(x, top + shift + row * gap)
+	for i in count:
+		_positions[i] = Vector2(rect.get_center().x + (i - (count - 1) * 0.5) * spacing, y)
+	var pad: float = Params.switch_strip_padding + Params.switch_level_ring_offset
+	var left: float = _positions[0].x - radius - pad
+	var right: float = _positions[count - 1].x + radius + pad
+	_strip = Rect2(left, y - radius - pad, right - left, (radius + pad) * 2.0)
 
 
 func _on_touch_started(pos: Vector2) -> void:
 	if not visible:
 		return
 	var reach: float = Params.switch_icon_radius * Params.switch_icon_touch_scale
-	for k in _indices.size():
-		if pos.distance_to(_positions[k]) <= reach:
-			body_chosen.emit(_indices[k])
+	for i in _positions.size():
+		if pos.distance_to(_positions[i]) <= reach and _state.is_alive(i) and i != _state.current:
+			body_chosen.emit(i)
 			return
 
 
 func _draw() -> void:
+	draw_style_box(_strip_style, _strip)
 	var radius: float = Params.switch_icon_radius
-	for k in _indices.size():
-		var index: int = _indices[k]
-		var body: BodyData = _state.bodies[index]
-		var center: Vector2 = _positions[k]
+	for i in _positions.size():
+		var body: BodyData = _state.bodies[i]
+		var center: Vector2 = _positions[i]
+		if not _state.is_alive(i):
+			_draw_dead(center, radius, body)
+			continue
+		var current: bool = i == _state.current and not forced
 		draw_circle(center, radius, Params.switch_icon_bg_color)
-		draw_arc(center, radius, 0.0, TAU, 48, body.color, 4.0)
-		_draw_level_ring(center, radius + Params.switch_level_ring_offset, index, body)
-		var points := PackedVector2Array()
-		for point in body.shape:
-			points.append(center + point * radius * Params.switch_icon_shape_scale)
-		draw_colored_polygon(points, body.color)
+		draw_arc(center, radius, 0.0, TAU, 48, Color.WHITE if current else body.color, 7.0 if current else 4.0)
+		_draw_level_ring(center, radius + Params.switch_level_ring_offset, i, body)
+		_draw_shape(center, radius, body, body.color)
 		# Hits restantes do corpo
-		var hits: int = _state.hits_left[index]
+		var hits: int = _state.hits_left[i]
 		for h in hits:
 			var offset := Vector2((h - (hits - 1) * 0.5) * radius * 0.22, radius * 0.75)
 			draw_circle(center + offset, radius * 0.07, Color.WHITE)
+
+
+## Corpo abatido: apagado, sem anel de nível e com um X vermelho.
+func _draw_dead(center: Vector2, radius: float, body: BodyData) -> void:
+	draw_circle(center, radius, Color(Params.switch_icon_bg_color, Params.switch_dead_alpha))
+	draw_arc(center, radius, 0.0, TAU, 48, Color(Params.hud_dead_color, Params.switch_dead_alpha), 3.0)
+	_draw_shape(center, radius, body, Color(Params.hud_dead_color, Params.switch_dead_alpha))
+	var d: float = radius * 0.55
+	draw_line(center + Vector2(-d, -d), center + Vector2(d, d), Params.hud_dead_mark_color, 7.0)
+	draw_line(center + Vector2(d, -d), center + Vector2(-d, d), Params.hud_dead_mark_color, 7.0)
+
+
+func _draw_shape(center: Vector2, radius: float, body: BodyData, color: Color) -> void:
+	var points := PackedVector2Array()
+	for point in body.shape:
+		points.append(center + point * radius * Params.switch_icon_shape_scale)
+	draw_colored_polygon(points, color)
 
 
 ## Segmentos dourados em volta do ícone: quantos níveis a arma do corpo já tem.

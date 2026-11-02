@@ -85,11 +85,16 @@ func _ready() -> void:
 	add_child(power_ups)
 	add_child(enemy_bullets)
 
+	# Faixa de troca numa camada própria: acima da moldura da câmera lenta, abaixo do HUD
+	var switcher_layer := CanvasLayer.new()
+	switcher_layer.name = "SwitcherLayer"
+	switcher_layer.layer = 8
+	add_child(switcher_layer)
 	switcher = BodySwitcher.new()
 	switcher.name = "BodySwitcher"
-	add_child(switcher)
+	switcher_layer.add_child(switcher)
 	# O switcher trata o toque antes da nave e da câmera lenta (ordem das conexões)
-	switcher.setup(state, player, touch_input)
+	switcher.setup(state, touch_input)
 	switcher.body_chosen.connect(_on_body_chosen)
 	player.bind_input(touch_input)
 

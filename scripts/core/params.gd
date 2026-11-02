@@ -117,10 +117,12 @@ var invulnerability_alpha: float = 0.3
 # --- Troca de corpo (ícones na câmera lenta) ---
 var switch_invulnerability_seconds: float = 2.0
 var switch_icon_radius: float = 70.0
-var switch_icon_distance: float = 200.0  # distância lateral da nave até a 1ª coluna
-var switch_icon_spacing: float = 195.0  # entre ícones da mesma coluna e entre colunas
-var switch_icons_top_margin: float = 200.0  # ícones não entram na área do HUD do topo
-var switch_icons_bottom_margin: float = 180.0  # nem na da base
+var switch_strip_bottom: float = 300.0  # centro da faixa de troca, a partir da base da tela
+var switch_strip_spacing: float = 175.0  # entre ícones da faixa
+var switch_strip_side_margin: float = 30.0
+var switch_strip_padding: float = 14.0
+var switch_strip_color: Color = Color(0.04, 0.05, 0.1, 0.75)
+var switch_dead_alpha: float = 0.35
 var switch_level_ring_offset: float = 11.0  # anel de nível da arma, fora do ícone
 var switch_level_ring_width: float = 7.0
 var switch_level_ring_gap_degrees: float = 14.0
