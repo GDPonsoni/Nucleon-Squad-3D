@@ -29,3 +29,4 @@ enum Kind { BEAM, SPREAD, HOMING, ORBIT }
 @export var orbit_speed_degrees: float = 270.0
 @export var orbit_size: float = 40.0
 @export var orbit_hit_seconds: float = 0.15  # intervalo de dano no mesmo inimigo
+@export var clears_projectiles: bool = false  # orbitais destroem tiros inimigos

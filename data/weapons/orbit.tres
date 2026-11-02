@@ -13,3 +13,4 @@ orbit_radius = 170.0
 orbit_speed_degrees = 270.0
 orbit_size = 40.0
 orbit_hit_seconds = 0.15
+clears_projectiles = true

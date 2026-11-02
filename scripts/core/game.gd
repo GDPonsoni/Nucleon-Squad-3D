@@ -10,6 +10,7 @@ var context: CombatContext
 var state: MatchState
 var time_controller: TimeController
 var switcher: BodySwitcher
+var spawner: EnemySpawner
 var pause_menu: PauseMenu
 var game_over_menu: GameOverMenu
 
@@ -61,7 +62,7 @@ func _ready() -> void:
 	switcher.body_chosen.connect(_on_body_chosen)
 	player.bind_input(touch_input)
 
-	var spawner := EnemySpawner.new()
+	spawner = EnemySpawner.new()
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
 	spawner.setup(load(Params.stage_path) as StageData, enemies)
