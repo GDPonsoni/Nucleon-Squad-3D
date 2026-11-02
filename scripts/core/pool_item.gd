@@ -6,6 +6,11 @@ extends Node2D
 signal expired(item: PoolItem)
 
 
+func _ready() -> void:
+	# O Godot reativa o _process ao entrar na árvore: começa desligado
+	deactivate()
+
+
 func deactivate() -> void:
 	visible = false
 	set_process(false)

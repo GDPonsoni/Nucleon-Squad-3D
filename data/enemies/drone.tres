@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"drone"
+max_hp = 6
+speed = 220.0
+radius = 48.0
+sides = 6
+color = Color(0.95, 0.2, 0.35, 1)
+fire_interval = 1.4
+first_shot_delay = 0.4
+bullet_speed = 700.0
+bullet_radius = 14.0
+bullet_damage = 1
+bullet_color = Color(1, 0.35, 0.75, 1)

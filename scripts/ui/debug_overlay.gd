@@ -3,6 +3,9 @@ extends CanvasLayer
 ## Mostra FPS e time scale no canto da tela (só em build de debug).
 ## Texto técnico de debug: fica fora da tabela de tradução.
 
+## Opcional: função que retorna uma linha extra (ex.: contagem de objetos).
+var stats: Callable
+
 var _label: Label
 
 
@@ -17,5 +20,7 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	var text: String = "FPS %d\ntime scale %.2f" % [Engine.get_frames_per_second(), Engine.time_scale]
+	if stats.is_valid():
+		text += "\n" + stats.call()
 	if _label.text != text:
 		_label.text = text

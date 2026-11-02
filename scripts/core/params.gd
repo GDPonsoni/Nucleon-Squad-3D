@@ -41,3 +41,9 @@ var bullet_speed: float = 2200.0  # px/s
 var bullet_size: Vector2 = Vector2(10.0, 36.0)
 var bullet_color: Color = Color(1.0, 0.95, 0.5)
 var player_bullet_pool_size: int = 128
+
+# --- Inimigos e fase (tipos e ondas ficam em data/) ---
+var stage_path: String = "res://data/stages/stage_01.tres"
+var enemy_pool_size: int = 24
+var enemy_bullet_pool_size: int = 160
+var enemy_hit_flash_seconds: float = 0.06

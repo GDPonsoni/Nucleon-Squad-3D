@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="StageData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="2_enemy_script"]
+[ext_resource type="Resource" path="res://data/enemies/drone.tres" id="3_drone"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"stage_01"
+enemies = Array[ExtResource("2_enemy_script")]([ExtResource("3_drone")])
+start_delay = 1.5
+spawn_interval_min = 0.9
+spawn_interval_max = 1.8
+spawn_margin_x = 80.0

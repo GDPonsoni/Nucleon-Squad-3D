@@ -12,8 +12,7 @@ var _free: Array[PoolItem] = []
 func _init(factory: Callable, size: int) -> void:
 	for i in size:
 		var item: PoolItem = factory.call()
-		add_child(item)
-		item.deactivate()
+		add_child(item)  # o item se desativa no próprio _ready
 		item.expired.connect(release)
 		_free.append(item)
 
