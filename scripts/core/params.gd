@@ -16,6 +16,14 @@ var pause_button_size: Vector2 = Vector2(130.0, 130.0)
 var pause_button_margin: Vector2 = Vector2(40.0, 100.0)  # a partir do canto superior direito
 var pause_overlay_color: Color = Color(0.0, 0.0, 0.0, 0.65)
 
+# --- Fundo: estrelas em camadas (distante -> próxima) ---
+var star_layer_counts: PackedInt32Array = [70, 40, 16]
+var star_layer_speeds: PackedFloat32Array = [40.0, 120.0, 320.0]  # px/s
+var star_layer_sizes: PackedFloat32Array = [2.0, 3.5, 5.0]
+var star_layer_alphas: PackedFloat32Array = [0.3, 0.55, 0.85]
+var star_layer_streaks: PackedFloat32Array = [0.0, 1.0, 4.0]  # alongamento vertical
+var star_color: Color = Color(0.8, 0.85, 1.0)
+
 # --- Câmera lenta ---
 var slow_time_scale: float = 0.3
 var time_scale_smooth_seconds: float = 0.1  # duração da transição, em tempo real

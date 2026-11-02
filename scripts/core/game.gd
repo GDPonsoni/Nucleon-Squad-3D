@@ -15,6 +15,10 @@ func _ready() -> void:
 	touch_input.name = "TouchInput"
 	add_child(touch_input)
 
+	var starfield := Starfield.new()
+	starfield.name = "Starfield"
+	add_child(starfield)
+
 	# Pool antes da nave para os projéteis ficarem atrás dela
 	bullet_pool = BulletPool.new()
 	bullet_pool.name = "BulletPool"
