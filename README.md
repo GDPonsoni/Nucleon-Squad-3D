@@ -38,7 +38,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 **O que já existe:**
 - **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
-- **Marco 1 (em teste):** 4 corpos (Raio, Leque, Mísseis, Órbita) com troca na câmera lenta, 1 inimigo que desce e atira, 3 hits por corpo, troca forçada ao perder um corpo, fim de jogo, HUD e fundo de estrelas em parallax. Tudo com placeholders desenhados por código.
+- **Marco 1 (em teste):** 4 corpos (Raio, Leque, Mísseis, Órbita) com troca na câmera lenta, 1 inimigo que desce e atira, 3 hits por corpo, troca forçada ao perder um corpo, fim de jogo, HUD, fundo de estrelas em parallax e power-ups que sobem a arma até o nível 5. Tudo com placeholders desenhados por código.
 
 ---
 
@@ -139,12 +139,13 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 | `switch_invulnerability_seconds` | 2.0 | invulnerabilidade ao trocar de corpo |
 | `hit_invulnerability_seconds` | 1.0 | invulnerabilidade após levar hit |
 | `star_layer_speeds` | 40 / 120 / 320 | velocidade de cada camada do fundo (px/s) |
+| `powerup_every_kills` | 8 | inimigos destruídos por power-up |
 
 **Dados (`data/`)** definem o conteúdo, editáveis no Inspector do Godot ou em texto:
 
 | Pasta | Conteúdo |
 |---|---|
-| `data/weapons/` | armas: tipo, cor, dano, cadência, leque, giro dos mísseis, órbita |
+| `data/weapons/` | armas: tipo, cor e os 5 níveis (dano, cadência, leque, feixes, mísseis, orbitais) |
 | `data/bodies/` | corpos: formato (pontos), cor e arma |
 | `data/formations/` | formação usada na partida (lista de corpos, qualquer quantidade) |
 | `data/enemies/` | inimigos: vida, velocidade, tamanho, tiro |
