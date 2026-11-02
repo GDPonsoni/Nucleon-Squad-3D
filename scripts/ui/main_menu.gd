@@ -20,6 +20,17 @@ func _ready() -> void:
 	column.add_child(quit_button)
 
 
+func _notification(what: int) -> void:
+	# Botão Voltar do Android no menu fecha o jogo
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		get_tree().quit()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		get_tree().quit()
+
+
 func _on_play_pressed() -> void:
 	get_tree().change_scene_to_file(ScenePaths.GAME)
 

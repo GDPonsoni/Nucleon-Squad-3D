@@ -53,6 +53,25 @@ func close() -> void:
 	_pause_button.visible = true
 
 
+func toggle() -> void:
+	if _overlay.visible:
+		close()
+	else:
+		open()
+
+
+func _notification(what: int) -> void:
+	# Botão Voltar do Android abre/fecha a pausa
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		toggle()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		toggle()
+		get_viewport().set_input_as_handled()
+
+
 func _exit_to_menu() -> void:
 	# A pausa persiste entre cenas: despausar antes de trocar
 	get_tree().paused = false
