@@ -5,6 +5,7 @@ var touch_input: TouchInput
 var player: Player
 var bullet_pool: BulletPool
 var gun: AutoGun
+var time_controller: TimeController
 
 
 func _ready() -> void:
@@ -28,3 +29,8 @@ func _ready() -> void:
 	gun.name = "AutoGun"
 	add_child(gun)
 	gun.setup(player, bullet_pool)
+
+	time_controller = TimeController.new()
+	time_controller.name = "TimeController"
+	add_child(time_controller)
+	time_controller.bind_input(touch_input)
