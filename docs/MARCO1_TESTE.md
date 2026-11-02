@@ -4,7 +4,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 
 ## Fluxo de telas
 
-**Menu inicial** (estrelas + nave alternando corpos) → **Jogar** → **Seletor de fases** (por planeta) → **Partida** → **Resultado** (fase concluída ou fim de jogo, com resumo) → próxima fase / jogar de novo / escolher fase / menu. Todas as trocas de tela têm fade.
+**Menu inicial** (estrelas + nave alternando corpos) → **Esquadrão** (montar os 4 corpos) ou **Jogar** → **Seletor de fases** (por planeta) → **Partida** → **Resultado** (fase concluída ou fim de jogo, com resumo) → próxima fase / jogar de novo / escolher fase / menu. Todas as trocas de tela têm fade.
 
 - A **primeira fase de cada capítulo** está sempre liberada. Concluir uma fase libera a próxima do mesmo capítulo e guarda o recorde no aparelho.
 - **Atalho de debug:** no seletor, tocar **5 vezes no título** libera todas as fases (só em build de debug). Para zerar o progresso, desinstale o app ou apague `save.json` (veja abaixo).
@@ -13,7 +13,9 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 
 | Item | Como funciona |
 |---|---|
-| **4 corpos** | Raio (ciano), Leque (verde), Mísseis (laranja) e Órbita (roxo). Formato e arma vêm de `data/bodies/` e `data/weapons/`. |
+| **6 naves, esquadrão de 4** | Raio (ciano), Leque (verde), Mísseis (laranja), Órbita (roxo), **Lança** (azul) e **Artilharia** (coral). Na tela **Esquadrão** você escolhe 4 e a ordem (a 1ª começa a fase); a escolha fica salva. Formato e arma vêm de `data/bodies/` e `data/weapons/`. |
+| **Lança** | Tiro lento e forte que **atravessa** vários inimigos (2 → todos no nível 5). Boa contra filas, colunas e Tanques. Especial: leque de 7 lanças gigantes. |
+| **Artilharia** | Projéteis lentos que **explodem em área** (raio 120 → 190). Boa contra formações. Especial: bombardeio de 12 explosões. |
 | **Raio** | Feixes contínuos que param no primeiro inimigo. Nível 1: 1 feixe; 2: **mais grosso**; 3: + 2 feixes laterais a ±5°; 4: todos mais grossos, ±7°; 5: raio central largo + laterais a ±9°. |
 | **Leque** | Alterna **projétil maior** e **mais fileiras**: 3 pequenos → 3 grandes → 5 grandes → 5 maiores → 7 grandes. |
 | **Mísseis** | Cada onda **surge em anel** ao redor da nave, **mira** por 0,35 s e dispara de uma vez; a próxima onda só vem após uma pausa. 4 → 8 mísseis por onda. Bem mais fraco que antes nos níveis altos. |
@@ -27,7 +29,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 | **Ondas em formação** | Além dos surgimentos aleatórios, cada fase tem ondas em momentos fixos: **V de kamikazes** que mergulham um após o outro, fileiras, colunas e Miradores entrando pela lateral em sequência. |
 | **Capítulos e fases** | **Aurora** (azul, 1:30 a 2:30), **Vulcânia** (avermelhado, 2:30 a 3:00) e **Abismo** (violeta, **4:00, 4:30 e 5:00**, todos os inimigos e de 10 a 13 ondas por fase). |
 | **Chefes** | No fim da última fase de cada capítulo: aviso "ALERTA: CHEFE À FRENTE", o chefe entra (invulnerável até parar) e a barra de vida dele aparece no topo. Muda de ataque conforme a vida cai. A fase só termina quando ele é destruído. **Sentinela** (1-3): rajadas e anel, depois espiral. **Forja** (2-3): leque largo e kamikazes, depois anel giratório. **Umbra** (3-3): três fases com espirais, anéis, leques e Miradores. Encostar no chefe tira 2 hits. |
-| **Troca de corpo** | Com o dedo solto, os outros corpos vivos aparecem **em colunas ao lado da nave** (fora do caminho dos raios; perto de uma borda, vão para o lado livre). Cada ícone mostra os hits e, num anel dourado, o nível da arma. Tocar num ícone troca o corpo (+2 s de invulnerabilidade). |
+| **Troca de corpo** | Com o dedo solto, uma **faixa fixa na base da tela** mostra todos os corpos (no lugar dos painéis do HUD): o atual com anel branco, os vivos com hits e nível, os **abatidos apagados com um X**. Tocar num corpo vivo troca (+2 s de invulnerabilidade); tocar fora retoma. |
 | **Núcleo e câmera lenta** | O núcleo (hitbox) tem borda escura e um anel branco pulsando, mais forte na câmera lenta. Na câmera lenta, uma **moldura azul** aparece nas bordas da tela. Ao subir o nível da arma, um anel dourado se expande em volta da nave. |
 | **Dano** | Hitbox = **núcleo branco**. Tiro ou encostar = 1 hit (Tanque: 2). 1 s de invulnerabilidade após o hit. **Flash vermelho** na tela. |
 | **HUD** | Topo: barra de progresso da fase, pontuação e nome da fase. Base: nível da arma e hits (esquerda), formação (direita), sobre painéis. |
@@ -35,10 +37,14 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 
 ## O que observar no S24
 
+**Esquadrão e naves novas**
+- A tela de esquadrão é clara? Dá para entender cada nave pela descrição?
+- Lança e Artilharia parecem estratégias diferentes das outras? Alguma ficou fraca ou forte demais?
+- A faixa de troca na base fica fácil de ver e tocar? Os abatidos ficam claros?
+
 **Legibilidade**
 - O núcleo fica fácil de achar no meio da ação? O anel pulsando incomoda?
 - A moldura azul deixa claro quando está em câmera lenta sem atrapalhar a visão?
-- Os ícones de troca em colunas ficam fáceis de ver e tocar com a nave no centro, nos cantos e no topo?
 
 **Armas (nova versão)**
 - **Mísseis:** ficou menos "roubado"? O anel mirando é legível? A pausa entre ondas parece boa?
@@ -86,7 +92,7 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em
 | Chefes (vida, movimento, fases e ataques) | `data/bosses/*.tres` |
 | Planetas (nome, cores, fases) e ordem da campanha | `data/planets/*.tres`, `data/campaign.tres` |
 | Valores de cada nível de arma e do especial | `data/weapons/*.tres` (um sub-recurso por nível; especial no grupo "Especial") |
-| Formato e cor dos corpos / formação | `data/bodies/*.tres`, `data/formations/default.tres` |
+| Formato e cor dos corpos / esquadrão inicial / naves disponíveis | `data/bodies/*.tres`, `data/formations/default.tres`, `data/formations/roster.tres` |
 | Power-ups, hits, invulnerabilidade, HUD, cores da interface | `scripts/core/params.gd` |
 | Liberar todas as fases sem tocar no save | `debug_unlock_all = true` em `params.gd` |
 | Começar com as armas em outro nível | `debug_start_weapon_level` em `params.gd` (1 a 5) |

@@ -38,7 +38,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 **O que já existe:**
 - **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
-- **Marco 1 (em teste):** 4 corpos com 5 níveis de arma e troca na câmera lenta, power-ups, 5 tipos de inimigo (Drone, Mirador, Kamikaze, Tanque, Atirador), ondas em formação, chefes no fim de cada capítulo, 3 capítulos com 3 fases cada (até 5 min), seletor de fases com desbloqueio e recordes salvos no aparelho, HUD com progresso e pontuação, telas de resultado e interface com tema próprio. Tudo com placeholders desenhados por código.
+- **Marco 1 (em teste):** 6 naves (esquadrão de 4 montado numa tela própria) com 5 níveis de arma, especial e troca na câmera lenta, power-ups, 5 tipos de inimigo (Drone, Mirador, Kamikaze, Tanque, Atirador), ondas em formação, chefes no fim de cada capítulo, 3 capítulos com 3 fases cada (até 5 min), seletor de fases com desbloqueio e recordes salvos no aparelho, HUD com progresso e pontuação, telas de resultado e interface com tema próprio. Tudo com placeholders desenhados por código.
 
 ---
 
@@ -118,7 +118,7 @@ adb install -r builds/nucleon-squad.apk
 adb shell monkey -p com.example.nucleonsquad 1
 ```
 
-O overlay de FPS só aparece em builds de **debug**. Roteiros de teste: [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md) e [`docs/MARCO1_TESTE.md`](docs/MARCO1_TESTE.md).
+O overlay de FPS só aparece em builds de **debug**. Roteiros de teste: [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md) e [`docs/MARCO1_TESTE.md`](docs/MARCO1_TESTE.md). Referências de design: [`docs/REFERENCIAS_ESQUADRAO.md`](docs/REFERENCIAS_ESQUADRAO.md).
 
 ### Ícone do app
 
@@ -158,7 +158,7 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 |---|---|
 | `data/weapons/` | armas: tipo, cor e os 5 níveis (dano, cadência, leque, feixes, ondas de mísseis, orbitais) |
 | `data/bodies/` | corpos: formato (pontos), cor e arma |
-| `data/formations/` | formação usada na partida (lista de corpos, qualquer quantidade) |
+| `data/formations/` | esquadrão inicial (`default.tres`) e naves disponíveis (`roster.tres`) |
 | `data/enemies/` | inimigos: vida, pontos, movimento (descer, cruzar, mergulhar, parar) e tiro (reto, mirado, anel, leque) |
 | `data/stages/` | fases: duração, inimigos, pesos, intervalo entre surgimentos, ondas em formação e chefe |
 | `data/bosses/` | chefes: vida, movimento e fases de ataque (leque, anel/espiral, convocar ondas) |
