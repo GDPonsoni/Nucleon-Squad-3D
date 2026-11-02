@@ -1,5 +1,5 @@
 extends Control
-## Menu inicial: escolher a fase ou sair do jogo. Fundo de estrelas e nave animada.
+## Menu inicial: escolher a fase, montar o esquadrão ou sair do jogo. Fundo de estrelas e nave animada.
 
 
 func _ready() -> void:
@@ -23,6 +23,10 @@ func _ready() -> void:
 	var play_button := UiFactory.make_button("MENU_PLAY")
 	play_button.pressed.connect(_on_play_pressed)
 	column.add_child(play_button)
+
+	var squad_button := UiFactory.make_button("MENU_SQUAD")
+	squad_button.pressed.connect(SceneTransition.go_to.bind(ScenePaths.SQUAD))
+	column.add_child(squad_button)
 
 	var quit_button := UiFactory.make_button("MENU_QUIT")
 	quit_button.pressed.connect(_on_quit_pressed)

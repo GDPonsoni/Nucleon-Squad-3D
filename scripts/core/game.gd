@@ -30,7 +30,7 @@ var _match_over: bool = false
 func _ready() -> void:
 	var planet: PlanetData = Session.planet()
 	RenderingServer.set_default_clear_color(planet.background_color)
-	state = MatchState.new(load(Params.formation_path) as FormationData)
+	state = MatchState.new(SaveGame.squad_formation())
 	state.body_destroyed.connect(_on_body_destroyed)
 	state.game_over.connect(_on_game_over)
 

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="FormationData" format=3]
+
+[ext_resource type="Script" path="res://scripts/player/formation_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/player/body_data.gd" id="2_body_script"]
+[ext_resource type="Resource" path="res://data/bodies/beam_body.tres" id="3_beam_body"]
+[ext_resource type="Resource" path="res://data/bodies/spread_body.tres" id="4_spread_body"]
+[ext_resource type="Resource" path="res://data/bodies/homing_body.tres" id="5_homing_body"]
+[ext_resource type="Resource" path="res://data/bodies/orbit_body.tres" id="6_orbit_body"]
+[ext_resource type="Resource" path="res://data/bodies/lance_body.tres" id="7_lance_body"]
+[ext_resource type="Resource" path="res://data/bodies/artillery_body.tres" id="8_artillery_body"]
+
+[resource]
+script = ExtResource("1_script")
+bodies = Array[ExtResource("2_body_script")]([ExtResource("3_beam_body"), ExtResource("4_spread_body"), ExtResource("5_homing_body"), ExtResource("6_orbit_body"), ExtResource("7_lance_body"), ExtResource("8_artillery_body")])

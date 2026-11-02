@@ -33,3 +33,19 @@ REVIVE_WATCH,Watch ad,Assistir anúncio
 REVIVE_SKIP,No thanks,"Não, obrigado"
 AD_PLACEHOLDER,Ad,Anúncio
 AD_PLACEHOLDER_INFO,(simulated - no ads yet),(simulado - ainda sem anúncios)
+SHIP_BEAM_NAME,Beam,Raio
+SHIP_BEAM_DESC,Continuous beam that stops at the first enemy. Special: giant beam.,Raio contínuo que para no primeiro inimigo. Especial: raio gigante.
+SHIP_SPREAD_NAME,Spread,Leque
+SHIP_SPREAD_DESC,Fan of shots that grows in size and rows. Special: 360° burst.,Leque de tiros que cresce em tamanho e fileiras. Especial: rajada 360°.
+SHIP_HOMING_NAME,Missiles,Mísseis
+SHIP_HOMING_DESC,Waves of homing missiles. Special: missile rain.,Ondas de mísseis teleguiados. Especial: chuva de mísseis.
+SHIP_ORBIT_NAME,Orbit,Órbita
+SHIP_ORBIT_DESC,Orbitals that hurt enemies and block shots. Special: energy ring.,Orbitais que ferem inimigos e bloqueiam tiros. Especial: anel de energia.
+SHIP_LANCE_NAME,Lance,Lança
+SHIP_LANCE_DESC,Slow shot that pierces lined-up enemies. Special: fan of lances.,Tiro lento que atravessa inimigos em fila. Especial: leque de lanças.
+SHIP_ARTILLERY_NAME,Artillery,Artilharia
+SHIP_ARTILLERY_DESC,Shells that explode in an area. Special: bombardment.,Projéteis que explodem em área. Especial: bombardeio.
+MENU_SQUAD,Squad,Esquadrão
+SQUAD_TITLE,Squad,Esquadrão
+SQUAD_HINT,Pick 4 ships. The first one starts the stage.,Escolha 4 naves. A primeira começa a fase.
+SQUAD_SAVE,Save,Salvar

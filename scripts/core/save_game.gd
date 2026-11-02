@@ -8,6 +8,7 @@ const VERSION: int = 2
 var completed: Dictionary = {}  # id da fase -> true (fases concluídas)
 var best_scores: Dictionary = {}  # id da fase -> melhor pontuação
 var unlock_everything: bool = false  # atalho de debug do seletor
+var squad: PackedStringArray = PackedStringArray()  # ids dos corpos escolhidos, em ordem
 ## Versão 1 do save: fase mais avançada na ordem geral. Só é lida (compatibilidade).
 var legacy_highest_unlocked: int = -1
 
@@ -42,6 +43,26 @@ func complete_stage(stage_id: StringName, score: int) -> bool:
 	return record
 
 
+## Esquadrão escolhido na tela de esquadrão; sem escolha válida, o esquadrão inicial.
+func squad_formation() -> FormationData:
+	var roster := load(Params.roster_path) as FormationData
+	var formation := FormationData.new()
+	for id in squad:
+		for body in roster.bodies:
+			if String(body.id) == id:
+				formation.bodies.append(body)
+	if formation.bodies.size() != Params.squad_size:
+		return load(Params.formation_path) as FormationData
+	return formation
+
+
+func set_squad(bodies: Array[BodyData]) -> void:
+	squad = PackedStringArray()
+	for body in bodies:
+		squad.append(String(body.id))
+	save()
+
+
 func unlock_all() -> void:
 	unlock_everything = true
 	save()
@@ -57,6 +78,7 @@ func save() -> void:
 		"completed": completed.keys(),
 		"best_scores": best_scores,
 		"unlock_everything": unlock_everything,
+		"squad": squad,
 		"legacy_highest_unlocked": legacy_highest_unlocked,
 	}, "\t"))
 
@@ -74,6 +96,9 @@ func load_data() -> void:
 		legacy_highest_unlocked = int(data["highest_unlocked"])
 	legacy_highest_unlocked = int(data.get("legacy_highest_unlocked", legacy_highest_unlocked))
 	unlock_everything = bool(data.get("unlock_everything", false))
+	var chosen: Variant = data.get("squad", [])
+	if typeof(chosen) == TYPE_ARRAY:
+		squad = PackedStringArray(chosen)
 	var done: Variant = data.get("completed", [])
 	if typeof(done) == TYPE_ARRAY:
 		for id in done:

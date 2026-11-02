@@ -11,8 +11,7 @@ var _base_y: float = 0.0
 
 
 func _ready() -> void:
-	var formation := load(Params.formation_path) as FormationData
-	_bodies = formation.bodies
+	_bodies = SaveGame.squad_formation().bodies
 	_base_y = position.y
 	_cycle()
 
