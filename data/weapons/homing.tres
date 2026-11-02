@@ -5,82 +5,72 @@
 
 [sub_resource type="Resource" id="WeaponLevel_lv1"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 3.0
-projectile_speed = 1100.0
-projectile_size = Vector2(18, 30)
-projectile_shape = 2
-projectile_count = 2
-homing_turn_degrees = 300.0
-projectile_lifetime = 2.0
-wave_spacing_seconds = 0.025
-launch_radius = 60.0
-launch_speed = 500.0
-homing_delay_seconds = 0.3
-homing_turn_growth_degrees = 900.0
-
-[sub_resource type="Resource" id="WeaponLevel_lv2"]
-script = ExtResource("2_level")
-damage = 1
-fire_rate = 3.0
+damage = 2
 projectile_speed = 1100.0
 projectile_size = Vector2(18, 30)
 projectile_shape = 2
 projectile_count = 4
-homing_turn_degrees = 330.0
+homing_turn_degrees = 300.0
 projectile_lifetime = 2.0
-wave_spacing_seconds = 0.025
-launch_radius = 60.0
-launch_speed = 500.0
-homing_delay_seconds = 0.3
+aim_seconds = 0.35
+wave_cooldown_seconds = 1.25
+launch_radius = 90.0
 homing_turn_growth_degrees = 900.0
 
-[sub_resource type="Resource" id="WeaponLevel_lv3"]
+[sub_resource type="Resource" id="WeaponLevel_lv2"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 3.8
+damage = 2
 projectile_speed = 1100.0
 projectile_size = Vector2(18, 30)
 projectile_shape = 2
 projectile_count = 5
+homing_turn_degrees = 330.0
+projectile_lifetime = 2.0
+aim_seconds = 0.35
+wave_cooldown_seconds = 1.05
+launch_radius = 90.0
+homing_turn_growth_degrees = 900.0
+
+[sub_resource type="Resource" id="WeaponLevel_lv3"]
+script = ExtResource("2_level")
+damage = 2
+projectile_speed = 1100.0
+projectile_size = Vector2(18, 30)
+projectile_shape = 2
+projectile_count = 6
 homing_turn_degrees = 360.0
 projectile_lifetime = 2.0
-wave_spacing_seconds = 0.025
-launch_radius = 60.0
-launch_speed = 500.0
-homing_delay_seconds = 0.3
+aim_seconds = 0.35
+wave_cooldown_seconds = 0.85
+launch_radius = 90.0
 homing_turn_growth_degrees = 900.0
 
 [sub_resource type="Resource" id="WeaponLevel_lv4"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 3.9
+damage = 2
 projectile_speed = 1100.0
 projectile_size = Vector2(18, 30)
 projectile_shape = 2
 projectile_count = 7
 homing_turn_degrees = 400.0
 projectile_lifetime = 2.0
-wave_spacing_seconds = 0.025
-launch_radius = 60.0
-launch_speed = 500.0
-homing_delay_seconds = 0.3
+aim_seconds = 0.35
+wave_cooldown_seconds = 0.75
+launch_radius = 90.0
 homing_turn_growth_degrees = 900.0
 
 [sub_resource type="Resource" id="WeaponLevel_lv5"]
 script = ExtResource("2_level")
-damage = 1
-fire_rate = 4.0
+damage = 2
 projectile_speed = 1100.0
 projectile_size = Vector2(18, 30)
 projectile_shape = 2
 projectile_count = 8
 homing_turn_degrees = 450.0
 projectile_lifetime = 2.0
-wave_spacing_seconds = 0.025
-launch_radius = 60.0
-launch_speed = 500.0
-homing_delay_seconds = 0.3
+aim_seconds = 0.35
+wave_cooldown_seconds = 0.65
+launch_radius = 90.0
 homing_turn_growth_degrees = 900.0
 
 [resource]

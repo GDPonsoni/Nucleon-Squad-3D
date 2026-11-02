@@ -4,7 +4,7 @@ extends Resource
 
 @export var damage: int = 1
 
-@export_group("Projéteis (Leque, Mísseis)")  # nos Mísseis: fire_rate = ondas/s, count = mísseis por onda
+@export_group("Projéteis (Leque, Mísseis)")  # nos Mísseis, count = mísseis por onda
 @export var fire_rate: float = 8.0  # disparos por segundo
 @export var projectile_speed: float = 2000.0
 @export var projectile_size: Vector2 = Vector2(10.0, 32.0)
@@ -15,10 +15,9 @@ extends Resource
 @export var projectile_lifetime: float = 0.0  # segundos (0 = até sair da tela)
 
 @export_group("Mísseis em ondas")
-@export var wave_spacing_seconds: float = 0.025  # entre mísseis da mesma onda
-@export var launch_radius: float = 60.0  # distância da nave onde o míssil surge
-@export var launch_speed: float = 500.0  # velocidade ao se afastar da nave
-@export var homing_delay_seconds: float = 0.3  # tempo se afastando antes de perseguir
+@export var aim_seconds: float = 0.35  # a onda surge e mira antes de disparar
+@export var wave_cooldown_seconds: float = 1.0  # pausa entre o disparo e a próxima onda
+@export var launch_radius: float = 90.0  # raio do anel onde os mísseis surgem
 @export var homing_turn_growth_degrees: float = 0.0  # aumento do giro por segundo ao perseguir
 
 @export_group("Raio")

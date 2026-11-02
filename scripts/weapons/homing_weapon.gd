@@ -1,40 +1,67 @@
 class_name HomingWeapon
 extends Weapon
-## Mísseis em ondas: cada onda solta N mísseis em volta da nave, um após o outro,
-## girando como um relógio. Eles se afastam devagar e só depois perseguem o alvo.
+## Mísseis em ondas: a onda surge em anel ao redor da nave, mira por um instante
+## e dispara de uma vez; a próxima onda só surge depois de uma pausa.
 
-var _cooldown: float = 0.0
-var _pending: int = 0  # mísseis que faltam na onda atual
-var _next_launch: float = 0.0
-var _angle: float = -PI * 0.5  # continua entre ondas (efeito espiral)
+enum Phase { COOLDOWN, AIMING }
+
+var _phase: Phase = Phase.COOLDOWN
+var _timer: float = 0.0
+var _aim_angle: float = -PI * 0.5  # direção para onde os mísseis da onda apontam
+
+
+func set_level(number: int) -> void:
+	super(number)
+	_phase = Phase.COOLDOWN
+	_timer = 0.0
 
 
 func _process(delta: float) -> void:
 	# delta escalado: as ondas também desaceleram na câmera lenta
-	_cooldown -= delta
-	if _cooldown <= 0.0 and _pending == 0:
-		_cooldown += 1.0 / stats.fire_rate
-		_pending = stats.projectile_count
-		_next_launch = 0.0
+	_timer -= delta
+	if _phase == Phase.COOLDOWN:
+		if _timer <= 0.0:
+			_phase = Phase.AIMING
+			_timer = stats.aim_seconds
+	else:
+		var target: Enemy = context.nearest_enemy(global_position)
+		var goal: float = -PI * 0.5 if target == null else (target.position - global_position).angle()
+		_aim_angle = rotate_toward(_aim_angle, goal, TAU * delta)
+		if _timer <= 0.0:
+			_launch_wave()
+			_phase = Phase.COOLDOWN
+			_timer = stats.wave_cooldown_seconds
+	queue_redraw()
 
-	_next_launch -= delta
-	while _pending > 0 and _next_launch <= 0.0:
-		_launch()
-		_pending -= 1
-		_next_launch += stats.wave_spacing_seconds
+
+func _launch_wave() -> void:
+	var dir := Vector2.from_angle(_aim_angle)
+	for i in stats.projectile_count:
+		var bullet := context.player_bullets.acquire() as Bullet
+		if bullet == null:
+			return
+		bullet.activate(global_position + _slot(i), dir * stats.projectile_speed, stats.damage,
+			stats.projectile_size, data.color, stats.projectile_shape)
+		bullet.life_left = stats.projectile_lifetime
+		bullet.homing_turn_rate = deg_to_rad(stats.homing_turn_degrees)
+		bullet.homing_turn_growth = deg_to_rad(stats.homing_turn_growth_degrees)
+		bullet.target_finder = context.nearest_enemy
 
 
-func _launch() -> void:
-	var dir := Vector2.from_angle(_angle)
-	_angle = wrapf(_angle + TAU / stats.projectile_count, 0.0, TAU)
-	var bullet := context.player_bullets.acquire() as Bullet
-	if bullet == null:
+## Posição de cada míssil no anel, relativa à nave.
+func _slot(index: int) -> Vector2:
+	return Vector2.from_angle(-PI * 0.5 + TAU * index / stats.projectile_count) * stats.launch_radius
+
+
+func _draw() -> void:
+	if _phase != Phase.AIMING:
 		return
-	bullet.activate(global_position + dir * stats.launch_radius, dir * stats.launch_speed, stats.damage,
-		stats.projectile_size, data.color, stats.projectile_shape)
-	bullet.life_left = stats.projectile_lifetime
-	bullet.homing_turn_rate = deg_to_rad(stats.homing_turn_degrees)
-	bullet.homing_turn_growth = deg_to_rad(stats.homing_turn_growth_degrees)
-	bullet.homing_delay = stats.homing_delay_seconds
-	bullet.cruise_speed = stats.projectile_speed
-	bullet.target_finder = context.nearest_enemy
+	# Os mísseis crescem enquanto miram
+	var grow: float = 1.0 - clampf(_timer / stats.aim_seconds, 0.0, 1.0)
+	var half: Vector2 = stats.projectile_size * 0.5 * lerpf(0.3, 1.0, grow)
+	for i in stats.projectile_count:
+		draw_set_transform(_slot(i), _aim_angle + PI * 0.5)
+		draw_colored_polygon(PackedVector2Array([
+			Vector2(0.0, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y),
+		]), data.color)
+	draw_set_transform(Vector2.ZERO)
