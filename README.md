@@ -145,7 +145,7 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 
 | Pasta | Conteúdo |
 |---|---|
-| `data/weapons/` | armas: tipo, cor e os 5 níveis (dano, cadência, leque, feixes, mísseis, orbitais) |
+| `data/weapons/` | armas: tipo, cor e os 5 níveis (dano, cadência, leque, feixes, ondas de mísseis, orbitais) |
 | `data/bodies/` | corpos: formato (pontos), cor e arma |
 | `data/formations/` | formação usada na partida (lista de corpos, qualquer quantidade) |
 | `data/enemies/` | inimigos: vida, velocidade, tamanho, tiro |

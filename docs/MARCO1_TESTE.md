@@ -7,7 +7,7 @@ Corpos trocáveis, primeiro inimigo, dano, power-ups com 5 níveis de arma e fun
 | Item | Como funciona |
 |---|---|
 | **4 corpos** | Raio (ciano), Leque (verde), Mísseis (laranja) e Órbita (roxo). Formato e arma vêm de `data/bodies/` e `data/weapons/`. |
-| **Armas (5 níveis)** | **Raio:** feixe contínuo que para no primeiro inimigo; 1 → 4 feixes e raio grande no nível 5. **Leque:** 3 → 7 tiros, abrindo de 24° a 60°. **Mísseis:** 1 → 5 teleguiados, com mais giro. **Órbita:** 1 → 4 orbitais e anel de 8 no nível 5; causam dano por contato e **destroem tiros inimigos**. |
+| **Armas (5 níveis)** | **Raio:** feixe contínuo que para no primeiro inimigo; 1 → 4 feixes e raio grande no nível 5. **Leque:** 3 → 7 tiros, abrindo de 24° a 60°. **Mísseis:** ondas de 2 → 8 mísseis que saem em sequência em volta da nave (espiral), se afastam por 0,3 s e depois perseguem o alvo. **Órbita:** 1 → 4 orbitais e anel de 8 no nível 5; causam dano por contato e **destroem tiros inimigos**. |
 | **Power-ups** | Losango dourado com "+" que cai a cada 8 inimigos destruídos (no lugar do último), desce devagar e é coletado encostando na nave. Sobe 1 nível da arma do **corpo ativo** (máx. 5). Perder o corpo zera o nível dele. |
 | **Troca de corpo** | Com o dedo solto (câmera lenta), os outros corpos vivos aparecem em arco ao redor da nave. Tocar num ícone troca o corpo (reconstrução + 2 s de invulnerabilidade, piscando). Tocar fora retoma com o corpo atual. |
 | **Inimigo** | Hexágono vermelho que desce reto e atira bolas rosa para baixo. 6 de vida. Surge a cada 0,9–1,8 s (`data/stages/stage_01.tres`). |
@@ -32,6 +32,7 @@ Corpos trocáveis, primeiro inimigo, dano, power-ups com 5 níveis de arma e fun
 - Os power-ups aparecem bem na tela (inclusive sobre o raio) e são fáceis de pegar?
 - O ritmo (1 a cada 8 inimigos) parece bom? No teste automático, uma arma chegou ao nível 5 em ~1 min de jogo agressivo.
 - Cada nível dá uma diferença perceptível? Qual arma ficou forte demais no nível 5?
+- **Mísseis em ondas:** a espiral em volta da nave fica bonita e legível? O atraso até perseguir (0,3 s) deixou a arma menos "roubada" sem ficar fraca?
 - Pegar power-up com um corpo e trocar: cada corpo guarda o próprio nível?
 
 **Inimigos e dano**
