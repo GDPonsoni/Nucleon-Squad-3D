@@ -33,7 +33,7 @@ assets/      imagens, áudio (placeholders até o Marco 2)
 
 ## Fluxo de trabalho
 
-- Trabalhe em **tarefas pequenas** e faça **um commit por mecânica funcional** (mensagem curta, em português).
+- Trabalhe em **tarefas pequenas** e faça **um commit por mecânica funcional**, no padrão **Conventional Commits** em português (ex.: `feat(player): implementa troca de corpo`). Tipos e escopos em `CONTRIBUTING.md`.
 - Você **não consegue rodar o jogo no celular**: ao terminar uma tarefa, diga em 2–4 linhas **o que o Gabriel deve testar no S24** e o que observar.
 - Se o executável do Godot estiver disponível (`godot` no PATH ou caminho informado), valide scripts com `godot --headless --path . --quit` e corrija erros antes de entregar.
 - **Não adicione conteúdo fora do marco atual.** Se algo for ambíguo ou o GDD estiver em aberto ([EM ABERTO]), **pergunte** em vez de assumir.
