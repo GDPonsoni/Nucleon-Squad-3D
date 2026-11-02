@@ -20,3 +20,8 @@ RESULT_POWERUPS,Power-ups,Power-ups
 RESULT_TIME,Time,Tempo
 RESULT_NEW_RECORD,New record!,Novo recorde!
 RESULT_STAGE_SELECT,Select stage,Escolher fase
+BOSS_WARNING,WARNING: BOSS AHEAD,ALERTA: CHEFE À FRENTE
+BOSS_1_NAME,Sentinel,Sentinela
+BOSS_2_NAME,Forge,Forja
+BOSS_3_NAME,Umbra,Umbra
+PLANET_3_NAME,Abyss,Abismo

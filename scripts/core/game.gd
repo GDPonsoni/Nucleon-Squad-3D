@@ -19,7 +19,8 @@ var pause_menu: PauseMenu
 var results_menu: ResultsMenu
 var hud: Hud
 
-var _spawning_done: bool = false
+var _spawning_done: bool = false  # fase pode terminar (tempo acabou e não há chefe vivo)
+var boss: Boss
 var _clear_wait: float = 0.0
 var _match_over: bool = false
 
@@ -94,7 +95,7 @@ func _ready() -> void:
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
 	spawner.setup(Session.stage(), enemies)
-	spawner.finished.connect(func() -> void: _spawning_done = true)
+	spawner.finished.connect(_on_spawning_finished)
 
 	time_controller = TimeController.new()
 	time_controller.name = "TimeController"
@@ -145,6 +146,45 @@ func _process(delta: float) -> void:
 		pause_menu.disable()
 		var record: bool = SaveGame.complete_stage(Session.linear_index(), Session.stage().id, state.score)
 		results_menu.show_stage_clear(state, spawner.elapsed(), record)
+
+
+## Tempo da fase acabou: sem chefe, a fase termina; com chefe, ele entra após o aviso.
+func _on_spawning_finished() -> void:
+	var boss_data: BossData = Session.stage().boss
+	if boss_data == null:
+		_spawning_done = true
+		return
+	hud.show_warning("BOSS_WARNING")
+	await get_tree().create_timer(Params.boss_warning_seconds, false).timeout
+	if _match_over:
+		return
+	boss = Boss.new()
+	boss.name = "Boss"
+	add_child(boss)
+	# Desenhado junto dos inimigos, abaixo da nave e dos tiros
+	move_child(boss, enemies.get_index() + 1)
+	boss.setup(boss_data, enemy_bullets, context, spawner.spawn_wave)
+	boss.killed.connect(_on_boss_killed)
+	context.boss = boss
+	hud.set_boss(boss, tr(boss_data.name_key))
+
+
+## Chefe destruído: explosões em sequência, tiros inimigos somem e a fase termina.
+func _on_boss_killed(killed: Enemy) -> void:
+	state.add_kill(killed.points())
+	context.boss = null
+	hud.set_boss(null, "")
+	for item in enemy_bullets.active.duplicate():
+		enemy_bullets.release(item)
+	var center: Vector2 = killed.position
+	var radius: float = killed.radius
+	var color: Color = killed.tint()
+	killed.queue_free()
+	boss = null
+	for i in Params.boss_explosions:
+		_explode(center + Vector2.from_angle(randf() * TAU) * randf() * radius, radius * randf_range(0.5, 1.2), color)
+		await get_tree().create_timer(Params.boss_explosion_gap, false).timeout
+	_spawning_done = true
 
 
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
@@ -203,8 +243,8 @@ func _create_enemy() -> PoolItem:
 	enemy.bullets = enemy_bullets
 	enemy.context = context
 	enemy.killed.connect(dropper.on_enemy_killed)
-	enemy.killed.connect(func(killed: Enemy) -> void: state.add_kill(killed.data.score))
-	enemy.killed.connect(func(killed: Enemy) -> void: _explode(killed.position, killed.radius, killed.data.color))
+	enemy.killed.connect(func(killed: Enemy) -> void: state.add_kill(killed.points()))
+	enemy.killed.connect(func(killed: Enemy) -> void: _explode(killed.position, killed.radius, killed.tint()))
 	return enemy
 
 

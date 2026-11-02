@@ -3,7 +3,7 @@ extends CanvasLayer
 ## HUD da partida.
 ## Topo: progresso da fase, pontuação e nome da fase.
 ## Base esquerda: nível da arma e hits do corpo ativo. Base direita: formação.
-## Flash vermelho na tela ao levar hit.
+## Flash vermelho na tela ao levar hit. Com chefe: barra de vida dele no topo.
 
 var _state: MatchState
 var _spawner: EnemySpawner
@@ -12,6 +12,9 @@ var _score_label: Label
 var _stage_label: Label
 var _flash: ColorRect
 var _panel_style: StyleBoxFlat
+var _boss: Boss
+var _boss_label: Label
+var _warning: Label
 
 
 func _ready() -> void:
@@ -36,6 +39,23 @@ func _ready() -> void:
 	_stage_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_canvas.add_child(_stage_label)
 
+	_boss_label = UiFactory.make_subtitle("")
+	_boss_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	_boss_label.add_theme_font_size_override("font_size", Params.hud_boss_name_font_size)
+	_boss_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_boss_label.offset_top = Params.hud_progress_y + Params.hud_boss_bar_height + 6.0
+	_boss_label.visible = false
+	_canvas.add_child(_boss_label)
+
+	_warning = UiFactory.make_title("")
+	_warning.set_anchors_preset(Control.PRESET_CENTER)
+	_warning.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_warning.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_warning.add_theme_color_override("font_color", Params.hud_warning_color)
+	_warning.add_theme_font_size_override("font_size", Params.hud_score_font_size)
+	_warning.visible = false
+	_canvas.add_child(_warning)
+
 	_flash = ColorRect.new()
 	_flash.color = Color(Params.hud_hit_flash_color, 0.0)
 	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -53,6 +73,25 @@ func setup(state: MatchState, spawner: EnemySpawner, stage_text: String) -> void
 	_stage_label.text = stage_text
 	state.score_changed.connect(_on_score_changed)
 	_on_score_changed(state.score)
+
+
+## Mostra a barra de vida do chefe (null esconde).
+func set_boss(boss: Boss, boss_name: String) -> void:
+	_boss = boss
+	_boss_label.text = boss_name
+	_boss_label.visible = boss != null
+
+
+## Aviso piscando no centro da tela.
+func show_warning(text_key: String) -> void:
+	_warning.text = text_key
+	_warning.visible = true
+	_warning.modulate.a = 0.0
+	var tween := create_tween()
+	for i in Params.hud_warning_blinks:
+		tween.tween_property(_warning, "modulate:a", 1.0, Params.boss_warning_seconds / Params.hud_warning_blinks * 0.5)
+		tween.tween_property(_warning, "modulate:a", 0.15, Params.boss_warning_seconds / Params.hud_warning_blinks * 0.5)
+	tween.tween_callback(_warning.hide)
 
 
 ## Flash vermelho rápido (em tempo real, mesmo na câmera lenta).
@@ -75,7 +114,10 @@ func _on_score_changed(score: int) -> void:
 func _draw_hud() -> void:
 	if _state == null:
 		return
-	_draw_progress()
+	if _boss != null and is_instance_valid(_boss):
+		_draw_boss_bar()
+	else:
+		_draw_progress()
 	var bottom: float = _canvas.size.y - Params.hud_margin.y
 	_draw_hits_and_level(bottom)
 	_draw_formation(bottom)
@@ -91,6 +133,18 @@ func _draw_progress() -> void:
 	var filled := Rect2(rect.position, Vector2(rect.size.x * _spawner.progress(), rect.size.y))
 	if filled.size.x > 0.0:
 		_draw_round_rect(filled, Params.ui_accent_color, radius)
+
+
+## Barra de vida do chefe no lugar do progresso da fase.
+func _draw_boss_bar() -> void:
+	var left: float = Params.hud_margin.x
+	var right: float = _canvas.size.x - Params.hud_margin.x
+	var rect := Rect2(left, Params.hud_progress_y, right - left, Params.hud_boss_bar_height)
+	var radius: float = Params.hud_boss_bar_height * 0.5
+	_draw_round_rect(rect, Params.hud_panel_color, radius)
+	var filled := Rect2(rect.position, Vector2(rect.size.x * _boss.health_ratio(), rect.size.y))
+	if filled.size.x > 0.0:
+		_draw_round_rect(filled, _boss.tint(), radius)
 
 
 ## Losangos do nível da arma em cima e quadrados dos hits embaixo, sobre um painel.

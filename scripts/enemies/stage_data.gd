@@ -8,6 +8,7 @@ extends Resource
 @export var enemies: Array[EnemyData] = []
 @export var spawn_weights: PackedFloat32Array = []  # chance relativa de cada inimigo (mesma ordem)
 @export var waves: Array[WaveData] = []  # ondas em formação em momentos fixos
+@export var boss: BossData  # chefe que entra quando o tempo acaba (opcional)
 @export var start_delay: float = 1.5
 @export var spawn_interval_min: float = 0.9
 @export var spawn_interval_max: float = 1.8

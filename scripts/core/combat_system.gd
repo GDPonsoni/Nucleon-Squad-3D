@@ -27,12 +27,14 @@ func _process(_delta: float) -> void:
 
 func _player_bullets_vs_enemies() -> void:
 	var bullets: Array[PoolItem] = _context.player_bullets.active
-	var enemies: Array[PoolItem] = _context.enemies.active
+	var enemies: Array[PoolItem] = _context.hostiles()
 	# De trás para frente: o projétil atual pode ser devolvido ao pool
 	for i in range(bullets.size() - 1, -1, -1):
 		var bullet := bullets[i] as Bullet
 		for item in enemies:
 			var enemy := item as Enemy
+			if not enemy.visible:
+				continue
 			var reach: float = bullet.radius + enemy.radius
 			if bullet.position.distance_squared_to(enemy.position) <= reach * reach:
 				_context.player_bullets.release(bullet)
@@ -63,12 +65,11 @@ func _hazards_vs_player() -> void:
 			player_hit.emit(bullet.damage)
 			return
 
-	for item in _context.enemies.active:
+	for item in _context.hostiles():
 		var enemy := item as Enemy
 		var reach: float = enemy.radius + Params.nucleus_radius
-		if enemy.position.distance_squared_to(center) <= reach * reach:
-			# A colisão destrói o inimigo
-			var damage: int = enemy.data.contact_damage
-			enemy.take_damage(enemy.hp)
+		if enemy.visible and enemy.position.distance_squared_to(center) <= reach * reach:
+			var damage: int = enemy.contact_damage()
+			enemy.on_player_contact()
 			player_hit.emit(damage)
 			return

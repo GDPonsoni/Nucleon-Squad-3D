@@ -42,6 +42,23 @@ func is_on_screen() -> bool:
 	return get_viewport_rect().grow(-radius * 0.5).has_point(position)
 
 
+func contact_damage() -> int:
+	return data.contact_damage
+
+
+func points() -> int:
+	return data.score
+
+
+func tint() -> Color:
+	return data.color
+
+
+## Encostou na nave: inimigos comuns são destruídos (o chefe sobrescreve).
+func on_player_contact() -> void:
+	take_damage(hp)
+
+
 func take_damage(amount: int) -> void:
 	if not visible:
 		return
@@ -73,6 +90,10 @@ func _process(delta: float) -> void:
 			_fire_cooldown += data.fire_interval
 			_shoot()
 
+	_update_flash(delta)
+
+
+func _update_flash(delta: float) -> void:
 	if _flash_left > 0.0:
 		_flash_left -= delta
 		if _flash_left <= 0.0:

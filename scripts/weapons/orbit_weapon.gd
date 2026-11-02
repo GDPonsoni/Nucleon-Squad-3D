@@ -15,7 +15,7 @@ func _process(delta: float) -> void:
 		if _cooldowns[enemy] <= 0.0 or not enemy.visible:
 			_cooldowns.erase(enemy)
 
-	var enemies: Array[PoolItem] = context.enemies.active
+	var enemies: Array[PoolItem] = context.hostiles()
 	for i in stats.orbit_count:
 		var center: Vector2 = global_position + _offset(i)
 		if stats.clears_projectiles:

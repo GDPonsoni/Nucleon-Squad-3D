@@ -26,9 +26,9 @@ func _process(delta: float) -> void:
 		var half_width: float = stats.beam_widths[k] * 0.5
 		var target: Enemy = null
 		var hit: float = MAX_LENGTH
-		for item in context.enemies.active:
+		for item in context.hostiles():
 			var enemy := item as Enemy
-			if not enemy.is_on_screen():
+			if not enemy.visible or not enemy.is_on_screen():
 				continue
 			var rel: Vector2 = enemy.position - origin
 			var along: float = rel.dot(dir)
