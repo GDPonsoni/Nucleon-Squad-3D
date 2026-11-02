@@ -14,3 +14,9 @@ STAGE_NEXT,Next stage,Próxima fase
 STAGE_SELECT_TITLE,Select stage,Escolha a fase
 STAGE_BEST,Best %d,Recorde %d
 MENU_BACK,Back,Voltar
+RESULT_SCORE,Score,Pontos
+RESULT_KILLS,Enemies destroyed,Inimigos destruídos
+RESULT_POWERUPS,Power-ups,Power-ups
+RESULT_TIME,Time,Tempo
+RESULT_NEW_RECORD,New record!,Novo recorde!
+RESULT_STAGE_SELECT,Select stage,Escolher fase

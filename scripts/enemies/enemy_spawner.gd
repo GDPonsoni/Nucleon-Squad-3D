@@ -19,6 +19,11 @@ func setup(stage: StageData, enemies: NodePool) -> void:
 	_cooldown = stage.start_delay
 
 
+## Segundos de jogo desde o início da fase.
+func elapsed() -> float:
+	return _elapsed
+
+
 ## 0 a 1 ao longo da duração da fase.
 func progress() -> float:
 	return clampf(_elapsed / _stage.duration_seconds, 0.0, 1.0)

@@ -15,8 +15,7 @@ var combat: CombatSystem
 var power_ups: NodePool
 var dropper: PowerUpDropper
 var pause_menu: PauseMenu
-var game_over_menu: GameOverMenu
-var stage_clear_menu: StageClearMenu
+var results_menu: ResultsMenu
 var hud: Hud
 
 var _spawning_done: bool = false
@@ -113,13 +112,9 @@ func _ready() -> void:
 	pause_menu.name = "PauseMenu"
 	add_child(pause_menu)
 
-	game_over_menu = GameOverMenu.new()
-	game_over_menu.name = "GameOverMenu"
-	add_child(game_over_menu)
-
-	stage_clear_menu = StageClearMenu.new()
-	stage_clear_menu.name = "StageClearMenu"
-	add_child(stage_clear_menu)
+	results_menu = ResultsMenu.new()
+	results_menu.name = "ResultsMenu"
+	add_child(results_menu)
 
 	if Params.debug_overlay_enabled and OS.is_debug_build():
 		var overlay := DebugOverlay.new()
@@ -138,8 +133,8 @@ func _process(delta: float) -> void:
 	if enemies.active.is_empty() or _clear_wait >= Params.stage_clear_timeout:
 		_match_over = true
 		pause_menu.disable()
-		SaveGame.complete_stage(Session.linear_index(), Session.stage().id, state.score)
-		stage_clear_menu.open()
+		var record: bool = SaveGame.complete_stage(Session.linear_index(), Session.stage().id, state.score)
+		results_menu.show_stage_clear(state, spawner.elapsed(), record)
 
 
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
@@ -182,7 +177,7 @@ func _on_game_over() -> void:
 	_match_over = true
 	pause_menu.disable()
 	await get_tree().create_timer(Params.game_over_delay_seconds, false).timeout
-	game_over_menu.open()
+	results_menu.show_game_over(state, spawner.elapsed())
 
 
 func _create_enemy() -> PoolItem:

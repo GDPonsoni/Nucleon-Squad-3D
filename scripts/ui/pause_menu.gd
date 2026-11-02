@@ -10,6 +10,7 @@ var _enabled: bool = true
 func _ready() -> void:
 	# Continua recebendo toques com a árvore pausada
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	layer = 50
 
 	_pause_button = Button.new()
 	_pause_button.focus_mode = Control.FOCUS_NONE

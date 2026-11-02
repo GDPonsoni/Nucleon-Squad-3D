@@ -10,7 +10,7 @@ var _label: Label
 
 
 func _ready() -> void:
-	layer = 100
+	layer = 40  # acima do HUD, abaixo de pausa e resultados
 	_label = Label.new()
 	_label.position = Params.debug_margin
 	_label.mouse_filter = Control.MOUSE_FILTER_IGNORE

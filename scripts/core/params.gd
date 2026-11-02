@@ -24,6 +24,7 @@ var ui_button_padding: float = 24.0
 var ui_panel_padding: float = 48.0
 var stage_button_size: Vector2 = Vector2(260.0, 190.0)
 var stage_record_font_size: int = 32
+var results_column_gap: int = 60
 var stage_select_spacing: int = 28
 var stage_lock_size: float = 34.0
 var debug_unlock_taps: int = 5  # toques no título do seletor (build de debug)
