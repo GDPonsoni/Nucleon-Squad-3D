@@ -1,6 +1,6 @@
 # Marco 1 — Como testar
 
-Corpos trocáveis com 5 níveis de arma, power-ups, 4 tipos de inimigo, 2 planetas com 3 fases cada, salvamento local e interface nova. Como abrir, exportar e instalar no S24: veja o [`MARCO0_TESTE.md`](MARCO0_TESTE.md).
+Corpos trocáveis com 5 níveis de arma, power-ups, 5 tipos de inimigo, ondas em formação, chefes, 3 capítulos com 3 fases cada, salvamento local e interface nova. Como abrir, exportar e instalar no S24: veja o [`MARCO0_TESTE.md`](MARCO0_TESTE.md).
 
 ## Fluxo de telas
 
@@ -20,7 +20,10 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 4 tipos de inimigo, 2 planet
 | **Órbita** | 1 → 4 orbitais e anel de 8 no nível 5. Dano por contato e **destroem tiros inimigos**. |
 | **Power-ups** | Losango dourado a cada 8 inimigos destruídos. Sobe 1 nível da arma do corpo ativo (máx. 5). Perder o corpo zera o nível dele. |
 | **Inimigos** | **Drone** (vermelho, desce e atira reto). **Mirador** (magenta, losango): entra pela lateral, cruza a tela e atira mirando a nave. **Kamikaze** (amarelo, triângulo): desce um pouco e mergulha na nave. **Tanque** (grande, octógono): lento, 60 de vida, solta anéis de 12 tiros girando e tira **2 hits** se encostar. |
-| **Planetas e fases** | **Aurora** (azul): 1-1 só drones, 1-2 + miradores, 1-3 + kamikazes. **Vulcânia** (fundo avermelhado): mais rápido e denso, tanques a partir da 2-2. Duração: 1:30 a 3:00. |
+| **Atirador** | Pentágono verde-água: desce até o alto da tela, para por 4 s disparando leques de 5 tiros mirados e depois segue descendo. Aparece no capítulo 3. |
+| **Ondas em formação** | Além dos surgimentos aleatórios, cada fase tem ondas em momentos fixos: **V de kamikazes** que mergulham um após o outro, fileiras, colunas e Miradores entrando pela lateral em sequência. |
+| **Capítulos e fases** | **Aurora** (azul, 1:30 a 2:30), **Vulcânia** (avermelhado, 2:30 a 3:00) e **Abismo** (violeta, **4:00, 4:30 e 5:00**, todos os inimigos e de 10 a 13 ondas por fase). |
+| **Chefes** | No fim da última fase de cada capítulo: aviso "ALERTA: CHEFE À FRENTE", o chefe entra (invulnerável até parar) e a barra de vida dele aparece no topo. Muda de ataque conforme a vida cai. A fase só termina quando ele é destruído. **Sentinela** (1-3): rajadas e anel, depois espiral. **Forja** (2-3): leque largo e kamikazes, depois anel giratório. **Umbra** (3-3): três fases com espirais, anéis, leques e Miradores. Encostar no chefe tira 2 hits. |
 | **Troca de corpo** | Com o dedo solto, os outros corpos vivos aparecem **em colunas ao lado da nave** (fora do caminho dos raios; perto de uma borda, vão para o lado livre). Cada ícone mostra os hits e, num anel dourado, o nível da arma. Tocar num ícone troca o corpo (+2 s de invulnerabilidade). |
 | **Núcleo e câmera lenta** | O núcleo (hitbox) tem borda escura e um anel branco pulsando, mais forte na câmera lenta. Na câmera lenta, uma **moldura azul** aparece nas bordas da tela. Ao subir o nível da arma, um anel dourado se expande em volta da nave. |
 | **Dano** | Hitbox = **núcleo branco**. Tiro ou encostar = 1 hit (Tanque: 2). 1 s de invulnerabilidade após o hit. **Flash vermelho** na tela. |
@@ -38,6 +41,12 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 4 tipos de inimigo, 2 planet
 - **Mísseis:** ficou menos "roubado"? O anel mirando é legível? A pausa entre ondas parece boa?
 - **Raio:** cada nível muda visivelmente (mais grosso, novos feixes, ângulo pequeno)? O ângulo de até 9° ficou bom?
 - **Leque:** dá para sentir a diferença entre níveis com projétil maior e níveis com mais fileiras?
+
+**Ondas e chefes**
+- As ondas de kamikaze em V são desviáveis? O mergulho em sequência fica claro?
+- Os chefes são legíveis (espirais e anéis) e a duração da luta é boa? No teste automático: ~30 s com arma no nível 5, ~75–100 s com arma no nível 3.
+- O aviso antes do chefe chama atenção suficiente?
+- As fases de 4 a 5 minutos do Abismo ficaram longas demais para jogar no celular?
 
 **Inimigos e fases**
 - A dificuldade sobe de forma sensata de 1-1 até 2-3? Alguma fase ficou injusta ou fácil demais?
@@ -60,7 +69,8 @@ Corpos trocáveis com 5 níveis de arma, power-ups, 4 tipos de inimigo, 2 planet
 | O quê | Onde |
 |---|---|
 | Inimigos (vida, velocidade, movimento, tiro, pontos) | `data/enemies/*.tres` |
-| Fases (duração, inimigos, pesos, frequência) | `data/stages/*.tres` |
+| Fases (duração, inimigos, pesos, frequência, ondas, chefe) | `data/stages/*.tres` (ondas como sub-recursos `WaveData`) |
+| Chefes (vida, movimento, fases e ataques) | `data/bosses/*.tres` |
 | Planetas (nome, cores, fases) e ordem da campanha | `data/planets/*.tres`, `data/campaign.tres` |
 | Valores de cada nível de arma | `data/weapons/*.tres` (um sub-recurso por nível) |
 | Formato e cor dos corpos / formação | `data/bodies/*.tres`, `data/formations/default.tres` |
