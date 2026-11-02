@@ -1,0 +1,32 @@
+name: 🎮 Playtest no celular
+description: Registro de uma sessão de teste no aparelho
+title: "playtest: "
+labels: [playtest]
+body:
+  - type: input
+    id: build
+    attributes:
+      label: Build / commit
+      placeholder: Marco 0, commit abc1234
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Aparelho
+      placeholder: Galaxy S24, 120 Hz
+  - type: input
+    id: fps
+    attributes:
+      label: FPS observado
+      placeholder: 60 estável / cai para 45 ao...
+  - type: textarea
+    id: feel
+    attributes:
+      label: Sensação de controle e câmera lenta
+      description: Arraste relativo, resposta na borda, suavidade da transição.
+  - type: textarea
+    id: params
+    attributes:
+      label: Ajustes sugeridos em params.gd
+      placeholder: slow_time_scale 0.3 -> 0.25

@@ -1,0 +1,38 @@
+name: 🐞 Bug
+description: Algo não funciona como esperado
+title: "fix: "
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: O que aconteceu
+      description: Comportamento observado e o esperado.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Como reproduzir
+      placeholder: |
+        1. Abrir o jogo
+        2. Soltar o dedo durante...
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Onde
+      options: [Celular (Android), PC (editor), PC (executável)]
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Aparelho / versão
+      placeholder: Galaxy S24, Android 15, commit abc1234
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs ou capturas
+      description: Saída do Godot, `adb logcat -s godot` ou screenshots.

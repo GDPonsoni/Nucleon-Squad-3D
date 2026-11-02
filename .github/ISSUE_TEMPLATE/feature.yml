@@ -1,0 +1,24 @@
+name: ✨ Funcionalidade
+description: Nova mecânica ou melhoria, ligada a um marco do GDD
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: dropdown
+    id: milestone
+    attributes:
+      label: Marco
+      options: [Marco 0, Marco 1, Marco 2, Marco 3, Marco 4]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: Descrição
+      description: O que fazer e a seção do GDD relacionada.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Critério de pronto
+      description: Como saber que está pronto (o que testar no celular).
