@@ -38,7 +38,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 **O que já existe:**
 - **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
-- **Marco 1 (em teste):** 6 naves (esquadrão de 4 montado numa tela própria) com 5 níveis de arma, especial e troca na câmera lenta, power-ups, 5 tipos de inimigo (Drone, Mirador, Kamikaze, Tanque, Atirador), ondas em formação, chefes no fim de cada capítulo, 3 capítulos com 3 fases cada (até 5 min), seletor de fases com desbloqueio e recordes salvos no aparelho, HUD com progresso e pontuação, telas de resultado e interface com tema próprio. Tudo com placeholders desenhados por código.
+- **Marco 1 (em teste):** 6 naves (esquadrão de 4 montado numa tela própria) com 5 níveis de arma, especial e troca na câmera lenta, power-ups, 7 tipos de inimigo (Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador, Caçador) com tiros que se dividem e tiros perseguidores, ondas em formação, 4 chefes com fases e movimentos, 4 capítulos com 13 fases (até 5 min), seletor de fases com desbloqueio e recordes salvos no aparelho, HUD com progresso e pontuação, telas de resultado e interface com tema próprio. Tudo com placeholders desenhados por código.
 
 ---
 
@@ -161,7 +161,7 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 | `data/formations/` | esquadrão inicial (`default.tres`) e naves disponíveis (`roster.tres`) |
 | `data/enemies/` | inimigos: vida, pontos, movimento (descer, cruzar, mergulhar, parar) e tiro (reto, mirado, anel, leque) |
 | `data/stages/` | fases: duração, inimigos, pesos, intervalo entre surgimentos, ondas em formação e chefe |
-| `data/bosses/` | chefes: vida, movimento e fases de ataque (leque, anel/espiral, convocar ondas) |
+| `data/bosses/` | chefes: vida e fases (movimento: balanço, oito, perseguir; ataques: leque, anel/espiral, convocar ondas, tiros que se dividem ou perseguem) |
 | `data/planets/`, `data/campaign.tres` | planetas (nome, cores, fases) e ordem da campanha |
 
 ---
