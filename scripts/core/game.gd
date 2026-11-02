@@ -14,6 +14,7 @@ var spawner: EnemySpawner
 var combat: CombatSystem
 var power_ups: NodePool
 var dropper: PowerUpDropper
+var explosions: NodePool
 var pause_menu: PauseMenu
 var results_menu: ResultsMenu
 var hud: Hud
@@ -59,6 +60,11 @@ func _ready() -> void:
 	enemies.name = "Enemies"
 	add_child(enemies)
 	context.enemies = enemies
+
+	# Explosões acima dos inimigos e atrás da nave
+	explosions = NodePool.new(Explosion.new, Params.explosion_pool_size)
+	explosions.name = "Explosions"
+	add_child(explosions)
 
 	power_ups = NodePool.new(PowerUp.new, Params.powerup_pool_size)
 	power_ups.name = "PowerUps"
@@ -161,8 +167,9 @@ func _on_powerup_collected() -> void:
 		player.weapon.set_level(state.weapon_levels[state.current])
 
 
-## Corpo destruído: o núcleo racha e o jogador escolhe outro corpo vivo.
-func _on_body_destroyed(_index: int) -> void:
+## Corpo destruído: explode, o núcleo racha e o jogador escolhe outro corpo vivo.
+func _on_body_destroyed(index: int) -> void:
+	_explode(player.position, Params.ship_size.y * 0.5, state.bodies[index].color)
 	player.clear_body()
 	player.cracks = state.dead_count()
 	var alive: Array[int] = state.alive_indices()
@@ -180,12 +187,19 @@ func _on_game_over() -> void:
 	results_menu.show_game_over(state, spawner.elapsed())
 
 
+func _explode(pos: Vector2, radius: float, color: Color) -> void:
+	var explosion := explosions.acquire() as Explosion
+	if explosion != null:
+		explosion.activate(pos, radius, color)
+
+
 func _create_enemy() -> PoolItem:
 	var enemy := Enemy.new()
 	enemy.bullets = enemy_bullets
 	enemy.context = context
 	enemy.killed.connect(dropper.on_enemy_killed)
 	enemy.killed.connect(func(killed: Enemy) -> void: state.add_kill(killed.data.score))
+	enemy.killed.connect(func(killed: Enemy) -> void: _explode(killed.position, killed.radius, killed.data.color))
 	return enemy
 
 

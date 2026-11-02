@@ -111,6 +111,17 @@ var stage_clear_timeout: float = 6.0  # após o tempo da fase, espera no máximo
 var enemy_pool_size: int = 24
 var enemy_bullet_pool_size: int = 240
 var enemy_hit_flash_seconds: float = 0.06
+var explosion_pool_size: int = 24
+var explosion_seconds: float = 0.55  # para um inimigo de raio de referência
+var explosion_reference_radius: float = 48.0
+var explosion_shards: int = 14
+var explosion_shard_speed_min: float = 300.0
+var explosion_shard_speed_max: float = 800.0
+var explosion_shard_length: float = 0.5  # em relação ao raio
+var explosion_shard_width: float = 8.0
+var explosion_ring_growth: float = 1.8  # o anel cresce até ~2,3x o raio
+var explosion_ring_width: float = 16.0
+var explosion_flash_part: float = 0.2  # fração inicial com clarão branco
 var cross_band_top: float = 0.08  # faixa da tela (0-1) onde os inimigos laterais entram
 var cross_band_bottom: float = 0.45
 
