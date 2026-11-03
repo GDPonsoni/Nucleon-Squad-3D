@@ -170,7 +170,7 @@ Todos os valores de tuning ficam em um único arquivo, [`scripts/core/params.gd`
 
 ```
 docs/            GDD e roteiros de teste
-scenes/          cenas (.tscn) pequenas: menu (inicial), stage_select e game (partida)
+scenes/          cenas (.tscn) pequenas: menu (inicial), stage_select, squad (esquadrão) e game (partida)
 scripts/
   core/          params, sessão, save, partida, estado, colisão, câmera lenta, pools, fundo
   player/        nave (núcleo + corpo), toque, troca de corpo, BodyData
@@ -183,7 +183,9 @@ assets/          imagens e áudio (placeholders até o Marco 2)
 builds/          APKs exportados (não versionado)
 ```
 
-**Autoloads:** `Params` (tuning), `Session` (fase escolhida), `SaveGame` (progresso em `user://save.json`) e `SceneTransition` (fade entre telas).
+**Autoloads:** `Params` (tuning), `Session` (fase escolhida), `SaveGame` (progresso em `user://save.json`), `SceneTransition` (fade entre telas) e `AdService` (anúncio de revive, simulado por enquanto).
+
+**Estado atual, pendências e guia de retomada:** [`docs/ESTADO_ATUAL.md`](docs/ESTADO_ATUAL.md).
 
 **Princípios:** GDScript tipado, parâmetros centralizados em `Params`, dados fora do código, pooling desde o início e suporte a N corpos. Detalhes em [`CLAUDE.md`](CLAUDE.md).
 

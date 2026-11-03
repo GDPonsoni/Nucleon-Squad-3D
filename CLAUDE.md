@@ -2,6 +2,8 @@
 
 Jogo mobile 2D, shmup vertical (bullet hell), feito em **Godot 4 (GDScript)**, alvo Android (teste em Galaxy S24). O design completo está em `docs/GDD_Nucleon_Squad_v1.md`: leia antes de qualquer tarefa e siga o documento.
 
+**Retomando o projeto numa conversa nova?** Leia antes `docs/ESTADO_ATUAL.md`. Ele traz o caminho do Godot e do adb, os comandos de build e instalação, o que já existe, as armadilhas conhecidas e as pendências. Mantenha esse arquivo atualizado ao final de cada entrega.
+
 ## Regras do projeto
 
 - **Linguagem:** GDScript tipado (`var x: int`, `func f() -> void`). Não usar C#.
