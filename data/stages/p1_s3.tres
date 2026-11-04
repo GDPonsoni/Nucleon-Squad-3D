@@ -15,7 +15,7 @@ spacing = 100.0
 
 [sub_resource type="Resource" id="Resource_swwa6"]
 script = ExtResource("3_wave_script")
-time_seconds = 11.700000000000001
+time_seconds = 11.100000000000001
 enemy = ExtResource("4_drone")
 formation = 2
 interval = 0.42
@@ -25,7 +25,7 @@ sway_period = 2.6
 
 [sub_resource type="Resource" id="Resource_2nuno"]
 script = ExtResource("3_wave_script")
-time_seconds = 19.5
+time_seconds = 18.1
 enemy = ExtResource("5_aimer")
 formation = 3
 count = 3
@@ -35,7 +35,7 @@ y_ratio = 0.14
 
 [sub_resource type="Resource" id="Resource_lb46n"]
 script = ExtResource("3_wave_script")
-time_seconds = 27.200000000000003
+time_seconds = 25.200000000000003
 enemy = ExtResource("4_drone")
 formation = 4
 spacing = 125.0
@@ -43,14 +43,14 @@ side = 0
 
 [sub_resource type="Resource" id="Resource_ejwsw"]
 script = ExtResource("3_wave_script")
-time_seconds = 35.0
+time_seconds = 32.300000000000004
 enemy = ExtResource("6_kamikaze")
 count = 7
 spacing = 100.0
 
 [sub_resource type="Resource" id="Resource_pexq1"]
 script = ExtResource("3_wave_script")
-time_seconds = 42.7
+time_seconds = 39.300000000000004
 enemy = ExtResource("4_drone")
 formation = 2
 count = 6
@@ -61,7 +61,7 @@ sway_period = 2.6
 
 [sub_resource type="Resource" id="Resource_ldo18"]
 script = ExtResource("3_wave_script")
-time_seconds = 50.5
+time_seconds = 46.400000000000006
 enemy = ExtResource("5_aimer")
 formation = 3
 count = 4
@@ -71,7 +71,7 @@ y_ratio = 0.14
 
 [sub_resource type="Resource" id="Resource_pf5a5"]
 script = ExtResource("3_wave_script")
-time_seconds = 58.2
+time_seconds = 53.5
 enemy = ExtResource("4_drone")
 formation = 4
 count = 6
@@ -80,14 +80,14 @@ side = 1
 
 [sub_resource type="Resource" id="Resource_7yt5d"]
 script = ExtResource("3_wave_script")
-time_seconds = 66.0
+time_seconds = 60.5
 enemy = ExtResource("6_kamikaze")
 count = 9
 spacing = 100.0
 
 [sub_resource type="Resource" id="Resource_0lfdb"]
 script = ExtResource("3_wave_script")
-time_seconds = 73.7
+time_seconds = 67.60000000000001
 enemy = ExtResource("4_drone")
 formation = 2
 count = 7
@@ -98,7 +98,7 @@ sway_period = 2.6
 
 [sub_resource type="Resource" id="Resource_suh6d"]
 script = ExtResource("3_wave_script")
-time_seconds = 81.5
+time_seconds = 74.60000000000001
 enemy = ExtResource("5_aimer")
 formation = 3
 interval = 0.55
@@ -107,7 +107,16 @@ y_ratio = 0.14
 
 [sub_resource type="Resource" id="Resource_dkscn"]
 script = ExtResource("3_wave_script")
-time_seconds = 83.0
+time_seconds = 81.7
+enemy = ExtResource("4_drone")
+formation = 4
+count = 7
+spacing = 125.0
+side = 0
+
+[sub_resource type="Resource" id="Resource_0kgix"]
+script = ExtResource("3_wave_script")
+time_seconds = 83.2
 enemy = ExtResource("6_kamikaze")
 count = 9
 spacing = 100.0
@@ -118,10 +127,10 @@ id = &"p1_s3"
 duration_seconds = 93.0
 enemies = Array[ExtResource("2_enemy_script")]([ExtResource("4_drone"), ExtResource("5_aimer"), ExtResource("6_kamikaze")])
 spawn_weights = PackedFloat32Array(3, 1, 1)
-waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_1fe3l"), SubResource("Resource_swwa6"), SubResource("Resource_2nuno"), SubResource("Resource_lb46n"), SubResource("Resource_ejwsw"), SubResource("Resource_pexq1"), SubResource("Resource_ldo18"), SubResource("Resource_pf5a5"), SubResource("Resource_7yt5d"), SubResource("Resource_0lfdb"), SubResource("Resource_suh6d"), SubResource("Resource_dkscn")])
+waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_1fe3l"), SubResource("Resource_swwa6"), SubResource("Resource_2nuno"), SubResource("Resource_lb46n"), SubResource("Resource_ejwsw"), SubResource("Resource_pexq1"), SubResource("Resource_ldo18"), SubResource("Resource_pf5a5"), SubResource("Resource_7yt5d"), SubResource("Resource_0lfdb"), SubResource("Resource_suh6d"), SubResource("Resource_dkscn"), SubResource("Resource_0kgix")])
 start_delay = 2.0
-spawn_interval_min = 2.492
-spawn_interval_max = 3.665
+spawn_interval_min = 2.2039999957084655
+spawn_interval_max = 3.304999994635582
 spawn_margin_x = 90.0
-enemy_hp_scale = 1.2
-enemy_fire_scale = 1.12
+enemy_hp_scale = 1.4
+enemy_fire_scale = 1.35

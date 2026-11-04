@@ -15,20 +15,22 @@ const STAGES: int = 9
 const MIDBOSS_STAGE: int = 4  # índice da fase 5
 const BOSS_STAGE: int = 8  # índice da fase 9
 const MOTIFS_PER_STAGE: int = 4
-# Escala da dificuldade (d vai de 0 na 1-1 até ~4,4 na 5-9)
+# Escala da dificuldade (d vai de 0,8 na 1-1 até ~4,4 na 5-9)
 const GAP_BASE: float = 8.0  # segundos entre ondas na 1-1
 const GAP_PER_DIFFICULTY: float = 0.85  # quanto o intervalo encurta por ponto de dificuldade
 const COUNT_STEP: float = 1.3  # a cada tantos pontos de dificuldade, ondas com +1 membro
 const PAIR_FROM: float = 1.6  # a partir dessa dificuldade, uma a cada 3 ondas vem em dupla
 const PAIR_OFTEN_FROM: float = 3.6  # a partir dessa, uma a cada 2
 # Orçamento de perigo: soma das notas de perigo dos motivos escolhidos para a fase
-const DANGER_BASE: float = 5.5
-const DANGER_PER_CHAPTER: float = 2.3
+const DANGER_BASE: float = 6.5
+const DANGER_PER_CHAPTER: float = 2.05
 const DANGER_PER_STAGE: float = 0.75
 const DANGER_MIDBOSS: float = 0.55  # fase do chefe intermediário: ondas mais leves
 const DANGER_BOSS: float = 0.7  # fase do chefe: o chefe é o desafio principal
-const HP_SCALE: PackedFloat32Array = [1.2, 1.3, 1.4, 1.5, 1.65]  # vida dos inimigos por capítulo
-const FIRE_SCALE: PackedFloat32Array = [1.12, 1.16, 1.2, 1.25, 1.32]  # cadência de tiro por capítulo
+const HP_SCALE: PackedFloat32Array = [1.4, 1.45, 1.55, 1.55, 1.65]  # vida dos inimigos por capítulo
+const FIRE_SCALE: PackedFloat32Array = [1.35, 1.32, 1.32, 1.3, 1.32]  # cadência de tiro por capítulo
+# Reforço de dificuldade por capítulo (os primeiros estavam fáceis demais)
+const DIFFICULTY_BOOST: PackedFloat32Array = [0.8, 0.5, 0.35, 0.2, 0.0]
 const OLD_MOTIF_DECAY: float = 0.65  # peso dos motivos de capítulos anteriores, por capítulo de distância
 const PLANET_KEYS: PackedStringArray = ["PLANET_1_NAME", "PLANET_2_NAME", "PLANET_3_NAME", "PLANET_4_NAME", "PLANET_5_NAME"]
 const BACKGROUNDS: PackedColorArray = [
@@ -78,10 +80,10 @@ func _save(resource: Resource, path: String) -> void:
 		push_error("Falha ao salvar %s: %s" % [path, error_string(error)])
 
 
-## Dificuldade de 0 (1-1) a ~4,4 (5-9): sobe ao longo do capítulo e recua um pouco no
+## Dificuldade de 0,8 (1-1) a ~4,4 (5-9): sobe ao longo do capítulo e recua um pouco no
 ## começo do seguinte (respiro depois do chefe).
 func _difficulty(c: int, s: int) -> float:
-	return c * 0.8 + s * 0.15
+	return c * 0.8 + s * 0.15 + DIFFICULTY_BOOST[c]
 
 
 func _build_stage(c: int, s: int) -> StageData:

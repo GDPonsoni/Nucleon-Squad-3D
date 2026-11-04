@@ -17,106 +17,163 @@ count = 1
 
 [sub_resource type="Resource" id="Resource_a22ib"]
 script = ExtResource("3_wave_script")
-time_seconds = 14.100000000000001
+time_seconds = 13.600000000000001
 enemy = ExtResource("6_kamikaze")
-spacing = 100.0
+formation = 6
+count = 8
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
 
 [sub_resource type="Resource" id="Resource_jwyg2"]
 script = ExtResource("3_wave_script")
-time_seconds = 21.1
+time_seconds = 20.3
 enemy = ExtResource("5_aimer")
 formation = 3
-count = 4
 interval = 0.5
 y_ratio = 0.18
 
 [sub_resource type="Resource" id="Resource_3ojci"]
 script = ExtResource("3_wave_script")
-time_seconds = 28.200000000000003
-enemy = ExtResource("5_aimer")
-formation = 3
-count = 3
-interval = 0.55
-side = 0
-y_ratio = 0.14
+time_seconds = 21.8
+enemy = ExtResource("6_kamikaze")
+formation = 6
+count = 8
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
 
 [sub_resource type="Resource" id="Resource_nn1ws"]
 script = ExtResource("3_wave_script")
-time_seconds = 35.300000000000004
-enemy = ExtResource("7_tank")
-formation = 0
-count = 1
+time_seconds = 26.900000000000002
+enemy = ExtResource("5_aimer")
+formation = 2
+count = 4
+interval = 0.5
+x_ratio = 0.12
+curve_degrees = -100.0
+curve_seconds = 1.6
+curve_delay = 0.6
 
 [sub_resource type="Resource" id="Resource_l5cpt"]
 script = ExtResource("3_wave_script")
-time_seconds = 45.300000000000004
-enemy = ExtResource("6_kamikaze")
-count = 7
-spacing = 100.0
-
-[sub_resource type="Resource" id="Resource_1pkex"]
-script = ExtResource("3_wave_script")
-time_seconds = 52.400000000000006
-enemy = ExtResource("5_aimer")
-formation = 3
-interval = 0.5
-y_ratio = 0.18
-
-[sub_resource type="Resource" id="Resource_hd3mf"]
-script = ExtResource("3_wave_script")
-time_seconds = 59.5
-enemy = ExtResource("5_aimer")
-formation = 3
-count = 4
-interval = 0.55
-side = 1
-y_ratio = 0.14
-
-[sub_resource type="Resource" id="Resource_2b518"]
-script = ExtResource("3_wave_script")
-time_seconds = 66.5
+time_seconds = 33.6
 enemy = ExtResource("7_tank")
 formation = 0
 count = 1
 
-[sub_resource type="Resource" id="Resource_h0e2n"]
+[sub_resource type="Resource" id="Resource_1pkex"]
 script = ExtResource("3_wave_script")
-time_seconds = 76.60000000000001
+time_seconds = 43.2
 enemy = ExtResource("6_kamikaze")
-count = 9
-spacing = 100.0
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
 
-[sub_resource type="Resource" id="Resource_sb1k4"]
+[sub_resource type="Resource" id="Resource_hd3mf"]
 script = ExtResource("3_wave_script")
-time_seconds = 83.60000000000001
+time_seconds = 44.7
 enemy = ExtResource("5_aimer")
 formation = 3
 count = 6
 interval = 0.5
 y_ratio = 0.18
 
-[sub_resource type="Resource" id="Resource_f7j5p"]
+[sub_resource type="Resource" id="Resource_2b518"]
 script = ExtResource("3_wave_script")
-time_seconds = 90.7
+time_seconds = 49.800000000000004
 enemy = ExtResource("5_aimer")
 formation = 3
-interval = 0.55
-side = 0
-y_ratio = 0.14
+count = 6
+interval = 0.5
+y_ratio = 0.18
 
-[sub_resource type="Resource" id="Resource_tqrop"]
+[sub_resource type="Resource" id="Resource_h0e2n"]
 script = ExtResource("3_wave_script")
-time_seconds = 92.2
-enemy = ExtResource("6_kamikaze")
-count = 9
-spacing = 100.0
+time_seconds = 56.5
+enemy = ExtResource("5_aimer")
+formation = 2
+interval = 0.5
+x_ratio = 0.88
+curve_degrees = 100.0
+curve_seconds = 1.6
+curve_delay = 0.6
 
-[sub_resource type="Resource" id="Resource_jykn6"]
+[sub_resource type="Resource" id="Resource_sb1k4"]
 script = ExtResource("3_wave_script")
-time_seconds = 97.80000000000001
+time_seconds = 63.1
 enemy = ExtResource("7_tank")
 formation = 0
 count = 1
+
+[sub_resource type="Resource" id="Resource_f7j5p"]
+script = ExtResource("3_wave_script")
+time_seconds = 64.60000000000001
+enemy = ExtResource("6_kamikaze")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
+[sub_resource type="Resource" id="Resource_tqrop"]
+script = ExtResource("3_wave_script")
+time_seconds = 72.8
+enemy = ExtResource("6_kamikaze")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
+[sub_resource type="Resource" id="Resource_jykn6"]
+script = ExtResource("3_wave_script")
+time_seconds = 79.4
+enemy = ExtResource("5_aimer")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_5h7jk"]
+script = ExtResource("3_wave_script")
+time_seconds = 86.0
+enemy = ExtResource("5_aimer")
+formation = 2
+interval = 0.5
+x_ratio = 0.12
+curve_degrees = -100.0
+curve_seconds = 1.6
+curve_delay = 0.6
+
+[sub_resource type="Resource" id="Resource_3lmf8"]
+script = ExtResource("3_wave_script")
+time_seconds = 87.5
+enemy = ExtResource("6_kamikaze")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
+[sub_resource type="Resource" id="Resource_50h20"]
+script = ExtResource("3_wave_script")
+time_seconds = 92.7
+enemy = ExtResource("7_tank")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_h2byd"]
+script = ExtResource("3_wave_script")
+time_seconds = 94.2
+enemy = ExtResource("6_kamikaze")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
 
 [resource]
 script = ExtResource("1_script")
@@ -124,10 +181,10 @@ id = &"p2_s3"
 duration_seconds = 105.0
 enemies = Array[ExtResource("2_enemy_script")]([ExtResource("4_drone"), ExtResource("5_aimer"), ExtResource("6_kamikaze")])
 spawn_weights = PackedFloat32Array(3, 1.5, 1.5)
-waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_74uuo"), SubResource("Resource_a22ib"), SubResource("Resource_jwyg2"), SubResource("Resource_3ojci"), SubResource("Resource_nn1ws"), SubResource("Resource_l5cpt"), SubResource("Resource_1pkex"), SubResource("Resource_hd3mf"), SubResource("Resource_2b518"), SubResource("Resource_h0e2n"), SubResource("Resource_sb1k4"), SubResource("Resource_f7j5p"), SubResource("Resource_tqrop"), SubResource("Resource_jykn6")])
+waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_74uuo"), SubResource("Resource_a22ib"), SubResource("Resource_jwyg2"), SubResource("Resource_3ojci"), SubResource("Resource_nn1ws"), SubResource("Resource_l5cpt"), SubResource("Resource_1pkex"), SubResource("Resource_hd3mf"), SubResource("Resource_2b518"), SubResource("Resource_h0e2n"), SubResource("Resource_sb1k4"), SubResource("Resource_f7j5p"), SubResource("Resource_tqrop"), SubResource("Resource_jykn6"), SubResource("Resource_5h7jk"), SubResource("Resource_3lmf8"), SubResource("Resource_50h20"), SubResource("Resource_h2byd")])
 start_delay = 2.0
-spawn_interval_min = 2.204
-spawn_interval_max = 3.3049999999999997
+spawn_interval_min = 2.024
+spawn_interval_max = 3.0799999999999996
 spawn_margin_x = 90.0
-enemy_hp_scale = 1.3
-enemy_fire_scale = 1.16
+enemy_hp_scale = 1.45
+enemy_fire_scale = 1.32
