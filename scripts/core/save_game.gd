@@ -5,12 +5,6 @@ extends Node
 
 const PATH: String = "user://save.json"
 const VERSION: int = 3
-## Campanha antiga (saves 1 e 2): fases por capítulo, na ordem, e a fase do chefe de cada um.
-const LEGACY_STAGES: Array[PackedStringArray] = [
-	["p1_s1", "p1_s2", "p1_s3"], ["p2_s1", "p2_s2", "p2_s3"],
-	["p3_s1", "p3_s2", "p3_s3"], ["p4_s1", "p4_s2", "p4_s3", "p4_s4"],
-]
-const LEGACY_PLANETS: PackedStringArray = ["planet_1", "planet_2", "planet_3", "planet_4"]
 
 var completed: Dictionary = {}  # id da fase -> true (fases concluídas)
 var best_scores: Dictionary = {}  # id da fase -> melhor pontuação
@@ -217,11 +211,22 @@ func _migrate_legacy_campaign(data: Dictionary) -> void:
 	# Versão 1 guardava só a fase mais avançada liberada, na ordem geral
 	var highest: int = int(data.get("legacy_highest_unlocked", data.get("highest_unlocked", -1)))
 	var index: int = 0
-	for chapter in LEGACY_STAGES.size():
-		var stages: PackedStringArray = LEGACY_STAGES[chapter]
-		for id in stages:
+	for chapter: Array in _legacy_campaign():
+		for i in range(1, chapter.size()):
 			if index < highest:
-				completed[id] = true
+				completed[String(chapter[i])] = true
 			index += 1
-		if completed.has(stages[stages.size() - 1]) and not cleared_chapters.has(LEGACY_PLANETS[chapter]):
-			cleared_chapters.append(LEGACY_PLANETS[chapter])
+		var planet_id: String = chapter[0]
+		if completed.has(String(chapter[chapter.size() - 1])) and not planet_id in cleared_chapters:
+			cleared_chapters.append(planet_id)
+
+
+## Campanha antiga (saves 1 e 2): id do capítulo e ids das fases, na ordem (chefe na última).
+## Montada numa função: uma constante tipada com listas aninhadas derrubava o Godot 4.7.2.
+static func _legacy_campaign() -> Array:
+	return [
+		["planet_1", "p1_s1", "p1_s2", "p1_s3"],
+		["planet_2", "p2_s1", "p2_s2", "p2_s3"],
+		["planet_3", "p3_s1", "p3_s2", "p3_s3"],
+		["planet_4", "p4_s1", "p4_s2", "p4_s3", "p4_s4"],
+	]
