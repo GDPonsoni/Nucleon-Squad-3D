@@ -56,7 +56,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 - Teste de dificuldade e de desempenho (FPS com carga máxima) no S24
 - Anúncios reais (AdMob) no lugar do simulador
 - Arte final e músicas definitivas
-- Pacote definitivo (hoje `com.example`), keystore de release e publicação
+- Pacote definitivo (hoje `com.example`), keystore de release e publicação. O plano de anúncios e da Play Store está em [`docs/PUBLICACAO.md`](docs/PUBLICACAO.md)
 
 ## Requisitos
 

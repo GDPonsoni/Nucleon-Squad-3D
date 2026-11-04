@@ -118,6 +118,7 @@ func _upgrades_button() -> Button:
 	var button := UiFactory.make_button("")
 	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	button.text = tr("RESULT_UPGRADES") % SaveGame.quarks
+	UiFactory.fit_button_text(button)
 	button.pressed.connect(func() -> void:
 		Session.upgrades_return_path = ScenePaths.STAGE_SELECT
 		_go(ScenePaths.UPGRADES))

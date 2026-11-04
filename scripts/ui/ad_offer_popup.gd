@@ -68,6 +68,7 @@ func _ready() -> void:
 func _refresh() -> void:
 	var left: int = SaveGame.ads_left_today()
 	_ad_button.text = tr("ADS_EARN_BUTTON") % SaveGame.ad_quark_reward()
+	UiFactory.fit_button_text(_ad_button)
 	_ad_button.disabled = left <= 0 or not AdService.is_rewarded_available()
 	_info.text = (tr("ADS_EARN_LEFT") % [left, Params.ad_quarks_daily_limit]) if left > 0 else tr("ADS_EARN_DONE")
 

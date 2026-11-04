@@ -83,6 +83,8 @@ func _ready() -> void:
 					scene.call("_show_chapter", c)
 					await get_tree().create_timer(0.5, true, false, true).timeout
 					overflow += _check_overflow(scene, "stage_select cap %d %s" % [c + 1, language])
+			for view in scene.find_children("*", "UpgradeTreeView", true, false):
+				overflow += _check_branch_titles(view, language)
 			scene.queue_free()
 			await get_tree().process_frame
 	failures += await _check_ship_switch()
@@ -109,6 +111,7 @@ func _check_overflow(root: Node, label: String) -> int:
 		var control := node as Control
 		if not control.is_visible_in_tree() or control.size.x <= 0.0:
 			continue
+		count += _check_text_fit(control, label)
 		var rect: Rect2 = control.get_global_rect()
 		var height: float = get_viewport().get_visible_rect().size.y
 		var scrolled: bool = _inside_scroll(control)
@@ -116,6 +119,59 @@ func _check_overflow(root: Node, label: String) -> int:
 			count += 1
 			if count <= 4:
 				printerr("FORA DA TELA [%s] %s (%s) x=%d..%d y=%d..%d" % [label, control.name, control.get_class(), rect.position.x, rect.end.x, rect.position.y, rect.end.y])
+	return count
+
+
+## Texto que não cabe na própria caixa (vaza para os lados ou é cortado).
+func _check_text_fit(control: Control, label: String) -> int:
+	var text: String = ""
+	var font: Font = control.get_theme_font("font")
+	var font_size: int = 0
+	var available: float = control.size.x
+	if control is Button:
+		var button := control as Button
+		text = button.atr(button.text)
+		font_size = button.get_theme_font_size("font_size")
+		var box: StyleBox = button.get_theme_stylebox("normal")
+		available -= box.get_minimum_size().x
+		if button.autowrap_mode != TextServer.AUTOWRAP_OFF:
+			var wrapped_button: Vector2 = font.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, available, font_size)
+			if wrapped_button.y > control.size.y - box.get_minimum_size().y + 4.0:
+				printerr("TEXTO CORTADO [%s] %s \"%s\"" % [label, control.name, text.left(40)])
+				return 1
+			return 0
+	elif control is Label:
+		var lbl := control as Label
+		text = lbl.atr(lbl.text)
+		font_size = lbl.get_theme_font_size("font_size")
+		if lbl.autowrap_mode != TextServer.AUTOWRAP_OFF:
+			# Quebra de linha: confere se a altura do texto cabe na caixa
+			var wrapped: Vector2 = font.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, control.size.x, font_size)
+			if wrapped.y > control.size.y + 4.0 and control.size.y > 0.0:
+				printerr("TEXTO CORTADO [%s] %s \"%s\"" % [label, control.name, text.left(40)])
+				return 1
+			return 0
+		if lbl.clip_text or lbl.text_overrun_behavior != TextServer.OVERRUN_NO_TRIMMING:
+			return 0
+	if text.is_empty() or font == null or text.contains("\n"):
+		return 0
+	var width: float = font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	# Rótulos se ajustam ao texto; só importa a folga de botões (e o limite da tela, checado à parte)
+	if width > available * 0.94 and (control is Button or width > available + 2.0):
+		printerr("TEXTO APERTADO [%s] %s \"%s\" texto=%d caixa=%d" % [label, control.name, text.left(40), width, available])
+		return 1
+	return 0
+
+
+## Nomes dos ramos da árvore (desenhados por código): cada um tem que caber na sua coluna.
+func _check_branch_titles(view: Control, label: String) -> int:
+	var font: Font = view.get_theme_default_font()
+	var count: int = 0
+	for key: String in UpgradeTreeView.BRANCH_KEYS:
+		var width: float = font.get_string_size(view.tr(key), HORIZONTAL_ALIGNMENT_LEFT, -1, Params.upgrade_branch_font_size).x
+		if width > Params.upgrade_column_offset - 12.0:
+			printerr("RAMO APERTADO [%s] %s texto=%d coluna=%d" % [label, view.tr(key), width, Params.upgrade_column_offset])
+			count += 1
 	return count
 
 

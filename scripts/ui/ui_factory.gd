@@ -92,6 +92,12 @@ static func add_corner_back(parent: Control, on_press: Callable) -> Button:
 	return button
 
 
+## Reduz a fonte do botão (já com o texto pronto) até o texto caber na largura dele, com folga.
+static func fit_button_text(button: Button, width: float = -1.0) -> void:
+	var box_width: float = width if width > 0.0 else button.custom_minimum_size.x
+	button.add_theme_font_size_override("font_size", fit_font_size(button.text, (box_width - Params.ui_button_padding * 2.0) * 0.94, Params.ui_font_size))
+
+
 ## Botão de ação principal (preenchido na cor de destaque).
 static func make_primary_button(text_key: String) -> Button:
 	var button := make_button(text_key)
