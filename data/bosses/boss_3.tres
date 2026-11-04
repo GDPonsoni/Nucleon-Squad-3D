@@ -9,7 +9,7 @@
 [sub_resource type="Resource" id="Attack_p0_a0"]
 script = ExtResource("3_attack")
 pattern = 1
-interval = 0.15
+interval = 0.2
 first_delay = 1.0
 count = 3
 spread_degrees = 40.0
@@ -45,9 +45,9 @@ attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p0_a0"), SubResour
 [sub_resource type="Resource" id="Attack_p1_a0"]
 script = ExtResource("3_attack")
 pattern = 1
-interval = 1.2
+interval = 1.4
 first_delay = 1.0
-count = 18
+count = 16
 spread_degrees = 40.0
 aimed = true
 turn_degrees = 10.0
@@ -110,9 +110,9 @@ attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResour
 [sub_resource type="Resource" id="Attack_p2_a0"]
 script = ExtResource("3_attack")
 pattern = 1
-interval = 0.13
+interval = 0.18
 first_delay = 1.0
-count = 4
+count = 3
 spread_degrees = 40.0
 aimed = true
 turn_degrees = 12.0
@@ -125,9 +125,9 @@ bullet_color = Color(0.85, 0.5, 1, 1)
 [sub_resource type="Resource" id="Attack_p2_a1"]
 script = ExtResource("3_attack")
 pattern = 1
-interval = 1.6
+interval = 1.9
 first_delay = 0.8
-count = 24
+count = 20
 spread_degrees = 40.0
 aimed = true
 turn_degrees = 7.0
@@ -149,7 +149,7 @@ attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p2_a0"), SubResour
 script = ExtResource("1_script")
 id = &"boss_3"
 name_key = "BOSS_3_NAME"
-max_hp = 1400
+max_hp = 1200
 score = 1200
 contact_damage = 2
 radius = 135.0

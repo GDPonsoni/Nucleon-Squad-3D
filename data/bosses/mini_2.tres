@@ -1,0 +1,97 @@
+[gd_resource type="Resource" script_class="BossData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/boss_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/enemies/boss_phase.gd" id="2_phase"]
+[ext_resource type="Script" path="res://scripts/enemies/boss_attack.gd" id="3_attack"]
+[ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="4_wave"]
+[ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="5_kamikaze"]
+
+[sub_resource type="Resource" id="Attack_p0_a0"]
+script = ExtResource("3_attack")
+pattern = 0
+interval = 1.6
+first_delay = 1.0
+count = 7
+spread_degrees = 70.0
+aimed = false
+burst = 1
+burst_gap = 0.15
+bullet_speed = 400.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+
+[sub_resource type="Resource" id="Wave_p0_a1"]
+script = ExtResource("4_wave")
+enemy = ExtResource("5_kamikaze")
+formation = 1
+count = 5
+spacing = 110.0
+interval = 0.0
+x_ratio = 0.5
+side = 2
+y_ratio = 0.25
+dive_stagger = 0.2
+
+[sub_resource type="Resource" id="Attack_p0_a1"]
+script = ExtResource("3_attack")
+pattern = 2
+interval = 8.0
+first_delay = 3.0
+wave = SubResource("Wave_p0_a1")
+
+[sub_resource type="Resource" id="Phase_0"]
+script = ExtResource("2_phase")
+hp_ratio = 1.0
+sway_speed_scale = 1.0
+movement = 0
+chase_speed = 220.0
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p0_a0"), SubResource("Attack_p0_a1")])
+
+[sub_resource type="Resource" id="Attack_p1_a0"]
+script = ExtResource("3_attack")
+pattern = 1
+interval = 1.5
+first_delay = 1.0
+count = 14
+turn_degrees = 10.0
+bullet_speed = 320.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.5, 0.3, 1)
+
+[sub_resource type="Resource" id="Attack_p1_a1"]
+script = ExtResource("3_attack")
+pattern = 0
+interval = 2.0
+first_delay = 0.8
+count = 5
+spread_degrees = 40.0
+aimed = true
+burst = 1
+burst_gap = 0.15
+bullet_speed = 480.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+
+[sub_resource type="Resource" id="Phase_1"]
+script = ExtResource("2_phase")
+hp_ratio = 0.5
+sway_speed_scale = 1.2
+movement = 0
+chase_speed = 220.0
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1")])
+
+[resource]
+script = ExtResource("1_script")
+id = &"mini_2"
+name_key = "MINI_2_NAME"
+max_hp = 520
+score = 450
+contact_damage = 2
+radius = 100.0
+sides = 4
+color = Color(1, 0.62, 0.25, 1)
+entry_speed = 160.0
+hold_y_ratio = 0.2
+sway_amplitude = 240.0
+sway_speed = 0.6
+phases = Array[ExtResource("2_phase")]([SubResource("Phase_0"), SubResource("Phase_1")])

@@ -1,0 +1,88 @@
+[gd_resource type="Resource" script_class="BossData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/boss_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/enemies/boss_phase.gd" id="2_phase"]
+[ext_resource type="Script" path="res://scripts/enemies/boss_attack.gd" id="3_attack"]
+[ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="4_wave"]
+
+[sub_resource type="Resource" id="Attack_p0_a0"]
+script = ExtResource("3_attack")
+pattern = 0
+interval = 1.7
+first_delay = 1.0
+count = 3
+spread_degrees = 30.0
+aimed = true
+burst = 2
+burst_gap = 0.18
+bullet_speed = 460.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+
+[sub_resource type="Resource" id="Attack_p0_a1"]
+script = ExtResource("3_attack")
+pattern = 1
+interval = 3.0
+first_delay = 1.8
+count = 10
+turn_degrees = 15.0
+bullet_speed = 290.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.5, 0.3, 1)
+
+[sub_resource type="Resource" id="Phase_0"]
+script = ExtResource("2_phase")
+hp_ratio = 1.0
+sway_speed_scale = 1.0
+movement = 0
+chase_speed = 220.0
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p0_a0"), SubResource("Attack_p0_a1")])
+
+[sub_resource type="Resource" id="Attack_p1_a0"]
+script = ExtResource("3_attack")
+pattern = 1
+interval = 0.24
+first_delay = 0.6
+count = 2
+turn_degrees = 19.0
+bullet_speed = 320.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.5, 0.3, 1)
+
+[sub_resource type="Resource" id="Attack_p1_a1"]
+script = ExtResource("3_attack")
+pattern = 0
+interval = 2.2
+first_delay = 1.2
+count = 3
+spread_degrees = 24.0
+aimed = true
+burst = 1
+burst_gap = 0.15
+bullet_speed = 480.0
+bullet_radius = 14.0
+bullet_color = Color(1, 0.35, 0.75, 1)
+
+[sub_resource type="Resource" id="Phase_1"]
+script = ExtResource("2_phase")
+hp_ratio = 0.5
+sway_speed_scale = 1.3
+movement = 0
+chase_speed = 220.0
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1")])
+
+[resource]
+script = ExtResource("1_script")
+id = &"mini_1"
+name_key = "MINI_1_NAME"
+max_hp = 400
+score = 300
+contact_damage = 2
+radius = 90.0
+sides = 6
+color = Color(1, 0.45, 0.6, 1)
+entry_speed = 160.0
+hold_y_ratio = 0.2
+sway_amplitude = 220.0
+sway_speed = 0.7
+phases = Array[ExtResource("2_phase")]([SubResource("Phase_0"), SubResource("Phase_1")])

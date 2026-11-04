@@ -108,3 +108,10 @@ SHIP_TESLA_NAME,Tesla,Tesla
 SHIP_TESLA_DESC,Bolts that jump between nearby enemies. Special: storm.,Descargas que saltam entre inimigos próximos. Especial: tempestade.
 SHIP_RICOCHET_NAME,Ricochet,Ricochete
 SHIP_RICOCHET_DESC,Shots that bounce from enemy to enemy and off the walls. Special: pinball.,Tiros que pulam de inimigo em inimigo e rebatem nas laterais. Especial: fliperama.
+MINI_1_NAME,Lookout,Vigia
+MINI_2_NAME,Anvil,Bigorna
+MINI_3_NAME,Specter,Espectro
+MINI_4_NAME,Vortex,Vórtice
+MINI_5_NAME,Flare,Labareda
+BOSS_5_NAME,Corona,Corona
+PLANET_5_NAME,Eclipse,Eclipse
