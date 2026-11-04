@@ -129,7 +129,7 @@ func _draw() -> void:
 
 ## Hits restantes em bolinhas embaixo do formato da nave (cheias e vazias).
 func _draw_hits(center: Vector2, radius: float, index: int) -> void:
-	var total: int = Params.body_max_hits
+	var total: int = _state.max_hits
 	var left: int = _state.hits_left[index]
 	var step: float = minf(radius * 0.24, radius * 1.3 / maxf(total, 1.0))
 	var dot: float = minf(radius * 0.08, step * 0.38)

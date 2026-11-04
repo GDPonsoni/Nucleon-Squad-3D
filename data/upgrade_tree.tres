@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UpgradeTreeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_tree_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="2_node_script"]
+[ext_resource type="Resource" path="res://data/upgrades/damage.tres" id="3_damage"]
+[ext_resource type="Resource" path="res://data/upgrades/fire_rate.tres" id="4_fire_rate"]
+[ext_resource type="Resource" path="res://data/upgrades/special.tres" id="5_special"]
+[ext_resource type="Resource" path="res://data/upgrades/boss_hunter.tres" id="6_boss_hunter"]
+[ext_resource type="Resource" path="res://data/upgrades/hull.tres" id="7_hull"]
+[ext_resource type="Resource" path="res://data/upgrades/reflex.tres" id="8_reflex"]
+[ext_resource type="Resource" path="res://data/upgrades/shield.tres" id="9_shield"]
+[ext_resource type="Resource" path="res://data/upgrades/repair.tres" id="10_repair"]
+[ext_resource type="Resource" path="res://data/upgrades/collect.tres" id="11_collect"]
+[ext_resource type="Resource" path="res://data/upgrades/arsenal.tres" id="12_arsenal"]
+[ext_resource type="Resource" path="res://data/upgrades/head_start.tres" id="13_head_start"]
+[ext_resource type="Resource" path="res://data/upgrades/wingman.tres" id="14_wingman"]
+[ext_resource type="Resource" path="res://data/upgrades/overdrive.tres" id="15_overdrive"]
+
+[resource]
+script = ExtResource("1_script")
+nodes = Array[ExtResource("2_node_script")]([ExtResource("3_damage"), ExtResource("4_fire_rate"), ExtResource("5_special"), ExtResource("6_boss_hunter"), ExtResource("7_hull"), ExtResource("8_reflex"), ExtResource("9_shield"), ExtResource("10_repair"), ExtResource("11_collect"), ExtResource("12_arsenal"), ExtResource("13_head_start"), ExtResource("14_wingman"), ExtResource("15_overdrive")])

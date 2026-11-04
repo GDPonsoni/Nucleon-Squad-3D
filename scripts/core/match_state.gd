@@ -1,7 +1,8 @@
 class_name MatchState
 extends RefCounted
 ## Estado da partida: corpos da formação, hits restantes de cada um e corpo ativo.
-## Não assume quantidade fixa de corpos.
+## Não assume quantidade fixa de corpos. Os bônus da evolução do núcleo (vida, nível
+## inicial, escudos, recarga do especial e quarks) são aplicados aqui.
 
 signal body_changed(index: int)
 signal hits_changed(index: int, hits_left: int)
@@ -9,6 +10,7 @@ signal body_destroyed(index: int)
 signal game_over
 signal weapon_level_changed(index: int, level: int)
 signal score_changed(score: int)
+signal shields_changed(shields: int)
 
 var bodies: Array[BodyData] = []
 var hits_left: PackedInt32Array = PackedInt32Array()
@@ -16,24 +18,35 @@ var weapon_levels: PackedInt32Array = PackedInt32Array()  # nível da arma de ca
 var special_charge: PackedFloat32Array = PackedFloat32Array()  # segundos de carga do especial por corpo
 var lost_levels: PackedInt32Array = PackedInt32Array()  # nível da arma de cada corpo ao ser destruído (revive)
 var current: int = 0
+var boosts: PlayerBoosts
+var max_hits: int = 0  # hits de cada corpo (com a evolução do núcleo)
+var start_level: int = 1  # nível das armas ao começar (e ao perder o corpo)
+var shields: int = 0  # hits absorvidos antes de tirar vida (evolução do núcleo)
 
 # Estatísticas da partida (HUD e telas de resultado)
 var score: int = 0
 var kills: int = 0
 var powerups_collected: int = 0
 var medkits_collected: int = 0
+var shields_used: int = 0
+var quarks: float = 0.0  # quarks ganhos com os inimigos nesta partida (ainda não guardados)
 
 
-func _init(formation: FormationData) -> void:
+func _init(formation: FormationData, player_boosts: PlayerBoosts = PlayerBoosts.new()) -> void:
+	boosts = player_boosts
 	bodies = formation.bodies.duplicate()
+	max_hits = Params.body_max_hits + boosts.extra_hits
+	start_level = Params.debug_start_weapon_level + boosts.start_level_bonus
+	shields = boosts.shields
 	hits_left.resize(bodies.size())
-	hits_left.fill(Params.body_max_hits)
+	hits_left.fill(max_hits)
 	weapon_levels.resize(bodies.size())
-	weapon_levels.fill(Params.debug_start_weapon_level)
 	special_charge.resize(bodies.size())
 	special_charge.fill(0.0)
 	lost_levels.resize(bodies.size())
-	lost_levels.fill(1)
+	for i in bodies.size():
+		weapon_levels[i] = _clamp_level(i, start_level)
+		lost_levels[i] = weapon_levels[i]
 
 
 func current_body() -> BodyData:
@@ -71,18 +84,28 @@ func damage_current(amount: int) -> void:
 		return
 	# Corpo perdido leva junto os power-ups da arma e a carga do especial
 	lost_levels[current] = weapon_levels[current]
-	weapon_levels[current] = 1
+	weapon_levels[current] = _clamp_level(current, start_level)
 	special_charge[current] = 0.0
 	body_destroyed.emit(current)
 	if alive_indices().is_empty():
 		game_over.emit()
 
 
+## Escudo da evolução do núcleo: absorve um hit inteiro. Retorna false se não havia escudo.
+func absorb_with_shield() -> bool:
+	if shields <= 0:
+		return false
+	shields -= 1
+	shields_used += 1
+	shields_changed.emit(shields)
+	return true
+
+
 ## Recupera hits do corpo ativo, até o máximo. Retorna false se já estava cheio.
 func heal_current(amount: int) -> bool:
-	if not is_alive(current) or hits_left[current] >= Params.body_max_hits:
+	if not is_alive(current) or hits_left[current] >= max_hits:
 		return false
-	hits_left[current] = mini(hits_left[current] + amount, Params.body_max_hits)
+	hits_left[current] = mini(hits_left[current] + amount, max_hits)
 	hits_changed.emit(current, hits_left[current])
 	return true
 
@@ -96,21 +119,28 @@ func level_up_current() -> bool:
 	return true
 
 
+## Inimigo destruído: soma pontos e os quarks correspondentes.
 func add_kill(points: int) -> void:
 	kills += 1
 	score += points
+	quarks += points * Params.quarks_per_point * boosts.quarks
 	score_changed.emit(score)
+
+
+## Segundos para encher o especial do corpo ativo (com a evolução do núcleo).
+func special_seconds() -> float:
+	return current_body().weapon.special_charge_seconds * boosts.special_charge
 
 
 ## O especial do corpo ativo carrega com o tempo (de jogo) enquanto ele está ativo.
 func charge_special(delta: float) -> void:
 	if is_alive(current):
-		special_charge[current] = minf(special_charge[current] + delta, current_body().weapon.special_charge_seconds)
+		special_charge[current] = minf(special_charge[current] + delta, special_seconds())
 
 
 ## 0 a 1: quanto o especial do corpo ativo já carregou.
 func special_ratio() -> float:
-	return special_charge[current] / current_body().weapon.special_charge_seconds
+	return special_charge[current] / special_seconds()
 
 
 func special_ready() -> bool:
@@ -123,7 +153,11 @@ func use_special() -> void:
 
 ## Revive (após anúncio): o corpo volta com a vida cheia e o nível de arma que tinha.
 func revive(index: int) -> void:
-	hits_left[index] = Params.body_max_hits
+	hits_left[index] = max_hits
 	weapon_levels[index] = lost_levels[index]
 	hits_changed.emit(index, hits_left[index])
 	select(index)
+
+
+func _clamp_level(index: int, level: int) -> int:
+	return clampi(level, 1, bodies[index].weapon.max_level())

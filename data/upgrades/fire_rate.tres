@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/upgrades/damage.tres" id="2_damage"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"fire_rate"
+name_key = "UPG_FIRE_RATE_NAME"
+description_key = "UPG_FIRE_RATE_DESC"
+stat = 1
+per_level = 0.05
+max_level = 8
+base_cost = 70
+cost_growth = 1.35
+cost_step = 0
+requires = Array[ExtResource("1_script")]([ExtResource("2_damage")])
+requires_companion = false
+column = 0
+row = 1
+color = Color(1.0, 0.5, 0.35, 1)

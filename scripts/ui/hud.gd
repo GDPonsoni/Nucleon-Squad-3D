@@ -1,7 +1,7 @@
 class_name Hud
 extends CanvasLayer
 ## HUD da partida.
-## Topo: progresso da fase (ou vida do chefe), pontuação e nome da fase.
+## Topo: progresso da fase (ou vida do chefe), pontuação, nome da fase e quarks ganhos.
 ## Base: botão do especial logo acima da barra de troca (que mostra hits e níveis).
 ## Flash vermelho na tela ao levar hit e aviso piscando antes do chefe.
 
@@ -12,11 +12,13 @@ var _spawner: EnemySpawner
 var _canvas: Control
 var _score_label: Label
 var _stage_label: Label
+var _quarks_label: Label
 var _flash: ColorRect
 var _boss: Boss
 var _boss_label: Label
 var _warning: Label
 var _special: SpecialButton
+var _shown_quarks: int = -1
 
 
 func _ready() -> void:
@@ -40,6 +42,15 @@ func _ready() -> void:
 	_stage_label.add_theme_font_size_override("font_size", Params.hud_stage_font_size)
 	_stage_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_canvas.add_child(_stage_label)
+
+	# Quarks ganhos na partida, com o ícone desenhado à esquerda
+	_quarks_label = UiFactory.make_subtitle("")
+	_quarks_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_quarks_label.position = _quarks_icon_center() + Vector2(Params.hud_quark_icon_radius * 1.6, -Params.hud_stage_font_size * 0.72)
+	_quarks_label.add_theme_font_size_override("font_size", Params.hud_stage_font_size)
+	_quarks_label.add_theme_color_override("font_color", Params.quark_color)
+	_quarks_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	_canvas.add_child(_quarks_label)
 
 	_boss_label = UiFactory.make_subtitle("")
 	_boss_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -123,10 +134,19 @@ func _process(_delta: float) -> void:
 		var alive: bool = _state.is_alive(_state.current)
 		_special.body = _state.current_body() if alive else null
 		_special.charge = _state.special_ratio() if alive else 0.0
+		var quarks: int = int(_state.quarks)
+		if quarks != _shown_quarks:
+			_shown_quarks = quarks
+			_quarks_label.text = "+%d" % quarks
 
 
 func _on_score_changed(score: int) -> void:
 	_score_label.text = str(score)
+
+
+func _quarks_icon_center() -> Vector2:
+	var y: float = Params.hud_score_position.y + Params.hud_score_font_size * 1.25 + Params.hud_stage_font_size * 2.3
+	return Vector2(Params.hud_score_position.x + Params.hud_quark_icon_radius, y)
 
 
 func _draw_hud() -> void:
@@ -136,6 +156,7 @@ func _draw_hud() -> void:
 		_draw_boss_bar()
 	else:
 		_draw_progress()
+	UiFactory.draw_quark_icon(_canvas, _quarks_icon_center(), Params.hud_quark_icon_radius)
 
 
 ## Barra fina no topo, entre a margem e o botão de pausa.

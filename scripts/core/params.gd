@@ -35,6 +35,28 @@ var stage_button_size: Vector2 = Vector2(260.0, 190.0)
 var stage_record_font_size: int = 27
 var stage_row_max_width: float = 880.0  # largura máxima da fileira de fases de um capítulo
 var results_column_gap: int = 60
+var results_spacing: int = 22  # entre os itens da tela de resultado
+var results_detail_font_size: int = 30
+var results_button_height: float = 128.0
+var upgrade_tree_width: float = 1000.0  # tela de evolução do núcleo
+var upgrade_tree_header: float = 64.0  # nomes dos ramos acima dos nós
+var upgrade_node_radius: float = 62.0
+var upgrade_row_gap: float = 196.0
+var upgrade_column_offset: float = 320.0  # distância das colunas laterais até o centro
+var upgrade_touch_scale: float = 1.3  # área de toque maior que o nó
+var upgrade_ring_width: float = 8.0
+var upgrade_link_width: float = 6.0
+var upgrade_node_bg_color: Color = Color(0.08, 0.09, 0.15, 1.0)
+var upgrade_level_font_size: int = 34
+var upgrade_branch_font_size: int = 40
+var upgrade_pulse_seconds: float = 0.5
+var upgrade_spacing: int = 24
+var upgrade_balance_font_size: int = 52
+var upgrade_detail_width: float = 900.0
+var upgrade_detail_spacing: int = 14
+var upgrade_name_font_size: int = 56
+var upgrade_detail_font_size: int = 36
+var upgrade_buy_height: float = 130.0
 var stage_select_spacing: int = 28
 var stage_lock_size: float = 34.0
 var debug_unlock_taps: int = 5  # toques no título do seletor (build de debug)
@@ -53,6 +75,7 @@ var pause_button_size: Vector2 = Vector2(130.0, 130.0)
 var pause_button_margin: Vector2 = Vector2(40.0, 100.0)  # a partir do canto superior direito
 var pause_overlay_color: Color = Color(0.0, 0.0, 0.0, 0.65)
 var hud_margin: Vector2 = Vector2(40.0, 70.0)  # margens laterais do HUD
+var hud_quark_icon_radius: float = 20.0
 var hud_dead_color: Color = Color(0.35, 0.35, 0.42)
 var hud_dead_mark_color: Color = Color(1.0, 0.3, 0.3)
 var hud_panel_color: Color = Color(0.06, 0.07, 0.12, 0.6)
@@ -189,6 +212,21 @@ var special_lance_pierce: int = 999
 var special_bombard_area: float = 0.75  # explosões caem até essa fração da altura
 var special_bombard_aim_chance: float = 0.6  # chance de mirar num inimigo
 var special_bombard_blast_seconds: float = 0.35
+
+# --- Progressão: quarks e evolução do núcleo (cores do ícone do quark) ---
+var quark_color: Color = Color(0.78, 0.66, 1.0)
+var quark_dot_colors: PackedColorArray = [Color(1.0, 0.4, 0.4), Color(0.45, 1.0, 0.55), Color(0.45, 0.65, 1.0)]
+
+# --- Progressão: quarks e evolução do núcleo (valores de cada nó ficam em data/upgrades/) ---
+var upgrade_tree_path: String = "res://data/upgrade_tree.tres"
+var quarks_per_point: float = 0.1  # quarks ganhos por ponto de pontuação (inimigos e chefes)
+var quarks_stage_clear: PackedInt32Array = [30, 45, 60, 80, 100]  # bônus por concluir uma fase, por capítulo
+var quarks_first_clear_multiplier: float = 2.0  # o bônus dobra na primeira vez que a fase é concluída
+var companion_unlock_chapter: int = 1  # concluir esse capítulo libera o espaço da nave auxiliar
+var shield_color: Color = Color(0.4, 0.85, 1.0)
+var shield_ring_scale: float = 0.62  # raio do anel do escudo em relação à altura da nave
+var shield_ring_width: float = 6.0
+var shield_gap_degrees: float = 18.0
 
 # --- Power-ups ---
 var powerup_every_kills: int = 8  # 1 power-up a cada N inimigos destruídos

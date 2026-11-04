@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"hull"
+name_key = "UPG_HULL_NAME"
+description_key = "UPG_HULL_DESC"
+stat = 4
+per_level = 1.0
+max_level = 3
+base_cost = 150
+cost_growth = 2.6
+cost_step = 0
+requires = Array[ExtResource("1_script")]([])
+requires_companion = false
+column = 1
+row = 0
+color = Color(0.4, 0.85, 1.0, 1)

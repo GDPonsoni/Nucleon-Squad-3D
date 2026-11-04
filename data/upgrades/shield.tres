@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/upgrades/reflex.tres" id="2_reflex"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"shield"
+name_key = "UPG_SHIELD_NAME"
+description_key = "UPG_SHIELD_DESC"
+stat = 6
+per_level = 1.0
+max_level = 3
+base_cost = 200
+cost_growth = 2.0
+cost_step = 0
+requires = Array[ExtResource("1_script")]([ExtResource("2_reflex")])
+requires_companion = false
+column = 1
+row = 2
+color = Color(0.4, 0.85, 1.0, 1)

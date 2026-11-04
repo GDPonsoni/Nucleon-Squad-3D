@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/upgrades/head_start.tres" id="2_head_start"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"wingman"
+name_key = "UPG_WINGMAN_NAME"
+description_key = "UPG_WINGMAN_DESC"
+stat = 10
+per_level = 0.15
+max_level = 5
+base_cost = 80
+cost_growth = 1.45
+cost_step = 0
+requires = Array[ExtResource("1_script")]([ExtResource("2_head_start")])
+requires_companion = true
+column = 2
+row = 3
+color = Color(1.0, 0.85, 0.3, 1)

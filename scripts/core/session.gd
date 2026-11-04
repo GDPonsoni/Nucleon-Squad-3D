@@ -2,12 +2,23 @@ extends Node
 ## Autoload: campanha carregada e fase escolhida, compartilhadas entre as telas.
 
 var campaign: CampaignData
+var upgrade_tree: UpgradeTreeData
 var planet_index: int = 0
 var stage_index: int = 0
+## Cena para onde a tela de evolução volta (menu ou seletor de fases).
+var upgrades_return_path: String = ScenePaths.MENU
 
 
 func _ready() -> void:
 	campaign = load(Params.campaign_path) as CampaignData
+	upgrade_tree = load(Params.upgrade_tree_path) as UpgradeTreeData
+
+
+## Bônus da evolução do núcleo para a próxima partida.
+func boosts() -> PlayerBoosts:
+	if upgrade_tree == null:
+		return PlayerBoosts.new()
+	return upgrade_tree.boosts_for(SaveGame.upgrades)
 
 
 func select(planet: int, stage: int) -> void:

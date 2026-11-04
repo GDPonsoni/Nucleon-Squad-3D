@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/upgrades/collect.tres" id="2_collect"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"arsenal"
+name_key = "UPG_ARSENAL_NAME"
+description_key = "UPG_ARSENAL_DESC"
+stat = 9
+per_level = 1.0
+max_level = 3
+base_cost = 120
+cost_growth = 1.8
+cost_step = 0
+requires = Array[ExtResource("1_script")]([ExtResource("2_collect")])
+requires_companion = false
+column = 2
+row = 1
+color = Color(1.0, 0.85, 0.3, 1)

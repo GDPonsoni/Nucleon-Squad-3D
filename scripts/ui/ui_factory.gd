@@ -64,6 +64,15 @@ static func make_overlay() -> ColorRect:
 	return overlay
 
 
+## Ícone do quark (moeda da evolução do núcleo): anel com três pontos nas cores das cargas.
+static func draw_quark_icon(canvas: CanvasItem, center: Vector2, radius: float) -> void:
+	canvas.draw_circle(center, radius, Color(Params.quark_color, 0.18))
+	canvas.draw_arc(center, radius, 0.0, TAU, 32, Params.quark_color, maxf(radius * 0.14, 2.0))
+	for i in Params.quark_dot_colors.size():
+		var dir := Vector2.from_angle(-PI * 0.5 + TAU * i / Params.quark_dot_colors.size())
+		canvas.draw_circle(center + dir * radius * 0.45, radius * 0.27, Params.quark_dot_colors[i])
+
+
 ## Entrada suave: aparece e sobe um pouco.
 static func animate_in(node: Control) -> void:
 	node.modulate.a = 0.0

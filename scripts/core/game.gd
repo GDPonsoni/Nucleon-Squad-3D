@@ -1,5 +1,6 @@
 extends Node2D
-## Cena da partida: monta os nós por código. Joga a fase escolhida em Session.
+## Cena da partida: monta os nós por código. Joga a fase escolhida em Session,
+## com os bônus da evolução do núcleo.
 
 var touch_input: TouchInput
 var player: Player
@@ -20,6 +21,7 @@ var results_menu: ResultsMenu
 var revive_offer: ReviveOffer
 var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
+var _quarks_banked: bool = false
 
 var _spawning_done: bool = false  # fase pode terminar (tempo acabou e não há chefe vivo)
 var boss: Boss
@@ -30,7 +32,8 @@ var _match_over: bool = false
 func _ready() -> void:
 	var planet: PlanetData = Session.planet()
 	RenderingServer.set_default_clear_color(planet.background_color)
-	state = MatchState.new(SaveGame.squad_formation())
+	var boosts: PlayerBoosts = Session.boosts()
+	state = MatchState.new(SaveGame.squad_formation(), boosts)
 	state.body_destroyed.connect(_on_body_destroyed)
 	state.game_over.connect(_on_game_over)
 
@@ -50,6 +53,7 @@ func _ready() -> void:
 
 	context = CombatContext.new()
 	context.player_bullets = player_bullets
+	context.boosts = boosts
 
 	enemy_bullets = NodePool.new(Bullet.new, Params.enemy_bullet_pool_size)
 	enemy_bullets.name = "EnemyBullets"
@@ -72,7 +76,7 @@ func _ready() -> void:
 	power_ups = NodePool.new(PowerUp.new, Params.powerup_pool_size)
 	power_ups.name = "PowerUps"
 	context.power_ups = power_ups
-	dropper.setup(power_ups)
+	dropper.setup(power_ups, boosts)
 	add_child(dropper)
 
 	player = Player.new()
@@ -80,6 +84,8 @@ func _ready() -> void:
 	add_child(player)
 	player.setup(context)
 	context.player = player
+	player.shield_charges = state.shields
+	state.shields_changed.connect(func(count: int) -> void: player.shield_charges = count)
 
 	# Power-ups e tiros inimigos por cima da nave e do raio, para ficarem sempre visíveis
 	add_child(power_ups)
@@ -160,10 +166,63 @@ func _process(delta: float) -> void:
 		return
 	_clear_wait += delta
 	if enemies.active.is_empty() or _clear_wait >= Params.stage_clear_timeout:
-		_match_over = true
-		pause_menu.disable()
-		var record: bool = SaveGame.complete_stage(Session.stage().id, state.score)
-		results_menu.show_stage_clear(state, spawner.elapsed(), record)
+		_finish_stage_clear()
+
+
+## Saiu da partida (menu, reiniciar, próxima fase): os quarks ganhos não se perdem.
+func _exit_tree() -> void:
+	_bank_quarks(0)
+
+
+## Fase concluída: guarda o progresso, os quarks (com bônus) e mostra as recompensas.
+func _finish_stage_clear() -> void:
+	_match_over = true
+	pause_menu.disable()
+	var stage: StageData = Session.stage()
+	var first_time: bool = not SaveGame.is_completed(stage.id)
+	var chapter_cleared_before: bool = SaveGame.is_chapter_cleared(Session.planet_index)
+	var record: bool = SaveGame.complete_stage(stage.id, state.score)
+	var kills_quarks: int = int(state.quarks)
+	var bonus: int = _clear_bonus(first_time)
+	_bank_quarks(bonus)
+	var rewards := PackedStringArray()
+	if not chapter_cleared_before and SaveGame.is_chapter_cleared(Session.planet_index):
+		rewards = _chapter_rewards(Session.planet_index)
+	results_menu.show_stage_clear(state, spawner.elapsed(), record, {
+		"quarks_kills": kills_quarks, "quarks_bonus": bonus, "rewards": rewards,
+	})
+
+
+## Bônus em quarks por concluir a fase (dobra na primeira vez).
+func _clear_bonus(first_time: bool) -> int:
+	var table: PackedInt32Array = Params.quarks_stage_clear
+	var base: float = table[mini(Session.planet_index, table.size() - 1)]
+	if first_time:
+		base *= Params.quarks_first_clear_multiplier
+	return int(base * state.boosts.quarks)
+
+
+## Guarda os quarks da partida (uma vez só). Retorna quanto foi guardado.
+func _bank_quarks(bonus: int) -> int:
+	if _quarks_banked or state == null:
+		return 0
+	_quarks_banked = true
+	var total: int = int(state.quarks) + bonus
+	SaveGame.add_quarks(total)
+	return total
+
+
+## Textos do que o capítulo libera: naves com unlock_chapter dele e o espaço auxiliar.
+func _chapter_rewards(planet_index: int) -> PackedStringArray:
+	var chapter: int = planet_index + 1
+	var rewards := PackedStringArray()
+	if Params.companion_unlock_chapter == chapter:
+		rewards.append(tr("REWARD_COMPANION_SLOT"))
+	var roster := load(Params.roster_path) as FormationData
+	for body in roster.bodies:
+		if body.unlock_chapter == chapter:
+			rewards.append(tr("REWARD_SHIP") % tr(body.name_key))
+	return rewards
 
 
 ## Tempo da fase acabou: sem chefe, a fase termina; com chefe, ele entra após o aviso.
@@ -217,10 +276,17 @@ func _on_body_chosen(index: int) -> void:
 
 
 func _on_player_hit(damage: int) -> void:
+	var invulnerability: float = Params.hit_invulnerability_seconds + state.boosts.extra_invulnerability
+	# Escudo da evolução do núcleo absorve o hit inteiro
+	if state.absorb_with_shield():
+		hud.flash_hit(Params.shield_color)
+		player.pulse(Params.shield_color)
+		player.start_invulnerability(invulnerability)
+		return
 	hud.flash_hit()
 	state.damage_current(damage)
 	if state.is_alive(state.current):
-		player.start_invulnerability(Params.hit_invulnerability_seconds)
+		player.start_invulnerability(invulnerability)
 
 
 func _on_special_pressed() -> void:
@@ -270,7 +336,11 @@ func _on_game_over() -> void:
 			if granted:
 				_revive()
 				return
-	results_menu.show_game_over(state, spawner.elapsed())
+	var kills_quarks: int = int(state.quarks)
+	_bank_quarks(0)
+	results_menu.show_game_over(state, spawner.elapsed(), {
+		"quarks_kills": kills_quarks, "quarks_bonus": 0, "rewards": PackedStringArray(),
+	})
 
 
 ## O último corpo usado volta com vida cheia, de onde parou, com os tiros inimigos limpos.

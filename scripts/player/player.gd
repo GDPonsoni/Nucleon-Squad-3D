@@ -9,6 +9,10 @@ var cracks: int = 0:  # rachaduras no núcleo, uma por corpo perdido
 	set(value):
 		cracks = value
 		queue_redraw()
+var shield_charges: int = 0:  # escudos restantes (evolução do núcleo), anel em volta da nave
+	set(value):
+		shield_charges = value
+		queue_redraw()
 ## Limite de baixo para a nave, em coordenadas de tela (topo da barra de troca).
 var bottom_limit: float = INF
 
@@ -108,6 +112,8 @@ func _draw() -> void:
 		draw_colored_polygon(points, body.color)
 
 	_draw_nucleus()
+	if shield_charges > 0:
+		_draw_shield()
 
 	if _level_pulse_left > 0.0:
 		var t: float = 1.0 - _level_pulse_left / Params.level_up_pulse_seconds
@@ -130,6 +136,17 @@ func _draw_nucleus() -> void:
 	for i in cracks:
 		var dir := Vector2.from_angle(Params.crack_start_angle + i * Params.crack_angle_step)
 		draw_line(dir * Params.nucleus_radius * 0.2, dir * Params.nucleus_radius, Params.background_color, 3.0)
+
+
+## Anel do escudo dividido em segmentos, um por escudo restante.
+func _draw_shield() -> void:
+	var radius: float = Params.ship_size.y * Params.shield_ring_scale
+	var gap: float = deg_to_rad(Params.shield_gap_degrees)
+	var segment: float = TAU / shield_charges
+	var pulse: float = 0.7 + 0.3 * sin(Time.get_ticks_msec() * 0.004)
+	for i in shield_charges:
+		var start: float = -PI * 0.5 + i * segment + gap * 0.5
+		draw_arc(Vector2.ZERO, radius, start, start + segment - gap, 24, Color(Params.shield_color, 0.75 * pulse), Params.shield_ring_width)
 
 
 func _set_build(value: float) -> void:

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/upgrades/arsenal.tres" id="2_arsenal"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"head_start"
+name_key = "UPG_HEADSTART_NAME"
+description_key = "UPG_HEADSTART_DESC"
+stat = 11
+per_level = 1.0
+max_level = 2
+base_cost = 500
+cost_growth = 2.5
+cost_step = 0
+requires = Array[ExtResource("1_script")]([ExtResource("2_arsenal")])
+requires_companion = false
+column = 2
+row = 2
+color = Color(1.0, 0.85, 0.3, 1)

@@ -52,3 +52,51 @@ SQUAD_SAVE,Save,Salvar
 PLANET_4_NAME,Singularity,Singularidade
 BOSS_4_NAME,Hydra,Hidra
 SWITCH_CHOOSE,Choose your next ship,Escolha a próxima nave
+MENU_UPGRADES,Core (%d quarks),Núcleo (%d quarks)
+RESULT_QUARKS,Quarks,Quarks
+RESULT_QUARKS_DETAIL,enemies +%d · stage +%d,inimigos +%d · fase +%d
+RESULT_UPGRADES,Upgrade core (%d quarks),Evoluir núcleo (%d quarks)
+RESULT_CHAPTER_CLEAR,Chapter clear!,Capítulo concluído!
+REWARD_COMPANION_SLOT,Wingman slot unlocked,Espaço da nave auxiliar liberado
+REWARD_SHIP,New ship: %s,Nova nave: %s
+UPGRADES_TITLE,Core,Núcleo
+UPGRADES_BALANCE,%d quarks,%d quarks
+UPGRADES_BRANCH_ATTACK,Attack,Ataque
+UPGRADES_BRANCH_DEFENSE,Defense,Defesa
+UPGRADES_BRANCH_SUPPORT,Support,Suporte
+UPGRADES_LEVEL,Level %d/%d,Nível %d/%d
+UPGRADES_LEVEL_INFINITE,Level %d,Nível %d
+UPGRADES_NOW,Now: %s,Agora: %s
+UPGRADES_NEXT,Next: %s,Próximo: %s
+UPGRADES_NONE,Not upgraded yet,Ainda sem evolução
+UPGRADES_MAXED,Max level,Nível máximo
+UPGRADES_BUY,Upgrade (%d quarks),Evoluir (%d quarks)
+UPGRADES_NOT_ENOUGH,%d quarks (need %d more),%d quarks (faltam %d)
+UPGRADES_REQUIRES,Requires: %s,Requer: %s
+UPGRADES_REQUIRES_COMPANION,Clear chapter %d to unlock the wingman,Conclua o capítulo %d para liberar a nave auxiliar
+UPG_DAMAGE_NAME,Damage,Dano
+UPG_DAMAGE_DESC,all weapon damage %s,dano de todas as armas %s
+UPG_FIRE_RATE_NAME,Fire rate,Cadência
+UPG_FIRE_RATE_DESC,fire rate of all weapons %s,velocidade de disparo de todas as armas %s
+UPG_SPECIAL_NAME,Special,Especial
+UPG_SPECIAL_DESC,"special damage %s, recharge time %s","dano do especial %s, tempo de recarga %s"
+UPG_BOSS_NAME,Boss hunter,Caça-chefes
+UPG_BOSS_DESC,damage to bosses %s,dano em chefes %s
+UPG_HULL_NAME,Hull,Casco
+UPG_HULL_DESC,hits per ship %s,hits de cada nave %s
+UPG_REFLEX_NAME,Reflex,Reflexo
+UPG_REFLEX_DESC,invulnerability after a hit %s,invulnerabilidade após levar hit %s
+UPG_SHIELD_NAME,Shield,Escudo
+UPG_SHIELD_DESC,shields per stage %s (each one blocks a hit),escudos por fase %s (cada um bloqueia um hit)
+UPG_REPAIR_NAME,Repair,Reparo
+UPG_REPAIR_DESC,enemies per medkit %s,inimigos por medkit %s
+UPG_COLLECT_NAME,Collector,Coleta
+UPG_COLLECT_DESC,"quarks earned %s, pickup range %s","quarks ganhos %s, alcance de coleta %s"
+UPG_ARSENAL_NAME,Arsenal,Arsenal
+UPG_ARSENAL_DESC,enemies per power-up %s,inimigos por power-up %s
+UPG_HEADSTART_NAME,Head start,Arma inicial
+UPG_HEADSTART_DESC,weapon level when a stage starts %s,nível das armas ao começar a fase %s
+UPG_WINGMAN_NAME,Wingman,Auxiliar
+UPG_WINGMAN_DESC,wingman damage %s,dano da nave auxiliar %s
+UPG_OVERDRIVE_NAME,Overdrive,Sobrecarga
+UPG_OVERDRIVE_DESC,overall damage %s (no level limit),dano geral %s (sem limite de nível)

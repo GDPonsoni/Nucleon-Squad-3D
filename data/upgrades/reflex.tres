@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="UpgradeData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/upgrade_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/upgrades/hull.tres" id="2_hull"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"reflex"
+name_key = "UPG_REFLEX_NAME"
+description_key = "UPG_REFLEX_DESC"
+stat = 5
+per_level = 0.2
+max_level = 5
+base_cost = 60
+cost_growth = 1.4
+cost_step = 0
+requires = Array[ExtResource("1_script")]([ExtResource("2_hull")])
+requires_companion = false
+column = 1
+row = 1
+color = Color(0.4, 0.85, 1.0, 1)
