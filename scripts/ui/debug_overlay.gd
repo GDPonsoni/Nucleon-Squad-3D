@@ -19,6 +19,10 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
+	# Estatísticas podem ser escondidas nas configurações (ex.: mostrar a demo)
+	_label.visible = bool(SaveGame.setting("show_stats"))
+	if not _label.visible:
+		return
 	var text: String = "FPS %d\ntime scale %.2f" % [Engine.get_frames_per_second(), Engine.time_scale]
 	if stats.is_valid():
 		text += "\n" + stats.call()

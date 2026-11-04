@@ -1,7 +1,8 @@
 extends Control
 ## Menu inicial: escolher a fase, montar o esquadrão, evoluir o núcleo ou configurar.
 ## Para sair, o botão Voltar do Android.
-## Fundo de estrelas, nave animada e saldo de quarks.
+## Fundo de estrelas, nave animada, selo com o saldo de quarks no topo e o espaço
+## do banner de anúncio no rodapé (só nesta tela).
 
 
 func _ready() -> void:
@@ -18,7 +19,21 @@ func _ready() -> void:
 
 	var column := UiFactory.make_column()
 	var center := UiFactory.make_centered(column)
+	# O conteúdo não cobre o banner do rodapé
+	center.offset_bottom = -Params.banner_height
 	add_child(center)
+
+	var badge := QuarkBadge.new()
+	badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	badge.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	badge.offset_right = -Params.hud_margin.x
+	badge.offset_top = Params.pause_button_margin.y
+	add_child(badge)
+
+	var banner: Control = AdService.make_banner_placeholder()
+	banner.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	banner.offset_top = -Params.banner_height
+	add_child(banner)
 	UiFactory.animate_in(center)
 
 	column.add_child(UiFactory.make_title("GAME_TITLE"))
@@ -31,9 +46,7 @@ func _ready() -> void:
 	squad_button.pressed.connect(SceneTransition.go_to.bind(ScenePaths.SQUAD))
 	column.add_child(squad_button)
 
-	var upgrades_button := UiFactory.make_button("")
-	upgrades_button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	upgrades_button.text = tr("MENU_UPGRADES") % SaveGame.quarks
+	var upgrades_button := UiFactory.make_button("MENU_UPGRADES")
 	upgrades_button.pressed.connect(_on_upgrades_pressed)
 	column.add_child(upgrades_button)
 

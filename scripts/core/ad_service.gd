@@ -14,6 +14,23 @@ func is_rewarded_available() -> bool:
 	return not _busy
 
 
+## Espaço do banner (simulado): retângulo marcando onde o banner real vai ficar.
+## Com o SDK, troque por um nó que exibe o banner do AdMob na mesma área.
+func make_banner_placeholder() -> Control:
+	var panel := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.0, 0.0, 0.0, 0.55)
+	style.border_color = Color(Params.ui_muted_text_color, 0.4)
+	style.border_width_top = 2
+	panel.add_theme_stylebox_override("panel", style)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var label := UiFactory.make_subtitle("BANNER_PLACEHOLDER")
+	label.add_theme_font_size_override("font_size", Params.results_detail_font_size)
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	panel.add_child(label)
+	return panel
+
+
 ## Mostra o anúncio. Quem chamou deve aguardar rewarded_finished.
 func show_rewarded() -> void:
 	if _busy:

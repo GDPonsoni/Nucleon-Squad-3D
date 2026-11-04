@@ -15,6 +15,8 @@ var quarks: int = 0  # saldo para a evolução do núcleo
 var quarks_earned_total: int = 0  # total ganho desde o início (estatística)
 var upgrades: Dictionary = {}  # id do nó da evolução -> nível
 var settings: Dictionary = {}  # configurações alteradas (as outras usam Params.default_settings)
+var ad_day: String = ""  # dia (AAAA-MM-DD) da contagem de anúncios por quarks
+var ad_count: int = 0  # anúncios por quarks vistos nesse dia
 ## Capítulos concluídos na campanha antiga (migração): contam como concluídos.
 var cleared_chapters: PackedStringArray = PackedStringArray()
 ## false = não grava no aparelho (ferramentas de teste e simulação)
@@ -122,6 +124,34 @@ func add_quarks(amount: int) -> void:
 	save()
 
 
+## Anúncios por quarks que ainda dá para ver hoje.
+func ads_left_today() -> int:
+	if ad_day != Time.get_date_string_from_system():
+		return Params.ad_quarks_daily_limit
+	return maxi(Params.ad_quarks_daily_limit - ad_count, 0)
+
+
+## Quarks de cada anúncio: crescem com os capítulos concluídos.
+func ad_quark_reward() -> int:
+	var cleared: int = 0
+	for p in Session.campaign.planets.size():
+		if is_chapter_cleared(p):
+			cleared += 1
+	return Params.ad_quarks_base + Params.ad_quarks_per_chapter * cleared
+
+
+## Anúncio assistido até o fim: soma os quarks e conta no limite do dia.
+func grant_ad_quarks() -> int:
+	var today: String = Time.get_date_string_from_system()
+	if ad_day != today:
+		ad_day = today
+		ad_count = 0
+	ad_count += 1
+	var reward: int = ad_quark_reward()
+	add_quarks(reward)
+	return reward
+
+
 func upgrade_level(node: UpgradeData) -> int:
 	return UpgradeTreeData.level_of(node, upgrades)
 
@@ -180,6 +210,8 @@ func to_dict() -> Dictionary:
 		"upgrades": upgrades,
 		"cleared_chapters": cleared_chapters,
 		"settings": settings,
+		"ad_day": ad_day,
+		"ad_count": ad_count,
 	}
 
 
@@ -214,6 +246,8 @@ func from_dict(data: Dictionary) -> void:
 	if typeof(levels) == TYPE_DICTIONARY:
 		for id in levels:
 			upgrades[String(id)] = maxi(int(levels[id]), 0)
+	ad_day = String(data.get("ad_day", ""))
+	ad_count = maxi(int(data.get("ad_count", 0)), 0)
 	var saved_settings: Variant = data.get("settings", {})
 	if typeof(saved_settings) == TYPE_DICTIONARY:
 		for key in saved_settings:

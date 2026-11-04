@@ -1,7 +1,7 @@
 class_name SettingsPanel
 extends VBoxContainer
 ## Configurações do jogo: volumes (geral, música, efeitos sonoros), vibração, efeitos
-## visuais reduzidos e idioma. Salva na hora (SaveGame.settings) e é usado na tela
+## visuais reduzidos, estatísticas na tela (FPS e contadores) e idioma. Salva na hora (SaveGame.settings) e é usado na tela
 ## de configurações do menu e na pausa.
 
 signal back_pressed
@@ -22,6 +22,7 @@ func _build() -> void:
 	_add_slider("SETTINGS_SFX", "sfx", func() -> void: Audio.play(&"powerup_pickup"))
 	_add_toggle("SETTINGS_VIBRATION", "vibration", "SETTINGS_ON", "SETTINGS_OFF")
 	_add_toggle("SETTINGS_EFFECTS", "reduced_effects", "SETTINGS_EFFECTS_REDUCED", "SETTINGS_EFFECTS_FULL")
+	_add_toggle("SETTINGS_STATS", "show_stats", "SETTINGS_ON", "SETTINGS_OFF")
 	_add_language()
 	var back := UiFactory.make_button("MENU_BACK")
 	back.pressed.connect(back_pressed.emit)
@@ -56,8 +57,12 @@ func _add_slider(label_key: String, setting: String, preview: Callable = Callabl
 func _add_toggle(label_key: String, setting: String, on_key: String, off_key: String) -> void:
 	var button := UiFactory.make_button("")
 	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	button.custom_minimum_size.x = Params.settings_slider_width
 	var refresh := func() -> void:
 		button.text = "%s: %s" % [tr(label_key), tr(on_key if bool(SaveGame.setting(setting)) else off_key)]
+		# Textos longos (espanhol) encolhem para caber na largura do painel
+		button.add_theme_font_size_override("font_size", UiFactory.fit_font_size(button.text,
+			Params.settings_slider_width - Params.ui_button_padding * 2.0, Params.ui_font_size))
 	refresh.call()
 	button.pressed.connect(func() -> void:
 		SaveGame.set_setting(setting, not bool(SaveGame.setting(setting)))
@@ -71,6 +76,9 @@ func _add_language() -> void:
 	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	var current: String = String(SaveGame.setting("language"))
 	button.text = "%s: %s" % [tr("SETTINGS_LANGUAGE"), tr("LANGUAGE_" + current.to_upper())]
+	button.custom_minimum_size.x = Params.settings_slider_width
+	button.add_theme_font_size_override("font_size", UiFactory.fit_font_size(button.text,
+		Params.settings_slider_width - Params.ui_button_padding * 2.0, Params.ui_font_size))
 	button.pressed.connect(_show_language_list)
 	add_child(button)
 

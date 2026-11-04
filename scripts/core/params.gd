@@ -27,8 +27,17 @@ var sfx_pitch_jitter: float = 0.06  # variação aleatória de tom
 var companion_sound_db: float = -8.0  # a nave auxiliar soa mais baixo
 var default_settings: Dictionary = {
 	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "reduced_effects": false, "language": "auto",
+	"show_stats": true,
 }
 var languages: PackedStringArray = ["auto", "pt_BR", "en", "es"]
+var ad_quarks_base: int = 120  # quarks por anúncio assistido
+var ad_quarks_per_chapter: int = 60  # a mais por capítulo concluído
+var ad_quarks_daily_limit: int = 5
+var ad_button_size: Vector2 = Vector2(520.0, 120.0)
+var banner_height: float = 150.0  # espaço simulado do banner no menu inicial
+var quark_badge_height: float = 92.0
+var quark_badge_font_size: int = 48
+var quark_badge_count_seconds: float = 0.8
 var vibration_ms: int = 60  # levar hit
 var haptic_tick_ms: int = 12  # toque leve: trocar de capítulo, trocar de nave
 var haptic_level_up_ms: int = 25

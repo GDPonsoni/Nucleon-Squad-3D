@@ -249,3 +249,22 @@ func test_spanish_translation() -> void:
 	check(tr("MENU_PLAY") == "Jugar" and tr("MENU_SETTINGS") == "Ajustes", "textos em espanhol: %s" % tr("MENU_PLAY"))
 	SaveGame.settings = saved
 	SaveGame.settings_changed.emit()
+
+
+func test_ad_quarks_daily_limit() -> void:
+	var save := _fresh_save()
+	check(save.ads_left_today() == Params.ad_quarks_daily_limit, "limite cheio no começo")
+	var reward: int = save.grant_ad_quarks()
+	check(reward == Params.ad_quarks_base and save.quarks == reward, "primeiro anúncio: %d quarks" % reward)
+	for i in Params.ad_quarks_daily_limit:
+		save.grant_ad_quarks()
+	check(save.ads_left_today() == 0, "limite do dia acaba")
+	save.ad_day = "2000-01-01"
+	check(save.ads_left_today() == Params.ad_quarks_daily_limit, "dia novo libera de novo")
+	save.cleared_chapters = PackedStringArray(["planet_1", "planet_2"])
+	check(save.ad_quark_reward() == Params.ad_quarks_base + 2 * Params.ad_quarks_per_chapter, "recompensa cresce com capítulos")
+	var copy := _fresh_save()
+	copy.from_dict(JSON.parse_string(JSON.stringify(save.to_dict())))
+	check(copy.ad_day == "2000-01-01" and copy.ad_count == save.ad_count, "contagem salva")
+	save.free()
+	copy.free()

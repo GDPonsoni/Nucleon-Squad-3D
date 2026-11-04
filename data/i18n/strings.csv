@@ -52,7 +52,7 @@ SQUAD_SAVE,Save,Salvar,Guardar
 PLANET_4_NAME,Singularity,Singularidade,Singularidad
 BOSS_4_NAME,Hydra,Hidra,Hidra
 SWITCH_CHOOSE,Choose your next ship,Escolha a próxima nave,Elige tu próxima nave
-MENU_UPGRADES,Core (%d quarks),Núcleo (%d quarks),Núcleo (%d quarks)
+MENU_UPGRADES,Core,Núcleo,Núcleo
 RESULT_QUARKS,Quarks,Quarks,Quarks
 RESULT_QUARKS_DETAIL,enemies +%d · stage +%d,inimigos +%d · fase +%d,enemigos +%d · fase +%d
 RESULT_UPGRADES,Upgrade core (%d quarks),Evoluir núcleo (%d quarks),Mejorar núcleo (%d quarks)
@@ -141,3 +141,8 @@ SQUAD_COMPANION_TITLE,Wingman (optional),Nave auxiliar (opcional),Nave auxiliar 
 SQUAD_COMPANION_NONE,None,Nenhuma,Ninguna
 SQUAD_SLOTS_TITLE,Squad,Esquadrão,Escuadrón
 SETTINGS_PICK_LANGUAGE,Choose the language,Escolha o idioma,Elige el idioma
+ADS_EARN_BUTTON,Watch ad: +%d quarks,Ver anúncio: +%d quarks,Ver anuncio: +%d quarks
+ADS_EARN_LEFT,%d of %d left today,%d de %d restantes hoje,%d de %d restantes hoy
+ADS_EARN_DONE,Come back tomorrow for more,Volte amanhã para mais,Vuelve mañana por más
+BANNER_PLACEHOLDER,Banner ad space (simulated),Espaço do banner (simulado),Espacio del banner (simulado)
+SETTINGS_STATS,On-screen stats,Estatísticas na tela,Estadísticas en pantalla
