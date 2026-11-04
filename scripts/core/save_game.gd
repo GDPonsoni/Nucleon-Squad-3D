@@ -99,7 +99,7 @@ func set_squad(bodies: Array[BodyData]) -> void:
 
 ## Nave auxiliar escolhida (null = nenhuma, espaço bloqueado ou nave bloqueada).
 func companion_body() -> BodyData:
-	if companion.is_empty() or not is_companion_unlocked():
+	if companion.is_empty() or not is_companion_unlocked() or squad.has(companion):
 		return null
 	var roster := load(Params.roster_path) as FormationData
 	for body in roster.bodies:

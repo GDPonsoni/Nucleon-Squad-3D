@@ -135,3 +135,4 @@ SETTINGS_OFF,Off,Desligada
 LANGUAGE_AUTO,Automatic,Automático
 LANGUAGE_PT_BR,Português,Português
 LANGUAGE_EN,English,English
+SQUAD_COMPANION_IN_SQUAD,The wingman must be a ship that is not in the squad.,A auxiliar precisa ser uma nave que não está no esquadrão.

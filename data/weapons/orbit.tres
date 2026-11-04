@@ -5,61 +5,61 @@
 
 [sub_resource type="Resource" id="WeaponLevel_lv1"]
 script = ExtResource("2_level")
-damage = 2
+damage = 3
 orbit_count = 1
 orbit_radius = 170.0
-orbit_speed_degrees = 270.0
-orbit_size = 40.0
-orbit_hit_seconds = 0.15
+orbit_speed_degrees = 310.0
+orbit_size = 52.0
+orbit_hit_seconds = 0.12
 clears_projectiles = true
 
 [sub_resource type="Resource" id="WeaponLevel_lv2"]
 script = ExtResource("2_level")
-damage = 2
+damage = 3
 orbit_count = 2
 orbit_radius = 170.0
-orbit_speed_degrees = 270.0
-orbit_size = 40.0
-orbit_hit_seconds = 0.15
+orbit_speed_degrees = 310.0
+orbit_size = 52.0
+orbit_hit_seconds = 0.12
 clears_projectiles = true
 
 [sub_resource type="Resource" id="WeaponLevel_lv3"]
 script = ExtResource("2_level")
-damage = 2
+damage = 4
 orbit_count = 3
 orbit_radius = 180.0
-orbit_speed_degrees = 270.0
-orbit_size = 40.0
-orbit_hit_seconds = 0.15
+orbit_speed_degrees = 310.0
+orbit_size = 52.0
+orbit_hit_seconds = 0.12
 clears_projectiles = true
 
 [sub_resource type="Resource" id="WeaponLevel_lv4"]
 script = ExtResource("2_level")
-damage = 2
+damage = 4
 orbit_count = 4
 orbit_radius = 190.0
-orbit_speed_degrees = 280.0
-orbit_size = 40.0
-orbit_hit_seconds = 0.15
+orbit_speed_degrees = 320.0
+orbit_size = 52.0
+orbit_hit_seconds = 0.12
 clears_projectiles = true
 
 [sub_resource type="Resource" id="WeaponLevel_lv5"]
 script = ExtResource("2_level")
-damage = 2
+damage = 5
 orbit_count = 8
 orbit_radius = 200.0
-orbit_speed_degrees = 300.0
-orbit_size = 40.0
-orbit_hit_seconds = 0.15
+orbit_speed_degrees = 340.0
+orbit_size = 52.0
+orbit_hit_seconds = 0.12
 clears_projectiles = true
 
 [sub_resource type="Resource" id="WeaponLevel_companion"]
 script = ExtResource("2_level")
-damage = 1
+damage = 2
 orbit_count = 1
 orbit_radius = 70.0
 orbit_speed_degrees = 300.0
-orbit_size = 26.0
+orbit_size = 32.0
 orbit_hit_seconds = 0.2
 clears_projectiles = true
 
@@ -70,7 +70,7 @@ kind = 3
 color = Color(0.75, 0.55, 1, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])
 companion = SubResource("WeaponLevel_companion")
-special_charge_seconds = 16.0
-special_damage = 25
+special_charge_seconds = 14.0
+special_damage = 35
 special_duration = 0.9
 special_radius = 1300.0

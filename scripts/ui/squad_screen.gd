@@ -163,12 +163,19 @@ func _make_card(body: BodyData) -> Button:
 
 func _on_card_pressed(body: BodyData) -> void:
 	if _picking_companion:
+		# A auxiliar não pode ser uma nave do esquadrão
+		if body in _chosen:
+			_hint.text = tr("SQUAD_COMPANION_IN_SQUAD")
+			return
 		_companion = body
 		_picking_companion = false
 	elif body in _chosen:
 		_chosen.erase(body)
 	elif _chosen.size() < Params.squad_size:
 		_chosen.append(body)
+		# Colocar a auxiliar no esquadrão esvazia o espaço auxiliar
+		if body == _companion:
+			_companion = null
 	_refresh()
 
 
@@ -206,6 +213,8 @@ func _refresh() -> void:
 		_cards[i].set_pressed_no_signal(position_in_squad >= 0 and not _picking_companion)
 		_card_icons[i].number = position_in_squad + 1
 		_card_icons[i].auxiliary = _roster[i] == _companion
+		# Escolhendo a auxiliar: naves do esquadrão ficam apagadas
+		_cards[i].modulate.a = 0.4 if _picking_companion and position_in_squad >= 0 else 1.0
 	_hint.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_hint.text = tr("SQUAD_COMPANION_HINT") if _picking_companion else tr("SQUAD_HINT")
 	_save_button.disabled = _chosen.size() != Params.squad_size
