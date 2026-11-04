@@ -44,7 +44,7 @@ func _goal() -> Vector2:
 	return _player.position + Vector2(Params.companion_offset.x * _side, Params.companion_offset.y)
 
 
-## Corpo pequeno com contorno escuro e um núcleo pequeno, para não ser confundido com a nave.
+## Corpo pequeno com contorno escuro e sem núcleo: só a nave principal tem núcleo (e hitbox).
 func _draw() -> void:
 	var size: Vector2 = Params.ship_size * Params.companion_scale
 	var points := PackedVector2Array()
@@ -54,4 +54,3 @@ func _draw() -> void:
 	outline.append(points[0])
 	draw_colored_polygon(points, body.color)
 	draw_polyline(outline, Params.nucleus_outline_color, 3.0)
-	draw_circle(Vector2.ZERO, Params.nucleus_radius * Params.companion_scale, Color(Params.nucleus_color, 0.85))

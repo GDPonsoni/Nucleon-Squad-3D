@@ -1,25 +1,24 @@
 extends Control
-## Montar o esquadrão: 4 espaços em ordem (o 1º começa a fase), o espaço opcional da
-## nave auxiliar e cartões com todas as naves. Tocar num cartão adiciona/remove a nave
-## do esquadrão; tocar num espaço a remove. Tocar no espaço auxiliar entra no modo de
-## escolha da auxiliar (o próximo cartão tocado vira a auxiliar; tocar de novo esvazia).
-## Naves e o espaço auxiliar ainda não liberados aparecem com cadeado.
+## Montar o esquadrão: 4 espaços em ordem (o 1º começa a fase) e cartões com todas as
+## naves; tocar num cartão adiciona/remove a nave, tocar num espaço a remove.
+## Abaixo, a seção da nave auxiliar (opcional): uma fileira com "Nenhuma" e as naves.
+## Um toque escolhe; naves do esquadrão e bloqueadas não podem ser a auxiliar.
 ## Salvar só fica ativo com o esquadrão completo.
 
 var _roster: Array[BodyData] = []
 var _chosen: Array[BodyData] = []
 var _companion: BodyData
-var _picking_companion: bool = false
 var _slots: Array[ShipIcon] = []
-var _companion_slot: ShipIcon
 var _cards: Array[Button] = []
 var _card_icons: Array[ShipIcon] = []
-var _hint: Label
+var _wingman_buttons: Array[Button] = []  # 0 = "Nenhuma", depois uma por nave do elenco
+var _wingman_icons: Array[ShipIcon] = []
 var _save_button: Button
 
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
+	Audio.play_menu_music()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())
@@ -40,14 +39,13 @@ func _ready() -> void:
 	column.add_theme_constant_override("separation", Params.squad_spacing)
 	center.add_child(column)
 	column.add_child(UiFactory.make_title("SQUAD_TITLE"))
-	_hint = UiFactory.make_subtitle("SQUAD_HINT")
-	_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_hint.custom_minimum_size.x = Params.squad_hint_width
-	column.add_child(_hint)
+	var hint := UiFactory.make_subtitle("SQUAD_HINT")
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.custom_minimum_size.x = Params.squad_hint_width
+	column.add_child(hint)
 
 	column.add_child(_build_slots())
 
-	# Cartões com todas as naves
 	var grid := GridContainer.new()
 	grid.columns = Params.squad_columns
 	grid.add_theme_constant_override("h_separation", Params.squad_spacing)
@@ -55,6 +53,8 @@ func _ready() -> void:
 	column.add_child(grid)
 	for body in _roster:
 		grid.add_child(_make_card(body))
+
+	column.add_child(_build_wingman())
 
 	var buttons := HBoxContainer.new()
 	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -64,7 +64,7 @@ func _ready() -> void:
 	back.custom_minimum_size = Params.squad_button_size
 	back.pressed.connect(_go_back)
 	buttons.add_child(back)
-	_save_button = UiFactory.make_button("SQUAD_SAVE")
+	_save_button = UiFactory.make_primary_button("SQUAD_SAVE")
 	_save_button.custom_minimum_size = Params.squad_button_size
 	_save_button.pressed.connect(_on_save_pressed)
 	buttons.add_child(_save_button)
@@ -73,45 +73,81 @@ func _ready() -> void:
 	_refresh()
 
 
-## Espaços do esquadrão em ordem e, separado, o espaço da nave auxiliar.
+## Espaços do esquadrão, em ordem.
 func _build_slots() -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", Params.squad_spacing)
 	for i in Params.squad_size:
-		var slot := _slot_button()
+		var slot := _icon_button(Params.squad_slot_size)
 		slot.pressed.connect(_on_slot_pressed.bind(i))
 		row.add_child(slot)
 		_slots.append(slot.get_child(0) as ShipIcon)
-
-	var divider := Control.new()
-	divider.custom_minimum_size.x = Params.squad_companion_gap
-	row.add_child(divider)
-
-	var aux := VBoxContainer.new()
-	aux.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_child(aux)
-	var slot := _slot_button()
-	slot.pressed.connect(_on_companion_slot_pressed)
-	aux.add_child(slot)
-	_companion_slot = slot.get_child(0) as ShipIcon
-	_companion_slot.auxiliary = true
-	var label := UiFactory.make_subtitle("SQUAD_COMPANION")
-	label.add_theme_color_override("font_color", Params.quark_color)
-	label.add_theme_font_size_override("font_size", Params.squad_description_font_size)
-	aux.add_child(label)
 	return row
 
 
-func _slot_button() -> Button:
-	var slot := Button.new()
-	slot.flat = true
-	slot.focus_mode = Control.FOCUS_NONE
-	slot.custom_minimum_size = Vector2.ONE * Params.squad_slot_size
+## Seção da nave auxiliar: título e a fileira de escolha (ou o aviso de bloqueio).
+func _build_wingman() -> PanelContainer:
+	var box := VBoxContainer.new()
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", Params.squad_spacing)
+	var title := UiFactory.make_subtitle("SQUAD_COMPANION_TITLE")
+	title.add_theme_color_override("font_color", Params.quark_color)
+	box.add_child(title)
+	var text_width: float = Params.squad_hint_width - Params.ui_panel_padding * 2.0
+	if not SaveGame.is_companion_unlocked():
+		var locked := UiFactory.make_subtitle("")
+		locked.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		locked.text = tr("SQUAD_COMPANION_LOCKED") % Params.companion_unlock_chapter
+		locked.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		locked.custom_minimum_size.x = text_width
+		box.add_child(locked)
+		return UiFactory.make_panel(box)
+	var hint := UiFactory.make_subtitle("SQUAD_COMPANION_HINT")
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.custom_minimum_size.x = text_width
+	hint.add_theme_font_size_override("font_size", Params.squad_description_font_size)
+	box.add_child(hint)
+	var grid := GridContainer.new()
+	grid.columns = Params.squad_wingman_columns
+	grid.add_theme_constant_override("h_separation", Params.squad_spacing)
+	grid.add_theme_constant_override("v_separation", Params.squad_spacing)
+	box.add_child(grid)
+	var options: Array = [null]
+	options.append_array(_roster)
+	for body in options:
+		var cell := VBoxContainer.new()
+		cell.alignment = BoxContainer.ALIGNMENT_CENTER
+		grid.add_child(cell)
+		var button := _icon_button(Params.squad_wingman_size)
+		button.pressed.connect(_on_wingman_pressed.bind(body))
+		cell.add_child(button)
+		var icon := button.get_child(0) as ShipIcon
+		icon.body = body
+		var label := Label.new()
+		label.text = tr("SQUAD_COMPANION_NONE") if body == null else tr(body.name_key)
+		label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		label.add_theme_font_size_override("font_size", Params.squad_wingman_font_size)
+		label.custom_minimum_size.x = Params.squad_wingman_size
+		label.clip_text = true
+		cell.add_child(label)
+		_wingman_buttons.append(button)
+		_wingman_icons.append(icon)
+	return UiFactory.make_panel(box)
+
+
+## Botão quadrado e sem fundo com um ícone de nave dentro.
+func _icon_button(side: float) -> Button:
+	var button := Button.new()
+	button.flat = true
+	button.focus_mode = Control.FOCUS_NONE
+	button.custom_minimum_size = Vector2.ONE * side
+	button.pressed.connect(Audio.play.bind(&"ui_click"))
 	var icon := ShipIcon.new()
 	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
-	slot.add_child(icon)
-	return slot
+	button.add_child(icon)
+	return button
 
 
 func _make_card(body: BodyData) -> Button:
@@ -162,61 +198,45 @@ func _make_card(body: BodyData) -> Button:
 
 
 func _on_card_pressed(body: BodyData) -> void:
-	if _picking_companion:
-		# A auxiliar não pode ser uma nave do esquadrão
-		if body in _chosen:
-			_hint.text = tr("SQUAD_COMPANION_IN_SQUAD")
-			return
-		_companion = body
-		_picking_companion = false
-	elif body in _chosen:
+	if body in _chosen:
 		_chosen.erase(body)
 	elif _chosen.size() < Params.squad_size:
 		_chosen.append(body)
-		# Colocar a auxiliar no esquadrão esvazia o espaço auxiliar
+		# Uma nave não pode estar no esquadrão e ser a auxiliar ao mesmo tempo
 		if body == _companion:
 			_companion = null
 	_refresh()
 
 
 func _on_slot_pressed(index: int) -> void:
-	_picking_companion = false
 	if index < _chosen.size():
 		_chosen.remove_at(index)
 	_refresh()
 
 
-## 1º toque: escolher a auxiliar. 2º toque (já escolhendo): deixar o espaço vazio.
-func _on_companion_slot_pressed() -> void:
-	if not SaveGame.is_companion_unlocked():
-		_hint.text = tr("SQUAD_COMPANION_LOCKED") % Params.companion_unlock_chapter
+func _on_wingman_pressed(body: BodyData) -> void:
+	if body != null and (body in _chosen or not SaveGame.is_ship_unlocked(body)):
 		return
-	if _picking_companion:
-		_companion = null
-		_picking_companion = false
-	else:
-		_picking_companion = true
+	_companion = body
 	_refresh()
 
 
-## Espaços, número de cada cartão, dica e estado do botão Salvar.
+## Espaços, número e marca de auxiliar nos cartões, escolha da auxiliar e botão Salvar.
 func _refresh() -> void:
 	for i in _slots.size():
 		_slots[i].body = _chosen[i] if i < _chosen.size() else null
-	var companion_unlocked: bool = SaveGame.is_companion_unlocked()
-	_companion_slot.body = _companion
-	_companion_slot.locked = not companion_unlocked
-	_companion_slot.highlighted = _picking_companion
 	for i in _roster.size():
 		var position_in_squad: int = _chosen.find(_roster[i])
-		# No modo de escolha da auxiliar, todos os cartões liberados ficam "soltos"
-		_cards[i].set_pressed_no_signal(position_in_squad >= 0 and not _picking_companion)
+		_cards[i].set_pressed_no_signal(position_in_squad >= 0)
 		_card_icons[i].number = position_in_squad + 1
 		_card_icons[i].auxiliary = _roster[i] == _companion
-		# Escolhendo a auxiliar: naves do esquadrão ficam apagadas
-		_cards[i].modulate.a = 0.4 if _picking_companion and position_in_squad >= 0 else 1.0
-	_hint.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	_hint.text = tr("SQUAD_COMPANION_HINT") if _picking_companion else tr("SQUAD_HINT")
+	for i in _wingman_buttons.size():
+		var body: BodyData = null if i == 0 else _roster[i - 1]
+		var blocked: bool = body != null and (body in _chosen or not SaveGame.is_ship_unlocked(body))
+		_wingman_buttons[i].disabled = blocked
+		_wingman_buttons[i].modulate.a = 0.35 if blocked else 1.0
+		_wingman_icons[i].locked = blocked
+		_wingman_icons[i].highlighted = body == _companion
 	_save_button.disabled = _chosen.size() != Params.squad_size
 
 

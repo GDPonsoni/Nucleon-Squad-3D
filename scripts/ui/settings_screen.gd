@@ -4,6 +4,7 @@ extends Control
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
+	Audio.play_menu_music()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())

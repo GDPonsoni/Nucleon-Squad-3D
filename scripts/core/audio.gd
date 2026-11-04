@@ -2,7 +2,7 @@ extends Node
 ## Autoload: efeitos sonoros, barramentos de volume e idioma.
 ## Os sons ficam em assets/audio/sfx/<nome>.wav; o ganho de cada um (Params.sfx_gain_db)
 ## nivela o volume entre eles. Barramentos: SFX e Música, ambos ligados ao Master.
-## Música: ainda não há faixas; play_music() já usa o barramento e o volume da configuração.
+## Música: assets/audio/music (menu e um tema por capítulo, geradas por scripts/tools/gen_music.py).
 
 const SFX_PATH: String = "res://assets/audio/sfx/%s.wav"
 const SFX_BUS: StringName = &"SFX"
@@ -61,10 +61,13 @@ func _set_bus_volume(bus_name: StringName, linear: float) -> void:
 	AudioServer.set_bus_mute(index, linear <= 0.001)
 
 
-## "auto" segue o idioma do aparelho (português ou inglês).
+## "auto" segue o idioma do aparelho (português, espanhol ou inglês).
 static func resolve_locale(language: String) -> String:
 	if language == "auto":
-		return "pt_BR" if OS.get_locale().begins_with("pt") else "en"
+		var system: String = OS.get_locale()
+		if system.begins_with("pt"):
+			return "pt_BR"
+		return "es" if system.begins_with("es") else "en"
 	return language
 
 
@@ -94,13 +97,33 @@ func _free_voice() -> AudioStreamPlayer:
 	return _voices[_next_voice]
 
 
-## Música de fundo em loop (sem faixas por enquanto).
+## Música de fundo em laço, com transição suave (sai a atual, entra a nova).
 func play_music(stream: AudioStream) -> void:
 	if _music.stream == stream and _music.playing:
 		return
-	_music.stream = stream
-	if stream != null:
-		_music.play()
+	var tween := create_tween().set_ignore_time_scale(true)
+	if _music.playing:
+		tween.tween_property(_music, "volume_db", Params.music_silent_db, Params.music_fade_seconds)
+	tween.tween_callback(func() -> void:
+		_music.stream = stream
+		_music.volume_db = Params.music_silent_db
+		if stream != null:
+			_music.play())
+	tween.tween_property(_music, "volume_db", Params.music_volume_db, Params.music_fade_seconds)
+
+
+## Tema dos menus (continua tocando de uma tela de menu para outra).
+func play_menu_music() -> void:
+	play_music(_load_music(Params.music_menu_path))
+
+
+## Tema do capítulo (0 = Aurora).
+func play_chapter_music(chapter: int) -> void:
+	play_music(_load_music(Params.music_chapter_path % (chapter + 1)))
+
+
+func _load_music(path: String) -> AudioStream:
+	return load(path) as AudioStream if ResourceLoader.exists(path) else null
 
 
 ## Som do botão: voltar, confirmar ou clique comum, conforme o texto dele.

@@ -16,6 +16,7 @@ var _selected: UpgradeData
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
+	Audio.play_menu_music()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())
@@ -66,9 +67,12 @@ func _build_detail_panel() -> PanelContainer:
 	_name_label = Label.new()
 	_name_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_name_label.custom_minimum_size.x = Params.upgrade_detail_width * 0.55
 	_name_label.add_theme_font_size_override("font_size", Params.upgrade_name_font_size)
 	header.add_child(_name_label)
 	_level_label = UiFactory.make_subtitle("")
+	_level_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_level_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	header.add_child(_level_label)
 
@@ -77,9 +81,12 @@ func _build_detail_panel() -> PanelContainer:
 	_next_label = _detail_line()
 	box.add_child(_next_label)
 
-	_buy_button = UiFactory.make_button("")
+	_buy_button = UiFactory.make_primary_button("")
 	_buy_button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	_buy_button.custom_minimum_size = Vector2(Params.upgrade_detail_width, Params.upgrade_buy_height)
+	# Textos longos (requisitos) quebram linha em vez de alargar o botão
+	_buy_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_buy_button.add_theme_font_size_override("font_size", Params.upgrade_buy_font_size)
 	_buy_button.pressed.connect(_on_buy_pressed)
 	box.add_child(_buy_button)
 	return UiFactory.make_panel(box)
@@ -119,6 +126,7 @@ func _refresh() -> void:
 	var node: UpgradeData = _selected
 	var level: int = SaveGame.upgrade_level(node)
 	_name_label.text = tr(node.name_key)
+	_name_label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(_name_label.text, Params.upgrade_detail_width * 0.55, Params.upgrade_name_font_size))
 	_name_label.add_theme_color_override("font_color", node.color)
 	_level_label.text = (tr("UPGRADES_LEVEL_INFINITE") % level) if node.is_infinite() else (tr("UPGRADES_LEVEL") % [level, node.max_level])
 	_now_label.text = tr("UPGRADES_NOW") % _effect(node, level) if level > 0 else tr("UPGRADES_NONE")

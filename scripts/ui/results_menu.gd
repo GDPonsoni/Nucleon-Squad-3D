@@ -20,7 +20,9 @@ func _ready() -> void:
 func show_stage_clear(state: MatchState, seconds: float, record: bool, summary: Dictionary) -> void:
 	var buttons: Array[Button] = []
 	if Session.has_next():
-		buttons.append(_button("STAGE_NEXT", _on_next_pressed))
+		var next := _button("STAGE_NEXT", _on_next_pressed)
+		next.theme_type_variation = &"PrimaryButton"
+		buttons.append(next)
 	buttons.append(_upgrades_button())
 	buttons.append(_button("RESULT_STAGE_SELECT", _go.bind(ScenePaths.STAGE_SELECT)))
 	buttons.append(_button("PAUSE_EXIT_TO_MENU", _go.bind(ScenePaths.MENU)))

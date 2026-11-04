@@ -1,138 +1,143 @@
-keys,en,pt_BR
-GAME_TITLE,Nucleon Squad,Nucleon Squad
-MENU_PLAY,Play,Jogar
-MENU_QUIT,Quit,Sair
-PAUSE_TITLE,Paused,Pausado
-PAUSE_RESUME,Resume,Continuar
-PAUSE_EXIT_TO_MENU,Back to menu,Voltar ao menu
-GAMEOVER_TITLE,Game over,Fim de jogo
-GAMEOVER_RETRY,Play again,Jogar de novo
-PLANET_1_NAME,Aurora,Aurora
-PLANET_2_NAME,Vulcania,Vulcânia
-STAGE_CLEAR_TITLE,Stage clear,Fase concluída
-STAGE_NEXT,Next stage,Próxima fase
-STAGE_SELECT_TITLE,Select stage,Escolha a fase
-STAGE_BEST,Best %d,Recorde %d
-MENU_BACK,Back,Voltar
-RESULT_SCORE,Score,Pontos
-RESULT_KILLS,Enemies destroyed,Inimigos destruídos
-RESULT_POWERUPS,Power-ups,Power-ups
-RESULT_TIME,Time,Tempo
-RESULT_NEW_RECORD,New record!,Novo recorde!
-RESULT_STAGE_SELECT,Select stage,Escolher fase
-BOSS_WARNING,WARNING: BOSS AHEAD,ALERTA: CHEFE À FRENTE
-BOSS_1_NAME,Sentinel,Sentinela
-BOSS_2_NAME,Forge,Forja
-BOSS_3_NAME,Umbra,Umbra
-PLANET_3_NAME,Abyss,Abismo
-PAUSE_RESTART,Restart,Reiniciar
-RESULT_MEDKITS,Medkits,Medkits
-REVIVE_TITLE,Continue?,Continuar?
-REVIVE_INFO,Watch an ad and your last ship returns with full health.,Assista a um anúncio e sua última nave volta com a vida cheia.
-REVIVE_WATCH,Watch ad,Assistir anúncio
-REVIVE_SKIP,No thanks,"Não, obrigado"
-AD_PLACEHOLDER,Ad,Anúncio
-AD_PLACEHOLDER_INFO,(simulated - no ads yet),(simulado - ainda sem anúncios)
-SHIP_BEAM_NAME,Beam,Raio
-SHIP_BEAM_DESC,Continuous beam that stops at the first enemy. Special: giant beam.,Raio contínuo que para no primeiro inimigo. Especial: raio gigante.
-SHIP_SPREAD_NAME,Spread,Leque
-SHIP_SPREAD_DESC,Fan of shots that grows in size and rows. Special: 360° burst.,Leque de tiros que cresce em tamanho e fileiras. Especial: rajada 360°.
-SHIP_HOMING_NAME,Missiles,Mísseis
-SHIP_HOMING_DESC,Waves of homing missiles. Special: missile rain.,Ondas de mísseis teleguiados. Especial: chuva de mísseis.
-SHIP_ORBIT_NAME,Orbit,Órbita
-SHIP_ORBIT_DESC,Orbitals that hurt enemies and block shots. Special: energy ring.,Orbitais que ferem inimigos e bloqueiam tiros. Especial: anel de energia.
-SHIP_LANCE_NAME,Lance,Lança
-SHIP_LANCE_DESC,Slow shot that pierces lined-up enemies. Special: fan of lances.,Tiro lento que atravessa inimigos em fila. Especial: leque de lanças.
-SHIP_ARTILLERY_NAME,Artillery,Artilharia
-SHIP_ARTILLERY_DESC,Shells that explode in an area. Special: bombardment.,Projéteis que explodem em área. Especial: bombardeio.
-MENU_SQUAD,Squad,Esquadrão
-SQUAD_TITLE,Squad,Esquadrão
-SQUAD_HINT,Pick 4 ships. The first one starts the stage. The wingman is optional.,Escolha 4 naves. A primeira começa a fase. A auxiliar é opcional.
-SQUAD_SAVE,Save,Salvar
-PLANET_4_NAME,Singularity,Singularidade
-BOSS_4_NAME,Hydra,Hidra
-SWITCH_CHOOSE,Choose your next ship,Escolha a próxima nave
-MENU_UPGRADES,Core (%d quarks),Núcleo (%d quarks)
-RESULT_QUARKS,Quarks,Quarks
-RESULT_QUARKS_DETAIL,enemies +%d · stage +%d,inimigos +%d · fase +%d
-RESULT_UPGRADES,Upgrade core (%d quarks),Evoluir núcleo (%d quarks)
-RESULT_CHAPTER_CLEAR,Chapter clear!,Capítulo concluído!
-REWARD_COMPANION_SLOT,Wingman slot unlocked,Espaço da nave auxiliar liberado
-REWARD_SHIP,New ship: %s,Nova nave: %s
-UPGRADES_TITLE,Core,Núcleo
-UPGRADES_BALANCE,%d quarks,%d quarks
-UPGRADES_BRANCH_ATTACK,Attack,Ataque
-UPGRADES_BRANCH_DEFENSE,Defense,Defesa
-UPGRADES_BRANCH_SUPPORT,Support,Suporte
-UPGRADES_LEVEL,Level %d/%d,Nível %d/%d
-UPGRADES_LEVEL_INFINITE,Level %d,Nível %d
-UPGRADES_NOW,Now: %s,Agora: %s
-UPGRADES_NEXT,Next: %s,Próximo: %s
-UPGRADES_NONE,Not upgraded yet,Ainda sem evolução
-UPGRADES_MAXED,Max level,Nível máximo
-UPGRADES_BUY,Upgrade (%d quarks),Evoluir (%d quarks)
-UPGRADES_NOT_ENOUGH,%d quarks (need %d more),%d quarks (faltam %d)
-UPGRADES_REQUIRES,Requires: %s,Requer: %s
-UPGRADES_REQUIRES_COMPANION,Clear chapter %d to unlock the wingman,Conclua o capítulo %d para liberar a nave auxiliar
-UPG_DAMAGE_NAME,Damage,Dano
-UPG_DAMAGE_DESC,all weapon damage %s,dano de todas as armas %s
-UPG_FIRE_RATE_NAME,Fire rate,Cadência
-UPG_FIRE_RATE_DESC,fire rate of all weapons %s,velocidade de disparo de todas as armas %s
-UPG_SPECIAL_NAME,Special,Especial
-UPG_SPECIAL_DESC,"special damage %s, recharge time %s","dano do especial %s, tempo de recarga %s"
-UPG_BOSS_NAME,Boss hunter,Caça-chefes
-UPG_BOSS_DESC,damage to bosses %s,dano em chefes %s
-UPG_HULL_NAME,Hull,Casco
-UPG_HULL_DESC,hits per ship %s,hits de cada nave %s
-UPG_REFLEX_NAME,Reflex,Reflexo
-UPG_REFLEX_DESC,invulnerability after a hit %s,invulnerabilidade após levar hit %s
-UPG_SHIELD_NAME,Shield,Escudo
-UPG_SHIELD_DESC,shields per stage %s (each one blocks a hit),escudos por fase %s (cada um bloqueia um hit)
-UPG_REPAIR_NAME,Repair,Reparo
-UPG_REPAIR_DESC,enemies per medkit %s,inimigos por medkit %s
-UPG_COLLECT_NAME,Collector,Coleta
-UPG_COLLECT_DESC,"quarks earned %s, pickup range %s","quarks ganhos %s, alcance de coleta %s"
-UPG_ARSENAL_NAME,Arsenal,Arsenal
-UPG_ARSENAL_DESC,enemies per power-up %s,inimigos por power-up %s
-UPG_HEADSTART_NAME,Head start,Arma inicial
-UPG_HEADSTART_DESC,weapon level when a stage starts %s,nível das armas ao começar a fase %s
-UPG_WINGMAN_NAME,Wingman,Auxiliar
-UPG_WINGMAN_DESC,wingman damage %s,dano da nave auxiliar %s
-UPG_OVERDRIVE_NAME,Overdrive,Sobrecarga
-UPG_OVERDRIVE_DESC,overall damage %s (no level limit),dano geral %s (sem limite de nível)
-SQUAD_COMPANION,Wingman,Auxiliar
-SQUAD_COMPANION_HINT,Tap a ship to make it your wingman. Tap the wingman slot again to leave it empty.,Toque numa nave para ser a auxiliar. Toque de novo no espaço auxiliar para deixá-lo vazio.
-SQUAD_COMPANION_LOCKED,Clear chapter %d to unlock the wingman slot.,Conclua o capítulo %d para liberar o espaço da nave auxiliar.
-SQUAD_LOCKED_SHIP,Clear chapter %d to unlock.,Conclua o capítulo %d para liberar.
-SHIP_TESLA_NAME,Tesla,Tesla
-SHIP_TESLA_DESC,Bolts that jump between nearby enemies. Special: storm.,Descargas que saltam entre inimigos próximos. Especial: tempestade.
-SHIP_RICOCHET_NAME,Ricochet,Ricochete
-SHIP_RICOCHET_DESC,Shots that bounce from enemy to enemy and off the walls. Special: pinball.,Tiros que pulam de inimigo em inimigo e rebatem nas laterais. Especial: fliperama.
-MINI_1_NAME,Lookout,Vigia
-MINI_2_NAME,Anvil,Bigorna
-MINI_3_NAME,Specter,Espectro
-MINI_4_NAME,Vortex,Vórtice
-MINI_5_NAME,Flare,Labareda
-BOSS_5_NAME,Corona,Corona
-PLANET_5_NAME,Eclipse,Eclipse
-STAGE_CHAPTER,Chapter %d,Capítulo %d
-STAGE_PROGRESS,%d of %d stages cleared,%d de %d fases concluídas
-STAGE_REWARD,Clear the chapter to unlock: %s,Conclua o capítulo para liberar: %s
-STAGE_REWARD_DONE,Chapter reward unlocked: %s,Recompensa do capítulo liberada: %s
-STAGE_REWARD_COMPANION,wingman slot,espaço da nave auxiliar
-MENU_SETTINGS,Settings,Configurações
-SETTINGS_TITLE,Settings,Configurações
-SETTINGS_MASTER,Master volume,Volume geral
-SETTINGS_MUSIC,Music,Música
-SETTINGS_SFX,Sound effects,Efeitos sonoros
-SETTINGS_VIBRATION,Vibration,Vibração
-SETTINGS_EFFECTS,Visual effects,Efeitos visuais
-SETTINGS_EFFECTS_REDUCED,Reduced,Reduzidos
-SETTINGS_EFFECTS_FULL,Full,Completos
-SETTINGS_LANGUAGE,Language,Idioma
-SETTINGS_ON,On,Ligada
-SETTINGS_OFF,Off,Desligada
-LANGUAGE_AUTO,Automatic,Automático
-LANGUAGE_PT_BR,Português,Português
-LANGUAGE_EN,English,English
-SQUAD_COMPANION_IN_SQUAD,The wingman must be a ship that is not in the squad.,A auxiliar precisa ser uma nave que não está no esquadrão.
+keys,en,pt_BR,es
+GAME_TITLE,Nucleon Squad,Nucleon Squad,Nucleon Squad
+MENU_PLAY,Play,Jogar,Jugar
+MENU_QUIT,Quit,Sair,Salir
+PAUSE_TITLE,Paused,Pausado,Pausa
+PAUSE_RESUME,Resume,Continuar,Continuar
+PAUSE_EXIT_TO_MENU,Back to menu,Voltar ao menu,Volver al menú
+GAMEOVER_TITLE,Game over,Fim de jogo,Fin del juego
+GAMEOVER_RETRY,Play again,Jogar de novo,Jugar de nuevo
+PLANET_1_NAME,Aurora,Aurora,Aurora
+PLANET_2_NAME,Vulcania,Vulcânia,Vulcania
+STAGE_CLEAR_TITLE,Stage clear,Fase concluída,Fase completada
+STAGE_NEXT,Next stage,Próxima fase,Siguiente fase
+STAGE_SELECT_TITLE,Select stage,Escolha a fase,Elige la fase
+STAGE_BEST,Best %d,Recorde %d,Récord %d
+MENU_BACK,Back,Voltar,Volver
+RESULT_SCORE,Score,Pontos,Puntos
+RESULT_KILLS,Enemies destroyed,Inimigos destruídos,Enemigos destruidos
+RESULT_POWERUPS,Power-ups,Power-ups,Power-ups
+RESULT_TIME,Time,Tempo,Tiempo
+RESULT_NEW_RECORD,New record!,Novo recorde!,¡Nuevo récord!
+RESULT_STAGE_SELECT,Select stage,Escolher fase,Elegir fase
+BOSS_WARNING,WARNING: BOSS AHEAD,ALERTA: CHEFE À FRENTE,ALERTA: JEFE EN CAMINO
+BOSS_1_NAME,Sentinel,Sentinela,Centinela
+BOSS_2_NAME,Forge,Forja,Forja
+BOSS_3_NAME,Umbra,Umbra,Umbra
+PLANET_3_NAME,Abyss,Abismo,Abismo
+PAUSE_RESTART,Restart,Reiniciar,Reiniciar
+RESULT_MEDKITS,Medkits,Medkits,Botiquines
+REVIVE_TITLE,Continue?,Continuar?,¿Continuar?
+REVIVE_INFO,Watch an ad and your last ship returns with full health.,Assista a um anúncio e sua última nave volta com a vida cheia.,Mira un anuncio y tu última nave vuelve con la vida llena.
+REVIVE_WATCH,Watch ad,Assistir anúncio,Ver anuncio
+REVIVE_SKIP,No thanks,"Não, obrigado","No, gracias"
+AD_PLACEHOLDER,Ad,Anúncio,Anuncio
+AD_PLACEHOLDER_INFO,(simulated - no ads yet),(simulado - ainda sem anúncios),(simulado - aún sin anuncios)
+SHIP_BEAM_NAME,Beam,Raio,Rayo
+SHIP_BEAM_DESC,Continuous beam that stops at the first enemy. Special: giant beam.,Raio contínuo que para no primeiro inimigo. Especial: raio gigante.,Rayo continuo que se detiene en el primer enemigo. Especial: rayo gigante.
+SHIP_SPREAD_NAME,Spread,Leque,Abanico
+SHIP_SPREAD_DESC,Fan of shots that grows in size and rows. Special: 360° burst.,Leque de tiros que cresce em tamanho e fileiras. Especial: rajada 360°.,Abanico de disparos que crece en tamaño y filas. Especial: ráfaga de 360°.
+SHIP_HOMING_NAME,Missiles,Mísseis,Misiles
+SHIP_HOMING_DESC,Waves of homing missiles. Special: missile rain.,Ondas de mísseis teleguiados. Especial: chuva de mísseis.,Oleadas de misiles teledirigidos. Especial: lluvia de misiles.
+SHIP_ORBIT_NAME,Orbit,Órbita,Órbita
+SHIP_ORBIT_DESC,Orbitals that hurt enemies and block shots. Special: energy ring.,Orbitais que ferem inimigos e bloqueiam tiros. Especial: anel de energia.,Orbitales que dañan enemigos y bloquean disparos. Especial: anillo de energía.
+SHIP_LANCE_NAME,Lance,Lança,Lanza
+SHIP_LANCE_DESC,Slow shot that pierces lined-up enemies. Special: fan of lances.,Tiro lento que atravessa inimigos em fila. Especial: leque de lanças.,Disparo lento que atraviesa enemigos en fila. Especial: abanico de lanzas.
+SHIP_ARTILLERY_NAME,Artillery,Artilharia,Artillería
+SHIP_ARTILLERY_DESC,Shells that explode in an area. Special: bombardment.,Projéteis que explodem em área. Especial: bombardeio.,Proyectiles que explotan en área. Especial: bombardeo.
+MENU_SQUAD,Squad,Esquadrão,Escuadrón
+SQUAD_TITLE,Squad,Esquadrão,Escuadrón
+SQUAD_HINT,Tap the ships to build a squad of 4. The first one starts the stage.,Toque nas naves para montar o esquadrão de 4. A primeira começa a fase.,Toca las naves para armar un escuadrón de 4. La primera empieza la fase.
+SQUAD_SAVE,Save,Salvar,Guardar
+PLANET_4_NAME,Singularity,Singularidade,Singularidad
+BOSS_4_NAME,Hydra,Hidra,Hidra
+SWITCH_CHOOSE,Choose your next ship,Escolha a próxima nave,Elige tu próxima nave
+MENU_UPGRADES,Core (%d quarks),Núcleo (%d quarks),Núcleo (%d quarks)
+RESULT_QUARKS,Quarks,Quarks,Quarks
+RESULT_QUARKS_DETAIL,enemies +%d · stage +%d,inimigos +%d · fase +%d,enemigos +%d · fase +%d
+RESULT_UPGRADES,Upgrade core (%d quarks),Evoluir núcleo (%d quarks),Mejorar núcleo (%d quarks)
+RESULT_CHAPTER_CLEAR,Chapter clear!,Capítulo concluído!,¡Capítulo completado!
+REWARD_COMPANION_SLOT,Wingman slot unlocked,Espaço da nave auxiliar liberado,Espacio de nave auxiliar desbloqueado
+REWARD_SHIP,New ship: %s,Nova nave: %s,Nueva nave: %s
+UPGRADES_TITLE,Core,Núcleo,Núcleo
+UPGRADES_BALANCE,%d quarks,%d quarks,%d quarks
+UPGRADES_BRANCH_ATTACK,Attack,Ataque,Ataque
+UPGRADES_BRANCH_DEFENSE,Defense,Defesa,Defensa
+UPGRADES_BRANCH_SUPPORT,Support,Suporte,Apoyo
+UPGRADES_LEVEL,Level %d/%d,Nível %d/%d,Nivel %d/%d
+UPGRADES_LEVEL_INFINITE,Level %d,Nível %d,Nivel %d
+UPGRADES_NOW,Now: %s,Agora: %s,Ahora: %s
+UPGRADES_NEXT,Next: %s,Próximo: %s,Siguiente: %s
+UPGRADES_NONE,Not upgraded yet,Ainda sem evolução,Aún sin mejoras
+UPGRADES_MAXED,Max level,Nível máximo,Nivel máximo
+UPGRADES_BUY,Upgrade (%d quarks),Evoluir (%d quarks),Mejorar (%d quarks)
+UPGRADES_NOT_ENOUGH,%d quarks (need %d more),%d quarks (faltam %d),%d quarks (faltan %d)
+UPGRADES_REQUIRES,Requires: %s,Requer: %s,Requiere: %s
+UPGRADES_REQUIRES_COMPANION,Clear chapter %d to unlock the wingman,Conclua o capítulo %d para liberar a nave auxiliar,Completa el capítulo %d para desbloquear la nave auxiliar
+UPG_DAMAGE_NAME,Damage,Dano,Daño
+UPG_DAMAGE_DESC,all weapon damage %s,dano de todas as armas %s,daño de todas las armas %s
+UPG_FIRE_RATE_NAME,Fire rate,Cadência,Cadencia
+UPG_FIRE_RATE_DESC,fire rate of all weapons %s,velocidade de disparo de todas as armas %s,velocidad de disparo de todas las armas %s
+UPG_SPECIAL_NAME,Special,Especial,Especial
+UPG_SPECIAL_DESC,"special damage %s, recharge time %s","dano do especial %s, tempo de recarga %s","daño del especial %s, tiempo de recarga %s"
+UPG_BOSS_NAME,Boss hunter,Caça-chefes,Cazajefes
+UPG_BOSS_DESC,damage to bosses %s,dano em chefes %s,daño a jefes %s
+UPG_HULL_NAME,Hull,Casco,Casco
+UPG_HULL_DESC,hits per ship %s,hits de cada nave %s,golpes por nave %s
+UPG_REFLEX_NAME,Reflex,Reflexo,Reflejo
+UPG_REFLEX_DESC,invulnerability after a hit %s,invulnerabilidade após levar hit %s,invulnerabilidad tras un golpe %s
+UPG_SHIELD_NAME,Shield,Escudo,Escudo
+UPG_SHIELD_DESC,shields per stage %s (each one blocks a hit),escudos por fase %s (cada um bloqueia um hit),escudos por fase %s (cada uno bloquea un golpe)
+UPG_REPAIR_NAME,Repair,Reparo,Reparación
+UPG_REPAIR_DESC,enemies per medkit %s,inimigos por medkit %s,enemigos por botiquín %s
+UPG_COLLECT_NAME,Collector,Coleta,Recolección
+UPG_COLLECT_DESC,"quarks earned %s, pickup range %s","quarks ganhos %s, alcance de coleta %s","quarks ganados %s, alcance de recolección %s"
+UPG_ARSENAL_NAME,Arsenal,Arsenal,Arsenal
+UPG_ARSENAL_DESC,enemies per power-up %s,inimigos por power-up %s,enemigos por power-up %s
+UPG_HEADSTART_NAME,Head start,Arma inicial,Arma inicial
+UPG_HEADSTART_DESC,weapon level when a stage starts %s,nível das armas ao começar a fase %s,nivel de las armas al empezar la fase %s
+UPG_WINGMAN_NAME,Wingman,Auxiliar,Auxiliar
+UPG_WINGMAN_DESC,wingman damage %s,dano da nave auxiliar %s,daño de la nave auxiliar %s
+UPG_OVERDRIVE_NAME,Overdrive,Sobrecarga,Sobrecarga
+UPG_OVERDRIVE_DESC,overall damage %s (no level limit),dano geral %s (sem limite de nível),daño general %s (sin límite de nivel)
+SQUAD_COMPANION,Wingman,Auxiliar,Auxiliar
+SQUAD_COMPANION_HINT,Pick a ship that is not in the squad. It is optional.,Escolha uma nave que não está no esquadrão. É opcional.,Elige una nave que no esté en el escuadrón. Es opcional.
+SQUAD_COMPANION_LOCKED,Clear chapter %d to unlock the wingman slot.,Conclua o capítulo %d para liberar o espaço da nave auxiliar.,Completa el capítulo %d para desbloquear la nave auxiliar.
+SQUAD_LOCKED_SHIP,Clear chapter %d to unlock.,Conclua o capítulo %d para liberar.,Completa el capítulo %d para desbloquear.
+SHIP_TESLA_NAME,Tesla,Tesla,Tesla
+SHIP_TESLA_DESC,Bolts that jump between nearby enemies. Special: storm.,Descargas que saltam entre inimigos próximos. Especial: tempestade.,Descargas que saltan entre enemigos cercanos. Especial: tormenta.
+SHIP_RICOCHET_NAME,Ricochet,Ricochete,Rebote
+SHIP_RICOCHET_DESC,Shots that bounce from enemy to enemy and off the walls. Special: pinball.,Tiros que pulam de inimigo em inimigo e rebatem nas laterais. Especial: fliperama.,Disparos que rebotan de enemigo en enemigo y en las paredes. Especial: pinball.
+MINI_1_NAME,Lookout,Vigia,Vigía
+MINI_2_NAME,Anvil,Bigorna,Yunque
+MINI_3_NAME,Specter,Espectro,Espectro
+MINI_4_NAME,Vortex,Vórtice,Vórtice
+MINI_5_NAME,Flare,Labareda,Llamarada
+BOSS_5_NAME,Corona,Corona,Corona
+PLANET_5_NAME,Eclipse,Eclipse,Eclipse
+STAGE_CHAPTER,Chapter %d,Capítulo %d,Capítulo %d
+STAGE_PROGRESS,%d of %d stages cleared,%d de %d fases concluídas,%d de %d fases completadas
+STAGE_REWARD,Clear the chapter to unlock: %s,Conclua o capítulo para liberar: %s,Completa el capítulo para desbloquear: %s
+STAGE_REWARD_DONE,Chapter reward unlocked: %s,Recompensa do capítulo liberada: %s,Recompensa del capítulo desbloqueada: %s
+STAGE_REWARD_COMPANION,wingman slot,espaço da nave auxiliar,espacio de nave auxiliar
+MENU_SETTINGS,Settings,Configurações,Ajustes
+SETTINGS_TITLE,Settings,Configurações,Ajustes
+SETTINGS_MASTER,Master volume,Volume geral,Volumen general
+SETTINGS_MUSIC,Music,Música,Música
+SETTINGS_SFX,Sound effects,Efeitos sonoros,Efectos de sonido
+SETTINGS_VIBRATION,Vibration,Vibração,Vibración
+SETTINGS_EFFECTS,Visual effects,Efeitos visuais,Efectos visuales
+SETTINGS_EFFECTS_REDUCED,Reduced,Reduzidos,Reducidos
+SETTINGS_EFFECTS_FULL,Full,Completos,Completos
+SETTINGS_LANGUAGE,Language,Idioma,Idioma
+SETTINGS_ON,On,Ligada,Activada
+SETTINGS_OFF,Off,Desligada,Desactivada
+LANGUAGE_AUTO,Automatic,Automático,Automático
+LANGUAGE_PT_BR,Português,Português,Português
+LANGUAGE_EN,English,English,English
+SQUAD_COMPANION_IN_SQUAD,The wingman must be a ship that is not in the squad.,A auxiliar precisa ser uma nave que não está no esquadrão.,La auxiliar debe ser una nave que no esté en el escuadrón.
+LANGUAGE_ES,Español,Español,Español
+SQUAD_COMPANION_TITLE,Wingman (optional),Nave auxiliar (opcional),Nave auxiliar (opcional)
+SQUAD_COMPANION_NONE,None,Nenhuma,Ninguna
+SQUAD_SLOTS_TITLE,Squad,Esquadrão,Escuadrón
+SETTINGS_PICK_LANGUAGE,Choose the language,Escolha o idioma,Elige el idioma

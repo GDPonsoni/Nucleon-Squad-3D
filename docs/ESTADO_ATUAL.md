@@ -1,6 +1,6 @@
 # Estado atual e guia de retomada
 
-Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **03/11/2026**. O trabalho novo está na branch `feat/capitulo-5-e-progressao` (ainda não mesclada na `main`).
+Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **04/11/2026**, com a `main` publicada no GitHub.
 
 > **Para o Claude Code:** leia este arquivo, o `CLAUDE.md` e o GDD antes de começar. Depois de cada entrega relevante, atualize as seções "O que existe" e "Pendências" daqui.
 
@@ -68,7 +68,9 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 ## 3. O que existe (resumo do jogo)
 
-**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações / Sair) → `stage_select.tscn` (um capítulo por página, com setas) → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
+**Interface:** botões com relevo e variação de ação principal (`PrimaryButton`); a nave auxiliar é escolhida numa fileira própria no Esquadrão (não pode repetir uma nave do esquadrão) e não tem núcleo.
+
+**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações; sair pelo Voltar do Android) → `stage_select.tscn` (um capítulo por página, com setas) → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
 
 **Partida:**
 - Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3) com moldura azul.
@@ -92,8 +94,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - 5 níveis de arma por power-up, kits médicos, especial que carrega com o tempo, revive por anúncio simulado (`AdService`).
 - **Quarks:** 10% da pontuação de cada inimigo/chefe, mais bônus ao concluir a fase (dobrado na 1ª vez). Guardados ao fim da partida, mesmo ao perder ou sair.
 - **Evolução do núcleo** (`upgrades.tscn`, `data/upgrade_tree.tres`, `data/upgrades/*.tres`): 12 nós em 3 ramos (Ataque, Defesa, Suporte) + **Sobrecarga**, sem limite de níveis (custo linear). Bônus calculados em `UpgradeTreeData.boosts_for` → `PlayerBoosts` (no `CombatContext` e no `MatchState`).
-- **Áudio** (`Audio`, autoload): 28 efeitos em `assets/audio/sfx`, com ganho por som em `Params.sfx_gain_db` (nivelados por categoria) e intervalo mínimo em `Params.sfx_min_gap`. Barramentos SFX e Música. **Ainda não há faixas de música**, só o volume.
-- **Configurações** (menu e pausa): volume geral/música/efeitos, vibração, efeitos visuais reduzidos, idioma (automático/PT/EN). Salvas em `SaveGame.settings`.
+- **Áudio** (`Audio`, autoload): 28 efeitos em `assets/audio/sfx`, com ganho por som em `Params.sfx_gain_db` e intervalo mínimo em `Params.sfx_min_gap`. **Músicas** em `assets/audio/music` (menu e um tema por capítulo, em laço, com troca suave), geradas por `python3 scripts/tools/gen_music.py` (Python puro). Barramentos SFX e Música.
+- **Configurações** (menu e pausa): volume geral/música/efeitos, vibração, efeitos visuais reduzidos, idioma (lista: automático, português, inglês, espanhol). Salvas em `SaveGame.settings`.
 
 **Inimigos (9):** Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador, Caçador, **Pulsar** (anéis finos em espiral) e **Fissor** (parte-se em 3 ao morrer). Ondas em formação: LINE, V, COLUMN, SIDE, DIAGONAL, GRID, PINCER, CIRCLE, com balanço, curva e escala de velocidade por onda (`WaveData`).
 
@@ -189,7 +191,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - mesclar a branch na `main` e dar `push` (depende do "pode mesclar na main")
 
 **Ainda não feito:**
-- música (há barramento e volume, faltam faixas)
+- músicas definitivas (as atuais são sintetizadas)
 - `bomb_global.wav` não usado (a bomba global do GDD ainda não existe)
 - anúncio real (SDK)
 - arte final (hoje tudo são placeholders desenhados por código)

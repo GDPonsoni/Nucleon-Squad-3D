@@ -62,6 +62,13 @@ static func fit_font_size(text: String, width: float, max_size: int) -> int:
 	return font_size
 
 
+## Botão de ação principal (preenchido na cor de destaque).
+static func make_primary_button(text_key: String) -> Button:
+	var button := make_button(text_key)
+	button.theme_type_variation = &"PrimaryButton"
+	return button
+
+
 ## Painel translúcido com cantos arredondados envolvendo o conteúdo.
 static func make_panel(child: Control) -> PanelContainer:
 	var panel := PanelContainer.new()

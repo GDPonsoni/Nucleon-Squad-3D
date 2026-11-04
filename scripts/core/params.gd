@@ -3,6 +3,11 @@ extends Node
 
 # --- Áudio e configurações (ganho de cada som em dB: nivela o volume entre eles) ---
 var sfx_voices: int = 20  # sons ao mesmo tempo
+var music_menu_path: String = "res://assets/audio/music/menu.wav"
+var music_chapter_path: String = "res://assets/audio/music/chapter_%d.wav"
+var music_volume_db: float = -6.0  # a música fica abaixo dos efeitos
+var music_silent_db: float = -40.0
+var music_fade_seconds: float = 0.6
 var sfx_gain_db: Dictionary = {
 	&"body_break": -4.1, &"bomb_global": -1.0, &"boss_explode": -1.8, &"boss_hit": -11.2,
 	&"boss_warning": -8.7, &"core_crack": -4.8, &"enemy_explode_medium": -6.3, &"enemy_explode_small": -6.9,
@@ -23,7 +28,7 @@ var companion_sound_db: float = -8.0  # a nave auxiliar soa mais baixo
 var default_settings: Dictionary = {
 	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "reduced_effects": false, "language": "auto",
 }
-var languages: PackedStringArray = ["auto", "pt_BR", "en"]
+var languages: PackedStringArray = ["auto", "pt_BR", "en", "es"]
 var vibration_ms: int = 60  # levar hit
 var haptic_tick_ms: int = 12  # toque leve: trocar de capítulo, trocar de nave
 var haptic_level_up_ms: int = 25
@@ -63,8 +68,9 @@ var ui_panel_color: Color = Color(0.1, 0.12, 0.2, 0.92)
 var ui_panel_alpha: float = 0.8
 var ui_text_color: Color = Color(0.92, 0.95, 1.0)
 var ui_muted_text_color: Color = Color(0.6, 0.66, 0.78)
-var ui_corner_radius: int = 28
+var ui_corner_radius: int = 34
 var ui_border_width: int = 3
+var ui_button_depth: int = 9  # relevo dos botões (borda de baixo)
 var ui_button_padding: float = 24.0
 var ui_panel_padding: float = 48.0
 var squad_spacing: int = 22
@@ -73,7 +79,9 @@ var squad_slot_size: float = 150.0
 var squad_card_size: Vector2 = Vector2(490.0, 225.0)
 var squad_card_icon_size: float = 110.0
 var squad_hint_width: float = 900.0
-var squad_companion_gap: float = 18.0  # separa o espaço auxiliar dos 4 do esquadrão
+var squad_wingman_columns: int = 5  # escolha da nave auxiliar
+var squad_wingman_size: float = 120.0
+var squad_wingman_font_size: int = 26
 var squad_name_font_size: int = 46
 var squad_description_font_size: int = 28
 var squad_button_size: Vector2 = Vector2(420.0, 140.0)
@@ -109,6 +117,7 @@ var upgrade_detail_spacing: int = 14
 var upgrade_name_font_size: int = 56
 var upgrade_detail_font_size: int = 36
 var upgrade_buy_height: float = 130.0
+var upgrade_buy_font_size: int = 46
 var stage_select_spacing: int = 28
 var stage_lock_size: float = 34.0
 var debug_unlock_taps: int = 5  # toques no título do seletor (build de debug)

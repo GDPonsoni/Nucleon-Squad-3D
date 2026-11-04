@@ -1,10 +1,12 @@
 extends Control
-## Menu inicial: escolher a fase, montar o esquadrão, evoluir o núcleo, configurar ou sair do jogo.
+## Menu inicial: escolher a fase, montar o esquadrão, evoluir o núcleo ou configurar.
+## Para sair, o botão Voltar do Android.
 ## Fundo de estrelas, nave animada e saldo de quarks.
 
 
 func _ready() -> void:
 	RenderingServer.set_default_clear_color(Params.background_color)
+	Audio.play_menu_music()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())
@@ -21,7 +23,7 @@ func _ready() -> void:
 
 	column.add_child(UiFactory.make_title("GAME_TITLE"))
 
-	var play_button := UiFactory.make_button("MENU_PLAY")
+	var play_button := UiFactory.make_primary_button("MENU_PLAY")
 	play_button.pressed.connect(_on_play_pressed)
 	column.add_child(play_button)
 
@@ -38,10 +40,6 @@ func _ready() -> void:
 	var settings_button := UiFactory.make_button("MENU_SETTINGS")
 	settings_button.pressed.connect(SceneTransition.go_to.bind(ScenePaths.SETTINGS))
 	column.add_child(settings_button)
-
-	var quit_button := UiFactory.make_button("MENU_QUIT")
-	quit_button.pressed.connect(_on_quit_pressed)
-	column.add_child(quit_button)
 
 
 func _notification(what: int) -> void:
@@ -62,7 +60,3 @@ func _on_play_pressed() -> void:
 func _on_upgrades_pressed() -> void:
 	Session.upgrades_return_path = ScenePaths.MENU
 	SceneTransition.go_to(ScenePaths.UPGRADES)
-
-
-func _on_quit_pressed() -> void:
-	get_tree().quit()

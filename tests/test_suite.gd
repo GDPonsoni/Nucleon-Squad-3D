@@ -230,3 +230,22 @@ func test_campaign_structure() -> void:
 			check((stage.boss != null) == (s == 4 or s == 8), "chefe só nas fases 5 e 9 (%s)" % stage.id)
 			check(not stage.waves.is_empty(), "%s tem ondas" % stage.id)
 	check(campaign.stage_count() == 45, "45 fases")
+
+
+func test_music_tracks_loop() -> void:
+	var paths: Array[String] = [Params.music_menu_path]
+	for c in Session.campaign.planets.size():
+		paths.append(Params.music_chapter_path % (c + 1))
+	for path in paths:
+		var stream := load(path) as AudioStreamWAV
+		check(stream != null, "música %s existe" % path)
+		if stream != null:
+			check(stream.loop_mode != AudioStreamWAV.LOOP_DISABLED, "música %s em laço" % path)
+
+
+func test_spanish_translation() -> void:
+	var saved: Dictionary = SaveGame.settings.duplicate()
+	SaveGame.set_setting("language", "es")
+	check(tr("MENU_PLAY") == "Jugar" and tr("MENU_SETTINGS") == "Ajustes", "textos em espanhol: %s" % tr("MENU_PLAY"))
+	SaveGame.settings = saved
+	SaveGame.settings_changed.emit()

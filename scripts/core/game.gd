@@ -34,6 +34,7 @@ var _match_over: bool = false
 func _ready() -> void:
 	var planet: PlanetData = Session.planet()
 	RenderingServer.set_default_clear_color(planet.background_color)
+	Audio.play_chapter_music(Session.planet_index)
 	var boosts: PlayerBoosts = Session.boosts()
 	state = MatchState.new(SaveGame.squad_formation(), boosts)
 	state.body_destroyed.connect(_on_body_destroyed)

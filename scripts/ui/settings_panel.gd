@@ -65,15 +65,35 @@ func _add_toggle(label_key: String, setting: String, on_key: String, off_key: St
 	add_child(button)
 
 
-## Botão que passa pelos idiomas: automático, português, inglês.
+## Botão que abre a lista de idiomas (mostra o atual).
 func _add_language() -> void:
 	var button := UiFactory.make_button("")
 	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	var current: String = String(SaveGame.setting("language"))
 	button.text = "%s: %s" % [tr("SETTINGS_LANGUAGE"), tr("LANGUAGE_" + current.to_upper())]
-	button.pressed.connect(func() -> void:
-		var index: int = Params.languages.find(current)
-		SaveGame.set_setting("language", Params.languages[(index + 1) % Params.languages.size()])
-		# set_setting aplica o idioma novo; refaz os textos
-		_build())
+	button.pressed.connect(_show_language_list)
 	add_child(button)
+
+
+## Lista de idiomas no lugar do painel: tocar num aplica e volta para as configurações.
+func _show_language_list() -> void:
+	for child in get_children():
+		child.queue_free()
+	add_child(UiFactory.make_title("SETTINGS_LANGUAGE"))
+	var hint := UiFactory.make_subtitle("SETTINGS_PICK_LANGUAGE")
+	add_child(hint)
+	var current: String = String(SaveGame.setting("language"))
+	for language in Params.languages:
+		var option := UiFactory.make_button("")
+		option.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		option.text = tr("LANGUAGE_" + language.to_upper())
+		if language == current:
+			option.theme_type_variation = &"PrimaryButton"
+		option.pressed.connect(func() -> void:
+			SaveGame.set_setting("language", language)
+			# set_setting aplica o idioma; refaz os textos no idioma novo
+			_build())
+		add_child(option)
+	var back := UiFactory.make_button("MENU_BACK")
+	back.pressed.connect(_build)
+	add_child(back)

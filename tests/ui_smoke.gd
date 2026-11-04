@@ -21,7 +21,7 @@ func _ready() -> void:
 			failures += 1
 			continue
 		# Cada tela também em inglês, para pegar textos quebrados
-		for language in ["pt_BR", "en"]:
+		for language in ["pt_BR", "en", "es"]:
 			SaveGame.settings["language"] = language
 			Audio.apply_settings()
 			printerr("[smoke] %s %s" % [path, language])
@@ -44,6 +44,16 @@ func _ready() -> void:
 				await get_tree().create_timer(0.8, true, false, true).timeout
 				overflow += _check_overflow(scene.get("results_menu"), "resultado %s" % language)
 				get_tree().paused = false
+			# Evolução: cada nó selecionado (requisitos e descrições longas)
+			if scene.has_method("_select"):
+				# Também com tudo bloqueado (textos de requisito, os mais longos)
+				SaveGame.unlock_everything = false
+				for node in Session.upgrade_tree.nodes:
+					scene.call("_select", node)
+					await get_tree().process_frame
+					await get_tree().process_frame
+					overflow += _check_overflow(scene, "upgrades %s %s" % [node.id, language])
+				SaveGame.unlock_everything = true
 			# Seletor: confere cada capítulo
 			if scene.has_method("_show_chapter"):
 				for c in Session.campaign.planets.size():
@@ -64,7 +74,7 @@ func _ready() -> void:
 		await get_tree().process_frame
 		await get_tree().process_frame
 	panel.queue_free()
-	print("ui_smoke: %d telas, %d falhas de carga, %d elementos fora da tela" % [SCENES.size() * 2, failures, overflow])
+	print("ui_smoke: %d telas, %d falhas de carga, %d elementos fora da tela" % [SCENES.size() * 3, failures, overflow])
 	get_tree().quit(1 if failures + overflow > 0 else 0)
 
 

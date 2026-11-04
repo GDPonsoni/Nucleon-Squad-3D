@@ -7,7 +7,7 @@
 ![Android](https://img.shields.io/badge/plataforma-Android-3DDC84?logo=android&logoColor=white)
 ![Status](https://img.shields.io/badge/status-Marco%201-orange)
 
-Shoot 'em up vertical (bullet hell) para celular, em 2D, feito em **Godot 4** com **GDScript**. O jogador controla a nave com toque relativo, e **soltar o dedo deixa o jogo em câmera lenta**: é nesse momento que se troca o corpo da nave.
+Shoot 'em up vertical (bullet hell) para celular, em 2D, feito em **Godot 4** com **GDScript**. Você comanda um **esquadrão de naves com armas diferentes** em torno de um núcleo: troca de nave no meio da luta, leva uma nave auxiliar e evolui o núcleo com os quarks ganhos nas fases. São **5 capítulos de 9 fases**, com chefes, ondas em padrões reconhecíveis e 8 naves para liberar.
 
 O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squad_v1.md).
 
@@ -38,7 +38,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 **O que já existe:**
 - **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
-- **Marco 1 (em teste):** 8 naves (esquadrão de 4 montado numa tela própria, mais uma nave auxiliar opcional) com 5 níveis de arma, especial e troca de nave por toque curto numa barra fixa, power-ups, 9 tipos de inimigo, ondas em padrões reconhecíveis, chefes intermediários e de capítulo, **5 capítulos de 9 fases**, seletor de capítulos, **quarks e árvore de evolução do núcleo** (com nó sem limite de níveis), desbloqueio de naves ao concluir capítulos, **28 efeitos sonoros**, menu de configurações (volumes, vibração, efeitos visuais, idioma), recordes e progresso salvos no aparelho. Tudo com placeholders desenhados por código.
+- **Marco 1 (em teste):** 8 naves (esquadrão de 4 montado numa tela própria, mais uma nave auxiliar opcional) com 5 níveis de arma, especial e troca de nave por toque curto numa barra fixa, power-ups, 9 tipos de inimigo, ondas em padrões reconhecíveis, chefes intermediários e de capítulo, **5 capítulos de 9 fases**, seletor de capítulos, **quarks e árvore de evolução do núcleo** (com nó sem limite de níveis), desbloqueio de naves ao concluir capítulos, **28 efeitos sonoros**, menu de configurações (volumes, vibração, efeitos visuais, idioma em PT, EN e ES), músicas por capítulo, recordes e progresso salvos no aparelho. Tudo com placeholders desenhados por código.
 
 ---
 
