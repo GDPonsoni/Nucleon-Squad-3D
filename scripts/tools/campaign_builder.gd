@@ -16,19 +16,19 @@ const MIDBOSS_STAGE: int = 4  # índice da fase 5
 const BOSS_STAGE: int = 8  # índice da fase 9
 const MOTIFS_PER_STAGE: int = 4
 # Escala da dificuldade (d vai de 0 na 1-1 até ~4,4 na 5-9)
-const GAP_BASE: float = 9.0  # segundos entre ondas na 1-1
-const GAP_PER_DIFFICULTY: float = 0.95  # quanto o intervalo encurta por ponto de dificuldade
-const COUNT_STEP: float = 1.6  # a cada tantos pontos de dificuldade, ondas com +1 membro
-const PAIR_FROM: float = 2.2  # a partir dessa dificuldade, uma a cada 3 ondas vem em dupla
+const GAP_BASE: float = 8.0  # segundos entre ondas na 1-1
+const GAP_PER_DIFFICULTY: float = 0.85  # quanto o intervalo encurta por ponto de dificuldade
+const COUNT_STEP: float = 1.3  # a cada tantos pontos de dificuldade, ondas com +1 membro
+const PAIR_FROM: float = 1.6  # a partir dessa dificuldade, uma a cada 3 ondas vem em dupla
 const PAIR_OFTEN_FROM: float = 3.6  # a partir dessa, uma a cada 2
 # Orçamento de perigo: soma das notas de perigo dos motivos escolhidos para a fase
-const DANGER_BASE: float = 4.5
-const DANGER_PER_CHAPTER: float = 2.0
-const DANGER_PER_STAGE: float = 0.55
+const DANGER_BASE: float = 5.5
+const DANGER_PER_CHAPTER: float = 2.3
+const DANGER_PER_STAGE: float = 0.75
 const DANGER_MIDBOSS: float = 0.55  # fase do chefe intermediário: ondas mais leves
 const DANGER_BOSS: float = 0.7  # fase do chefe: o chefe é o desafio principal
-const HP_SCALE: PackedFloat32Array = [1.0, 1.0, 1.1, 1.2, 1.3]  # vida dos inimigos por capítulo
-const FIRE_SCALE: PackedFloat32Array = [1.0, 1.0, 1.05, 1.12, 1.2]  # cadência de tiro por capítulo
+const HP_SCALE: PackedFloat32Array = [1.2, 1.3, 1.4, 1.5, 1.65]  # vida dos inimigos por capítulo
+const FIRE_SCALE: PackedFloat32Array = [1.12, 1.16, 1.2, 1.25, 1.32]  # cadência de tiro por capítulo
 const OLD_MOTIF_DECAY: float = 0.65  # peso dos motivos de capítulos anteriores, por capítulo de distância
 const PLANET_KEYS: PackedStringArray = ["PLANET_1_NAME", "PLANET_2_NAME", "PLANET_3_NAME", "PLANET_4_NAME", "PLANET_5_NAME"]
 const BACKGROUNDS: PackedColorArray = [
@@ -130,8 +130,8 @@ func _set_filler(stage: StageData, c: int, s: int, d: float) -> void:
 		weights.append(0.7)
 	stage.enemies = enemies
 	stage.spawn_weights = weights
-	stage.spawn_interval_min = maxf(3.2 - 0.42 * d, 1.3)
-	stage.spawn_interval_max = maxf(4.6 - 0.55 * d, 2.0)
+	stage.spawn_interval_min = maxf(2.6 - 0.36 * d, 1.1)
+	stage.spawn_interval_max = maxf(3.8 - 0.45 * d, 1.7)
 	stage.spawn_margin_x = 90.0
 
 

@@ -11,23 +11,25 @@
 [sub_resource type="Resource" id="Resource_hqeeu"]
 script = ExtResource("7_bv6x4")
 time_seconds = 4.0
+enemy = ExtResource("4_hbso3")
+formation = 3
+count = 3
+interval = 0.55
+side = 0
+y_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_ptrg7"]
+script = ExtResource("7_bv6x4")
+time_seconds = 11.0
 enemy = ExtResource("3_4iovi")
 formation = 5
 count = 6
 spacing = 160.0
 speed_scale = 0.85
 
-[sub_resource type="Resource" id="Resource_ptrg7"]
-script = ExtResource("7_bv6x4")
-time_seconds = 11.9
-enemy = ExtResource("3_4iovi")
-formation = 4
-spacing = 125.0
-side = 0
-
 [sub_resource type="Resource" id="Resource_4iovi"]
 script = ExtResource("7_bv6x4")
-time_seconds = 19.700000000000003
+time_seconds = 18.0
 enemy = ExtResource("5_u8fx3")
 formation = 2
 interval = 0.32
@@ -35,17 +37,26 @@ x_ratio = 0.35
 
 [sub_resource type="Resource" id="Resource_hbso3"]
 script = ExtResource("7_bv6x4")
-time_seconds = 27.6
+time_seconds = 24.900000000000002
 enemy = ExtResource("3_4iovi")
-formation = 2
-interval = 0.42
-x_ratio = 0.3
-sway_amplitude = 150.0
-sway_period = 2.6
+formation = 7
+count = 8
+spacing = 170.0
+speed_scale = 0.8
 
 [sub_resource type="Resource" id="Resource_u8fx3"]
 script = ExtResource("7_bv6x4")
-time_seconds = 35.4
+time_seconds = 31.900000000000002
+enemy = ExtResource("4_hbso3")
+formation = 3
+count = 4
+interval = 0.55
+side = 1
+y_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_jo2vh"]
+script = ExtResource("7_bv6x4")
+time_seconds = 38.900000000000006
 enemy = ExtResource("3_4iovi")
 formation = 5
 count = 8
@@ -53,18 +64,9 @@ spacing = 160.0
 columns = 4
 speed_scale = 0.85
 
-[sub_resource type="Resource" id="Resource_jo2vh"]
-script = ExtResource("7_bv6x4")
-time_seconds = 43.300000000000004
-enemy = ExtResource("3_4iovi")
-formation = 4
-count = 6
-spacing = 125.0
-side = 1
-
 [sub_resource type="Resource" id="Resource_bv6x4"]
 script = ExtResource("7_bv6x4")
-time_seconds = 51.2
+time_seconds = 45.900000000000006
 enemy = ExtResource("5_u8fx3")
 formation = 2
 count = 6
@@ -73,18 +75,25 @@ x_ratio = 0.65
 
 [sub_resource type="Resource" id="Resource_lprq5"]
 script = ExtResource("7_bv6x4")
-time_seconds = 59.0
+time_seconds = 52.900000000000006
 enemy = ExtResource("3_4iovi")
-formation = 2
-count = 6
-interval = 0.42
-x_ratio = 0.7
-sway_amplitude = 150.0
-sway_period = 2.6
+formation = 7
+count = 8
+spacing = 170.0
+speed_scale = 0.8
 
 [sub_resource type="Resource" id="Resource_gnek3"]
 script = ExtResource("7_bv6x4")
-time_seconds = 66.9
+time_seconds = 59.800000000000004
+enemy = ExtResource("4_hbso3")
+formation = 3
+interval = 0.55
+side = 0
+y_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_vkapk"]
+script = ExtResource("7_bv6x4")
+time_seconds = 66.8
 enemy = ExtResource("3_4iovi")
 formation = 5
 count = 8
@@ -92,14 +101,23 @@ spacing = 160.0
 columns = 4
 speed_scale = 0.85
 
-[sub_resource type="Resource" id="Resource_vkapk"]
+[sub_resource type="Resource" id="Resource_yv8p7"]
 script = ExtResource("7_bv6x4")
-time_seconds = 68.4
-enemy = ExtResource("3_4iovi")
-formation = 4
-count = 7
-spacing = 125.0
+time_seconds = 68.3
+enemy = ExtResource("4_hbso3")
+formation = 3
+interval = 0.55
 side = 1
+y_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_hxs8w"]
+script = ExtResource("7_bv6x4")
+time_seconds = 73.8
+enemy = ExtResource("5_u8fx3")
+formation = 2
+count = 7
+interval = 0.32
+x_ratio = 0.35
 
 [resource]
 script = ExtResource("6_jo2vh")
@@ -107,9 +125,11 @@ id = &"p1_s9"
 duration_seconds = 80.0
 enemies = Array[ExtResource("2_ptrg7")]([ExtResource("3_4iovi"), ExtResource("4_hbso3"), ExtResource("5_u8fx3")])
 spawn_weights = PackedFloat32Array(3, 1, 1)
-waves = Array[ExtResource("7_bv6x4")]([SubResource("Resource_hqeeu"), SubResource("Resource_ptrg7"), SubResource("Resource_4iovi"), SubResource("Resource_hbso3"), SubResource("Resource_u8fx3"), SubResource("Resource_jo2vh"), SubResource("Resource_bv6x4"), SubResource("Resource_lprq5"), SubResource("Resource_gnek3"), SubResource("Resource_vkapk")])
+waves = Array[ExtResource("7_bv6x4")]([SubResource("Resource_hqeeu"), SubResource("Resource_ptrg7"), SubResource("Resource_4iovi"), SubResource("Resource_hbso3"), SubResource("Resource_u8fx3"), SubResource("Resource_jo2vh"), SubResource("Resource_bv6x4"), SubResource("Resource_lprq5"), SubResource("Resource_gnek3"), SubResource("Resource_vkapk"), SubResource("Resource_yv8p7"), SubResource("Resource_hxs8w")])
 boss = ExtResource("1_hqeeu")
 start_delay = 2.0
-spawn_interval_min = 2.696
-spawn_interval_max = 3.9399999999999995
+spawn_interval_min = 2.168
+spawn_interval_max = 3.26
 spawn_margin_x = 90.0
+enemy_hp_scale = 1.2
+enemy_fire_scale = 1.12

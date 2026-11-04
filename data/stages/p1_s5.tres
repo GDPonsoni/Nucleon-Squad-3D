@@ -12,22 +12,14 @@
 script = ExtResource("7_3bf6t")
 time_seconds = 4.0
 enemy = ExtResource("3_yg481")
-formation = 5
-count = 6
-spacing = 160.0
-speed_scale = 0.85
+formation = 7
+count = 8
+spacing = 170.0
+speed_scale = 0.8
 
 [sub_resource type="Resource" id="Resource_0fwv4"]
 script = ExtResource("7_3bf6t")
-time_seconds = 12.4
-enemy = ExtResource("3_yg481")
-formation = 0
-count = 4
-spacing = 165.0
-
-[sub_resource type="Resource" id="Resource_yg481"]
-script = ExtResource("7_3bf6t")
-time_seconds = 20.900000000000002
+time_seconds = 11.5
 enemy = ExtResource("3_yg481")
 formation = 2
 interval = 0.42
@@ -35,26 +27,27 @@ x_ratio = 0.3
 sway_amplitude = 150.0
 sway_period = 2.6
 
-[sub_resource type="Resource" id="Resource_oqjfs"]
+[sub_resource type="Resource" id="Resource_yg481"]
 script = ExtResource("7_3bf6t")
-time_seconds = 29.3
+time_seconds = 19.0
 enemy = ExtResource("3_yg481")
 formation = 5
-count = 8
+count = 6
 spacing = 160.0
-columns = 4
 speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_oqjfs"]
+script = ExtResource("7_3bf6t")
+time_seconds = 26.5
+enemy = ExtResource("3_yg481")
+formation = 7
+count = 8
+spacing = 170.0
+speed_scale = 0.8
 
 [sub_resource type="Resource" id="Resource_gjkn5"]
 script = ExtResource("7_3bf6t")
-time_seconds = 37.7
-enemy = ExtResource("3_yg481")
-formation = 0
-spacing = 165.0
-
-[sub_resource type="Resource" id="Resource_b1hxv"]
-script = ExtResource("7_3bf6t")
-time_seconds = 46.1
+time_seconds = 34.0
 enemy = ExtResource("3_yg481")
 formation = 2
 count = 6
@@ -63,15 +56,36 @@ x_ratio = 0.7
 sway_amplitude = 150.0
 sway_period = 2.6
 
+[sub_resource type="Resource" id="Resource_b1hxv"]
+script = ExtResource("7_3bf6t")
+time_seconds = 41.5
+enemy = ExtResource("3_yg481")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_3bf6t"]
+script = ExtResource("7_3bf6t")
+time_seconds = 48.900000000000006
+enemy = ExtResource("3_yg481")
+formation = 7
+count = 8
+spacing = 170.0
+speed_scale = 0.8
+
 [resource]
 script = ExtResource("6_b1hxv")
 id = &"p1_s5"
 duration_seconds = 55.0
 enemies = Array[ExtResource("2_0fwv4")]([ExtResource("3_yg481"), ExtResource("4_oqjfs"), ExtResource("5_gjkn5")])
 spawn_weights = PackedFloat32Array(3, 1, 1)
-waves = Array[ExtResource("7_3bf6t")]([SubResource("Resource_dhtxq"), SubResource("Resource_0fwv4"), SubResource("Resource_yg481"), SubResource("Resource_oqjfs"), SubResource("Resource_gjkn5"), SubResource("Resource_b1hxv")])
+waves = Array[ExtResource("7_3bf6t")]([SubResource("Resource_dhtxq"), SubResource("Resource_0fwv4"), SubResource("Resource_yg481"), SubResource("Resource_oqjfs"), SubResource("Resource_gjkn5"), SubResource("Resource_b1hxv"), SubResource("Resource_3bf6t")])
 boss = ExtResource("1_dhtxq")
 start_delay = 2.0
-spawn_interval_min = 2.9480000000000004
-spawn_interval_max = 4.27
+spawn_interval_min = 2.384
+spawn_interval_max = 3.53
 spawn_margin_x = 90.0
+enemy_hp_scale = 1.2
+enemy_fire_scale = 1.12
