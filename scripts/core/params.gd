@@ -99,9 +99,10 @@ var squad_wingman_font_size: int = 26
 var squad_name_font_size: int = 46
 var squad_description_font_size: int = 28
 var squad_button_size: Vector2 = Vector2(420.0, 140.0)
-var back_corner_size: Vector2 = Vector2(230.0, 92.0)  # botão Voltar pequeno no canto superior esquerdo
-var back_corner_margin: Vector2 = Vector2(28.0, 70.0)
-var back_corner_font_size: int = 34
+var back_corner_size: Vector2 = Vector2(104.0, 104.0)  # seta de voltar no canto superior esquerdo
+var back_corner_margin: Vector2 = Vector2(24.0, 48.0)
+var back_top_space: float = 150.0  # espaço no topo das telas para a seta não cobrir o conteúdo
+var back_top_space_squad: float = 60.0  # a tela do esquadrão é a mais cheia
 var stage_button_size: Vector2 = Vector2(260.0, 190.0)
 var stage_grid_columns: int = 3  # fases por linha no seletor (9 fases = 3 x 3)
 var stage_chapter_font_size: int = 72

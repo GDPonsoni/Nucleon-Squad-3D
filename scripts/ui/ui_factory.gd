@@ -62,11 +62,26 @@ static func fit_font_size(text: String, width: float, max_size: int) -> int:
 	return font_size
 
 
-## Botão Voltar discreto no canto superior esquerdo (não entra no layout da tela).
+## Espaço vazio no topo de uma coluna, para a seta de voltar não cobrir o conteúdo.
+static func add_top_space(column: Control, height: float = Params.back_top_space) -> void:
+	var space := Control.new()
+	space.custom_minimum_size.y = height
+	column.add_child(space)
+
+
+## Seta de voltar discreta no canto superior esquerdo (não entra no layout da tela).
 static func add_corner_back(parent: Control, on_press: Callable) -> Button:
 	var button := make_button("MENU_BACK")
+	button.text = ""  # só a seta; a chave serve ao som do botão
 	button.custom_minimum_size = Params.back_corner_size
-	button.add_theme_font_size_override("font_size", Params.back_corner_font_size)
+	button.draw.connect(func() -> void:
+		var c: Vector2 = button.size * 0.5
+		var h: float = button.size.y * 0.2
+		var color: Color = Params.ui_text_color
+		var width: float = maxf(button.size.y * 0.07, 4.0)
+		button.draw_line(c + Vector2(h * 0.9, 0.0), c + Vector2(-h * 0.9, 0.0), color, width)
+		button.draw_line(c + Vector2(-h * 0.9, 0.0), c + Vector2(0.0, -h * 0.9), color, width)
+		button.draw_line(c + Vector2(-h * 0.9, 0.0), c + Vector2(0.0, h * 0.9), color, width))
 	button.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	button.offset_left = Params.back_corner_margin.x
 	button.offset_top = Params.back_corner_margin.y

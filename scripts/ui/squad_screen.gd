@@ -38,6 +38,7 @@ func _ready() -> void:
 	var column := UiFactory.make_column()
 	column.add_theme_constant_override("separation", Params.squad_spacing)
 	center.add_child(column)
+	UiFactory.add_top_space(column, Params.back_top_space_squad)
 	column.add_child(UiFactory.make_title("SQUAD_TITLE"))
 	var hint := UiFactory.make_subtitle("SQUAD_HINT")
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

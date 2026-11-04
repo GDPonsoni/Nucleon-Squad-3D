@@ -34,6 +34,7 @@ func _ready() -> void:
 	column.add_theme_constant_override("separation", Params.upgrade_spacing)
 	center.add_child(column)
 
+	UiFactory.add_top_space(column)
 	column.add_child(UiFactory.make_title("UPGRADES_TITLE"))
 	var top := HBoxContainer.new()
 	top.alignment = BoxContainer.ALIGNMENT_CENTER

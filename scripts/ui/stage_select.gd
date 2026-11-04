@@ -50,6 +50,7 @@ func _build() -> void:
 	column.add_theme_constant_override("separation", Params.stage_select_spacing)
 	center.add_child(column)
 
+	UiFactory.add_top_space(column)
 	var title := UiFactory.make_title("STAGE_SELECT_TITLE")
 	title.mouse_filter = Control.MOUSE_FILTER_STOP
 	title.gui_input.connect(_on_title_input)
