@@ -38,7 +38,7 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 **O que já existe:**
 - **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
-- **Marco 1 (em teste):** 6 naves (esquadrão de 4 montado numa tela própria) com 5 níveis de arma, especial e troca na câmera lenta, power-ups, 7 tipos de inimigo (Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador, Caçador) com tiros que se dividem e tiros perseguidores, ondas em formação, 4 chefes com fases e movimentos, 4 capítulos com 13 fases (até 5 min), seletor de fases com desbloqueio e recordes salvos no aparelho, HUD com progresso e pontuação, telas de resultado e interface com tema próprio. Tudo com placeholders desenhados por código.
+- **Marco 1 (em teste):** 8 naves (esquadrão de 4 montado numa tela própria, mais uma nave auxiliar opcional) com 5 níveis de arma, especial e troca de nave por toque curto numa barra fixa, power-ups, 9 tipos de inimigo, ondas em padrões reconhecíveis, chefes intermediários e de capítulo, **5 capítulos de 9 fases**, seletor de capítulos, **quarks e árvore de evolução do núcleo** (com nó sem limite de níveis), desbloqueio de naves ao concluir capítulos, **28 efeitos sonoros**, menu de configurações (volumes, vibração, efeitos visuais, idioma), recordes e progresso salvos no aparelho. Tudo com placeholders desenhados por código.
 
 ---
 
@@ -118,7 +118,7 @@ adb install -r builds/nucleon-squad.apk
 adb shell monkey -p com.example.nucleonsquad 1
 ```
 
-O overlay de FPS só aparece em builds de **debug**. Roteiros de teste: [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md) e [`docs/MARCO1_TESTE.md`](docs/MARCO1_TESTE.md). Referências de design: [`docs/REFERENCIAS_ESQUADRAO.md`](docs/REFERENCIAS_ESQUADRAO.md).
+O overlay de FPS só aparece em builds de **debug**. Roteiros de teste: [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md), [`docs/MARCO1_TESTE.md`](docs/MARCO1_TESTE.md) e [`docs/MARCO2_TESTE.md`](docs/MARCO2_TESTE.md). Referências de design: [`docs/REFERENCIAS_ESQUADRAO.md`](docs/REFERENCIAS_ESQUADRAO.md).
 
 ### Ícone do app
 
@@ -179,7 +179,7 @@ scripts/
   ui/            tema, menus, seletor, pausa, resultados, HUD, transições, debug
 data/            campanha, planetas, fases, inimigos, armas, corpos e formações (.tres)
   i18n/          tabela de tradução strings.csv (chave, en, pt_BR)
-assets/          imagens e áudio (placeholders até o Marco 2)
+assets/          ícone e efeitos sonoros (audio/sfx)
 builds/          APKs exportados (não versionado)
 ```
 
