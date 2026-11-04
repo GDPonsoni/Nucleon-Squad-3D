@@ -60,10 +60,7 @@ func _ready() -> void:
 	_info = UiFactory.make_subtitle("")
 	_info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	column.add_child(_info)
-	var close := UiFactory.make_button("MENU_BACK")
-	close.custom_minimum_size.x = Params.ad_popup_width
-	close.pressed.connect(_close)
-	column.add_child(close)
+	UiFactory.add_corner_back(overlay, _close)
 	UiFactory.animate_in(center)
 	_refresh()
 

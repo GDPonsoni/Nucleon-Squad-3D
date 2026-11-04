@@ -51,10 +51,7 @@ func _ready() -> void:
 
 	column.add_child(_build_detail_panel())
 
-	var back := UiFactory.make_button("MENU_BACK")
-	back.pressed.connect(_go_back)
-	column.add_child(back)
-
+	UiFactory.add_corner_back(self, _go_back)
 	UiFactory.animate_in(center)
 	# Começa no primeiro nó que dá para evoluir (ou no primeiro da árvore)
 	_select(_first_suggestion())

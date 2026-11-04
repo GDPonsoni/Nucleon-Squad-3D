@@ -62,6 +62,21 @@ static func fit_font_size(text: String, width: float, max_size: int) -> int:
 	return font_size
 
 
+## Botão Voltar discreto no canto superior esquerdo (não entra no layout da tela).
+static func add_corner_back(parent: Control, on_press: Callable) -> Button:
+	var button := make_button("MENU_BACK")
+	button.custom_minimum_size = Params.back_corner_size
+	button.add_theme_font_size_override("font_size", Params.back_corner_font_size)
+	button.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	button.offset_left = Params.back_corner_margin.x
+	button.offset_top = Params.back_corner_margin.y
+	button.offset_right = Params.back_corner_margin.x + Params.back_corner_size.x
+	button.offset_bottom = Params.back_corner_margin.y + Params.back_corner_size.y
+	button.pressed.connect(on_press)
+	parent.add_child(button)
+	return button
+
+
 ## Botão de ação principal (preenchido na cor de destaque).
 static func make_primary_button(text_key: String) -> Button:
 	var button := make_button(text_key)

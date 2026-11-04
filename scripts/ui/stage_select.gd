@@ -8,6 +8,7 @@ extends Control
 
 var _chapter: int = 0
 var _page: Control
+var _back_corner: Button
 var _title_taps: int = 0
 var _swipe_start := Vector2.ZERO
 var _swipe_usec: int = -1
@@ -23,6 +24,7 @@ func _ready() -> void:
 	_chapter = Session.browsed_chapter if Session.browsed_chapter >= 0 else _first_open_chapter()
 	_build()
 	UiFactory.animate_in(_page)
+	_back_corner = UiFactory.add_corner_back(self, _go_back)
 
 
 ## Primeiro capítulo ainda não concluído (ou o último, se todos foram).
@@ -59,10 +61,8 @@ func _build() -> void:
 	art.planet = Session.campaign.planets[_chapter]
 	column.add_child(art)
 	column.add_child(_chapter_panel(_chapter, Session.campaign.planets[_chapter]))
-
-	var back_button := UiFactory.make_button("MENU_BACK")
-	back_button.pressed.connect(_go_back)
-	column.add_child(back_button)
+	if _back_corner != null:
+		_back_corner.move_to_front()
 
 
 ## Setas e nome do capítulo atual.

@@ -74,6 +74,7 @@ func _open_settings() -> void:
 		_settings_overlay.visible = false
 		_overlay.visible = true)
 	_settings_overlay.add_child(UiFactory.make_centered(UiFactory.make_panel(panel)))
+	UiFactory.add_corner_back(_settings_overlay, panel.go_back)
 	_overlay.visible = false
 	_settings_overlay.visible = true
 

@@ -60,10 +60,7 @@ func _ready() -> void:
 	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
 	buttons.add_theme_constant_override("separation", Params.squad_spacing)
 	column.add_child(buttons)
-	var back := UiFactory.make_button("MENU_BACK")
-	back.custom_minimum_size = Params.squad_button_size
-	back.pressed.connect(_go_back)
-	buttons.add_child(back)
+	UiFactory.add_corner_back(self, _go_back)
 	_save_button = UiFactory.make_primary_button("SQUAD_SAVE")
 	_save_button.custom_minimum_size = Params.squad_button_size
 	_save_button.pressed.connect(_on_save_pressed)

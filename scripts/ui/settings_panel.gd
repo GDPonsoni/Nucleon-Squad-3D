@@ -6,6 +6,8 @@ extends VBoxContainer
 
 signal back_pressed
 
+var _in_language_list: bool = false
+
 
 func _ready() -> void:
 	_build()
@@ -24,9 +26,15 @@ func _build() -> void:
 	_add_toggle("SETTINGS_EFFECTS", "reduced_effects", true)
 	_add_toggle("SETTINGS_STATS", "show_stats")
 	_add_language()
-	var back := UiFactory.make_button("MENU_BACK")
-	back.pressed.connect(back_pressed.emit)
-	add_child(back)
+	_in_language_list = false
+
+
+## Voltar: da lista de idiomas para as configurações; das configurações, sai do painel.
+func go_back() -> void:
+	if _in_language_list:
+		_build()
+	else:
+		back_pressed.emit()
 
 
 func _add_slider(label_key: String, setting: String, preview: Callable = Callable()) -> void:
@@ -77,6 +85,7 @@ func _add_language() -> void:
 
 ## Lista de idiomas no lugar do painel: tocar num aplica e volta para as configurações.
 func _show_language_list() -> void:
+	_in_language_list = true
 	for child in get_children():
 		child.queue_free()
 	add_child(UiFactory.make_title("SETTINGS_LANGUAGE"))
@@ -94,6 +103,3 @@ func _show_language_list() -> void:
 			# set_setting aplica o idioma; refaz os textos no idioma novo
 			_build())
 		add_child(option)
-	var back := UiFactory.make_button("MENU_BACK")
-	back.pressed.connect(_build)
-	add_child(back)
