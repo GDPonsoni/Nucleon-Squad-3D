@@ -1,6 +1,6 @@
 # Estado atual e guia de retomada
 
-Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **02/11/2026**, com a `main` em `079139e`.
+Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **03/11/2026**. O trabalho novo está na branch `feat/capitulo-5-e-progressao` (ainda não mesclada na `main`).
 
 > **Para o Claude Code:** leia este arquivo, o `CLAUDE.md` e o GDD antes de começar. Depois de cada entrega relevante, atualize as seções "O que existe" e "Pendências" daqui.
 
@@ -36,13 +36,29 @@ $ADB shell monkey -p com.example.nucleonsquad 1
 $G --headless --path . -s res://scripts/tools/render_icons.gd
 ```
 
-**Testes de simulação:** o balanceamento foi medido com scripts headless temporários (`extends SceneTree`, rodados com `$G --headless --path . --fixed-fps 60 -s <script>.gd`). Eles montam a cena `game.tscn`, forçam nível de arma e medem DPS, abates, duração de chefe e carga nos pools. Não ficaram no repo; recrie quando precisar medir.
+**Ferramentas e testes (headless, no repo):**
+
+```bash
+# Valida todos os scripts e recursos
+$G --headless --path . -s res://scripts/tools/validate_project.gd
+# Testes de lógica (save, migração, evolução, áudio, campanha)
+$G --headless --path . -s res://tests/run_tests.gd
+# Abre todas as telas e a partida em PT e EN, clicando nos botões
+$G --headless --path . -s res://tests/ui_smoke_run.gd
+# Joga fases com piloto automático e mede dificuldade (hits que levaria, duração de chefe)
+$G --headless --path . --fixed-fps 60 -s res://scripts/tools/simulate_stages.gd -- --chapter 5 --level 1 --seed 1
+# Regera as 45 fases (sobrescreve data/stages, planets e campaign.tres)
+$G --headless --path . -s res://scripts/tools/build_campaign.gd
+```
+
+O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`, `--upgrades dano=3,...`, `--mode survival` e `--boss-only`. Depois de criar scripts ou recursos novos, rode `--import` uma vez para gerar os `.uid`. Scripts de ferramenta que usam os autoloads precisam de um arquivo `-s` mínimo que só carrega o resto no primeiro quadro (veja `simulate_stages.gd`).
 
 ---
 
 ## 2. Fluxo de trabalho combinado com o Gabriel
 
 - Conversa em **português**. Commits em **Conventional Commits** em português (ver `CONTRIBUTING.md`), um por mecânica.
+- **Antes de cada commit, procurar dados sensíveis** (chaves, keystores, senhas, tokens, APK) no que vai subir; o repositório é público. `builds/`, `.godot/` e keystores já estão no `.gitignore`.
 - **Branch por tarefa** (`feat/...`, `fix/...`, `docs/...`). Quando o Gabriel diz "pode mesclar na main", fazer `git merge --ff-only`, `git push origin main` e apagar a branch.
 - Ao terminar uma tarefa: **validar no Godot headless**, exportar e **instalar no S24** quando o celular estiver conectado, e dizer em 2–4 linhas o que testar.
 - **Builds temporárias de teste** (por exemplo, com `debug_start_weapon_level` alterado) devem ser **substituídas pela build normal** logo depois. Uma build de nível 5 esquecida no celular já causou um falso relato de "power-up não muda nada".
@@ -52,51 +68,49 @@ $G --headless --path . -s res://scripts/tools/render_icons.gd
 
 ## 3. O que existe (resumo do jogo)
 
-**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Sair) → `stage_select.tscn` (capítulos com rolagem, desbloqueio e recordes) → `game.tscn`. `squad.tscn` monta o esquadrão. Caminhos em `scripts/core/scene_paths.gd`.
+**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações / Sair) → `stage_select.tscn` (um capítulo por página, com setas) → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
 
 **Partida:**
-- Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3), com moldura própria (`SlowMotionOverlay`).
-- Na câmera lenta aparece a **faixa fixa de troca** embaixo. Corpos mortos aparecem apagados com um X, e o anel dourado mostra o nível da arma.
-- Esquadrão de 4 corpos (`Params.squad_size`), 3 hits cada. O núcleo é a hitbox.
-- **6 naves:**
+- Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3) com moldura azul.
+- **Barra de troca de nave** fixa na base, translúcida enquanto o dedo move a nave e nítida na câmera lenta. A troca é um **toque curto** num corpo; se o dedo andar ou demorar mais que 0,35 s, vira arraste normal (evita trocas sem querer). A nave não desce além da barra. Hits e nível de cada corpo aparecem na própria barra.
+- Esquadrão de 4 corpos (`Params.squad_size`), 3 hits cada (mais com o Casco da evolução). O núcleo é a hitbox.
+- **Nave auxiliar** (opcional, espaço liberado ao concluir o capítulo 1): versão pequena de uma nave que acompanha a principal ao lado, não leva dano e atira uma versão fraca da arma (`WeaponData.companion`).
+- **8 naves:**
 
-  | Nave | Arma | Especial |
-  |---|---|---|
-  | Raio | BEAM | raio gigante + anel que limpa tiros |
-  | Leque | SPREAD | rajada de 360° + anel que limpa tiros |
-  | Mísseis | HOMING | chuva de mísseis em todos os inimigos |
-  | Órbita | ORBIT (apaga tiros) | anel de energia que causa dano e limpa tiros |
-  | Lança | PIERCE (atravessa) | leque de lanças gigantes |
-  | Artilharia | BLAST (área) | bombardeio pela tela |
+  | Nave | Arma | Especial | Liberada |
+  |---|---|---|---|
+  | Raio | BEAM | raio gigante + anel que limpa tiros | início |
+  | Leque | SPREAD | rajada 360° + anel | início |
+  | Mísseis | HOMING | chuva de mísseis em todos | início |
+  | Órbita | ORBIT | anel de energia | início |
+  | Lança | PIERCE | leque de lanças gigantes | cap. 2 |
+  | Artilharia | BLAST | bombardeio | cap. 3 |
+  | Tesla | CHAIN | tempestade de raios em todos | cap. 4 |
+  | Ricochete | BOUNCE | 16 orbes que ricocheteiam | cap. 5 |
 
-  Os especiais ficam em `scripts/weapons/special_attack.gd`, e os valores, no grupo "Especial" do `WeaponData`.
-- Cada arma tem **5 níveis**, que sobem com os power-ups dropados por abates. Os **kits médicos** são mais raros e devolvem 1 hit.
-- **Especial:** carrega com o tempo e é ativado pelo botão no canto inferior esquerdo.
-- **Revive por anúncio simulado:** oferta de 20 s no game over, uma vez por partida. O último corpo volta com vida cheia. O `AdService` é um stub, ainda sem SDK de anúncios.
-- Pausa com Continuar / Reiniciar / Voltar ao menu. Tela de resultado com pontuação, abates e recorde.
+  "Liberada" = concluir o capítulo (fase 9). Está em `BodyData.unlock_chapter`.
+- 5 níveis de arma por power-up, kits médicos, especial que carrega com o tempo, revive por anúncio simulado (`AdService`).
+- **Quarks:** 10% da pontuação de cada inimigo/chefe, mais bônus ao concluir a fase (dobrado na 1ª vez). Guardados ao fim da partida, mesmo ao perder ou sair.
+- **Evolução do núcleo** (`upgrades.tscn`, `data/upgrade_tree.tres`, `data/upgrades/*.tres`): 12 nós em 3 ramos (Ataque, Defesa, Suporte) + **Sobrecarga**, sem limite de níveis (custo linear). Bônus calculados em `UpgradeTreeData.boosts_for` → `PlayerBoosts` (no `CombatContext` e no `MatchState`).
+- **Áudio** (`Audio`, autoload): 28 efeitos em `assets/audio/sfx`, com ganho por som em `Params.sfx_gain_db` (nivelados por categoria) e intervalo mínimo em `Params.sfx_min_gap`. Barramentos SFX e Música. **Ainda não há faixas de música**, só o volume.
+- **Configurações** (menu e pausa): volume geral/música/efeitos, vibração, efeitos visuais reduzidos, idioma (automático/PT/EN). Salvas em `SaveGame.settings`.
 
-**Inimigos:**
-- **7 tipos:** Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador (tiros que se dividem) e Caçador (tiros perseguidores por tempo limitado).
-- **Movimentos:** descer, cruzar, mergulhar, parar.
-- **Tiros:** reto, mirado, anel, leque.
-- **Ondas em formação** (`WaveData`).
+**Inimigos (9):** Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador, Caçador, **Pulsar** (anéis finos em espiral) e **Fissor** (parte-se em 3 ao morrer). Ondas em formação: LINE, V, COLUMN, SIDE, DIAGONAL, GRID, PINCER, CIRCLE, com balanço, curva e escala de velocidade por onda (`WaveData`).
 
 **Chefes:**
 
-| Chefe | Planeta |
+| Fase | Chefe |
 |---|---|
-| Sentinela | Aurora |
-| Forja | Vulcânia |
-| Umbra | Abismo |
-| Hidra | Singularidade |
+| 1-5 / 2-5 / 3-5 / 4-5 / 5-5 | Vigia / Bigorna / Espectro / Vórtice / Labareda (intermediários) |
+| 1-9 | Sentinela |
+| 2-9 | Forja |
+| 3-9 | Umbra (1200 de vida) |
+| 4-9 | Hidra (1800 de vida) |
+| 5-9 | Corona (2600 de vida, 4 fases) |
 
-- Cada chefe tem fases por % de vida, com movimentos SWAY / FIGURE8 / CHASE.
-- **Ataques:** FAN, RING, SUMMON e tiros que se dividem ou perseguem.
+**Campanha:** 5 planetas (Aurora, Vulcânia, Abismo, Singularidade, Eclipse) × 9 fases = 45, ids `p1_s1`…`p5_s9`, de 1:15 a 3:15. Gerada por `scripts/tools/build_campaign.gd`. Cada fase usa 3 ou 4 padrões de onda (motivos) repetidos em ritmo fixo, com orçamento de perigo crescente. A 1ª fase de cada capítulo está sempre liberada; as outras liberam ao concluir a anterior.
 
-**Campanha:**
-- 4 planetas e 13 fases (`p1_s1`…`p4_s4`, de até 5 min). O chefe aparece na última fase de cada planeta.
-- A 1ª fase de cada capítulo está sempre liberada. As outras liberam ao completar a anterior do mesmo capítulo.
-- **Save:** `user://save.json` versão 2, com fases completas, recordes, esquadrão e "liberar tudo". Para liberar tudo, toque 5× no título do seletor (build de debug) ou ligue `Params.debug_unlock_all`.
+**Save** (`user://save.json`, versão 3): fases concluídas, recordes, esquadrão, auxiliar, quarks, evolução, capítulos concluídos e configurações. Saves 1 e 2 são migrados: o avanço vira fases concluídas e cada chefe antigo vencido conta como capítulo concluído (libera nave e auxiliar). Para liberar tudo, toque 5× no título do seletor (build de debug).
 
 ---
 
@@ -104,22 +118,27 @@ $G --headless --path . -s res://scripts/tools/render_icons.gd
 
 | Quero mudar… | Arquivo |
 |---|---|
-| Qualquer número de tuning | `scripts/core/params.gd` (autoload `Params`) |
+| Qualquer número de tuning, sons e configurações padrão | `scripts/core/params.gd` (autoload `Params`) |
 | Montagem da partida, chefe, revive, especial, kits | `scripts/core/game.gd` |
 | Estado da partida (hits, níveis, carga, pontuação) | `scripts/core/match_state.gd` |
 | Colisão (círculos) | `scripts/core/combat_system.gd`, `combat_context.gd` |
 | Pools | `scripts/core/node_pool.gd`, `pool_item.gd` (o item se desativa no `_ready`) |
-| Save / desbloqueio | `scripts/core/save_game.gd` |
+| Save / desbloqueio / configurações | `scripts/core/save_game.gd` |
+| Evolução do núcleo | `upgrade_data.gd`, `upgrade_tree_data.gd`, `player_boosts.gd`, `data/upgrades/*.tres`, `scripts/ui/upgrade_*.gd` |
+| Sons | `scripts/core/audio.gd`, `assets/audio/sfx/` |
+| Nave auxiliar | `scripts/player/companion.gd` |
+| Barra de troca e toque curto | `body_switcher.gd`, `touch_input.gd` |
+| Campanha (gerador) | `scripts/tools/campaign_builder.gd` |
 | Armas | `scripts/weapons/*` + `data/weapons/*.tres` (`WeaponData` com 5 `WeaponLevel`) |
 | Especiais | `special_attack.gd`, `giant_beam.gd`, `shockwave.gd`, `bombardment.gd` |
 | Inimigos / ondas / fases | `scripts/enemies/*` + `data/enemies`, `data/stages` |
 | Chefes | `boss.gd`, `boss_phase.gd`, `boss_attack.gd` + `data/bosses` |
-| Planetas / campanha | `data/planets/*.tres`, `data/campaign.tres` |
+| Planetas / campanha | `data/planets/*.tres`, `data/campaign.tres` (geradas) |
 | Naves e esquadrão | `data/bodies`, `data/formations/{default,roster}.tres` |
 | Textos (PT-BR / EN) | `data/i18n/strings.csv`. Campos com vírgula vão entre aspas |
 | UI | `scripts/ui/*`. Tema em `ui_theme.gd` / `ui_factory.gd` |
 
-**Autoloads:** `Params`, `Session`, `SaveGame`, `SceneTransition`, `AdService`.
+**Autoloads:** `Params`, `Session`, `SaveGame`, `SceneTransition`, `AdService`, `Audio`.
 
 **Camadas de CanvasLayer:**
 
@@ -146,27 +165,32 @@ $G --headless --path . -s res://scripts/tools/render_icons.gd
 - **Nomes de enum ou método que colidem** com globais do Godot ou com a classe-pai quebram em silêncio. Já aconteceu com `Side` (virou `EntrySide`) e com `Boss._shoot` (virou `_shoot_bullet`).
 - **CSV de tradução:** uma vírgula num texto sem aspas desloca as colunas. Já aconteceu com "Não, obrigado".
 - **Inimigos e tiros** são pooled. O chefe não é: ele é instanciado e liberado.
+- **Godot 4.7.2 trava (sinal 11)** ao ler uma constante tipada com listas aninhadas (`const X: Array[PackedStringArray]`) dentro de laços. Use função que devolve `Array` simples (aconteceu na migração do save).
+- **Scripts `-s` e autoloads:** os nomes de autoload não existem ao compilar um script rodado com `-s`. Carregue o código real no primeiro quadro (`simulate_stages.gd`, `run_tests.gd`).
+- **`pkill -f`** com o nome do script mata o próprio shell que o contém.
+- **Intervalo mínimo de som:** tiros e acertos disparam muitas vezes por segundo; novos sons de alta frequência precisam entrar em `sfx_min_gap`.
+- **Campanha gerada:** editar `data/stages/*.tres` à mão se perde ao rodar o gerador de novo.
 - **Arquivos `.uid`:** versione-os junto com os scripts.
 
 ---
 
 ## 6. Pendências e ideias
 
-**A testar no S24 (última build instalada = `main` atual):**
-- capítulo 4 e a Hidra
-- tiros que se dividem e perseguidores
-- Lança e Artilharia
-- faixa de troca
-- FPS com muitos tiros na tela (overlay de debug)
+**A testar no S24 (última build instalada = branch `feat/capitulo-5-e-progressao`):** veja `docs/MARCO2_TESTE.md`.
+
+**Observações de balanceamento (piloto automático, sem troca de nave):**
+- Mísseis sofre muito no capítulo 5 (muito mais hits que Raio e Leque). Vale revisar se o teste no aparelho confirmar.
+- 4-8, 3-8 e 5-8 são as fases mais pesadas de cada capítulo.
+- Os quarks começam em 0 mesmo para quem já jogou (sem retroativo).
 
 **Ofertas feitas e ainda não confirmadas pelo Gabriel:**
 - trocar a tela de boot (splash) do Godot
-- encurtar a luta da Hidra: ~95 s com Raio nv. 5 e ~165 s com Leque nv. 3
 - medir o FPS no aparelho com carga máxima
+- mesclar a branch na `main` e dar `push` (depende do "pode mesclar na main")
 
-**Ainda não feito (marcos 2–4 do GDD):**
-- bomba global
-- áudio
+**Ainda não feito:**
+- música (há barramento e volume, faltam faixas)
+- `bomb_global.wav` não usado (a bomba global do GDD ainda não existe)
 - anúncio real (SDK)
 - arte final (hoje tudo são placeholders desenhados por código)
 - pacote definitivo (`com.example` ainda)
@@ -176,9 +200,9 @@ $G --headless --path . -s res://scripts/tools/render_icons.gd
 **Itens [EM ABERTO] do GDD:**
 - limite da câmera lenta
 - núcleo rachando como mecânica
-- itens de escudo/moedas
+- itens de escudo/moedas (parte coberta pelos quarks e pelo Escudo da evolução)
 
 **Documentos relacionados:**
 - `docs/GDD_Nucleon_Squad_v1.md`: design
-- `docs/MARCO0_TESTE.md` e `docs/MARCO1_TESTE.md`: roteiros de teste
+- `docs/MARCO0_TESTE.md`, `docs/MARCO1_TESTE.md` e `docs/MARCO2_TESTE.md`: roteiros de teste
 - `docs/REFERENCIAS_ESQUADRAO.md`: pesquisa de referências
