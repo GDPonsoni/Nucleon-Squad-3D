@@ -30,7 +30,7 @@ func _process(delta: float) -> void:
 		if _timer <= 0.0:
 			_launch_wave()
 			_phase = Phase.COOLDOWN
-			_timer = stats.wave_cooldown_seconds
+			_timer = stats.wave_cooldown_seconds / rate()
 	queue_redraw()
 
 
@@ -40,7 +40,7 @@ func _launch_wave() -> void:
 		var bullet := context.player_bullets.acquire() as Bullet
 		if bullet == null:
 			return
-		bullet.activate(global_position + _slot(i), dir * stats.projectile_speed, stats.damage,
+		bullet.activate(global_position + _slot(i), dir * stats.projectile_speed, damage(),
 			stats.projectile_size, data.color, stats.projectile_shape)
 		bullet.life_left = stats.projectile_lifetime
 		bullet.homing_turn_rate = deg_to_rad(stats.homing_turn_degrees)

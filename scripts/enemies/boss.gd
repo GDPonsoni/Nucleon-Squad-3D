@@ -64,11 +64,11 @@ func on_player_contact() -> void:
 	pass
 
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: float) -> void:
 	# Invulnerável enquanto entra na tela
 	if _entering:
 		return
-	super(amount)
+	super(amount * context.boosts.boss_damage)
 
 
 func _process(delta: float) -> void:

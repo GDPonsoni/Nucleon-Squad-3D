@@ -5,7 +5,7 @@ extends PoolItem
 enum Shape { RECT, CIRCLE, TRIANGLE }
 
 var velocity: Vector2
-var damage: int = 1
+var damage: float = 1.0
 var radius: float = 0.0  # raio de colisão
 
 ## Teleguiado: giro máximo em rad/s (0 = reto) e função (posição) -> alvo ou null.
@@ -35,7 +35,7 @@ var _shape: Shape
 var _pierced: Dictionary = {}  # inimigos já atravessados (não acerta duas vezes)
 
 
-func activate(pos: Vector2, vel: Vector2, dmg: int, size: Vector2, color: Color, shape: Shape) -> void:
+func activate(pos: Vector2, vel: Vector2, dmg: float, size: Vector2, color: Color, shape: Shape) -> void:
 	position = pos
 	velocity = vel
 	damage = dmg

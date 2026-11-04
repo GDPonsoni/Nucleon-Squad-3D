@@ -43,8 +43,8 @@ func _process(delta: float) -> void:
 		_lengths[k] = hit
 		_ticks[k] = maxf(_ticks[k] - delta, 0.0)
 		if target != null and _ticks[k] == 0.0:
-			_ticks[k] = stats.beam_tick_seconds
-			target.take_damage(stats.damage)
+			_ticks[k] = stats.beam_tick_seconds / rate()
+			target.take_damage(damage())
 	queue_redraw()
 
 
@@ -54,7 +54,7 @@ func _direction(index: int) -> Vector2:
 
 
 func _draw() -> void:
-	var tip := Vector2(0.0, -Params.ship_size.y * 0.5)
+	var tip := Vector2(0.0, -muzzle_offset)
 	var glow := Color(data.color, 0.35)
 	var core: Color = data.color.lightened(0.6)
 	for k in stats.beam_angles.size():

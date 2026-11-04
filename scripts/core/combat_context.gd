@@ -8,6 +8,7 @@ var enemies: NodePool
 var power_ups: NodePool
 var player: Player
 var boss: Boss  # fora do pool; null quando não há chefe
+var boosts: PlayerBoosts = PlayerBoosts.new()  # evolução do núcleo (neutro em testes)
 
 
 ## Alvos atingíveis: inimigos ativos e, se houver, o chefe.

@@ -7,6 +7,7 @@ const TICK: float = 0.05  # segundos entre aplicações de dano
 
 var _context: CombatContext
 var _data: WeaponData
+var _damage: float = 0.0
 var _age: float = 0.0
 var _tick: float = 0.0
 var _width: float = 0.0
@@ -15,6 +16,7 @@ var _width: float = 0.0
 func setup(context: CombatContext, data: WeaponData) -> void:
 	_context = context
 	_data = data
+	_damage = SpecialAttack.damage_of(data, context)
 	show_behind_parent = true
 
 
@@ -43,7 +45,7 @@ func _process(delta: float) -> void:
 		for item in _context.hostiles():
 			var enemy := item as Enemy
 			if enemy.visible and enemy.position.y < tip_y and absf(enemy.position.x - global_position.x) <= half + enemy.radius:
-				enemy.take_damage(_data.special_damage)
+				enemy.take_damage(_damage)
 	queue_redraw()
 
 

@@ -27,8 +27,8 @@ func _process(delta: float) -> void:
 				continue
 			var reach: float = enemy.radius + stats.orbit_size * 0.5
 			if center.distance_squared_to(enemy.position) <= reach * reach:
-				_cooldowns[enemy] = stats.orbit_hit_seconds
-				enemy.take_damage(stats.damage)
+				_cooldowns[enemy] = stats.orbit_hit_seconds / rate()
+				enemy.take_damage(damage())
 	queue_redraw()
 
 

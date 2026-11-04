@@ -6,6 +6,11 @@ class_name SpecialAttack
 ## que atravessam tudo. Artilharia: bombardeio de explosões pela tela.
 
 
+## Dano do especial com a evolução do núcleo (dano geral e dano de especial).
+static func damage_of(data: WeaponData, context: CombatContext) -> float:
+	return data.special_damage * context.boosts.damage * context.boosts.special_damage
+
+
 static func trigger(data: WeaponData, player: Player, context: CombatContext, world: Node) -> void:
 	match data.kind:
 		WeaponData.Kind.BEAM:
@@ -19,7 +24,7 @@ static func trigger(data: WeaponData, player: Player, context: CombatContext, wo
 		WeaponData.Kind.HOMING:
 			_missile_rain(data, player, context)
 		WeaponData.Kind.ORBIT:
-			_shockwave(context, world, player.position, data.special_radius, data.special_duration, data.special_damage, data.color)
+			_shockwave(context, world, player.position, data.special_radius, data.special_duration, damage_of(data, context), data.color)
 		WeaponData.Kind.PIERCE:
 			_lances(data, player, context)
 		WeaponData.Kind.BLAST:
@@ -28,7 +33,7 @@ static func trigger(data: WeaponData, player: Player, context: CombatContext, wo
 			world.add_child(bombardment)
 
 
-static func _shockwave(context: CombatContext, world: Node, center: Vector2, radius: float, duration: float, damage: int, color: Color) -> void:
+static func _shockwave(context: CombatContext, world: Node, center: Vector2, radius: float, duration: float, damage: float, color: Color) -> void:
 	var wave := Shockwave.new()
 	wave.setup(context, center, radius, duration, damage, color)
 	world.add_child(wave)
@@ -44,7 +49,7 @@ static func _lances(data: WeaponData, player: Player, context: CombatContext) ->
 			return
 		var t: float = 0.0 if data.special_count == 1 else float(i) / (data.special_count - 1) - 0.5
 		var dir := Vector2.from_angle(-PI * 0.5 + spread * t)
-		bullet.activate(player.position, dir * Params.special_lance_speed, data.special_damage, size, data.color, Bullet.Shape.RECT)
+		bullet.activate(player.position, dir * Params.special_lance_speed, damage_of(data, context), size, data.color, Bullet.Shape.RECT)
 		bullet.pierce_left = Params.special_lance_pierce
 
 
@@ -59,7 +64,7 @@ static func _burst(data: WeaponData, player: Player, context: CombatContext) -> 
 				return
 			var dir := Vector2.from_angle(offset + TAU * i / per_ring)
 			var speed: float = Params.special_burst_speed * (1.0 - ring * 0.15)
-			bullet.activate(player.position, dir * speed, data.special_damage, Params.special_burst_size, data.color, Bullet.Shape.CIRCLE)
+			bullet.activate(player.position, dir * speed, damage_of(data, context), Params.special_burst_size, data.color, Bullet.Shape.CIRCLE)
 
 
 ## Dois mísseis por inimigo na tela (até special_count), cada um preso ao seu alvo.
@@ -76,7 +81,7 @@ static func _missile_rain(data: WeaponData, player: Player, context: CombatConte
 			return
 		var dir := Vector2.from_angle(-PI * 0.5 + TAU * i / count)
 		bullet.activate(player.position + dir * Params.ship_size.y, dir * Params.special_missile_speed,
-			data.special_damage, Params.special_missile_size, data.color, Bullet.Shape.TRIANGLE)
+			damage_of(data, context), Params.special_missile_size, data.color, Bullet.Shape.TRIANGLE)
 		bullet.life_left = Params.special_missile_lifetime
 		bullet.homing_turn_rate = deg_to_rad(Params.special_missile_turn_degrees)
 		bullet.homing_turn_growth = deg_to_rad(Params.special_missile_turn_degrees)

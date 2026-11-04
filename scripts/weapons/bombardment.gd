@@ -31,7 +31,7 @@ func _process(delta: float) -> void:
 	if enemy != null and randf() < Params.special_bombard_aim_chance:
 		target = enemy.position
 	var wave := Shockwave.new()
-	wave.setup(_context, target, _data.special_radius, Params.special_bombard_blast_seconds, _data.special_damage, _data.color)
+	wave.setup(_context, target, _data.special_radius, Params.special_bombard_blast_seconds, SpecialAttack.damage_of(_data, _context), _data.color)
 	_world.add_child(wave)
 	_left -= 1
 	if _left <= 0:

@@ -11,7 +11,7 @@ func _process(delta: float) -> void:
 	_cooldown -= delta
 	if _cooldown > 0.0:
 		return
-	_cooldown += 1.0 / stats.fire_rate
+	_cooldown += 1.0 / (stats.fire_rate * rate())
 	_fire()
 
 
@@ -25,7 +25,7 @@ func _fire() -> void:
 		var bullet := context.player_bullets.acquire() as Bullet
 		if bullet == null:
 			return
-		bullet.activate(origin, Vector2.from_angle(angle) * stats.projectile_speed, stats.damage,
+		bullet.activate(origin, Vector2.from_angle(angle) * stats.projectile_speed, damage(),
 			stats.projectile_size, data.color, stats.projectile_shape)
 		bullet.life_left = stats.projectile_lifetime
 		bullet.pierce_left = stats.pierce

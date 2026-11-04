@@ -6,7 +6,7 @@ extends PoolItem
 signal killed(enemy: Enemy)
 
 var data: EnemyData
-var hp: int = 0
+var hp: float = 0.0
 var radius: float = 0.0
 var bullets: NodePool  # projéteis inimigos
 var context: CombatContext  # para mirar na nave
@@ -59,7 +59,7 @@ func on_player_contact() -> void:
 	take_damage(hp)
 
 
-func take_damage(amount: int) -> void:
+func take_damage(amount: float) -> void:
 	if not visible:
 		return
 	hp -= amount

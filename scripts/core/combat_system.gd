@@ -66,7 +66,7 @@ func _splash(bullet: Bullet, direct: Enemy) -> void:
 ## Área de coleta generosa (maior que a hitbox), centrada na nave.
 func _collect_powerups() -> void:
 	var power_ups: Array[PoolItem] = _context.power_ups.active
-	var reach: float = Params.powerup_pickup_radius + Params.powerup_radius
+	var reach: float = Params.powerup_pickup_radius * _context.boosts.pickup_radius + Params.powerup_radius
 	for i in range(power_ups.size() - 1, -1, -1):
 		var power_up := power_ups[i] as PowerUp
 		if power_up.position.distance_squared_to(_player.position) <= reach * reach:
@@ -84,7 +84,7 @@ func _hazards_vs_player() -> void:
 		var reach: float = bullet.radius + Params.nucleus_radius
 		if bullet.position.distance_squared_to(center) <= reach * reach:
 			_context.enemy_bullets.release(bullet)
-			player_hit.emit(bullet.damage)
+			player_hit.emit(maxi(roundi(bullet.damage), 1))
 			return
 
 	for item in _context.hostiles():

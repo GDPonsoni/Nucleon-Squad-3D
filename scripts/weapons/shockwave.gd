@@ -6,14 +6,14 @@ extends Node2D
 var _context: CombatContext
 var _max_radius: float = 0.0
 var _duration: float = 0.0
-var _damage: int = 0
+var _damage: float = 0.0
 var _color: Color
 var _age: float = 0.0
 var _radius: float = 0.0
 var _hit: Dictionary = {}  # inimigos já atingidos
 
 
-func setup(context: CombatContext, center: Vector2, max_radius: float, duration: float, damage: int, color: Color) -> void:
+func setup(context: CombatContext, center: Vector2, max_radius: float, duration: float, damage: float, color: Color) -> void:
 	_context = context
 	position = center
 	_max_radius = max_radius
@@ -33,7 +33,7 @@ func _process(delta: float) -> void:
 		if bullet.position.distance_to(position) <= _radius + bullet.radius:
 			_context.enemy_bullets.release(bullet)
 
-	if _damage > 0:
+	if _damage > 0.0:
 		for item in _context.hostiles():
 			var enemy := item as Enemy
 			if _hit.has(enemy) or not enemy.visible:
