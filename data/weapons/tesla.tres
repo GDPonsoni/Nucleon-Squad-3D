@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3]
+
+[ext_resource type="Script" path="res://scripts/weapons/weapon_data.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/weapons/weapon_level.gd" id="2_level"]
+
+[sub_resource type="Resource" id="WeaponLevel_lv1"]
+script = ExtResource("2_level")
+damage = 2
+fire_rate = 3.5
+chain_targets = 2
+chain_range = 850.0
+chain_jump = 280.0
+chain_falloff = 0.75
+
+[sub_resource type="Resource" id="WeaponLevel_lv2"]
+script = ExtResource("2_level")
+damage = 2
+fire_rate = 4.0
+chain_targets = 3
+chain_range = 900.0
+chain_jump = 300.0
+chain_falloff = 0.78
+
+[sub_resource type="Resource" id="WeaponLevel_lv3"]
+script = ExtResource("2_level")
+damage = 2
+fire_rate = 4.5
+chain_targets = 4
+chain_range = 950.0
+chain_jump = 320.0
+chain_falloff = 0.8
+
+[sub_resource type="Resource" id="WeaponLevel_lv4"]
+script = ExtResource("2_level")
+damage = 3
+fire_rate = 4.5
+chain_targets = 5
+chain_range = 1000.0
+chain_jump = 340.0
+chain_falloff = 0.8
+
+[sub_resource type="Resource" id="WeaponLevel_lv5"]
+script = ExtResource("2_level")
+damage = 3
+fire_rate = 5.2
+chain_targets = 7
+chain_range = 1100.0
+chain_jump = 380.0
+chain_falloff = 0.82
+
+[sub_resource type="Resource" id="WeaponLevel_companion"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 1.6
+chain_targets = 2
+chain_range = 750.0
+chain_jump = 260.0
+chain_falloff = 0.7
+
+[resource]
+script = ExtResource("1_script")
+id = &"tesla"
+kind = 6
+color = Color(0.7, 0.8, 1, 1)
+levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])
+companion = SubResource("WeaponLevel_companion")
+special_charge_seconds = 18.0
+special_damage = 9
+special_duration = 1.4
+special_radius = 420.0
+special_count = 4

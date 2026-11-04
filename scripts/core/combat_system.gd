@@ -47,6 +47,8 @@ func _player_bullets_vs_enemies() -> void:
 				# Atravessa e segue procurando outros inimigos
 				bullet.pierce(enemy)
 				continue
+			if bullet.bounce_left > 0 and bullet.ricochet(enemy, enemies):
+				continue
 			_context.player_bullets.release(bullet)
 			break
 

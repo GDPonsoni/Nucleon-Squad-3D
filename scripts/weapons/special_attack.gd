@@ -3,7 +3,8 @@ class_name SpecialAttack
 ## Raio: raio gigante + anel que limpa em volta. Leque: rajada de 360° que limpa os tiros.
 ## Mísseis: chuva de mísseis atrás de todos os inimigos na tela. Órbita: anel de energia
 ## que se expande pela tela, limpa os tiros e causa dano. Lança: leque de lanças gigantes
-## que atravessam tudo. Artilharia: bombardeio de explosões pela tela.
+## que atravessam tudo. Artilharia: bombardeio de explosões pela tela. Tesla: tempestade
+## de raios em todos os inimigos. Ricochete: orbes que ricocheteiam entre os inimigos.
 
 
 ## Dano do especial com a evolução do núcleo (dano geral e dano de especial).
@@ -31,6 +32,13 @@ static func trigger(data: WeaponData, player: Player, context: CombatContext, wo
 			var bombardment := Bombardment.new()
 			bombardment.setup(context, data, world)
 			world.add_child(bombardment)
+		WeaponData.Kind.CHAIN:
+			var storm := Storm.new()
+			storm.setup(context, data)
+			world.add_child(storm)
+			_shockwave(context, world, player.position, data.special_radius, 0.4, 0, data.color)
+		WeaponData.Kind.BOUNCE:
+			_pinball(data, player, context)
 
 
 static func _shockwave(context: CombatContext, world: Node, center: Vector2, radius: float, duration: float, damage: float, color: Color) -> void:
@@ -51,6 +59,21 @@ static func _lances(data: WeaponData, player: Player, context: CombatContext) ->
 		var dir := Vector2.from_angle(-PI * 0.5 + spread * t)
 		bullet.activate(player.position, dir * Params.special_lance_speed, damage_of(data, context), size, data.color, Bullet.Shape.RECT)
 		bullet.pierce_left = Params.special_lance_pierce
+
+
+## Orbes em 360° que ricocheteiam entre os inimigos e nas laterais da tela.
+static func _pinball(data: WeaponData, player: Player, context: CombatContext) -> void:
+	for i in data.special_count:
+		var bullet := context.player_bullets.acquire() as Bullet
+		if bullet == null:
+			return
+		var dir := Vector2.from_angle(-PI * 0.5 + TAU * i / data.special_count)
+		bullet.activate(player.position, dir * Params.special_pinball_speed, damage_of(data, context),
+			Params.special_pinball_size, data.color, Bullet.Shape.CIRCLE)
+		bullet.bounce_left = Params.special_pinball_bounces
+		bullet.wall_bounce_left = Params.special_pinball_wall_bounces
+		bullet.bounce_range = Params.special_pinball_range
+		bullet.life_left = Params.special_pinball_lifetime
 
 
 ## Anéis de projéteis em 360°, um pouco defasados entre si.

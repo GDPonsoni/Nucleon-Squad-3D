@@ -30,6 +30,17 @@ extends Resource
 @export var beam_widths: PackedFloat32Array = PackedFloat32Array()
 @export var beam_tick_seconds: float = 0.08  # aplica o dano a cada intervalo
 
+@export_group("Descarga em cadeia (Tesla)")  # usa fire_rate (descargas/s) e damage
+@export var chain_targets: int = 2  # inimigos atingidos por descarga
+@export var chain_range: float = 900.0  # alcance da 1ª descarga, só à frente da nave
+@export var chain_jump: float = 300.0  # distância máxima de um alvo até o próximo
+@export var chain_falloff: float = 0.8  # o dano é multiplicado por isso a cada salto
+
+@export_group("Ricochete")  # tiros do grupo Projéteis que pulam de inimigo em inimigo
+@export var bounces: int = 0  # vezes que o tiro ricocheteia para outro inimigo
+@export var wall_bounces: int = 0  # vezes que rebate nas laterais da tela
+@export var bounce_range: float = 420.0  # distância máxima até o próximo inimigo
+
 @export_group("Órbita")
 @export var orbit_count: int = 1
 @export var orbit_radius: float = 170.0

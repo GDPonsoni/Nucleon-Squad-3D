@@ -104,3 +104,7 @@ SQUAD_COMPANION,Wingman,Auxiliar
 SQUAD_COMPANION_HINT,Tap a ship to make it your wingman. Tap the wingman slot again to leave it empty.,Toque numa nave para ser a auxiliar. Toque de novo no espaço auxiliar para deixá-lo vazio.
 SQUAD_COMPANION_LOCKED,Clear chapter %d to unlock the wingman slot.,Conclua o capítulo %d para liberar o espaço da nave auxiliar.
 SQUAD_LOCKED_SHIP,Clear chapter %d to unlock.,Conclua o capítulo %d para liberar.
+SHIP_TESLA_NAME,Tesla,Tesla
+SHIP_TESLA_DESC,Bolts that jump between nearby enemies. Special: storm.,Descargas que saltam entre inimigos próximos. Especial: tempestade.
+SHIP_RICOCHET_NAME,Ricochet,Ricochete
+SHIP_RICOCHET_DESC,Shots that bounce from enemy to enemy and off the walls. Special: pinball.,Tiros que pulam de inimigo em inimigo e rebatem nas laterais. Especial: fliperama.

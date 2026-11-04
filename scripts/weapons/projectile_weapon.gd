@@ -1,7 +1,7 @@
 class_name ProjectileWeapon
 extends Weapon
 ## Dispara projéteis retos do pool: um ou vários em leque, que podem atravessar
-## inimigos (Lança) ou explodir em área (Artilharia).
+## inimigos (Lança), explodir em área (Artilharia) ou ricochetear (Ricochete).
 
 var _cooldown: float = 0.0
 
@@ -30,3 +30,6 @@ func _fire() -> void:
 		bullet.life_left = stats.projectile_lifetime
 		bullet.pierce_left = stats.pierce
 		bullet.splash_radius = stats.splash_radius
+		bullet.bounce_left = stats.bounces
+		bullet.wall_bounce_left = stats.wall_bounces
+		bullet.bounce_range = stats.bounce_range

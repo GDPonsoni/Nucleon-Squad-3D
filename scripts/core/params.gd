@@ -221,6 +221,17 @@ var special_lance_pierce: int = 999
 var special_bombard_area: float = 0.75  # explosões caem até essa fração da altura
 var special_bombard_aim_chance: float = 0.6  # chance de mirar num inimigo
 var special_bombard_blast_seconds: float = 0.35
+var special_pinball_speed: float = 1300.0  # Ricochete
+var special_pinball_size: Vector2 = Vector2(24.0, 24.0)
+var special_pinball_bounces: int = 5
+var special_pinball_wall_bounces: int = 3
+var special_pinball_range: float = 600.0
+var special_pinball_lifetime: float = 2.5
+var storm_flash_seconds: float = 0.25  # Tesla: cada raio da tempestade
+var chain_bolt_seconds: float = 0.12  # Tesla: quanto cada descarga fica na tela
+var chain_bolt_segments: int = 6  # pedaços do raio quebrado
+var chain_bolt_jitter: float = 18.0  # px de zigue-zague
+var chain_bolt_width: float = 5.0
 
 # --- Progressão: quarks e evolução do núcleo (cores do ícone do quark) ---
 var quark_color: Color = Color(0.78, 0.66, 1.0)

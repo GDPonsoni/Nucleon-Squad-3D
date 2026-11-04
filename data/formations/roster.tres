@@ -8,7 +8,9 @@
 [ext_resource type="Resource" path="res://data/bodies/orbit_body.tres" id="6_orbit_body"]
 [ext_resource type="Resource" path="res://data/bodies/lance_body.tres" id="7_lance_body"]
 [ext_resource type="Resource" path="res://data/bodies/artillery_body.tres" id="8_artillery_body"]
+[ext_resource type="Resource" path="res://data/bodies/tesla_body.tres" id="9_tesla_body"]
+[ext_resource type="Resource" path="res://data/bodies/ricochet_body.tres" id="10_ricochet_body"]
 
 [resource]
 script = ExtResource("1_script")
-bodies = Array[ExtResource("2_body_script")]([ExtResource("3_beam_body"), ExtResource("4_spread_body"), ExtResource("5_homing_body"), ExtResource("6_orbit_body"), ExtResource("7_lance_body"), ExtResource("8_artillery_body")])
+bodies = Array[ExtResource("2_body_script")]([ExtResource("3_beam_body"), ExtResource("4_spread_body"), ExtResource("5_homing_body"), ExtResource("6_orbit_body"), ExtResource("7_lance_body"), ExtResource("8_artillery_body"), ExtResource("9_tesla_body"), ExtResource("10_ricochet_body")])

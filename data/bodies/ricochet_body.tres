@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BodyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/player/body_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/weapons/ricochet.tres" id="2_weapon"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"ricochet_body"
+name_key = "SHIP_RICOCHET_NAME"
+description_key = "SHIP_RICOCHET_DESC"
+color = Color(0.8, 1, 0.35, 1)
+shape = PackedVector2Array(0, -0.5, 0.35, -0.2, 0.5, 0.25, 0.2, 0.5, 0, 0.3, -0.2, 0.5, -0.5, 0.25, -0.35, -0.2)
+weapon = ExtResource("2_weapon")
+unlock_chapter = 5
