@@ -1,10 +1,9 @@
 class_name Hud
 extends CanvasLayer
 ## HUD da partida.
-## Topo: progresso da fase, pontuação e nome da fase.
-## Base esquerda: nível da arma e hits do corpo ativo. Base direita: formação.
-## Flash vermelho na tela ao levar hit. Com chefe: barra de vida dele no topo.
-## Botão do especial acima do painel da base esquerda.
+## Topo: progresso da fase (ou vida do chefe), pontuação e nome da fase.
+## Base: botão do especial logo acima da barra de troca (que mostra hits e níveis).
+## Flash vermelho na tela ao levar hit e aviso piscando antes do chefe.
 
 signal special_pressed
 
@@ -14,13 +13,10 @@ var _canvas: Control
 var _score_label: Label
 var _stage_label: Label
 var _flash: ColorRect
-var _panel_style: StyleBoxFlat
 var _boss: Boss
 var _boss_label: Label
 var _warning: Label
 var _special: SpecialButton
-## Faixa de troca visível: esconde os painéis da base (ela já mostra hits e níveis).
-var hide_bottom_panels: bool = false
 
 
 func _ready() -> void:
@@ -62,27 +58,18 @@ func _ready() -> void:
 	_warning.visible = false
 	_canvas.add_child(_warning)
 
-	# Especial: canto inferior esquerdo, logo acima do painel de nível e hits
+	# Especial: canto inferior esquerdo, logo acima da barra de troca (place_special)
 	_special = SpecialButton.new()
 	_special.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	var panel_height: float = Params.hud_pip_size.y + Params.hud_gap + Params.hud_level_size + Params.hud_panel_padding * 2.0
-	var bottom: float = Params.hud_margin.y + panel_height + Params.special_button_gap
-	_special.offset_left = Params.hud_margin.x - Params.hud_panel_padding
-	_special.offset_right = _special.offset_left + Params.special_button_size
-	_special.offset_bottom = -bottom
-	_special.offset_top = -bottom - Params.special_button_size
 	_special.pressed.connect(special_pressed.emit)
 	_canvas.add_child(_special)
+	place_special(Params.switch_strip_bottom * 2.0)
 
 	_flash = ColorRect.new()
 	_flash.color = Color(Params.hud_hit_flash_color, 0.0)
 	_flash.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_flash)
-
-	_panel_style = StyleBoxFlat.new()
-	_panel_style.bg_color = Params.hud_panel_color
-	_panel_style.set_corner_radius_all(Params.ui_corner_radius)
 
 
 func setup(state: MatchState, spawner: EnemySpawner, stage_text: String) -> void:
@@ -91,6 +78,15 @@ func setup(state: MatchState, spawner: EnemySpawner, stage_text: String) -> void
 	_stage_label.text = stage_text
 	state.score_changed.connect(_on_score_changed)
 	_on_score_changed(state.score)
+
+
+## Coloca o botão do especial acima de uma faixa reservada na base (a barra de troca).
+func place_special(reserved_bottom: float) -> void:
+	var bottom: float = reserved_bottom + Params.special_button_gap
+	_special.offset_left = Params.hud_margin.x
+	_special.offset_right = _special.offset_left + Params.special_button_size
+	_special.offset_bottom = -bottom
+	_special.offset_top = -bottom - Params.special_button_size
 
 
 ## Mostra a barra de vida do chefe (null esconde).
@@ -113,8 +109,8 @@ func show_warning(text_key: String) -> void:
 
 
 ## Flash vermelho rápido (em tempo real, mesmo na câmera lenta).
-func flash_hit() -> void:
-	_flash.color.a = Params.hud_hit_flash_alpha
+func flash_hit(color: Color = Params.hud_hit_flash_color) -> void:
+	_flash.color = Color(color, Params.hud_hit_flash_alpha)
 	var tween := create_tween()
 	tween.set_ignore_time_scale(true)
 	tween.tween_property(_flash, "color:a", 0.0, Params.hud_hit_flash_seconds)
@@ -140,10 +136,6 @@ func _draw_hud() -> void:
 		_draw_boss_bar()
 	else:
 		_draw_progress()
-	var bottom: float = _canvas.size.y - Params.hud_margin.y
-	if not hide_bottom_panels:
-		_draw_hits_and_level(bottom)
-		_draw_formation(bottom)
 
 
 ## Barra fina no topo, entre a margem e o botão de pausa.
@@ -168,66 +160,6 @@ func _draw_boss_bar() -> void:
 	var filled := Rect2(rect.position, Vector2(rect.size.x * _boss.health_ratio(), rect.size.y))
 	if filled.size.x > 0.0:
 		_draw_round_rect(filled, _boss.tint(), radius)
-
-
-## Losangos do nível da arma em cima e quadrados dos hits embaixo, sobre um painel.
-func _draw_hits_and_level(bottom: float) -> void:
-	var body: BodyData = _state.current_body()
-	var hits: int = _state.hits_left[_state.current]
-	var level: int = _state.weapon_levels[_state.current]
-	var pip: Vector2 = Params.hud_pip_size
-	var diamond: float = Params.hud_level_size
-	var left: float = Params.hud_margin.x
-	var width: float = maxf(Params.body_max_hits * (pip.x + Params.hud_gap), body.weapon.max_level() * (diamond + Params.hud_level_gap))
-	var top: float = bottom - pip.y - Params.hud_gap - diamond
-	var pad: float = Params.hud_panel_padding
-	_canvas.draw_style_box(_panel_style, Rect2(left - pad, top - pad, width + pad * 2.0, bottom - top + pad * 2.0))
-
-	for i in body.weapon.max_level():
-		var center := Vector2(left + diamond * 0.5 + i * (diamond + Params.hud_level_gap), top + diamond * 0.5)
-		var half: float = diamond * 0.5
-		var points := PackedVector2Array([
-			center + Vector2(0.0, -half), center + Vector2(half, 0.0),
-			center + Vector2(0.0, half), center + Vector2(-half, 0.0),
-		])
-		if i < level:
-			_canvas.draw_colored_polygon(points, Params.powerup_color)
-		else:
-			points.append(points[0])
-			_canvas.draw_polyline(points, Params.hud_dead_color, 2.0)
-
-	var color: Color = body.color if hits > 0 else Params.hud_dead_color
-	for i in Params.body_max_hits:
-		var rect := Rect2(Vector2(left + i * (pip.x + Params.hud_gap), bottom - pip.y), pip)
-		if i < hits:
-			_draw_round_rect(rect, color, Params.hud_pip_radius)
-		else:
-			_canvas.draw_rect(rect, color, false, 3.0)
-
-
-func _draw_formation(bottom: float) -> void:
-	var radius: float = Params.hud_icon_radius
-	var count: int = _state.bodies.size()
-	var right: float = _canvas.size.x - Params.hud_margin.x
-	var width: float = count * radius * 2.0 + (count - 1) * Params.hud_gap
-	var pad: float = Params.hud_panel_padding
-	_canvas.draw_style_box(_panel_style, Rect2(right - width - pad, bottom - radius * 2.0 - pad, width + pad * 2.0, radius * 2.0 + pad * 2.0))
-	for i in count:
-		var center := Vector2(right - radius - (count - 1 - i) * (radius * 2.0 + Params.hud_gap), bottom - radius)
-		var body: BodyData = _state.bodies[i]
-		var alive: bool = _state.is_alive(i)
-		var color: Color = body.color if alive else Params.hud_dead_color
-		_canvas.draw_circle(center, radius, Params.switch_icon_bg_color)
-		var points := PackedVector2Array()
-		for point in body.shape:
-			points.append(center + point * radius * Params.switch_icon_shape_scale)
-		_canvas.draw_colored_polygon(points, color)
-		if not alive:
-			var d: float = radius * 0.6
-			_canvas.draw_line(center + Vector2(-d, -d), center + Vector2(d, d), Params.hud_dead_mark_color, 4.0)
-			_canvas.draw_line(center + Vector2(d, -d), center + Vector2(-d, d), Params.hud_dead_mark_color, 4.0)
-		elif i == _state.current:
-			_canvas.draw_arc(center, radius, 0.0, TAU, 40, Color.WHITE, 4.0)
 
 
 func _draw_round_rect(rect: Rect2, color: Color, radius: float) -> void:

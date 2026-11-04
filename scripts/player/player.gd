@@ -9,6 +9,8 @@ var cracks: int = 0:  # rachaduras no núcleo, uma por corpo perdido
 	set(value):
 		cracks = value
 		queue_redraw()
+## Limite de baixo para a nave, em coordenadas de tela (topo da barra de troca).
+var bottom_limit: float = INF
 
 var _context: CombatContext
 var _touch_origin: Vector2
@@ -151,4 +153,5 @@ func _on_touch_moved(pos: Vector2) -> void:
 func _clamp_to_screen(point: Vector2) -> Vector2:
 	var rect: Rect2 = get_viewport_rect()
 	var half: Vector2 = Params.ship_size * 0.5
-	return point.clamp(rect.position + half, rect.end - half)
+	var bottom: float = minf(rect.end.y, bottom_limit) - half.y
+	return point.clamp(rect.position + half, Vector2(rect.end.x - half.x, bottom))

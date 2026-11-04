@@ -52,17 +52,10 @@ var menu_spacing: int = 56
 var pause_button_size: Vector2 = Vector2(130.0, 130.0)
 var pause_button_margin: Vector2 = Vector2(40.0, 100.0)  # a partir do canto superior direito
 var pause_overlay_color: Color = Color(0.0, 0.0, 0.0, 0.65)
-var hud_margin: Vector2 = Vector2(40.0, 70.0)  # a partir dos cantos inferiores
-var hud_pip_size: Vector2 = Vector2(48.0, 48.0)
-var hud_pip_radius: float = 8.0
-var hud_gap: float = 14.0
-var hud_icon_radius: float = 34.0
-var hud_level_size: float = 30.0
-var hud_level_gap: float = 8.0
+var hud_margin: Vector2 = Vector2(40.0, 70.0)  # margens laterais do HUD
 var hud_dead_color: Color = Color(0.35, 0.35, 0.42)
 var hud_dead_mark_color: Color = Color(1.0, 0.3, 0.3)
 var hud_panel_color: Color = Color(0.06, 0.07, 0.12, 0.6)
-var hud_panel_padding: float = 18.0
 var hud_progress_y: float = 50.0
 var hud_progress_height: float = 14.0
 var hud_score_position: Vector2 = Vector2(40.0, 80.0)
@@ -93,7 +86,7 @@ var slow_motion_tint: Color = Color(0.3, 0.6, 1.0, 0.6)  # vinheta nas bordas (a
 var ship_speed: float = 3000.0  # px/s máximos (escalado pelo time scale)
 var drag_sensitivity: float = 1.0  # 1.0 = nave anda o mesmo que o dedo
 var ship_size: Vector2 = Vector2(90.0, 110.0)  # tamanho de referência dos corpos
-var ship_start_bottom_offset: float = 300.0  # distância da base da tela
+var ship_start_bottom_offset: float = 380.0  # distância da base da tela (acima da barra de troca)
 var nucleus_radius: float = 16.0  # também é a hitbox da nave
 var nucleus_color: Color = Color(1.0, 1.0, 1.0)
 var nucleus_outline_color: Color = Color(0.02, 0.02, 0.06)  # separa o núcleo da cor do corpo
@@ -125,21 +118,31 @@ var ad_placeholder_color: Color = Color(0.02, 0.02, 0.05, 0.97)
 var invulnerability_blink_hz: float = 12.0
 var invulnerability_alpha: float = 0.3
 
-# --- Troca de corpo (ícones na câmera lenta) ---
+# --- Troca de corpo: barra fixa na base da tela (nítida na câmera lenta) ---
 var switch_invulnerability_seconds: float = 2.0
-var switch_icon_radius: float = 70.0
-var switch_strip_bottom: float = 150.0  # centro da faixa de troca, a partir da base da tela (no lugar dos painéis do HUD)
-var switch_strip_spacing: float = 175.0  # entre ícones da faixa
+var switch_icon_radius: float = 82.0
+var switch_icon_max_spacing_ratio: float = 0.36  # com muitos corpos, o raio diminui para caber
+var switch_strip_bottom: float = 150.0  # centro da barra, a partir da base da tela
+var switch_strip_spacing: float = 235.0  # entre ícones da barra
 var switch_strip_side_margin: float = 30.0
 var switch_strip_padding: float = 14.0
-var switch_strip_color: Color = Color(0.04, 0.05, 0.1, 0.75)
+var switch_strip_touch_margin: float = 20.0  # toque curto vale um pouco além da barra
+var switch_strip_color: Color = Color(0.04, 0.05, 0.1, 0.55)  # levemente transparente
+var switch_bar_border_alpha: float = 0.35
+var switch_bar_idle_alpha: float = 0.45  # opacidade da barra enquanto o dedo move a nave
+var switch_bar_fade_seconds: float = 0.12  # transição entre translúcida e nítida (tempo real)
+var switch_current_scale: float = 1.08  # o corpo ativo aparece um pouco maior
 var switch_dead_alpha: float = 0.35
 var switch_level_ring_offset: float = 11.0  # anel de nível da arma, fora do ícone
 var switch_level_ring_width: float = 7.0
 var switch_level_ring_gap_degrees: float = 14.0
-var switch_icon_touch_scale: float = 1.25  # área de toque maior que o ícone
+var switch_icon_touch_scale: float = 1.15  # área de toque um pouco maior que o ícone
 var switch_icon_shape_scale: float = 1.1
-var switch_icon_bg_color: Color = Color(0.1, 0.1, 0.16, 1.0)
+var switch_icon_bg_color: Color = Color(0.1, 0.1, 0.16, 0.85)
+var switch_hint_font_size: int = 44
+var switch_hint_gap: float = 26.0  # aviso "escolha a próxima nave" acima da barra
+var tap_max_seconds: float = 0.35  # toque curto: tempo máximo com o dedo na barra (tempo real)
+var tap_move_tolerance: float = 36.0  # toque curto: quanto o dedo pode andar sem virar arraste
 
 # --- Projéteis do jogador ---
 var player_bullet_pool_size: int = 128
@@ -169,7 +172,7 @@ var cross_band_bottom: float = 0.45
 
 # --- Especial (valores de cada arma ficam em data/weapons/) ---
 var special_button_size: float = 150.0
-var special_button_gap: float = 24.0  # acima do painel de hits e nível
+var special_button_gap: float = 28.0  # acima da barra de troca
 var special_ring_width: float = 9.0
 var special_beam_open_seconds: float = 0.15
 var special_burst_rings: int = 3
