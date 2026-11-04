@@ -64,6 +64,10 @@ func on_player_contact() -> void:
 	pass
 
 
+func _hit_sound() -> StringName:
+	return &"boss_hit"
+
+
 func take_damage(amount: float) -> void:
 	# Invulnerável enquanto entra na tela
 	if _entering:

@@ -16,6 +16,7 @@ func _process(delta: float) -> void:
 
 
 func _fire() -> void:
+	Audio.shot(data.kind, sound_db)
 	var origin: Vector2 = muzzle()
 	var count: int = maxi(stats.projectile_count, 1)
 	for i in count:

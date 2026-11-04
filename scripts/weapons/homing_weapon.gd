@@ -35,6 +35,7 @@ func _process(delta: float) -> void:
 
 
 func _launch_wave() -> void:
+	Audio.shot(data.kind, sound_db)
 	var dir := Vector2.from_angle(_aim_angle)
 	for i in stats.projectile_count:
 		var bullet := context.player_bullets.acquire() as Bullet

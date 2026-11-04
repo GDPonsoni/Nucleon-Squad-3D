@@ -45,6 +45,7 @@ func _process(delta: float) -> void:
 		if target != null and _ticks[k] == 0.0:
 			_ticks[k] = stats.beam_tick_seconds / rate()
 			target.take_damage(damage())
+			Audio.shot(data.kind, sound_db)
 	queue_redraw()
 
 

@@ -23,6 +23,7 @@ Session="*res://scripts/core/session.gd"
 SaveGame="*res://scripts/core/save_game.gd"
 SceneTransition="*res://scripts/ui/scene_transition.gd"
 AdService="*res://scripts/core/ad_service.gd"
+Audio="*res://scripts/core/audio.gd"
 
 [display]
 

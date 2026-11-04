@@ -14,10 +14,15 @@ var companion: String = ""  # id do corpo da nave auxiliar ("" = nenhuma)
 var quarks: int = 0  # saldo para a evolução do núcleo
 var quarks_earned_total: int = 0  # total ganho desde o início (estatística)
 var upgrades: Dictionary = {}  # id do nó da evolução -> nível
+var settings: Dictionary = {}  # configurações alteradas (as outras usam Params.default_settings)
 ## Capítulos concluídos na campanha antiga (migração): contam como concluídos.
 var cleared_chapters: PackedStringArray = PackedStringArray()
 ## false = não grava no aparelho (ferramentas de teste e simulação)
 var persistent: bool = true
+
+
+## Alguma configuração mudou (áudio, idioma, efeitos).
+signal settings_changed
 
 
 func _ready() -> void:
@@ -136,6 +141,17 @@ func buy_upgrade(node: UpgradeData) -> bool:
 	return true
 
 
+## Configuração atual (padrão de Params.default_settings quando não alterada).
+func setting(key: String) -> Variant:
+	return settings.get(key, Params.default_settings[key])
+
+
+func set_setting(key: String, value: Variant) -> void:
+	settings[key] = value
+	save()
+	settings_changed.emit()
+
+
 func unlock_all() -> void:
 	unlock_everything = true
 	save()
@@ -163,6 +179,7 @@ func to_dict() -> Dictionary:
 		"quarks_earned_total": quarks_earned_total,
 		"upgrades": upgrades,
 		"cleared_chapters": cleared_chapters,
+		"settings": settings,
 	}
 
 
@@ -197,6 +214,11 @@ func from_dict(data: Dictionary) -> void:
 	if typeof(levels) == TYPE_DICTIONARY:
 		for id in levels:
 			upgrades[String(id)] = maxi(int(levels[id]), 0)
+	var saved_settings: Variant = data.get("settings", {})
+	if typeof(saved_settings) == TYPE_DICTIONARY:
+		for key in saved_settings:
+			if Params.default_settings.has(key):
+				settings[String(key)] = saved_settings[key]
 	var cleared: Variant = data.get("cleared_chapters", [])
 	if typeof(cleared) == TYPE_ARRAY:
 		cleared_chapters = PackedStringArray(cleared)

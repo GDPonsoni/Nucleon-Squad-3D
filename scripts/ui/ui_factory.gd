@@ -37,6 +37,7 @@ static func make_button(text_key: String) -> Button:
 	button.custom_minimum_size = Params.button_min_size
 	# Sem contorno de foco ao tocar
 	button.focus_mode = Control.FOCUS_NONE
+	button.pressed.connect(Audio.ui_press.bind(text_key))
 	return button
 
 

@@ -39,4 +39,6 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	var intensity: float = clampf((1.0 - Engine.time_scale) / (1.0 - Params.slow_time_scale), 0.0, 1.0)
+	if SaveGame.setting("reduced_effects"):
+		intensity *= Params.reduced_slowmo_intensity
 	_material.set_shader_parameter("intensity", intensity)

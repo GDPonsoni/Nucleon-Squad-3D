@@ -29,6 +29,7 @@ func _process(delta: float) -> void:
 			if center.distance_squared_to(enemy.position) <= reach * reach:
 				_cooldowns[enemy] = stats.orbit_hit_seconds / rate()
 				enemy.take_damage(damage())
+				Audio.shot(data.kind, sound_db)
 	queue_redraw()
 
 

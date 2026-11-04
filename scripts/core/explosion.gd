@@ -18,9 +18,10 @@ func activate(pos: Vector2, radius: float, color: Color) -> void:
 	_age = 0.0
 	var size_factor: float = radius / Params.explosion_reference_radius
 	_duration = Params.explosion_seconds * clampf(size_factor, 0.8, 1.6)
-	_dirs.resize(Params.explosion_shards)
-	_speeds.resize(Params.explosion_shards)
-	for i in Params.explosion_shards:
+	var shards: int = Params.reduced_explosion_shards if SaveGame.setting("reduced_effects") else Params.explosion_shards
+	_dirs.resize(shards)
+	_speeds.resize(shards)
+	for i in shards:
 		_dirs[i] = Vector2.from_angle(randf() * TAU)
 		_speeds[i] = randf_range(Params.explosion_shard_speed_min, Params.explosion_shard_speed_max) * size_factor
 	queue_redraw()

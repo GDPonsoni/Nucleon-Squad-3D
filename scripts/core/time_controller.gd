@@ -43,8 +43,12 @@ func _exit_tree() -> void:
 
 func _on_touch_started(_pos: Vector2) -> void:
 	if not forced_slow:
+		if _target < NORMAL_TIME_SCALE:
+			Audio.play(&"slowmo_exit")
 		_target = NORMAL_TIME_SCALE
 
 
 func _on_touch_ended() -> void:
+	if _target >= NORMAL_TIME_SCALE:
+		Audio.play(&"slowmo_enter")
 	_target = Params.slow_time_scale

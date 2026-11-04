@@ -38,6 +38,7 @@ func _discharge() -> void:
 		amount *= stats.chain_falloff
 	if points.size() > 1:
 		_bolts.append({"points": points, "age": 0.0})
+		Audio.shot(data.kind, sound_db)
 
 
 ## Inimigo mais próximo ainda não atingido; o primeiro precisa estar à frente da nave.

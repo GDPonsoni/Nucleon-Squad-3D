@@ -121,6 +121,8 @@ func show_warning(text_key: String) -> void:
 
 ## Flash vermelho rápido (em tempo real, mesmo na câmera lenta).
 func flash_hit(color: Color = Params.hud_hit_flash_color) -> void:
+	if SaveGame.setting("reduced_effects"):
+		return
 	_flash.color = Color(color, Params.hud_hit_flash_alpha)
 	var tween := create_tween()
 	tween.set_ignore_time_scale(true)

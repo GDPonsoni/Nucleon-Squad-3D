@@ -16,6 +16,7 @@ func setup(data: BodyData, context: CombatContext) -> void:
 	_player = context.player
 	weapon = Weapon.create_companion(data.weapon, context)
 	weapon.power = context.boosts.companion_damage
+	weapon.sound_db = Params.companion_sound_db
 	weapon.muzzle_offset = Params.ship_size.y * 0.5 * Params.companion_scale
 	weapon.show_behind_parent = true
 	add_child(weapon)

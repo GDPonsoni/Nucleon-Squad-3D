@@ -1,6 +1,37 @@
 extends Node
 ## Parâmetros ajustáveis do jogo. Único lugar para valores de tuning.
 
+# --- Áudio e configurações (ganho de cada som em dB: nivela o volume entre eles) ---
+var sfx_voices: int = 20  # sons ao mesmo tempo
+var sfx_gain_db: Dictionary = {
+	&"body_break": -4.1, &"bomb_global": -1.0, &"boss_explode": -1.8, &"boss_hit": -11.2,
+	&"boss_warning": -8.7, &"core_crack": -4.8, &"enemy_explode_medium": -6.3, &"enemy_explode_small": -6.9,
+	&"enemy_hit": -13.4, &"game_over": -5.4, &"hit_player": -2.2, &"missile_explode": -5.2,
+	&"powerup_pickup": -10.1, &"revive": -5.8, &"ship_switch": -7.4, &"shot_beam": -11.2,
+	&"shot_missile": -8.4, &"shot_orbit": -11.1, &"shot_spread": -9.7, &"slowmo_enter": -9.3,
+	&"slowmo_exit": -10.8, &"special_fire": -1.9, &"special_ready": -5.0, &"stage_clear": -10.1,
+	&"ui_back": -13.5, &"ui_click": -13.1, &"ui_confirm": -13.5, &"weapon_levelup": -11.0,
+}
+# Intervalo mínimo entre dois disparos do mesmo som (s): evita empilhar tiros e acertos
+var sfx_min_gap: Dictionary = {
+	&"shot_beam": 0.2, &"shot_spread": 0.07, &"shot_missile": 0.15, &"shot_orbit": 0.18,
+	&"enemy_hit": 0.05, &"boss_hit": 0.08, &"enemy_explode_small": 0.05, &"enemy_explode_medium": 0.06,
+	&"missile_explode": 0.08, &"ui_click": 0.04, &"slowmo_enter": 0.15, &"slowmo_exit": 0.15,
+}
+var sfx_pitch_jitter: float = 0.06  # variação aleatória de tom
+var companion_sound_db: float = -8.0  # a nave auxiliar soa mais baixo
+var default_settings: Dictionary = {
+	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "reduced_effects": false, "language": "auto",
+}
+var languages: PackedStringArray = ["auto", "pt_BR", "en"]
+var vibration_ms: int = 60
+var reduced_explosion_shards: int = 5
+var reduced_slowmo_intensity: float = 0.45
+var settings_slider_width: float = 900.0
+var settings_slider_height: float = 84.0
+var settings_row_spacing: int = 14
+var settings_label_font_size: int = 46
+
 # --- Tela / debug ---
 var background_color: Color = Color(0.04, 0.04, 0.08)
 var debug_overlay_enabled: bool = true

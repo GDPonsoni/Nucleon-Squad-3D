@@ -165,6 +165,56 @@ func test_match_state_applies_boosts() -> void:
 	check(not state.is_alive(0) and state.weapon_levels[0] == 2, "corpo perdido volta ao nível inicial")
 
 
+func test_every_sound_has_a_file_and_gain() -> void:
+	for sound: StringName in Params.sfx_gain_db:
+		check(ResourceLoader.exists("res://assets/audio/sfx/%s.wav" % sound), "arquivo de %s" % sound)
+		check(float(Params.sfx_gain_db[sound]) <= 0.0, "%s não amplifica (risco de estourar)" % sound)
+	for sound: StringName in Params.sfx_min_gap:
+		check(Params.sfx_gain_db.has(sound), "intervalo de %s sem som correspondente" % sound)
+	check(Params.sfx_gain_db.size() == 28, "28 sons mapeados")
+
+
+func test_settings_apply_to_buses() -> void:
+	var saved: Dictionary = SaveGame.settings.duplicate()
+	SaveGame.set_setting("sfx", 0.5)
+	var bus: int = AudioServer.get_bus_index(&"SFX")
+	check(bus >= 0, "barramento SFX existe")
+	check(is_equal_approx(AudioServer.get_bus_volume_db(bus), linear_to_db(0.5)), "volume do SFX")
+	SaveGame.set_setting("music", 0.0)
+	check(AudioServer.is_bus_mute(AudioServer.get_bus_index(&"Music")), "música em zero fica muda")
+	SaveGame.set_setting("language", "en")
+	check(TranslationServer.get_locale().begins_with("en"), "idioma inglês")
+	check(tr("MENU_SETTINGS") == "Settings", "texto em inglês: %s" % tr("MENU_SETTINGS"))
+	SaveGame.set_setting("language", "pt_BR")
+	check(tr("MENU_SETTINGS") == "Configurações", "texto em português")
+	SaveGame.settings = saved
+	SaveGame.settings_changed.emit()
+
+
+func test_settings_round_trip_and_defaults() -> void:
+	var save := _fresh_save()
+	check(is_equal_approx(float(save.setting("master")), 1.0) and save.setting("vibration") == true, "padrões")
+	save.settings = {"sfx": 0.3, "language": "en"}
+	var copy := _fresh_save()
+	copy.from_dict(JSON.parse_string(JSON.stringify(save.to_dict())))
+	check(is_equal_approx(float(copy.setting("sfx")), 0.3) and copy.setting("language") == "en", "valores salvos")
+	check(is_equal_approx(float(copy.setting("music")), Params.default_settings["music"]), "o resto fica no padrão")
+	copy.from_dict({"settings": {"inexistente": 5}, "version": 3})
+	check(not copy.settings.has("inexistente"), "chave desconhecida é ignorada")
+	save.free()
+	copy.free()
+
+
+func test_audio_play_is_safe() -> void:
+	Audio.play(&"ui_click")
+	Audio.play(&"nao_existe")
+	Audio.shot(WeaponData.Kind.CHAIN)
+	Audio.explosion(10.0)
+	Audio.explosion(200.0)
+	Audio.ui_press("MENU_BACK")
+	check(true, "tocar sons (inclusive inexistentes) não quebra")
+
+
 func test_campaign_structure() -> void:
 	var campaign: CampaignData = Session.campaign
 	check(campaign.planets.size() == 5, "5 capítulos")

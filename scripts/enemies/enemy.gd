@@ -101,7 +101,13 @@ func take_damage(amount: float) -> void:
 	if hp <= 0:
 		killed.emit(self)
 		expire()
+	else:
+		Audio.play(_hit_sound())
 
+
+## Som de quando leva um acerto sem morrer (o chefe usa outro).
+func _hit_sound() -> StringName:
+	return &"enemy_hit"
 
 
 func _process(delta: float) -> void:

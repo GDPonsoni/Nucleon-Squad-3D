@@ -7,6 +7,7 @@ var context: CombatContext
 var level: int = 1
 var stats: WeaponLevel  # valores do nível atual
 var power: float = 1.0  # multiplicador de dano próprio (nave auxiliar)
+var sound_db: float = 0.0  # ajuste de volume dos disparos (nave auxiliar soa mais baixo)
 var muzzle_offset: float = Params.ship_size.y * 0.5  # distância do centro até a ponta
 
 

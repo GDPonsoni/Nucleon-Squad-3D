@@ -4,6 +4,7 @@ extends CanvasLayer
 
 var _pause_button: Button
 var _overlay: ColorRect
+var _settings_overlay: ColorRect
 var _enabled: bool = true
 
 
@@ -22,6 +23,7 @@ func _ready() -> void:
 	_pause_button.offset_top = Params.pause_button_margin.y
 	_pause_button.offset_bottom = Params.pause_button_margin.y + Params.pause_button_size.y
 	_pause_button.pressed.connect(open)
+	_pause_button.pressed.connect(Audio.play.bind(&"ui_click"))
 	add_child(_pause_button)
 
 	_overlay = UiFactory.make_overlay()
@@ -40,9 +42,18 @@ func _ready() -> void:
 	restart_button.pressed.connect(_restart_stage)
 	column.add_child(restart_button)
 
+	var settings_button := UiFactory.make_button("MENU_SETTINGS")
+	settings_button.pressed.connect(_open_settings)
+	column.add_child(settings_button)
+
 	var exit_button := UiFactory.make_button("PAUSE_EXIT_TO_MENU")
 	exit_button.pressed.connect(_exit_to_menu)
 	column.add_child(exit_button)
+
+	# Configurações por cima da pausa
+	_settings_overlay = UiFactory.make_overlay()
+	_settings_overlay.visible = false
+	add_child(_settings_overlay)
 
 
 ## Duas barras verticais desenhadas sobre o botão.
@@ -53,6 +64,18 @@ func _draw_pause_icon() -> void:
 	var top: float = (size.y - bar.y) * 0.5
 	for x in [size.x * 0.5 - gap * 0.5 - bar.x, size.x * 0.5 + gap * 0.5]:
 		_pause_button.draw_rect(Rect2(Vector2(x, top), bar), Params.ui_text_color)
+
+
+func _open_settings() -> void:
+	for child in _settings_overlay.get_children():
+		child.queue_free()
+	var panel := SettingsPanel.new()
+	panel.back_pressed.connect(func() -> void:
+		_settings_overlay.visible = false
+		_overlay.visible = true)
+	_settings_overlay.add_child(UiFactory.make_centered(UiFactory.make_panel(panel)))
+	_overlay.visible = false
+	_settings_overlay.visible = true
 
 
 func open() -> void:

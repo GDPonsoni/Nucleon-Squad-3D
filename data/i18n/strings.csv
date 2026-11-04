@@ -120,3 +120,18 @@ STAGE_PROGRESS,%d of %d stages cleared,%d de %d fases concluídas
 STAGE_REWARD,Clear the chapter to unlock: %s,Conclua o capítulo para liberar: %s
 STAGE_REWARD_DONE,Chapter reward unlocked: %s,Recompensa do capítulo liberada: %s
 STAGE_REWARD_COMPANION,wingman slot,espaço da nave auxiliar
+MENU_SETTINGS,Settings,Configurações
+SETTINGS_TITLE,Settings,Configurações
+SETTINGS_MASTER,Master volume,Volume geral
+SETTINGS_MUSIC,Music,Música
+SETTINGS_SFX,Sound effects,Efeitos sonoros
+SETTINGS_VIBRATION,Vibration,Vibração
+SETTINGS_EFFECTS,Visual effects,Efeitos visuais
+SETTINGS_EFFECTS_REDUCED,Reduced,Reduzidos
+SETTINGS_EFFECTS_FULL,Full,Completos
+SETTINGS_LANGUAGE,Language,Idioma
+SETTINGS_ON,On,Ligada
+SETTINGS_OFF,Off,Desligada
+LANGUAGE_AUTO,Automatic,Automático
+LANGUAGE_PT_BR,Português,Português
+LANGUAGE_EN,English,English

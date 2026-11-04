@@ -22,6 +22,7 @@ var revive_offer: ReviveOffer
 var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
 var companion: Companion  # null = sem nave auxiliar
+var _special_was_ready: bool = false
 var _quarks_banked: bool = false
 
 var _spawning_done: bool = false  # fase pode terminar (tempo acabou e não há chefe vivo)
@@ -135,6 +136,7 @@ func _ready() -> void:
 	combat.player_hit.connect(_on_player_hit)
 	combat.powerup_collected.connect(_on_powerup_collected)
 	combat.splashed.connect(func(pos: Vector2, radius: float, color: Color) -> void:
+		Audio.play(&"missile_explode")
 		_explode(pos, radius * 0.5, color))
 
 	var slow_overlay := SlowMotionOverlay.new()
@@ -173,6 +175,10 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not _match_over and player.body != null:
 		state.charge_special(delta)
+	var special_ready: bool = player.body != null and state.special_ready()
+	if special_ready and not _special_was_ready:
+		Audio.play(&"special_ready")
+	_special_was_ready = special_ready
 	if not _spawning_done or _match_over:
 		return
 	_clear_wait += delta
@@ -189,6 +195,7 @@ func _exit_tree() -> void:
 func _finish_stage_clear() -> void:
 	_match_over = true
 	pause_menu.disable()
+	Audio.play(&"stage_clear")
 	var stage: StageData = Session.stage()
 	var first_time: bool = not SaveGame.is_completed(stage.id)
 	var chapter_cleared_before: bool = SaveGame.is_chapter_cleared(Session.planet_index)
@@ -242,6 +249,7 @@ func _on_spawning_finished() -> void:
 	if boss_data == null:
 		_spawning_done = true
 		return
+	Audio.play(&"boss_warning")
 	hud.show_warning("BOSS_WARNING")
 	await get_tree().create_timer(Params.boss_warning_seconds, false).timeout
 	if _match_over:
@@ -260,6 +268,7 @@ func _on_spawning_finished() -> void:
 ## Chefe destruído: explosões em sequência, tiros inimigos somem e a fase termina.
 func _on_boss_killed(killed: Enemy) -> void:
 	state.add_kill(killed.points())
+	Audio.play(&"boss_explode")
 	context.boss = null
 	hud.set_boss(null, "")
 	for item in enemy_bullets.active.duplicate():
@@ -281,6 +290,7 @@ func _switch_to(index: int, invulnerable_seconds: float) -> void:
 
 
 func _on_body_chosen(index: int) -> void:
+	Audio.play(&"ship_switch")
 	switcher.forced = false
 	time_controller.forced_slow = false
 	_switch_to(index, Params.switch_invulnerability_seconds)
@@ -290,10 +300,13 @@ func _on_player_hit(damage: int) -> void:
 	var invulnerability: float = Params.hit_invulnerability_seconds + state.boosts.extra_invulnerability
 	# Escudo da evolução do núcleo absorve o hit inteiro
 	if state.absorb_with_shield():
+		Audio.play(&"hit_player", -8.0, 1.4)
 		hud.flash_hit(Params.shield_color)
 		player.pulse(Params.shield_color)
 		player.start_invulnerability(invulnerability)
 		return
+	Audio.play(&"hit_player")
+	Audio.vibrate()
 	hud.flash_hit()
 	state.damage_current(damage)
 	if state.is_alive(state.current):
@@ -304,10 +317,12 @@ func _on_special_pressed() -> void:
 	if _match_over or player.body == null or not state.special_ready():
 		return
 	state.use_special()
+	Audio.play(&"special_fire")
 	SpecialAttack.trigger(player.body.weapon, player, context, self)
 
 
 func _on_powerup_collected(kind: PowerUp.Kind) -> void:
+	Audio.play(&"powerup_pickup", 0.0, 1.25 if kind == PowerUp.Kind.HEAL else 1.0)
 	if kind == PowerUp.Kind.HEAL:
 		state.medkits_collected += 1
 		if state.heal_current(Params.medkit_heal):
@@ -317,10 +332,13 @@ func _on_powerup_collected(kind: PowerUp.Kind) -> void:
 	if state.level_up_current() and player.weapon != null:
 		player.weapon.set_level(state.weapon_levels[state.current])
 		player.pulse_level_up()
+		Audio.play(&"weapon_levelup")
 
 
 ## Corpo destruído: explode, o núcleo racha e o jogador escolhe outro corpo vivo.
 func _on_body_destroyed(index: int) -> void:
+	Audio.play(&"body_break")
+	Audio.play(&"core_crack")
 	_explode(player.position, Params.ship_size.y * 0.5, state.bodies[index].color)
 	player.clear_body()
 	player.cracks = state.dead_count()
@@ -334,6 +352,7 @@ func _on_body_destroyed(index: int) -> void:
 
 ## Sem corpos vivos: oferece continuar com anúncio (uma vez por partida); senão, fim de jogo.
 func _on_game_over() -> void:
+	Audio.play(&"game_over")
 	_match_over = true
 	pause_menu.disable()
 	# Tempo real: na câmera lenta o atraso não se estende
@@ -356,6 +375,7 @@ func _on_game_over() -> void:
 
 ## O último corpo usado volta com vida cheia, de onde parou, com os tiros inimigos limpos.
 func _revive() -> void:
+	Audio.play(&"revive")
 	_revive_used = true
 	var index: int = state.current
 	state.revive(index)
@@ -379,6 +399,7 @@ func _create_enemy() -> PoolItem:
 	enemy.killed.connect(dropper.on_enemy_killed)
 	enemy.killed.connect(func(killed: Enemy) -> void: state.add_kill(killed.points()))
 	enemy.killed.connect(func(killed: Enemy) -> void:
+		Audio.explosion(killed.radius)
 		_explode(killed.position, killed.radius, killed.tint()))
 	enemy.killed.connect(_on_enemy_split)
 	return enemy

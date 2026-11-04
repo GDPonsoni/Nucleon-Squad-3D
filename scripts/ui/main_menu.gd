@@ -1,5 +1,5 @@
 extends Control
-## Menu inicial: escolher a fase, montar o esquadrão, evoluir o núcleo ou sair do jogo.
+## Menu inicial: escolher a fase, montar o esquadrão, evoluir o núcleo, configurar ou sair do jogo.
 ## Fundo de estrelas, nave animada e saldo de quarks.
 
 
@@ -34,6 +34,10 @@ func _ready() -> void:
 	upgrades_button.text = tr("MENU_UPGRADES") % SaveGame.quarks
 	upgrades_button.pressed.connect(_on_upgrades_pressed)
 	column.add_child(upgrades_button)
+
+	var settings_button := UiFactory.make_button("MENU_SETTINGS")
+	settings_button.pressed.connect(SceneTransition.go_to.bind(ScenePaths.SETTINGS))
+	column.add_child(settings_button)
 
 	var quit_button := UiFactory.make_button("MENU_QUIT")
 	quit_button.pressed.connect(_on_quit_pressed)
