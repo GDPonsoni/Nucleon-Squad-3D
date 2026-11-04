@@ -115,7 +115,7 @@ MINI_4_NAME,Vortex,Vórtice
 MINI_5_NAME,Flare,Labareda
 BOSS_5_NAME,Corona,Corona
 PLANET_5_NAME,Eclipse,Eclipse
-STAGE_CHAPTER,Chapter %d: %s,Capítulo %d: %s
+STAGE_CHAPTER,Chapter %d,Capítulo %d
 STAGE_PROGRESS,%d of %d stages cleared,%d de %d fases concluídas
 STAGE_REWARD,Clear the chapter to unlock: %s,Conclua o capítulo para liberar: %s
 STAGE_REWARD_DONE,Chapter reward unlocked: %s,Recompensa do capítulo liberada: %s

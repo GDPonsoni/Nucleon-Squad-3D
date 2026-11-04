@@ -38,7 +38,28 @@ static func make_button(text_key: String) -> Button:
 	# Sem contorno de foco ao tocar
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(Audio.ui_press.bind(text_key))
+	_add_press_feedback(button)
 	return button
+
+
+## Botão afunda um pouco ao ser tocado e volta ao soltar (resposta visual imediata).
+static func _add_press_feedback(button: Button) -> void:
+	button.resized.connect(func() -> void: button.pivot_offset = button.size * 0.5)
+	button.button_down.connect(func() -> void:
+		if not button.disabled:
+			button.create_tween().set_ignore_time_scale(true).tween_property(button, "scale", Vector2.ONE * Params.button_press_scale, Params.button_press_seconds))
+	button.button_up.connect(func() -> void:
+		button.create_tween().set_ignore_time_scale(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT) \
+			.tween_property(button, "scale", Vector2.ONE, Params.button_press_seconds * 2.0))
+
+
+## Maior tamanho de fonte (até max_size) em que o texto cabe na largura.
+static func fit_font_size(text: String, width: float, max_size: int) -> int:
+	var font: Font = UiTheme.get_theme().default_font if UiTheme.get_theme().default_font != null else ThemeDB.fallback_font
+	var font_size: int = max_size
+	while font_size > 24 and font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > width:
+		font_size -= 2
+	return font_size
 
 
 ## Painel translúcido com cantos arredondados envolvendo o conteúdo.
@@ -78,6 +99,7 @@ static func draw_quark_icon(canvas: CanvasItem, center: Vector2, radius: float) 
 static func animate_in(node: Control) -> void:
 	node.modulate.a = 0.0
 	node.position.y += Params.ui_enter_offset
-	var tween := node.create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	# Tempo real: na câmera lenta (ex.: fim de fase sem o dedo na tela) não fica lenta
+	var tween := node.create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC).set_ignore_time_scale(true)
 	tween.tween_property(node, "modulate:a", 1.0, Params.ui_enter_seconds)
 	tween.tween_property(node, "position:y", node.position.y - Params.ui_enter_offset, Params.ui_enter_seconds)

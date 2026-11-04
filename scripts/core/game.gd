@@ -196,6 +196,7 @@ func _finish_stage_clear() -> void:
 	_match_over = true
 	pause_menu.disable()
 	Audio.play(&"stage_clear")
+	Audio.vibrate(Params.haptic_stage_clear_ms)
 	var stage: StageData = Session.stage()
 	var first_time: bool = not SaveGame.is_completed(stage.id)
 	var chapter_cleared_before: bool = SaveGame.is_chapter_cleared(Session.planet_index)
@@ -269,6 +270,7 @@ func _on_spawning_finished() -> void:
 func _on_boss_killed(killed: Enemy) -> void:
 	state.add_kill(killed.points())
 	Audio.play(&"boss_explode")
+	Audio.vibrate(Params.haptic_boss_kill_ms)
 	context.boss = null
 	hud.set_boss(null, "")
 	for item in enemy_bullets.active.duplicate():
@@ -291,6 +293,7 @@ func _switch_to(index: int, invulnerable_seconds: float) -> void:
 
 func _on_body_chosen(index: int) -> void:
 	Audio.play(&"ship_switch")
+	Audio.vibrate(Params.haptic_tick_ms)
 	switcher.forced = false
 	time_controller.forced_slow = false
 	_switch_to(index, Params.switch_invulnerability_seconds)
@@ -318,6 +321,7 @@ func _on_special_pressed() -> void:
 		return
 	state.use_special()
 	Audio.play(&"special_fire")
+	Audio.vibrate(Params.haptic_special_ms)
 	SpecialAttack.trigger(player.body.weapon, player, context, self)
 
 
@@ -333,11 +337,13 @@ func _on_powerup_collected(kind: PowerUp.Kind) -> void:
 		player.weapon.set_level(state.weapon_levels[state.current])
 		player.pulse_level_up()
 		Audio.play(&"weapon_levelup")
+		Audio.vibrate(Params.haptic_level_up_ms)
 
 
 ## Corpo destruído: explode, o núcleo racha e o jogador escolhe outro corpo vivo.
 func _on_body_destroyed(index: int) -> void:
 	Audio.play(&"body_break")
+	Audio.vibrate(Params.haptic_body_break_ms)
 	Audio.play(&"core_crack")
 	_explode(player.position, Params.ship_size.y * 0.5, state.bodies[index].color)
 	player.clear_body()

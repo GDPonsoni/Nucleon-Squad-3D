@@ -3,11 +3,15 @@ extends Control
 ## Cada página mostra o nome do capítulo, o progresso, a recompensa por concluí-lo e as
 ## fases numa grade (chefe intermediário e chefe marcados). Fases travadas aparecem
 ## desativadas com cadeado; concluídas, com o recorde.
+## Deslizar o dedo para o lado também troca de capítulo (com animação e vibração curta).
 ## Em build de debug, tocar várias vezes no título libera todas as fases.
 
 var _chapter: int = 0
 var _page: Control
 var _title_taps: int = 0
+var _swipe_start := Vector2.ZERO
+var _swipe_usec: int = -1
+var _slide_from: int = 0  # direção da animação ao trocar de capítulo
 
 
 func _ready() -> void:
@@ -49,6 +53,10 @@ func _build() -> void:
 	column.add_child(title)
 	column.add_child(_chapter_header())
 	column.add_child(_chapter_dots())
+	var art := ChapterArt.new()
+	art.chapter = _chapter
+	art.planet = Session.campaign.planets[_chapter]
+	column.add_child(art)
 	column.add_child(_chapter_panel(_chapter, Session.campaign.planets[_chapter]))
 
 	var back_button := UiFactory.make_button("MENU_BACK")
@@ -64,14 +72,22 @@ func _chapter_header() -> HBoxContainer:
 	var previous := _arrow_button(-1)
 	row.add_child(previous)
 	var planet: PlanetData = Session.campaign.planets[_chapter]
+	var names := VBoxContainer.new()
+	names.alignment = BoxContainer.ALIGNMENT_CENTER
+	names.custom_minimum_size.x = Params.stage_chapter_name_width
+	row.add_child(names)
+	var number := UiFactory.make_subtitle("")
+	number.text = (tr("STAGE_CHAPTER") % (_chapter + 1)).to_upper()
+	number.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	names.add_child(number)
 	var name_label := Label.new()
-	name_label.text = tr("STAGE_CHAPTER") % [_chapter + 1, tr(planet.name_key)]
+	name_label.text = tr(planet.name_key)
 	name_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.custom_minimum_size.x = Params.stage_chapter_name_width
 	name_label.add_theme_color_override("font_color", planet.star_color)
-	name_label.add_theme_font_size_override("font_size", Params.stage_chapter_font_size)
-	row.add_child(name_label)
+	name_label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(name_label.text,
+		Params.stage_chapter_name_width, Params.stage_chapter_font_size))
+	names.add_child(name_label)
 	row.add_child(_arrow_button(1))
 	return row
 
@@ -116,9 +132,19 @@ func _chapter_dots() -> Control:
 func _show_chapter(chapter: int) -> void:
 	if chapter < 0 or chapter >= Session.campaign.planets.size():
 		return
+	if chapter == _chapter:
+		return
+	_slide_from = 1 if chapter > _chapter else -1
 	_chapter = chapter
 	Session.browsed_chapter = chapter
 	_build()
+	Audio.vibrate(Params.haptic_tick_ms)
+	# Entra deslizando do lado para onde o dedo foi
+	_page.modulate.a = 0.0
+	_page.position.x = _slide_from * Params.stage_slide_offset
+	var tween := _page.create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(_page, "position:x", 0.0, Params.stage_slide_seconds)
+	tween.tween_property(_page, "modulate:a", 1.0, Params.stage_slide_seconds)
 
 
 func _chapter_panel(planet_index: int, planet: PlanetData) -> PanelContainer:
@@ -261,6 +287,25 @@ func _notification(what: int) -> void:
 	# Botão Voltar do Android volta ao menu inicial
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		_go_back()
+
+
+## Gesto: deslizar rápido na horizontal troca de capítulo (esquerda = próximo).
+func _input(event: InputEvent) -> void:
+	var touch := event as InputEventScreenTouch
+	if touch == null:
+		return
+	if touch.pressed:
+		_swipe_start = touch.position
+		_swipe_usec = Time.get_ticks_usec()
+		return
+	if _swipe_usec < 0:
+		return
+	var moved: Vector2 = touch.position - _swipe_start
+	var seconds: float = (Time.get_ticks_usec() - _swipe_usec) / 1_000_000.0
+	_swipe_usec = -1
+	if absf(moved.x) >= Params.swipe_min_distance and absf(moved.x) > absf(moved.y) * 1.5 and seconds <= Params.swipe_max_seconds:
+		_show_chapter(_chapter + (1 if moved.x < 0.0 else -1))
+		get_viewport().set_input_as_handled()
 
 
 func _unhandled_input(event: InputEvent) -> void:

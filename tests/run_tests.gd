@@ -10,6 +10,8 @@ var _started: bool = false
 func _process(_delta: float) -> bool:
 	if not _started:
 		_started = true
+		# Headless abre uma tela quadrada de 1920; usa a proporção do Galaxy S24 (em pé)
+		root.size = Vector2i(1080, 2340)
 		var suite: Node = load("res://tests/test_suite.gd").new()
 		root.add_child(suite)
 	return false

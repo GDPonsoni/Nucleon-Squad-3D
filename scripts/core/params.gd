@@ -24,7 +24,20 @@ var default_settings: Dictionary = {
 	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "reduced_effects": false, "language": "auto",
 }
 var languages: PackedStringArray = ["auto", "pt_BR", "en"]
-var vibration_ms: int = 60
+var vibration_ms: int = 60  # levar hit
+var haptic_tick_ms: int = 12  # toque leve: trocar de capítulo, trocar de nave
+var haptic_level_up_ms: int = 25
+var haptic_special_ms: int = 40
+var haptic_body_break_ms: int = 160
+var haptic_boss_kill_ms: int = 220
+var haptic_stage_clear_ms: int = 90
+var button_press_scale: float = 0.94  # botão afunda ao tocar
+var button_press_seconds: float = 0.06
+var swipe_min_distance: float = 140.0  # gesto para trocar de capítulo
+var swipe_max_seconds: float = 0.6
+var stage_slide_offset: float = 260.0  # animação ao trocar de capítulo
+var stage_slide_seconds: float = 0.28
+var chapter_art_size: Vector2 = Vector2(900.0, 300.0)
 var reduced_explosion_shards: int = 5
 var reduced_slowmo_intensity: float = 0.45
 var settings_slider_width: float = 900.0
@@ -66,8 +79,8 @@ var squad_description_font_size: int = 28
 var squad_button_size: Vector2 = Vector2(420.0, 140.0)
 var stage_button_size: Vector2 = Vector2(260.0, 190.0)
 var stage_grid_columns: int = 3  # fases por linha no seletor (9 fases = 3 x 3)
-var stage_chapter_font_size: int = 64
-var stage_chapter_name_width: float = 600.0
+var stage_chapter_font_size: int = 72
+var stage_chapter_name_width: float = 620.0  # o nome encolhe para caber
 var stage_arrow_size: float = 130.0
 var stage_dot_spacing: float = 56.0  # bolinhas indicando o capítulo aberto
 var stage_dot_radius: float = 11.0
