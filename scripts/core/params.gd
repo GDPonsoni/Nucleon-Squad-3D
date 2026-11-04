@@ -33,7 +33,6 @@ var languages: PackedStringArray = ["auto", "pt_BR", "en", "es"]
 var ad_quarks_base: int = 120  # quarks por anúncio assistido
 var ad_quarks_per_chapter: int = 60  # a mais por capítulo concluído
 var ad_quarks_daily_limit: int = 5
-var ad_button_size: Vector2 = Vector2(520.0, 120.0)
 var banner_height_dp: float = 90.0  # banner do menu inicial: cabe o padrão (50 dp) e o adaptativo do AdMob
 var banner_fallback_dpi: float = 420.0  # densidade usada fora do Android (S24 ~ 2,6 px por dp)
 var ad_popup_width: float = 760.0

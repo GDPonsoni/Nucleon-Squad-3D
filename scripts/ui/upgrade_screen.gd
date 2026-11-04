@@ -6,7 +6,6 @@ var _tree: UpgradeTreeData
 var _view: UpgradeTreeView
 var _scroll: ScrollContainer
 var _balance: QuarkBadge
-var _ad_button: Button
 var _name_label: Label
 var _level_label: Label
 var _now_label: Label
@@ -44,7 +43,6 @@ func _ready() -> void:
 	_balance.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_balance.pressed.connect(_open_ad_offer)
 	top.add_child(_balance)
-	top.add_child(_build_ad_offer())
 
 	_view = UpgradeTreeView.new()
 	_view.tree = _tree
@@ -128,7 +126,6 @@ func _select(node: UpgradeData) -> void:
 ## Atualiza saldo e painel do nó selecionado.
 func _refresh() -> void:
 	_balance.set_amount(SaveGame.quarks, false)
-	_refresh_ad_offer()
 	var node: UpgradeData = _selected
 	var level: int = SaveGame.upgrade_level(node)
 	_name_label.text = tr(node.name_key)
@@ -190,23 +187,12 @@ func _on_buy_pressed() -> void:
 		_refresh()
 
 
-## Botão que abre a janela de ganhar quarks com anúncios.
-func _build_ad_offer() -> Button:
-	_ad_button = UiFactory.make_button("ADS_EARN_TITLE")
-	_ad_button.custom_minimum_size = Params.ad_button_size
-	_ad_button.pressed.connect(_open_ad_offer)
-	return _ad_button
-
-
+## Janela de ganhar quarks (toque no saldo ou compra sem saldo).
 func _open_ad_offer(warning: String = "") -> void:
 	var popup := AdOfferPopup.open(self, warning)
 	popup.quarks_changed.connect(func() -> void:
 		_balance.set_amount(SaveGame.quarks, true)
 		_refresh())
-
-
-func _refresh_ad_offer() -> void:
-	_ad_button.disabled = not AdService.is_rewarded_available()
 
 
 func _go_back() -> void:
