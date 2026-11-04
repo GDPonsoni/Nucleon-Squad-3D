@@ -7,7 +7,6 @@ var _view: UpgradeTreeView
 var _scroll: ScrollContainer
 var _balance: QuarkBadge
 var _ad_button: Button
-var _ad_info: Label
 var _name_label: Label
 var _level_label: Label
 var _now_label: Label
@@ -43,6 +42,7 @@ func _ready() -> void:
 	column.add_child(top)
 	_balance = QuarkBadge.new()
 	_balance.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_balance.pressed.connect(_open_ad_offer)
 	top.add_child(_balance)
 	top.add_child(_build_ad_offer())
 
@@ -151,8 +151,9 @@ func _refresh() -> void:
 		_buy_button.text = _requirement_text(node)
 		_buy_button.disabled = true
 	elif SaveGame.quarks < price:
+		# Fica ativo: tocar explica a falta de saldo e oferece ganhar quarks
 		_buy_button.text = tr("UPGRADES_NOT_ENOUGH") % [price, price - SaveGame.quarks]
-		_buy_button.disabled = true
+		_buy_button.disabled = false
 	else:
 		_buy_button.text = tr("UPGRADES_BUY") % price
 		_buy_button.disabled = false
@@ -177,49 +178,35 @@ func _requirement_text(node: UpgradeData) -> String:
 
 
 func _on_buy_pressed() -> void:
+	var level: int = SaveGame.upgrade_level(_selected)
+	var price: int = _selected.cost(level + 1)
+	if _is_available(_selected) and not _selected.is_maxed(level) and SaveGame.quarks < price:
+		Audio.play(&"ui_back")
+		_open_ad_offer(tr("UPGRADES_NO_QUARKS") % (price - SaveGame.quarks))
+		return
 	if SaveGame.buy_upgrade(_selected):
 		Audio.play(&"ui_confirm")
 		_view.play_pulse(_selected)
 		_refresh()
 
 
-## Ganhar quarks com anúncio (limite por dia): botão e quantos ainda restam hoje.
-func _build_ad_offer() -> VBoxContainer:
-	var box := VBoxContainer.new()
-	box.alignment = BoxContainer.ALIGNMENT_CENTER
-	_ad_button = UiFactory.make_button("")
-	_ad_button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+## Botão que abre a janela de ganhar quarks com anúncios.
+func _build_ad_offer() -> Button:
+	_ad_button = UiFactory.make_button("ADS_EARN_TITLE")
 	_ad_button.custom_minimum_size = Params.ad_button_size
-	_ad_button.add_theme_font_size_override("font_size", Params.upgrade_buy_font_size)
-	_ad_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_ad_button.pressed.connect(_on_ad_pressed)
-	box.add_child(_ad_button)
-	_ad_info = UiFactory.make_subtitle("")
-	_ad_info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	_ad_info.add_theme_font_size_override("font_size", Params.results_detail_font_size)
-	box.add_child(_ad_info)
-	return box
+	_ad_button.pressed.connect(_open_ad_offer)
+	return _ad_button
+
+
+func _open_ad_offer(warning: String = "") -> void:
+	var popup := AdOfferPopup.open(self, warning)
+	popup.quarks_changed.connect(func() -> void:
+		_balance.set_amount(SaveGame.quarks, true)
+		_refresh())
 
 
 func _refresh_ad_offer() -> void:
-	var left: int = SaveGame.ads_left_today()
-	_ad_button.text = tr("ADS_EARN_BUTTON") % SaveGame.ad_quark_reward()
-	_ad_button.disabled = left <= 0 or not AdService.is_rewarded_available()
-	_ad_info.text = tr("ADS_EARN_LEFT") % [left, Params.ad_quarks_daily_limit] if left > 0 else tr("ADS_EARN_DONE")
-
-
-func _on_ad_pressed() -> void:
-	if SaveGame.ads_left_today() <= 0 or not AdService.is_rewarded_available():
-		return
-	_ad_button.disabled = true
-	AdService.show_rewarded()
-	var granted: bool = await AdService.rewarded_finished
-	if granted:
-		SaveGame.grant_ad_quarks()
-		Audio.play(&"powerup_pickup")
-		Audio.vibrate(Params.haptic_level_up_ms)
-		_balance.set_amount(SaveGame.quarks, true)
-	_refresh()
+	_ad_button.disabled = not AdService.is_rewarded_available()
 
 
 func _go_back() -> void:

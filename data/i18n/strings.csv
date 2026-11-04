@@ -146,3 +146,6 @@ ADS_EARN_LEFT,%d of %d left today,%d de %d restantes hoje,%d de %d restantes hoy
 ADS_EARN_DONE,Come back tomorrow for more,Volte amanhã para mais,Vuelve mañana por más
 BANNER_PLACEHOLDER,Banner ad space (simulated),Espaço do banner (simulado),Espacio del banner (simulado)
 SETTINGS_STATS,On-screen stats,Estatísticas na tela,Estadísticas en pantalla
+ADS_EARN_TITLE,Earn quarks,Ganhar quarks,Ganar quarks
+ADS_EARN_HINT,Watch a short ad to earn quarks for upgrading the core.,Assista a um anúncio curto para ganhar quarks e evoluir o núcleo.,Mira un anuncio corto para ganar quarks y mejorar el núcleo.
+UPGRADES_NO_QUARKS,Not enough quarks: you need %d more.,Saldo insuficiente: faltam %d quarks.,Saldo insuficiente: faltan %d quarks.

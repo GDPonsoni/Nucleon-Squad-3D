@@ -20,7 +20,8 @@ func _ready() -> void:
 	var column := UiFactory.make_column()
 	var center := UiFactory.make_centered(column)
 	# O conteúdo não cobre o banner do rodapé
-	center.offset_bottom = -Params.banner_height
+	var banner_height: float = AdService.banner_height(get_viewport_rect().size.x)
+	center.offset_bottom = -banner_height
 	add_child(center)
 
 	var badge := QuarkBadge.new()
@@ -28,11 +29,14 @@ func _ready() -> void:
 	badge.grow_horizontal = Control.GROW_DIRECTION_BEGIN
 	badge.offset_right = -Params.hud_margin.x
 	badge.offset_top = Params.pause_button_margin.y
+	badge.pressed.connect(func() -> void:
+		var popup := AdOfferPopup.open(self)
+		popup.quarks_changed.connect(func() -> void: badge.set_amount(SaveGame.quarks, true)))
 	add_child(badge)
 
 	var banner: Control = AdService.make_banner_placeholder()
 	banner.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	banner.offset_top = -Params.banner_height
+	banner.offset_top = -banner_height
 	add_child(banner)
 	UiFactory.animate_in(center)
 

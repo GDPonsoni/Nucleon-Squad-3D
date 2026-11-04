@@ -2,7 +2,11 @@ class_name QuarkBadge
 extends PanelContainer
 ## Selo com o saldo de quarks: painel arredondado, ícone do quark e o número.
 ## set_amount(valor, true) conta até o valor novo e dá um pulo (ganho de quarks).
+## Tocável (interactive): mostra um "+" e emite pressed (abre a janela de ganhar quarks).
 
+signal pressed
+
+var interactive: bool = true
 var _label: Label
 var _icon: Control
 var _shown: int = 0
@@ -35,8 +39,33 @@ func _ready() -> void:
 	_label.add_theme_color_override("font_color", Params.quark_color.lightened(0.3))
 	_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(_label)
+	if interactive:
+		var plus := Control.new()
+		plus.custom_minimum_size = Vector2.ONE * Params.quark_badge_height * 0.55
+		plus.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		plus.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		plus.draw.connect(func() -> void:
+			var c: Vector2 = plus.size * 0.5
+			var r: float = plus.size.x * 0.5
+			plus.draw_circle(c, r, Params.ui_accent_color)
+			plus.draw_line(c + Vector2(-r * 0.5, 0.0), c + Vector2(r * 0.5, 0.0), Params.background_color, 5.0)
+			plus.draw_line(c + Vector2(0.0, -r * 0.5), c + Vector2(0.0, r * 0.5), Params.background_color, 5.0))
+		row.add_child(plus)
+		mouse_filter = Control.MOUSE_FILTER_STOP
+	else:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for child in row.get_children():
+		(child as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resized.connect(func() -> void: pivot_offset = size * 0.5)
 	set_amount(SaveGame.quarks, false)
+
+
+func _gui_input(event: InputEvent) -> void:
+	var click := event as InputEventMouseButton
+	if interactive and click != null and click.button_index == MOUSE_BUTTON_LEFT and not click.pressed:
+		Audio.play(&"ui_click")
+		pressed.emit()
+		accept_event()
 
 
 func set_amount(value: int, animate: bool) -> void:

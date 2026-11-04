@@ -14,6 +14,18 @@ func is_rewarded_available() -> bool:
 	return not _busy
 
 
+## Altura reservada para o banner, em pixels da tela do jogo: banner_height_dp em dp
+## (cabe o banner padrão de 50 dp e o adaptativo do AdMob, de até ~90 dp).
+func banner_height(viewport_width: float) -> float:
+	var screen_width: float = float(DisplayServer.screen_get_size().x)
+	var dpi: float = float(DisplayServer.screen_get_dpi())
+	if screen_width <= 0.0 or dpi <= 0.0 or OS.get_name() != "Android":
+		dpi = Params.banner_fallback_dpi
+		screen_width = viewport_width
+	var px_per_dp: float = dpi / 160.0
+	return Params.banner_height_dp * px_per_dp * viewport_width / screen_width
+
+
 ## Espaço do banner (simulado): retângulo marcando onde o banner real vai ficar.
 ## Com o SDK, troque por um nó que exibe o banner do AdMob na mesma área.
 func make_banner_placeholder() -> Control:

@@ -44,6 +44,29 @@ func _ready() -> void:
 				await get_tree().create_timer(0.8, true, false, true).timeout
 				overflow += _check_overflow(scene.get("results_menu"), "resultado %s" % language)
 				get_tree().paused = false
+			# Janela de ganhar quarks pelo selo do saldo
+			for badge in scene.find_children("*", "QuarkBadge", true, false):
+				if (badge as QuarkBadge).interactive:
+					badge.emit_signal("pressed")
+					await get_tree().create_timer(0.6, true, false, true).timeout
+					for popup in scene.find_children("*", "AdOfferPopup", true, false):
+						overflow += _check_overflow(popup, "ganhar quarks %s %s" % [path.get_file(), language])
+						popup.queue_free()
+			# Compra sem saldo: aviso e janela de anúncios
+			if scene.has_method("_on_buy_pressed"):
+				var saved_quarks: int = SaveGame.quarks
+				SaveGame.quarks = 0
+				scene.call("_select", Session.upgrade_tree.nodes[0])
+				scene.call("_on_buy_pressed")
+				await get_tree().create_timer(0.6, true, false, true).timeout
+				var popups: Array[Node] = scene.find_children("*", "AdOfferPopup", true, false)
+				if popups.is_empty():
+					printerr("FALHOU: compra sem saldo não abriu a janela de anúncios")
+					failures += 1
+				for popup in popups:
+					overflow += _check_overflow(popup, "sem saldo %s" % language)
+					popup.queue_free()
+				SaveGame.quarks = saved_quarks
 			# Evolução: cada nó selecionado (requisitos e descrições longas)
 			if scene.has_method("_select"):
 				# Também com tudo bloqueado (textos de requisito, os mais longos)
