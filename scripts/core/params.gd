@@ -5,7 +5,7 @@ extends Node
 var sfx_voices: int = 20  # sons ao mesmo tempo
 var music_menu_path: String = "res://assets/audio/music/menu.wav"
 var music_chapter_path: String = "res://assets/audio/music/chapter_%d.wav"
-var music_volume_db: float = -6.0  # a música fica abaixo dos efeitos
+var music_volume_db: float = -14.0  # a música fica bem abaixo dos efeitos
 var music_silent_db: float = -40.0
 var music_fade_seconds: float = 0.6
 var sfx_gain_db: Dictionary = {

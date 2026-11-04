@@ -71,15 +71,15 @@ def track(name, bpm, key, scale, prog, bars, style):
             per = style["arp_div"]
             for k in range(4 * per):
                 m = tones[(k + (b % 2)) % 3] + 12 * (1 + (k // 3) % 2)
-                add_note(buf, t0 + k * beat / per, beat / per * 0.7, m, style["arp_wave"], style["arp_vol"], release=0.08, cutoff=0.35)
+                add_note(buf, t0 + k * beat / per, beat / per * 0.7, m, style["arp_wave"], style["arp_vol"], release=0.08, cutoff=style.get("arp_cut", 0.35))
         # Melodia na segunda metade: passeio pela escala, sempre começando em nota do acorde
-        if b >= bars // 2 and style.get("lead_vol", 0.0) > 0:
+        if b >= style.get("lead_from", bars // 2) and style.get("lead_vol", 0.0) > 0:
             rnd = random.Random(name + str(b % 4))
             d = chord + 7
             for k in range(8):
-                if rnd.random() < 0.7:
+                if rnd.random() < style.get("lead_density", 0.7):
                     add_note(buf, t0 + k * beat / 2, beat / 2 * (1.6 if k % 4 == 3 else 0.9), degree(d), style["lead_wave"],
-                             style["lead_vol"], attack=0.02, release=0.12, cutoff=0.22)
+                             style["lead_vol"], attack=0.02, release=0.12, cutoff=style.get("lead_cut", 0.22), detune=style.get("lead_detune", 0.0))
                 d += rnd.choice([-2, -1, 1, 1, 2])
                 d = max(chord + 4, min(chord + 11, d))
         # Bateria
@@ -99,16 +99,20 @@ def track(name, bpm, key, scale, prog, bars, style):
 CALM = {"lead_wave": "tri", "lead_vol": 0.16, "pad": "tri", "pad_vol": 0.22, "bass": [1, 0, 0, 0, 1, 0, 0, 0], "bass_wave": "sine", "bass_vol": 0.35,
         "arp_wave": "sine", "arp_vol": 0.12, "arp_div": 2, "drums": [""] * 8, "drum_vol": 0.0}
 track("menu", 84, "A", "minor", [0, 5, 3, 4], 16, CALM)
-track("chapter_1", 112, "D", "dorian", [0, 3, 6, 4], 16, {**CALM, "arp_wave": "tri", "arp_vol": 0.14, "arp_div": 4,
-      "bass": [1, 0, 1, 0, 1, 0, 1, 1], "bass_wave": "tri", "drums": ["kh", "h", "sh", "h", "kh", "kh", "sh", "h"], "drum_vol": 0.5})
-track("chapter_2", 126, "E", "phrygian", [0, 1, 0, 6], 16, {**CALM, "pad": "saw", "pad_vol": 0.12, "bass": [1, 1, 0, 1, 1, 1, 0, 1],
-      "bass_wave": "saw", "bass_vol": 0.4, "arp_wave": "square", "arp_vol": 0.07, "arp_div": 2,
-      "drums": ["kh", "h", "skh", "h", "kh", "kh", "sh", "hs"], "drum_vol": 0.6})
-track("chapter_3", 96, "C", "minor", [0, 5, 6, 4], 16, {**CALM, "pad": "saw", "pad_vol": 0.14, "bass_wave": "tri", "bass_vol": 0.4,
-      "arp_wave": "sine", "arp_vol": 0.1, "arp_div": 3, "drums": ["k", "", "", "h", "s", "", "k", "h"], "drum_vol": 0.5})
-track("chapter_4", 134, "F#", "minor", [0, 6, 5, 4], 16, {**CALM, "pad": "square", "pad_vol": 0.07, "bass": [1, 1, 1, 1, 1, 1, 1, 1],
-      "bass_wave": "square", "bass_vol": 0.28, "arp_wave": "square", "arp_vol": 0.08, "arp_div": 4,
-      "drums": ["kh", "h", "sh", "h", "kh", "h", "sh", "kh"], "drum_vol": 0.55})
-track("chapter_5", 142, "G", "harmonic", [0, 5, 3, 4], 16, {**CALM, "pad": "saw", "pad_vol": 0.13, "bass": [1, 0, 1, 1, 1, 0, 1, 1],
-      "bass_wave": "saw", "bass_vol": 0.38, "arp_wave": "saw", "arp_vol": 0.08, "arp_div": 4,
-      "drums": ["kh", "h", "skh", "h", "kh", "kh", "skh", "sh"], "drum_vol": 0.65})
+# Faixas de batalha: mais rápidas, bumbo em todo tempo, hats cheios, arpejo e melodia brilhantes
+FOUR = ["kh", "h", "kh", "sh", "kh", "h", "kh", "sh"]  # bumbo no tempo, caixa no 2 e 4
+DRIVE = {**CALM, "lead_from": 0, "lead_wave": "saw", "lead_vol": 0.13, "lead_cut": 0.4, "lead_detune": 0.006, "lead_density": 0.85,
+         "pad": "saw", "pad_vol": 0.1, "arp_cut": 0.6, "drum_vol": 0.7}
+track("chapter_1", 128, "D", "dorian", [0, 3, 6, 4], 16, {**DRIVE, "arp_wave": "saw", "arp_vol": 0.09, "arp_div": 4,
+      "bass": [1, 0, 1, 1, 1, 0, 1, 1], "bass_wave": "saw", "bass_vol": 0.36, "drums": FOUR})
+track("chapter_2", 140, "E", "phrygian", [0, 1, 0, 6], 16, {**DRIVE, "arp_wave": "square", "arp_vol": 0.07, "arp_div": 4,
+      "bass": [1, 1, 0, 1, 1, 1, 0, 1], "bass_wave": "saw", "bass_vol": 0.4, "lead_wave": "square", "lead_vol": 0.09,
+      "drums": ["kh", "h", "skh", "kh", "kh", "h", "skh", "kh"]})
+track("chapter_3", 120, "C", "minor", [0, 5, 6, 4], 16, {**DRIVE, "arp_wave": "saw", "arp_vol": 0.08, "arp_div": 4,
+      "bass": [1, 1, 1, 1, 1, 1, 1, 1], "bass_wave": "saw", "bass_vol": 0.34, "drums": FOUR})
+track("chapter_4", 148, "F#", "minor", [0, 6, 5, 4], 16, {**DRIVE, "pad": "square", "pad_vol": 0.06, "bass": [1, 1, 1, 1, 1, 1, 1, 1],
+      "bass_wave": "square", "bass_vol": 0.28, "arp_wave": "square", "arp_vol": 0.08, "arp_div": 4, "lead_wave": "square", "lead_vol": 0.09,
+      "drums": ["kh", "h", "skh", "h", "kh", "kh", "skh", "kh"]})
+track("chapter_5", 156, "G", "harmonic", [0, 5, 3, 4], 16, {**DRIVE, "arp_wave": "saw", "arp_vol": 0.09, "arp_div": 4,
+      "bass": [1, 1, 1, 1, 1, 1, 1, 1], "bass_wave": "saw", "bass_vol": 0.38, "lead_vol": 0.15,
+      "drums": ["kh", "kh", "skh", "kh", "kh", "kh", "skh", "skh"], "drum_vol": 0.75})
