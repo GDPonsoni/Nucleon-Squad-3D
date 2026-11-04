@@ -13,6 +13,15 @@ var shield_charges: int = 0:  # escudos restantes (evolução do núcleo), anel 
 	set(value):
 		shield_charges = value
 		queue_redraw()
+## Saúde do corpo ativo, mostrada em segmentos logo abaixo da nave.
+var max_health: int = 3
+var health: int = 3:
+	set(value):
+		if value < health:
+			_health_flash_left = Params.health_flash_seconds
+		health = value
+		queue_redraw()
+var _health_flash_left: float = 0.0
 ## Limite de baixo para a nave, em coordenadas de tela (topo da barra de troca).
 var bottom_limit: float = INF
 
@@ -100,6 +109,7 @@ func _process(delta: float) -> void:
 		self_modulate.a = 1.0
 
 	_level_pulse_left = maxf(_level_pulse_left - delta, 0.0)
+	_health_flash_left = maxf(_health_flash_left - delta / maxf(Engine.time_scale, 0.01), 0.0)
 	# Halo do núcleo e pulso de nível são animados
 	queue_redraw()
 
@@ -112,6 +122,8 @@ func _draw() -> void:
 		draw_colored_polygon(points, body.color)
 
 	_draw_nucleus()
+	if body != null:
+		_draw_health()
 	if shield_charges > 0:
 		_draw_shield()
 
@@ -136,6 +148,30 @@ func _draw_nucleus() -> void:
 	for i in cracks:
 		var dir := Vector2.from_angle(Params.crack_start_angle + i * Params.crack_angle_step)
 		draw_line(dir * Params.nucleus_radius * 0.2, dir * Params.nucleus_radius, Params.background_color, 3.0)
+
+
+## Segmentos de saúde embaixo da nave: cheios na cor do corpo, vazios só com contorno.
+## Perder um hit faz a barra piscar; com 1 hit restante, os segmentos pulsam em vermelho.
+func _draw_health() -> void:
+	var w: float = Params.health_pip_size.x
+	var h: float = Params.health_pip_size.y
+	var gap: float = Params.health_pip_gap
+	var total: float = max_health * w + (max_health - 1) * gap
+	var top: float = Params.ship_size.y * 0.5 + Params.health_offset
+	var critical: bool = health == 1 and max_health > 1
+	var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.012)
+	var fill: Color = body.color
+	if critical:
+		fill = Params.hud_hit_flash_color.lerp(Color.WHITE, pulse * 0.4)
+	if _health_flash_left > 0.0:
+		fill = Color.WHITE
+	draw_rect(Rect2(-total * 0.5 - 4.0, top - 4.0, total + 8.0, h + 8.0), Color(Params.nucleus_outline_color, 0.7))
+	for i in max_health:
+		var rect := Rect2(-total * 0.5 + i * (w + gap), top, w, h)
+		if i < health:
+			draw_rect(rect, fill)
+		else:
+			draw_rect(rect, Color(Params.hud_dead_color, 0.9), false, 2.0)
 
 
 ## Anel do escudo dividido em segmentos, um por escudo restante.

@@ -52,6 +52,7 @@ func _ready() -> void:
 					overflow += _check_overflow(scene, "stage_select cap %d %s" % [c + 1, language])
 			scene.queue_free()
 			await get_tree().process_frame
+	failures += await _check_ship_switch()
 	# Painel de configurações: mexe em tudo
 	var panel := SettingsPanel.new()
 	get_tree().root.add_child(panel)
@@ -92,3 +93,45 @@ func _inside_scroll(control: Node) -> bool:
 			return true
 		node = node.get_parent()
 	return false
+
+
+
+## Troca de nave na barra: toque curto num ícone troca; arrastar a partir dele não.
+func _check_ship_switch() -> int:
+	var game: Node = (load("res://scenes/game.tscn") as PackedScene).instantiate()
+	get_tree().root.add_child(game)
+	for i in 10:
+		await get_tree().process_frame
+	var switcher: BodySwitcher = game.get("switcher")
+	var state: MatchState = game.get("state")
+	var icon: Vector2 = switcher.get("_positions")[1]
+	await _touch(icon, true)
+	await _touch(icon, false)
+	var errors: int = 0
+	if state.current != 1:
+		printerr("FALHOU: toque curto no ícone não trocou de nave")
+		errors += 1
+	var other: Vector2 = switcher.get("_positions")[2]
+	await _touch(other, true)
+	var drag := InputEventScreenDrag.new()
+	drag.index = 0
+	drag.position = other + Vector2(0.0, -200.0)
+	Input.parse_input_event(drag)
+	await get_tree().process_frame
+	await _touch(drag.position, false)
+	if state.current != 1:
+		printerr("FALHOU: arrastar a partir do ícone trocou de nave")
+		errors += 1
+	game.queue_free()
+	await get_tree().process_frame
+	return errors
+
+
+func _touch(pos: Vector2, pressed: bool) -> void:
+	var event := InputEventScreenTouch.new()
+	event.index = 0
+	event.position = pos
+	event.pressed = pressed
+	Input.parse_input_event(event)
+	await get_tree().process_frame
+	await get_tree().process_frame

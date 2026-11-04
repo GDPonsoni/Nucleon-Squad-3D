@@ -46,8 +46,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		var touch := event as InputEventScreenTouch
 		if touch.pressed and _index == NO_TOUCH:
+			# Consulta o filtro antes de registrar o dedo: com o dedo registrado, a barra
+			# de troca se considera "em jogo" e recusaria todo toque curto
+			var tap: bool = tap_filter.is_valid() and tap_filter.call(touch.position)
 			_index = touch.index
-			if tap_filter.is_valid() and tap_filter.call(touch.position):
+			if tap:
 				_pending = true
 				_pending_start = touch.position
 				_pending_usec = Time.get_ticks_usec()

@@ -87,6 +87,11 @@ func _ready() -> void:
 	player.setup(context)
 	context.player = player
 	player.shield_charges = state.shields
+	player.max_health = state.max_hits
+	state.hits_changed.connect(func(index: int, left: int) -> void:
+		if index == state.current:
+			player.health = left)
+	state.body_changed.connect(func(index: int) -> void: player.set("health", state.hits_left[index]))
 	state.shields_changed.connect(func(count: int) -> void: player.shield_charges = count)
 
 	# Nave auxiliar (opcional): desenhada atrás da nave principal
