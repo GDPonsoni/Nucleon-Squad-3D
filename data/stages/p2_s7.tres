@@ -1,0 +1,226 @@
+[gd_resource type="Resource" script_class="StageData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_2tinj"]
+[ext_resource type="Resource" path="res://data/enemies/drone.tres" id="2_ft6s1"]
+[ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="3_2kuip"]
+[ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="4_ekism"]
+[ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="5_rv7eu"]
+[ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="6_sjnfm"]
+[ext_resource type="Resource" path="res://data/enemies/tank.tres" id="7_6ov2t"]
+
+[sub_resource type="Resource" id="Resource_2tinj"]
+script = ExtResource("6_sjnfm")
+time_seconds = 4.0
+enemy = ExtResource("3_2kuip")
+formation = 3
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_ft6s1"]
+script = ExtResource("6_sjnfm")
+time_seconds = 11.4
+enemy = ExtResource("7_6ov2t")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_2kuip"]
+script = ExtResource("6_sjnfm")
+time_seconds = 11.9
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_ekism"]
+script = ExtResource("6_sjnfm")
+time_seconds = 11.9
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.86
+
+[sub_resource type="Resource" id="Resource_rv7eu"]
+script = ExtResource("6_sjnfm")
+time_seconds = 21.8
+enemy = ExtResource("2_ft6s1")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_sjnfm"]
+script = ExtResource("6_sjnfm")
+time_seconds = 29.200000000000003
+enemy = ExtResource("7_6ov2t")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_6ov2t"]
+script = ExtResource("6_sjnfm")
+time_seconds = 39.5
+enemy = ExtResource("3_2kuip")
+formation = 3
+count = 6
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_uy56t"]
+script = ExtResource("6_sjnfm")
+time_seconds = 46.900000000000006
+enemy = ExtResource("7_6ov2t")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_swmkc"]
+script = ExtResource("6_sjnfm")
+time_seconds = 47.400000000000006
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_cjf03"]
+script = ExtResource("6_sjnfm")
+time_seconds = 47.400000000000006
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.86
+
+[sub_resource type="Resource" id="Resource_4ntd3"]
+script = ExtResource("6_sjnfm")
+time_seconds = 57.300000000000004
+enemy = ExtResource("2_ft6s1")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_5l3bm"]
+script = ExtResource("6_sjnfm")
+time_seconds = 64.7
+enemy = ExtResource("7_6ov2t")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_6rfc0"]
+script = ExtResource("6_sjnfm")
+time_seconds = 75.10000000000001
+enemy = ExtResource("3_2kuip")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_xk8dr"]
+script = ExtResource("6_sjnfm")
+time_seconds = 82.5
+enemy = ExtResource("7_6ov2t")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_5lbrg"]
+script = ExtResource("6_sjnfm")
+time_seconds = 83.0
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_ih3hv"]
+script = ExtResource("6_sjnfm")
+time_seconds = 83.0
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.86
+
+[sub_resource type="Resource" id="Resource_m7que"]
+script = ExtResource("6_sjnfm")
+time_seconds = 92.9
+enemy = ExtResource("2_ft6s1")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_yiir1"]
+script = ExtResource("6_sjnfm")
+time_seconds = 100.2
+enemy = ExtResource("7_6ov2t")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_ysx2l"]
+script = ExtResource("6_sjnfm")
+time_seconds = 110.60000000000001
+enemy = ExtResource("3_2kuip")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_0qjid"]
+script = ExtResource("6_sjnfm")
+time_seconds = 118.0
+enemy = ExtResource("7_6ov2t")
+formation = 0
+count = 1
+
+[sub_resource type="Resource" id="Resource_f6gr1"]
+script = ExtResource("6_sjnfm")
+time_seconds = 118.5
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_wumg5"]
+script = ExtResource("6_sjnfm")
+time_seconds = 118.5
+enemy = ExtResource("2_ft6s1")
+formation = 2
+count = 4
+interval = 0.45
+x_ratio = 0.86
+
+[sub_resource type="Resource" id="Resource_5ms8r"]
+script = ExtResource("6_sjnfm")
+time_seconds = 128.4
+enemy = ExtResource("2_ft6s1")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_ul3ev"]
+script = ExtResource("6_sjnfm")
+time_seconds = 129.9
+enemy = ExtResource("3_2kuip")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
+
+[resource]
+script = ExtResource("5_rv7eu")
+id = &"p2_s7"
+duration_seconds = 141.0
+enemies = Array[ExtResource("1_2tinj")]([ExtResource("2_ft6s1"), ExtResource("3_2kuip"), ExtResource("4_ekism")])
+spawn_weights = PackedFloat32Array(3, 1.5, 1.5)
+waves = Array[ExtResource("6_sjnfm")]([SubResource("Resource_2tinj"), SubResource("Resource_ft6s1"), SubResource("Resource_2kuip"), SubResource("Resource_ekism"), SubResource("Resource_rv7eu"), SubResource("Resource_sjnfm"), SubResource("Resource_6ov2t"), SubResource("Resource_uy56t"), SubResource("Resource_swmkc"), SubResource("Resource_cjf03"), SubResource("Resource_4ntd3"), SubResource("Resource_5l3bm"), SubResource("Resource_6rfc0"), SubResource("Resource_xk8dr"), SubResource("Resource_5lbrg"), SubResource("Resource_ih3hv"), SubResource("Resource_m7que"), SubResource("Resource_yiir1"), SubResource("Resource_ysx2l"), SubResource("Resource_0qjid"), SubResource("Resource_f6gr1"), SubResource("Resource_wumg5"), SubResource("Resource_5ms8r"), SubResource("Resource_ul3ev")])
+start_delay = 2.0
+spawn_interval_min = 2.486
+spawn_interval_max = 3.6649999999999996
+spawn_margin_x = 90.0

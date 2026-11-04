@@ -14,6 +14,10 @@ extends Node
 ##   --mode count     invulnerável: conta os hits que levaria (padrão)
 ##   --mode survival  regras normais: mede se o piloto passa da fase
 ##   --seed N         semente do sorteio (padrão 1)
+##   --squad a,b,c,d  ids dos corpos do esquadrão (padrão: o salvo / inicial)
+##   --companion id   nave auxiliar (padrão: nenhuma)
+##   --upgrades a=3,b=1  níveis da evolução do núcleo (padrão: nenhum)
+##   --boss-only      pula direto para o chefe (fases com chefe)
 ## Não grava o save do aparelho.
 
 const LOOKAHEAD := [0.0, 0.12, 0.24, 0.38]
@@ -33,6 +37,7 @@ var _boss_started: float = -1.0
 var _candidates := PackedVector2Array()
 var _results: Array[Dictionary] = []
 var _waiting_free: int = 0
+var _boss_only: bool = false
 
 
 func _ready() -> void:
@@ -41,7 +46,17 @@ func _ready() -> void:
 	_level = int(args.get("level", "1"))
 	_survival = args.get("mode", "count") == "survival"
 	SaveGame.persistent = false
+	SaveGame.unlock_everything = true  # libera naves e o espaço auxiliar para testar
 	Params.debug_start_weapon_level = _level
+	if args.has("squad"):
+		SaveGame.squad = (args["squad"] as String).split(",")
+	SaveGame.companion = args.get("companion", "")
+	SaveGame.upgrades = {}
+	if args.has("upgrades"):
+		for pair in (args["upgrades"] as String).split(","):
+			var parts: PackedStringArray = pair.split("=")
+			SaveGame.upgrades[parts[0]] = int(parts[1])
+	_boss_only = args.has("boss-only")
 
 	var campaign: CampaignData = Session.campaign
 	var wanted: PackedStringArray = PackedStringArray()
@@ -68,9 +83,12 @@ func _parse_args(raw: PackedStringArray) -> Dictionary:
 	var i: int = 0
 	while i < raw.size():
 		var key: String = raw[i]
-		if key.begins_with("--") and i + 1 < raw.size():
+		if key.begins_with("--") and i + 1 < raw.size() and not raw[i + 1].begins_with("--"):
 			result[key.substr(2)] = raw[i + 1]
 			i += 2
+		elif key.begins_with("--"):
+			result[key.substr(2)] = "true"
+			i += 1
 		else:
 			i += 1
 	return result
@@ -84,6 +102,12 @@ func _start_next() -> void:
 	var next: Vector2i = _queue.pop_front()
 	Session.select(next.x, next.y)
 	_stage_id = String(Session.stage().id)
+	if _boss_only and Session.stage().boss != null:
+		var copy: StageData = Session.stage().duplicate()
+		copy.duration_seconds = 2.0
+		var no_waves: Array[WaveData] = []
+		copy.waves = no_waves
+		Session.planet().stages[next.y] = copy
 	_clock = 0.0
 	_virtual_invulnerable = 0.0
 	_boss_started = -1.0

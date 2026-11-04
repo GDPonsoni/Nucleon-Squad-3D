@@ -34,6 +34,12 @@ var squad_name_font_size: int = 46
 var squad_description_font_size: int = 28
 var squad_button_size: Vector2 = Vector2(420.0, 140.0)
 var stage_button_size: Vector2 = Vector2(260.0, 190.0)
+var stage_grid_columns: int = 3  # fases por linha no seletor (9 fases = 3 x 3)
+var stage_chapter_font_size: int = 64
+var stage_chapter_name_width: float = 600.0
+var stage_arrow_size: float = 130.0
+var stage_dot_spacing: float = 56.0  # bolinhas indicando o capítulo aberto
+var stage_dot_radius: float = 11.0
 var stage_record_font_size: int = 27
 var stage_row_max_width: float = 880.0  # largura máxima da fileira de fases de um capítulo
 var results_column_gap: int = 60

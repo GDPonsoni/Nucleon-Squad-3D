@@ -5,6 +5,12 @@
 [ext_resource type="Resource" path="res://data/stages/p2_s1.tres" id="3_p2_s1"]
 [ext_resource type="Resource" path="res://data/stages/p2_s2.tres" id="4_p2_s2"]
 [ext_resource type="Resource" path="res://data/stages/p2_s3.tres" id="5_p2_s3"]
+[ext_resource type="Resource" path="res://data/stages/p2_s4.tres" id="6_umwux"]
+[ext_resource type="Resource" path="res://data/stages/p2_s5.tres" id="7_3x3ai"]
+[ext_resource type="Resource" path="res://data/stages/p2_s6.tres" id="8_4ubxj"]
+[ext_resource type="Resource" path="res://data/stages/p2_s7.tres" id="9_4l753"]
+[ext_resource type="Resource" path="res://data/stages/p2_s8.tres" id="10_w4clo"]
+[ext_resource type="Resource" path="res://data/stages/p2_s9.tres" id="11_4k5ge"]
 
 [resource]
 script = ExtResource("1_script")
@@ -12,4 +18,4 @@ id = &"planet_2"
 name_key = "PLANET_2_NAME"
 background_color = Color(0.08, 0.03, 0.04, 1)
 star_color = Color(1, 0.8, 0.7, 1)
-stages = Array[ExtResource("2_stage_script")]([ExtResource("3_p2_s1"), ExtResource("4_p2_s2"), ExtResource("5_p2_s3")])
+stages = Array[ExtResource("2_stage_script")]([ExtResource("3_p2_s1"), ExtResource("4_p2_s2"), ExtResource("5_p2_s3"), ExtResource("6_umwux"), ExtResource("7_3x3ai"), ExtResource("8_4ubxj"), ExtResource("9_4l753"), ExtResource("10_w4clo"), ExtResource("11_4k5ge")])

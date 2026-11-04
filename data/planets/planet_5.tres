@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="PlanetData" format=3]
+
+[ext_resource type="Script" path="res://scripts/core/planet_data.gd" id="1_88n7a"]
+[ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="2_sehxr"]
+[ext_resource type="Resource" path="res://data/stages/p5_s1.tres" id="3_vteof"]
+[ext_resource type="Resource" path="res://data/stages/p5_s2.tres" id="4_01wfp"]
+[ext_resource type="Resource" path="res://data/stages/p5_s3.tres" id="5_7msbc"]
+[ext_resource type="Resource" path="res://data/stages/p5_s4.tres" id="6_tfv3l"]
+[ext_resource type="Resource" path="res://data/stages/p5_s5.tres" id="7_k32qg"]
+[ext_resource type="Resource" path="res://data/stages/p5_s6.tres" id="8_qr8dx"]
+[ext_resource type="Resource" path="res://data/stages/p5_s7.tres" id="9_j4icc"]
+[ext_resource type="Resource" path="res://data/stages/p5_s8.tres" id="10_37o18"]
+[ext_resource type="Resource" path="res://data/stages/p5_s9.tres" id="11_hvp7p"]
+
+[resource]
+script = ExtResource("1_88n7a")
+id = &"planet_5"
+name_key = "PLANET_5_NAME"
+background_color = Color(0.06, 0.035, 0.02, 1)
+star_color = Color(1, 0.85, 0.55, 1)
+stages = Array[ExtResource("2_sehxr")]([ExtResource("3_vteof"), ExtResource("4_01wfp"), ExtResource("5_7msbc"), ExtResource("6_tfv3l"), ExtResource("7_k32qg"), ExtResource("8_qr8dx"), ExtResource("9_j4icc"), ExtResource("10_37o18"), ExtResource("11_hvp7p")])

@@ -6,7 +6,8 @@
 [ext_resource type="Resource" path="res://data/planets/planet_2.tres" id="4_planet_2"]
 [ext_resource type="Resource" path="res://data/planets/planet_3.tres" id="5_planet_3"]
 [ext_resource type="Resource" path="res://data/planets/planet_4.tres" id="6_planet_4"]
+[ext_resource type="Resource" path="res://data/planets/planet_5.tres" id="6_r4krw"]
 
 [resource]
 script = ExtResource("1_script")
-planets = Array[ExtResource("2_planet_script")]([ExtResource("3_planet_1"), ExtResource("4_planet_2"), ExtResource("5_planet_3"), ExtResource("6_planet_4")])
+planets = Array[ExtResource("2_planet_script")]([ExtResource("3_planet_1"), ExtResource("4_planet_2"), ExtResource("5_planet_3"), ExtResource("6_planet_4"), ExtResource("6_r4krw")])

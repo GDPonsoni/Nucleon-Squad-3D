@@ -163,3 +163,20 @@ func test_match_state_applies_boosts() -> void:
 	check(is_equal_approx(state.quarks, 100 * Params.quarks_per_point * 1.5), "quarks por abate com bônus")
 	state.damage_current(state.max_hits)
 	check(not state.is_alive(0) and state.weapon_levels[0] == 2, "corpo perdido volta ao nível inicial")
+
+
+func test_campaign_structure() -> void:
+	var campaign: CampaignData = Session.campaign
+	check(campaign.planets.size() == 5, "5 capítulos")
+	var ids := {}
+	for p in campaign.planets.size():
+		var planet: PlanetData = campaign.planets[p]
+		check(planet.stages.size() == 9, "capítulo %d com 9 fases" % (p + 1))
+		for s in planet.stages.size():
+			var stage: StageData = planet.stages[s]
+			check(not ids.has(stage.id), "id repetido %s" % stage.id)
+			ids[stage.id] = true
+			check(String(stage.id) == "p%d_s%d" % [p + 1, s + 1], "id %s na posição %d-%d" % [stage.id, p + 1, s + 1])
+			check((stage.boss != null) == (s == 4 or s == 8), "chefe só nas fases 5 e 9 (%s)" % stage.id)
+			check(not stage.waves.is_empty(), "%s tem ondas" % stage.id)
+	check(campaign.stage_count() == 45, "45 fases")

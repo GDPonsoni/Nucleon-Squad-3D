@@ -7,6 +7,8 @@ var planet_index: int = 0
 var stage_index: int = 0
 ## Cena para onde a tela de evolução volta (menu ou seletor de fases).
 var upgrades_return_path: String = ScenePaths.MENU
+## Capítulo aberto no seletor de fases (-1 = o primeiro ainda não concluído).
+var browsed_chapter: int = -1
 
 
 func _ready() -> void:

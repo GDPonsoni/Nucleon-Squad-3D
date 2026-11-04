@@ -1,0 +1,153 @@
+[gd_resource type="Resource" script_class="StageData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_45olu"]
+[ext_resource type="Resource" path="res://data/enemies/drone.tres" id="2_5g68i"]
+[ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="3_1gpaw"]
+[ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="4_x873w"]
+[ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="5_qvgfb"]
+[ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="6_bj1x7"]
+
+[sub_resource type="Resource" id="Resource_45olu"]
+script = ExtResource("6_bj1x7")
+time_seconds = 4.0
+enemy = ExtResource("4_x873w")
+formation = 2
+interval = 0.32
+x_ratio = 0.35
+
+[sub_resource type="Resource" id="Resource_5g68i"]
+script = ExtResource("6_bj1x7")
+time_seconds = 12.3
+enemy = ExtResource("2_5g68i")
+formation = 4
+spacing = 125.0
+side = 0
+
+[sub_resource type="Resource" id="Resource_1gpaw"]
+script = ExtResource("6_bj1x7")
+time_seconds = 20.6
+enemy = ExtResource("4_x873w")
+spacing = 100.0
+
+[sub_resource type="Resource" id="Resource_x873w"]
+script = ExtResource("6_bj1x7")
+time_seconds = 28.900000000000002
+enemy = ExtResource("3_1gpaw")
+formation = 2
+count = 3
+interval = 0.5
+x_ratio = 0.12
+curve_degrees = -100.0
+curve_seconds = 1.6
+curve_delay = 0.6
+
+[sub_resource type="Resource" id="Resource_qvgfb"]
+script = ExtResource("6_bj1x7")
+time_seconds = 37.1
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.32
+x_ratio = 0.65
+
+[sub_resource type="Resource" id="Resource_bj1x7"]
+script = ExtResource("6_bj1x7")
+time_seconds = 45.400000000000006
+enemy = ExtResource("2_5g68i")
+formation = 4
+count = 6
+spacing = 125.0
+side = 1
+
+[sub_resource type="Resource" id="Resource_ooxcn"]
+script = ExtResource("6_bj1x7")
+time_seconds = 53.7
+enemy = ExtResource("4_x873w")
+count = 7
+spacing = 100.0
+
+[sub_resource type="Resource" id="Resource_8lrhp"]
+script = ExtResource("6_bj1x7")
+time_seconds = 62.0
+enemy = ExtResource("3_1gpaw")
+formation = 2
+count = 4
+interval = 0.5
+x_ratio = 0.88
+curve_degrees = 100.0
+curve_seconds = 1.6
+curve_delay = 0.6
+
+[sub_resource type="Resource" id="Resource_txdm8"]
+script = ExtResource("6_bj1x7")
+time_seconds = 70.3
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 7
+interval = 0.32
+x_ratio = 0.35
+
+[sub_resource type="Resource" id="Resource_toyjo"]
+script = ExtResource("6_bj1x7")
+time_seconds = 78.60000000000001
+enemy = ExtResource("2_5g68i")
+formation = 4
+count = 7
+spacing = 125.0
+side = 0
+
+[sub_resource type="Resource" id="Resource_q2how"]
+script = ExtResource("6_bj1x7")
+time_seconds = 86.9
+enemy = ExtResource("4_x873w")
+count = 9
+spacing = 100.0
+
+[sub_resource type="Resource" id="Resource_b2bpy"]
+script = ExtResource("6_bj1x7")
+time_seconds = 95.2
+enemy = ExtResource("3_1gpaw")
+formation = 2
+interval = 0.5
+x_ratio = 0.12
+curve_degrees = -100.0
+curve_seconds = 1.6
+curve_delay = 0.6
+
+[sub_resource type="Resource" id="Resource_wg8b5"]
+script = ExtResource("6_bj1x7")
+time_seconds = 103.4
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 8
+interval = 0.32
+x_ratio = 0.65
+
+[sub_resource type="Resource" id="Resource_10yh8"]
+script = ExtResource("6_bj1x7")
+time_seconds = 111.7
+enemy = ExtResource("2_5g68i")
+formation = 4
+count = 8
+spacing = 125.0
+side = 1
+
+[sub_resource type="Resource" id="Resource_e0au1"]
+script = ExtResource("6_bj1x7")
+time_seconds = 113.2
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 8
+interval = 0.32
+x_ratio = 0.35
+
+[resource]
+script = ExtResource("5_qvgfb")
+id = &"p1_s6"
+enemies = Array[ExtResource("1_45olu")]([ExtResource("2_5g68i"), ExtResource("3_1gpaw"), ExtResource("4_x873w")])
+spawn_weights = PackedFloat32Array(3, 1, 1)
+waves = Array[ExtResource("6_bj1x7")]([SubResource("Resource_45olu"), SubResource("Resource_5g68i"), SubResource("Resource_1gpaw"), SubResource("Resource_x873w"), SubResource("Resource_qvgfb"), SubResource("Resource_bj1x7"), SubResource("Resource_ooxcn"), SubResource("Resource_8lrhp"), SubResource("Resource_txdm8"), SubResource("Resource_toyjo"), SubResource("Resource_q2how"), SubResource("Resource_b2bpy"), SubResource("Resource_wg8b5"), SubResource("Resource_10yh8"), SubResource("Resource_e0au1")])
+start_delay = 2.0
+spawn_interval_min = 2.8850000000000002
+spawn_interval_max = 4.1875
+spawn_margin_x = 90.0
