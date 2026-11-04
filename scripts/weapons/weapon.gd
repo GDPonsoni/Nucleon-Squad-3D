@@ -27,9 +27,21 @@ static func create(weapon_data: WeaponData, combat_context: CombatContext, start
 	return weapon
 
 
+## Arma da nave auxiliar: usa a versão simples e fraca (WeaponData.companion), sem níveis.
+static func create_companion(weapon_data: WeaponData, combat_context: CombatContext) -> Weapon:
+	var weapon := create(weapon_data, combat_context, 1)
+	weapon.apply_stats(weapon_data.companion if weapon_data.companion != null else weapon_data.level(1))
+	return weapon
+
+
 func set_level(number: int) -> void:
 	level = clampi(number, 1, data.max_level())
-	stats = data.level(level)
+	apply_stats(data.level(level))
+
+
+## Troca os valores em uso (nível da arma ou versão da nave auxiliar).
+func apply_stats(values: WeaponLevel) -> void:
+	stats = values
 	queue_redraw()
 
 

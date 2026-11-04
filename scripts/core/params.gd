@@ -26,8 +26,10 @@ var ui_panel_padding: float = 48.0
 var squad_spacing: int = 22
 var squad_columns: int = 2
 var squad_slot_size: float = 150.0
-var squad_card_size: Vector2 = Vector2(490.0, 265.0)
-var squad_card_icon_size: float = 120.0
+var squad_card_size: Vector2 = Vector2(490.0, 225.0)
+var squad_card_icon_size: float = 110.0
+var squad_hint_width: float = 900.0
+var squad_companion_gap: float = 18.0  # separa o espaço auxiliar dos 4 do esquadrão
 var squad_name_font_size: int = 46
 var squad_description_font_size: int = 28
 var squad_button_size: Vector2 = Vector2(420.0, 140.0)
@@ -167,8 +169,15 @@ var switch_hint_gap: float = 26.0  # aviso "escolha a próxima nave" acima da ba
 var tap_max_seconds: float = 0.35  # toque curto: tempo máximo com o dedo na barra (tempo real)
 var tap_move_tolerance: float = 36.0  # toque curto: quanto o dedo pode andar sem virar arraste
 
+# --- Nave auxiliar (a arma dela fica em data/weapons/, campo companion) ---
+var companion_scale: float = 0.5  # tamanho em relação à nave principal
+var companion_offset: Vector2 = Vector2(115.0, 70.0)  # posição relativa à nave (x = para o lado)
+var companion_follow_rate: float = 9.0  # quão rápido acompanha a nave (maior = mais grudada)
+var companion_side_margin: float = 230.0  # perto da borda, passa para o outro lado
+var companion_alpha: float = 0.9
+
 # --- Projéteis do jogador ---
-var player_bullet_pool_size: int = 128
+var player_bullet_pool_size: int = 160
 
 # --- Inimigos e fase (tipos e ondas ficam em data/) ---
 var campaign_path: String = "res://data/campaign.tres"

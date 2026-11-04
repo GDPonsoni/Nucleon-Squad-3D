@@ -9,6 +9,8 @@ enum Kind { BEAM, SPREAD, HOMING, ORBIT, PIERCE, BLAST }
 @export var kind: Kind = Kind.SPREAD
 @export var color: Color = Color.WHITE
 @export var levels: Array[WeaponLevel] = []
+## Versão simples e fraca usada pela nave auxiliar (sem níveis). Vazio = nível 1.
+@export var companion: WeaponLevel
 
 @export_group("Especial")  # cada tipo usa só parte dos campos
 @export var special_charge_seconds: float = 20.0  # tempo (com o corpo ativo) para encher

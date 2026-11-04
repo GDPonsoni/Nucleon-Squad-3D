@@ -10,8 +10,8 @@ var _timer: float = 0.0
 var _aim_angle: float = -PI * 0.5  # direção para onde os mísseis da onda apontam
 
 
-func set_level(number: int) -> void:
-	super(number)
+func apply_stats(values: WeaponLevel) -> void:
+	super(values)
 	_phase = Phase.COOLDOWN
 	_timer = 0.0
 

@@ -1,6 +1,6 @@
 extends Node2D
 ## Cena da partida: monta os nós por código. Joga a fase escolhida em Session,
-## com os bônus da evolução do núcleo.
+## com os bônus da evolução do núcleo e a nave auxiliar escolhida no esquadrão.
 
 var touch_input: TouchInput
 var player: Player
@@ -21,6 +21,7 @@ var results_menu: ResultsMenu
 var revive_offer: ReviveOffer
 var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
+var companion: Companion  # null = sem nave auxiliar
 var _quarks_banked: bool = false
 
 var _spawning_done: bool = false  # fase pode terminar (tempo acabou e não há chefe vivo)
@@ -86,6 +87,15 @@ func _ready() -> void:
 	context.player = player
 	player.shield_charges = state.shields
 	state.shields_changed.connect(func(count: int) -> void: player.shield_charges = count)
+
+	# Nave auxiliar (opcional): desenhada atrás da nave principal
+	var companion_body: BodyData = SaveGame.companion_body()
+	if companion_body != null:
+		companion = Companion.new()
+		companion.name = "Companion"
+		add_child(companion)
+		move_child(companion, player.get_index())
+		companion.setup(companion_body, context)
 
 	# Power-ups e tiros inimigos por cima da nave e do raio, para ficarem sempre visíveis
 	add_child(power_ups)

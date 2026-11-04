@@ -47,7 +47,7 @@ SHIP_ARTILLERY_NAME,Artillery,Artilharia
 SHIP_ARTILLERY_DESC,Shells that explode in an area. Special: bombardment.,Projéteis que explodem em área. Especial: bombardeio.
 MENU_SQUAD,Squad,Esquadrão
 SQUAD_TITLE,Squad,Esquadrão
-SQUAD_HINT,Pick 4 ships. The first one starts the stage.,Escolha 4 naves. A primeira começa a fase.
+SQUAD_HINT,Pick 4 ships. The first one starts the stage. The wingman is optional.,Escolha 4 naves. A primeira começa a fase. A auxiliar é opcional.
 SQUAD_SAVE,Save,Salvar
 PLANET_4_NAME,Singularity,Singularidade
 BOSS_4_NAME,Hydra,Hidra
@@ -100,3 +100,7 @@ UPG_WINGMAN_NAME,Wingman,Auxiliar
 UPG_WINGMAN_DESC,wingman damage %s,dano da nave auxiliar %s
 UPG_OVERDRIVE_NAME,Overdrive,Sobrecarga
 UPG_OVERDRIVE_DESC,overall damage %s (no level limit),dano geral %s (sem limite de nível)
+SQUAD_COMPANION,Wingman,Auxiliar
+SQUAD_COMPANION_HINT,Tap a ship to make it your wingman. Tap the wingman slot again to leave it empty.,Toque numa nave para ser a auxiliar. Toque de novo no espaço auxiliar para deixá-lo vazio.
+SQUAD_COMPANION_LOCKED,Clear chapter %d to unlock the wingman slot.,Conclua o capítulo %d para liberar o espaço da nave auxiliar.
+SQUAD_LOCKED_SHIP,Clear chapter %d to unlock.,Conclua o capítulo %d para liberar.

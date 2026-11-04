@@ -9,8 +9,8 @@ var _lengths := PackedFloat32Array()
 var _ticks := PackedFloat32Array()
 
 
-func set_level(number: int) -> void:
-	super(number)
+func apply_stats(values: WeaponLevel) -> void:
+	super(values)
 	var count: int = stats.beam_angles.size()
 	_lengths.resize(count)
 	_lengths.fill(0.0)
