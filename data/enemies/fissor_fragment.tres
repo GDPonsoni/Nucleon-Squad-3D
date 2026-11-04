@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"fissor_fragment"
+max_hp = 3
+score = 5
+contact_damage = 1
+radius = 26.0
+sides = 3
+color = Color(1, 0.82, 0.45, 1)
+movement = 0
+speed = 400.0
+fire_pattern = 0

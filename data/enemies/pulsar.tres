@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"pulsar"
+max_hp = 28
+score = 50
+contact_damage = 1
+radius = 50.0
+sides = 10
+color = Color(1, 0.72, 0.25, 1)
+movement = 3
+speed = 220.0
+hover_y_ratio = 0.2
+hover_seconds = 5.0
+fire_pattern = 3
+fire_interval = 0.32
+first_shot_delay = 0.8
+bullet_speed = 300.0
+bullet_radius = 13.0
+bullet_damage = 1
+bullet_color = Color(1, 0.45, 0.35, 1)
+ring_count = 3
+ring_turn_degrees = 21.0

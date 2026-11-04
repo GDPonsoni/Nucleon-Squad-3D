@@ -55,3 +55,8 @@ enum FirePattern {
 @export var bullet_split_radius: float = 11.0
 @export var bullet_homing_time: float = 0.0  # > 0: o tiro persegue a nave por esse tempo
 @export var bullet_homing_turn_degrees: float = 140.0
+
+@export_group("Ao ser destruído")
+@export var death_spawn: EnemyData  # fissão: vira esses inimigos ao ser destruído (vazio = nada)
+@export var death_spawn_count: int = 3
+@export var death_spawn_spread_degrees: float = 70.0  # leque para baixo onde os pedaços saem

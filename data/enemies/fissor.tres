@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/enemies/fissor_fragment.tres" id="2_fragment"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"fissor"
+max_hp = 18
+score = 40
+contact_damage = 1
+radius = 52.0
+sides = 5
+color = Color(1, 0.6, 0.2, 1)
+movement = 0
+speed = 170.0
+fire_pattern = 2
+fire_interval = 2.2
+first_shot_delay = 0.9
+bullet_speed = 520.0
+bullet_radius = 14.0
+bullet_damage = 1
+bullet_color = Color(1, 0.35, 0.75, 1)
+death_spawn = ExtResource("2_fragment")
+death_spawn_count = 3
+death_spawn_spread_degrees = 70.0

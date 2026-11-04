@@ -13,3 +13,5 @@ extends Resource
 @export var spawn_interval_min: float = 0.9
 @export var spawn_interval_max: float = 1.8
 @export var spawn_margin_x: float = 80.0  # distância mínima das bordas laterais
+@export var enemy_hp_scale: float = 1.0  # multiplica a vida dos inimigos da fase (capítulos finais)
+@export var enemy_fire_scale: float = 1.0  # multiplica a cadência de tiro dos inimigos da fase

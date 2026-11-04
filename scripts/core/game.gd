@@ -134,7 +134,8 @@ func _ready() -> void:
 	combat.setup(context, player)
 	combat.player_hit.connect(_on_player_hit)
 	combat.powerup_collected.connect(_on_powerup_collected)
-	combat.splashed.connect(func(pos: Vector2, radius: float, color: Color) -> void: _explode(pos, radius * 0.5, color))
+	combat.splashed.connect(func(pos: Vector2, radius: float, color: Color) -> void:
+		_explode(pos, radius * 0.5, color))
 
 	var slow_overlay := SlowMotionOverlay.new()
 	slow_overlay.name = "SlowMotionOverlay"
@@ -377,8 +378,17 @@ func _create_enemy() -> PoolItem:
 	enemy.context = context
 	enemy.killed.connect(dropper.on_enemy_killed)
 	enemy.killed.connect(func(killed: Enemy) -> void: state.add_kill(killed.points()))
-	enemy.killed.connect(func(killed: Enemy) -> void: _explode(killed.position, killed.radius, killed.tint()))
+	enemy.killed.connect(func(killed: Enemy) -> void:
+		_explode(killed.position, killed.radius, killed.tint()))
+	enemy.killed.connect(_on_enemy_split)
 	return enemy
+
+
+## Inimigos com fissão viram pedaços ao serem destruídos.
+func _on_enemy_split(killed: Enemy) -> void:
+	var data: EnemyData = killed.data
+	if data.death_spawn != null and data.death_spawn_count > 0:
+		spawner.spawn_burst(data.death_spawn, killed.position, data.death_spawn_count, data.death_spawn_spread_degrees)
 
 
 func _debug_stats() -> String:

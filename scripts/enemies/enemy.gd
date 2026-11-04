@@ -18,6 +18,15 @@ var _fire_cooldown: float = 0.0
 var _ring_angle: float = 0.0
 var _flash_left: float = 0.0
 var _hover_left: float = -1.0  # HOVER: < 0 = ainda descendo até a altura de parada
+# Movimento da onda (WaveData): balanço lateral, curva e velocidade
+var _speed_scale: float = 1.0
+var _fire_scale: float = 1.0  # cadência de tiro da fase (StageData.enemy_fire_scale)
+var _sway_amplitude: float = 0.0
+var _sway_omega: float = 0.0
+var _sway_phase: float = 0.0
+var _curve_rate: float = 0.0  # rad/s
+var _curve_delay: float = 0.0
+var _curve_left: float = 0.0
 
 
 ## extra_delay atrasa o comportamento por tempo (ex.: mergulhos em sequência numa onda).
@@ -33,9 +42,33 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 	_ring_angle = 0.0
 	_flash_left = 0.0
 	_hover_left = -1.0
+	_speed_scale = 1.0
+	_fire_scale = 1.0
+	_sway_amplitude = 0.0
+	_curve_left = 0.0
 	rotation = 0.0
 	queue_redraw()
 	_set_active()
+
+
+## Movimento comum da onda (chamar depois de activate). member = posição na onda.
+func set_motion(wave: WaveData, member: int) -> void:
+	_speed_scale = wave.speed_scale
+	_velocity *= wave.speed_scale
+	if wave.sway_amplitude > 0.0 and wave.sway_period > 0.0:
+		_sway_amplitude = wave.sway_amplitude
+		_sway_omega = TAU / wave.sway_period
+		_sway_phase = wave.sway_phase_step * member
+	if not is_zero_approx(wave.curve_degrees) and wave.curve_seconds > 0.0:
+		_curve_rate = deg_to_rad(wave.curve_degrees) / wave.curve_seconds
+		_curve_delay = wave.curve_delay
+		_curve_left = wave.curve_seconds
+
+
+## Escalas da fase: vida e cadência de tiro dos inimigos (capítulos finais).
+func apply_stage(stage: StageData) -> void:
+	hp *= stage.enemy_hp_scale
+	_fire_scale = stage.enemy_fire_scale
 
 
 func is_on_screen() -> bool:
@@ -70,13 +103,21 @@ func take_damage(amount: float) -> void:
 		expire()
 
 
+
 func _process(delta: float) -> void:
 	_age += delta
 	if data.movement == EnemyData.Movement.DIVE and _age >= data.dive_delay:
 		_dive(delta)
 	elif data.movement == EnemyData.Movement.HOVER:
 		_hover(delta)
-	position += _velocity * delta
+	if _curve_left > 0.0 and _age >= _curve_delay:
+		var step: float = minf(delta, _curve_left)
+		_velocity = _velocity.rotated(_curve_rate * step)
+		_curve_left -= step
+	var drift := Vector2.ZERO
+	if _sway_amplitude > 0.0 and _age > 0.0:
+		drift.x = _sway_amplitude * _sway_omega * cos(_sway_omega * _age + _sway_phase)
+	position += (_velocity + drift) * delta
 
 	var on_screen: bool = is_on_screen()
 	_entered = _entered or on_screen
@@ -87,7 +128,7 @@ func _process(delta: float) -> void:
 	if on_screen and data.fire_pattern != EnemyData.FirePattern.NONE:
 		_fire_cooldown -= delta
 		if _fire_cooldown <= 0.0:
-			_fire_cooldown += data.fire_interval
+			_fire_cooldown += data.fire_interval / _fire_scale
 			_shoot()
 
 	_update_flash(delta)
@@ -121,7 +162,7 @@ func _hover(delta: float) -> void:
 	elif _hover_left > 0.0:
 		_hover_left -= delta
 		if _hover_left <= 0.0:
-			_velocity = Vector2(0.0, data.speed)
+			_velocity = Vector2(0.0, data.speed * _speed_scale)
 
 
 func _shoot() -> void:

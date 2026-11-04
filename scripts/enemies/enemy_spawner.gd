@@ -11,7 +11,7 @@ var _enemies: NodePool
 var _cooldown: float = 0.0
 var _elapsed: float = 0.0
 var _finished: bool = false
-## Surgimentos agendados, em ordem de tempo: {time, data, pos, velocity, delay}
+## Surgimentos agendados, em ordem de tempo: {time, data, pos, velocity, delay, wave, member}
 var _pending: Array[Dictionary] = []
 
 
@@ -40,9 +40,12 @@ func spawn_wave(wave: WaveData, start_time: float = -1.0) -> void:
 	var data: EnemyData = wave.enemy
 	var center_x: float = rect.position.x + rect.size.x * wave.x_ratio
 	var top: float = rect.position.y - data.radius
+	# Com balanço lateral, a formação fica longe das bordas para não sair da tela
+	var margin: float = data.radius + wave.sway_amplitude
 	for i in wave.count:
 		var pos: Vector2
 		var velocity := Vector2(0.0, data.speed)
+		var time: float = start + i * wave.interval
 		match wave.formation:
 			WaveData.Formation.LINE:
 				pos = Vector2(center_x + (i - (wave.count - 1) * 0.5) * wave.spacing, top)
@@ -58,13 +61,45 @@ func spawn_wave(wave: WaveData, start_time: float = -1.0) -> void:
 				var y: float = rect.position.y + rect.size.y * wave.y_ratio
 				pos = Vector2(rect.position.x - data.radius if from_left else rect.end.x + data.radius, y)
 				velocity = Vector2((1.0 if from_left else -1.0) * data.speed, data.speed * data.cross_drift)
+			WaveData.Formation.DIAGONAL:
+				# O primeiro membro lidera embaixo; os outros sobem em escada para o lado
+				var direction: float = -1.0 if wave.side == WaveData.EntrySide.RIGHT else 1.0
+				var offset: float = (i - (wave.count - 1) * 0.5) * wave.spacing * direction
+				pos = Vector2(center_x + offset, top - i * wave.spacing * 0.55)
+			WaveData.Formation.GRID:
+				var columns: int = maxi(wave.columns, 1)
+				var col: int = i % columns
+				var row: int = i / columns
+				pos = Vector2(center_x + (col - (columns - 1) * 0.5) * wave.spacing, top - row * wave.spacing * 0.85)
+			WaveData.Formation.PINCER:
+				# Pares: um de cada lado ao mesmo tempo
+				var mirrored: bool = i % 2 == 1
+				var x: float = rect.position.x + rect.size.x * (1.0 - wave.x_ratio if mirrored else wave.x_ratio)
+				pos = Vector2(x, top)
+				time = start + (i / 2) * wave.interval
+			WaveData.Formation.CIRCLE:
+				var dir := Vector2.from_angle(-PI * 0.5 + TAU * i / maxf(wave.count, 1.0))
+				pos = Vector2(center_x, top - wave.spacing) + dir * wave.spacing
 		if wave.formation != WaveData.Formation.SIDE:
-			pos.x = clampf(pos.x, rect.position.x + data.radius, rect.end.x - data.radius)
+			pos.x = clampf(pos.x, rect.position.x + margin, rect.end.x - margin)
 		_pending.append({
-			"time": start + i * wave.interval, "data": data, "pos": pos,
-			"velocity": velocity, "delay": i * wave.dive_stagger,
+			"time": time, "data": data, "pos": pos,
+			"velocity": velocity, "delay": i * wave.dive_stagger, "wave": wave, "member": i,
 		})
 	_pending.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a["time"] < b["time"])
+
+
+## Fissão: pedaços saem do ponto em leque para baixo (ex.: Fissor destruído).
+func spawn_burst(data: EnemyData, pos: Vector2, count: int, spread_degrees: float) -> void:
+	var spread: float = deg_to_rad(spread_degrees)
+	for i in count:
+		var enemy := _enemies.acquire() as Enemy
+		if enemy == null:
+			return
+		var t: float = 0.0 if count == 1 else float(i) / (count - 1) - 0.5
+		var dir := Vector2.from_angle(PI * 0.5 + spread * t)
+		enemy.activate(data, pos + dir * data.radius, dir * data.speed)
+		enemy.apply_stage(_stage)
 
 
 func _process(delta: float) -> void:
@@ -75,6 +110,8 @@ func _process(delta: float) -> void:
 		var enemy := _enemies.acquire() as Enemy
 		if enemy != null:
 			enemy.activate(entry["data"], entry["pos"], entry["velocity"], entry["delay"])
+			enemy.set_motion(entry["wave"], entry["member"])
+			enemy.apply_stage(_stage)
 
 	if _finished:
 		return
@@ -105,6 +142,7 @@ func _spawn_random() -> void:
 	else:
 		var x: float = randf_range(rect.position.x + _stage.spawn_margin_x, rect.end.x - _stage.spawn_margin_x)
 		enemy.activate(data, Vector2(x, rect.position.y - data.radius), Vector2(0.0, data.speed))
+	enemy.apply_stage(_stage)
 
 
 ## Sorteio ponderado por spawn_weights (sem pesos: todos iguais).
