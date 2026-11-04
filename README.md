@@ -5,7 +5,7 @@
 ![Godot](https://img.shields.io/badge/Godot-4.7-478CBF?logo=godotengine&logoColor=white)
 ![GDScript](https://img.shields.io/badge/linguagem-GDScript-355570)
 ![Android](https://img.shields.io/badge/plataforma-Android-3DDC84?logo=android&logoColor=white)
-![Status](https://img.shields.io/badge/status-Marco%201-orange)
+![Status](https://img.shields.io/badge/status-conte%C3%BAdo%20completo%20%C2%B7%20em%20polimento-brightgreen)
 
 Shoot 'em up vertical (bullet hell) para celular, em 2D, feito em **Godot 4** com **GDScript**. Você comanda um **esquadrão de naves com armas diferentes** em torno de um núcleo: troca de nave no meio da luta, leva uma nave auxiliar e evolui o núcleo com os quarks ganhos nas fases. São **5 capítulos de 9 fases**, com chefes, ondas em padrões reconhecíveis e 8 naves para liberar.
 
@@ -28,19 +28,35 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 
 ## Status e roadmap
 
+**Fase atual: conteúdo completo e jogável, em ajuste fino de dificuldade e polimento.** A campanha inteira roda no Galaxy S24; faltam arte final, áudio definitivo, anúncios reais e a publicação.
+
 | Marco | Objetivo | Status |
 |---|---|---|
 | **0** | Protótipo: nave com controle relativo e câmera lenta no S24 | ✅ |
-| **1** | Jogável mínimo: 2 corpos, troca de corpo, 1 inimigo, 1 fase, 3 hits | 🟡 em teste (com 4 corpos) |
-| **2** | Núcleo completo: 4 corpos, 4 armas com 5 níveis, especial, bomba, chefe | ⚪ |
-| **3** | Conteúdo: inimigos, chefes, 1º planeta, áudio, revive por anúncio | ⚪ |
-| **4** | Polimento e publicação | ⚪ |
+| **1** | Jogável mínimo: corpos, troca de corpo, inimigos, fases, 3 hits | ✅ |
+| **2** | Núcleo completo: 4 corpos, armas com 5 níveis, especiais, chefes, salvamento local | ✅ |
+| **3** | Conteúdo, áudio e anúncio de revive | 🟡 conteúdo e áudio prontos; anúncios ainda simulados |
+| **4** | Polimento e publicação | ⚪ arte final, pacote definitivo, keystore de release, loja |
 
-**O que já existe:**
-- **Marco 0:** retrato 1080×1920, controle relativo por toque/mouse, câmera lenta ao soltar o dedo, menu inicial, pausa, overlay de debug e textos em PT-BR/EN.
-- **Marco 1 (em teste):** 8 naves (esquadrão de 4 montado numa tela própria, mais uma nave auxiliar opcional) com 5 níveis de arma, especial e troca de nave por toque curto numa barra fixa, power-ups, 9 tipos de inimigo, ondas em padrões reconhecíveis, chefes intermediários e de capítulo, **5 capítulos de 9 fases**, seletor de capítulos, **quarks e árvore de evolução do núcleo** (com nó sem limite de níveis), desbloqueio de naves ao concluir capítulos, **28 efeitos sonoros**, menu de configurações (volumes, vibração, efeitos visuais, idioma em PT, EN e ES), músicas por capítulo, recordes e progresso salvos no aparelho. Tudo com placeholders desenhados por código.
+### O que já existe
 
----
+| Área | Resumo |
+|---|---|
+| **Campanha** | 5 planetas × 9 fases (45), com chefe intermediário na fase 5 e chefe de capítulo na 9. Ondas em padrões reconhecíveis, gerada por script e balanceada com um piloto automático |
+| **Esquadrão** | 8 naves com armas e especiais próprios, 5 níveis de arma por power-up, esquadrão de 4 montado numa tela própria, nave auxiliar opcional e troca de nave por toque curto numa barra fixa |
+| **Inimigos e chefes** | 9 tipos de inimigo e 10 chefes (5 intermediários e 5 de capítulo, o último com 4 fases) |
+| **Progressão** | quarks ganhos nas fases, árvore de evolução do núcleo (12 nós, sem limite de níveis), naves liberadas ao concluir capítulos, recordes e progresso salvos no aparelho |
+| **Áudio** | 28 efeitos e uma música por capítulo, mais a do menu (geradas por síntese, sem samples), com volume geral, de música e de efeitos |
+| **Interface** | menus com relevo e animações, botão Voltar no canto, configurações (vibração, efeitos reduzidos, estatísticas) e idiomas **PT-BR, EN e ES** |
+| **Anúncios** | simulados (`AdService`): revive, quarks por anúncio e banner reservado no menu, prontos para trocar pelo SDK |
+| **Visual** | placeholders desenhados por código, sem arte final |
+
+### Próximos passos
+
+- Teste de dificuldade e de desempenho (FPS com carga máxima) no S24
+- Anúncios reais (AdMob) no lugar do simulador
+- Arte final e músicas definitivas
+- Pacote definitivo (hoje `com.example`), keystore de release e publicação
 
 ## Requisitos
 
@@ -179,11 +195,13 @@ scripts/
   ui/            tema, menus, seletor, pausa, resultados, HUD, transições, debug
 data/            campanha, planetas, fases, inimigos, armas, corpos e formações (.tres)
   i18n/          tabela de tradução strings.csv (chave, en, pt_BR)
-assets/          ícone e efeitos sonoros (audio/sfx)
+assets/          ícone, efeitos sonoros (audio/sfx) e músicas (audio/music)
 builds/          APKs exportados (não versionado)
 ```
 
-**Autoloads:** `Params` (tuning), `Session` (fase escolhida), `SaveGame` (progresso em `user://save.json`), `SceneTransition` (fade entre telas) e `AdService` (anúncio de revive, simulado por enquanto).
+**Autoloads:** `Params` (tuning), `Session` (fase escolhida), `SaveGame` (progresso e configurações em `user://save.json`), `SceneTransition` (fade entre telas), `AdService` (anúncios, simulados por enquanto) e `Audio` (efeitos, músicas e volumes).
+
+**Ferramentas** (em `scripts/tools/`): gerador da campanha, simulador de fases com piloto automático, gerador de músicas e validador do projeto. Os comandos estão no guia abaixo.
 
 **Estado atual, pendências e guia de retomada:** [`docs/ESTADO_ATUAL.md`](docs/ESTADO_ATUAL.md).
 

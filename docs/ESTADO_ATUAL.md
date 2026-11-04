@@ -181,6 +181,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 **A testar no S24 (última build instalada = branch `feat/capitulo-5-e-progressao`):** veja `docs/MARCO2_TESTE.md`.
 
+**Balanceamento (04/11/2026):** a dificuldade dos capítulos 1 a 3 subiu (`DIFFICULTY_BOOST` em `campaign_builder.gd`, mais vida dos chefes dos capítulos 1 a 3). Piloto automático, média de 3 sementes, hits/min: cap. 1 ≈ 1,3; cap. 2 ≈ 2,0; cap. 3 ≈ 2,2; cap. 4 ≈ 2,0; cap. 5 ≈ 3,1. Falta confirmar no aparelho. Músicas de batalha refeitas (mais rápidas) e `music_volume_db` em -14. O botão Voltar fica no canto superior esquerdo (`UiFactory.add_corner_back`).
+
 **Observações de balanceamento (piloto automático, sem troca de nave):**
 - Mísseis sofre muito no capítulo 5 (muito mais hits que Raio e Leque). Vale revisar se o teste no aparelho confirmar.
 - 4-8, 3-8 e 5-8 são as fases mais pesadas de cada capítulo.
