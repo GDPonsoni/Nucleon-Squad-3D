@@ -164,9 +164,3 @@ func explosion(radius: float) -> void:
 		play(&"enemy_explode_medium")
 	else:
 		play(&"enemy_explode_small")
-
-
-## Vibração do aparelho (se ligada nas configurações). ms = duração; mais longa = mais forte.
-func vibrate(ms: int = Params.vibration_ms) -> void:
-	if bool(SaveGame.setting("vibration")):
-		Input.vibrate_handheld(ms)

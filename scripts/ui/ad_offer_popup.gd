@@ -68,7 +68,7 @@ func _on_ad_pressed() -> void:
 	if granted:
 		SaveGame.grant_ad_quarks()
 		Audio.play(&"powerup_pickup")
-		Audio.vibrate(Params.haptic_level_up_ms)
+		Haptics.play(&"nivel_arma")
 		_badge.set_amount(SaveGame.quarks, true)
 		quarks_changed.emit()
 	close_blocked = false

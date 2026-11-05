@@ -140,7 +140,7 @@ func _show_chapter(chapter: int) -> void:
 	_chapter = chapter
 	Session.browsed_chapter = chapter
 	_build()
-	Audio.vibrate(Params.haptic_tick_ms)
+	Haptics.play(&"tick")
 	# Entra deslizando do lado para onde o dedo foi
 	_page.modulate.a = 0.0
 	_page.position.x = _slide_from * Params.stage_slide_offset

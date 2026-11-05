@@ -26,7 +26,7 @@ var sfx_min_gap: Dictionary = {
 var sfx_pitch_jitter: float = 0.06  # variação aleatória de tom
 var companion_sound_db: float = -8.0  # a nave auxiliar soa mais baixo
 var default_settings: Dictionary = {
-	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "reduced_effects": false, "language": "auto",
+	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "haptic_level": 1, "reduced_effects": false, "language": "auto",
 	"show_stats": true,
 }
 var languages: PackedStringArray = ["auto", "pt_BR", "en", "es"]
@@ -49,13 +49,6 @@ var toggle_seconds: float = 0.12
 var quark_badge_height: float = 92.0
 var quark_badge_font_size: int = 48
 var quark_badge_count_seconds: float = 0.8
-var vibration_ms: int = 60  # levar hit
-var haptic_tick_ms: int = 12  # toque leve: trocar de capítulo, trocar de nave
-var haptic_level_up_ms: int = 25
-var haptic_special_ms: int = 40
-var haptic_body_break_ms: int = 160
-var haptic_boss_kill_ms: int = 220
-var haptic_stage_clear_ms: int = 90
 var button_press_scale: float = 0.94  # botão afunda ao tocar
 var button_press_seconds: float = 0.06
 var swipe_min_distance: float = 140.0  # gesto para trocar de capítulo
@@ -432,3 +425,34 @@ var powerup_color: Color = Color(1.0, 0.85, 0.3)
 var powerup_spin_speed: float = 2.5  # rad/s
 var powerup_pulse: float = 0.12  # variação de escala
 var powerup_pulse_speed: float = 6.0
+
+
+# --- Vibração (Haptics): padrões = lista de [duração_ms, intensidade 0..1]; intensidade 0 = pausa ---
+var haptic_amplitude_supported: bool = true  # false = simula intensidade com pulsos (duração x intervalo)
+var haptic_levels: PackedFloat32Array = [0.55, 0.8, 1.0]  # baixa, média, alta (multiplica a intensidade)
+var haptic_min_gap_ms: int = 35  # intervalo mínimo entre dois padrões quaisquer
+var haptic_max_pattern_ms: int = 700  # nenhum padrão passa disso
+var haptic_budget_window_ms: int = 1000  # janela para limitar o tempo total de motor ligado
+var haptic_budget_max_ms: int = 380  # acima disso, só padrões de prioridade >= haptic_budget_priority
+var haptic_budget_priority: int = 3
+var haptic_pwm_period_ms: int = 48  # só no modo simulado: período de cada pulso
+var haptic_boss_window: float = 0.25  # segundos acumulando dano ao chefe antes de vibrar
+var haptic_boss_tiers: PackedFloat32Array = [0.004, 0.015, 0.04]  # fração da vida do chefe na janela: leve, médio, forte
+var haptic_boss_tier_names: Array[StringName] = [&"dano_boss_leve", &"dano_boss_medio", &"dano_boss_forte"]
+var haptic_patterns: Dictionary = {
+	# nome: {prioridade, intervalo mínimo (s) entre repetições, passos}
+	&"tick": {"priority": 0, "cooldown": 0.05, "steps": [[16, 0.5]]},
+	&"tiro_forte": {"priority": 1, "cooldown": 0.12, "steps": [[16, 1.0], [32, 0.0], [16, 0.35]]},
+	&"nivel_arma": {"priority": 2, "cooldown": 0.2, "steps": [[16, 0.5], [32, 0.0], [32, 0.85]]},
+	&"explosao_pequena": {"priority": 1, "cooldown": 0.12, "steps": [[16, 0.5], [16, 0.3], [16, 0.15]]},
+	&"explosao_grande": {"priority": 3, "cooldown": 0.2, "steps": [[16, 0.4], [32, 0.7], [48, 1.0], [48, 0.7], [64, 0.45], [80, 0.25], [80, 0.12]]},
+	&"dano_boss_leve": {"priority": 1, "cooldown": 0.0, "steps": [[16, 0.35]]},
+	&"dano_boss_medio": {"priority": 1, "cooldown": 0.0, "steps": [[16, 0.6], [16, 0.35]]},
+	&"dano_boss_forte": {"priority": 2, "cooldown": 0.0, "steps": [[32, 1.0], [32, 0.6], [16, 0.3]]},
+	&"dano_jogador": {"priority": 3, "cooldown": 0.1, "steps": [[48, 1.0], [32, 0.0], [32, 0.6]]},
+	&"troca_nave": {"priority": 2, "cooldown": 0.2, "steps": [[16, 0.6], [48, 0.0], [32, 1.0]]},
+	&"especial": {"priority": 3, "cooldown": 0.3, "steps": [[32, 0.2], [32, 0.4], [48, 0.6], [48, 0.8], [112, 1.0], [80, 0.5]]},
+	&"perda_nave": {"priority": 4, "cooldown": 0.3, "steps": [[48, 1.0], [48, 0.0], [32, 0.8], [32, 0.0], [128, 0.65], [96, 0.4], [80, 0.2]]},
+	&"explosao_chefe": {"priority": 4, "cooldown": 0.3, "steps": [[32, 0.4], [32, 0.0], [48, 0.7], [32, 0.0], [80, 1.0], [128, 0.9], [144, 0.6], [160, 0.3]]},
+	&"fase_completa": {"priority": 3, "cooldown": 0.3, "steps": [[32, 0.6], [48, 0.0], [32, 0.8], [48, 0.0], [96, 1.0], [80, 0.4]]},
+}

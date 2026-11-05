@@ -72,7 +72,9 @@ func take_damage(amount: float) -> void:
 	# Invulnerável enquanto entra na tela
 	if _entering:
 		return
-	super(amount * context.boosts.boss_damage)
+	var dealt: float = amount * context.boosts.boss_damage
+	Haptics.boss_damage(dealt / maxf(boss_data.max_hp, 1.0))
+	super(dealt)
 
 
 func _process(delta: float) -> void:

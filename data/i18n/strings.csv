@@ -125,6 +125,10 @@ SETTINGS_MASTER,Master volume,Volume geral,Volumen general
 SETTINGS_MUSIC,Music,Música,Música
 SETTINGS_SFX,Sound effects,Efeitos sonoros,Efectos de sonido
 SETTINGS_VIBRATION,Vibration,Vibração,Vibración
+SETTINGS_HAPTIC_LEVEL,Strength,Intensidade,Intensidad
+HAPTIC_LOW,Low,Baixa,Baja
+HAPTIC_MEDIUM,Medium,Média,Media
+HAPTIC_HIGH,High,Alta,Alta
 SETTINGS_EFFECTS,Visual effects,Efeitos visuais,Efectos visuales
 SETTINGS_EFFECTS_REDUCED,Reduced,Reduzidos,Reducidos
 SETTINGS_EFFECTS_FULL,Full,Completos,Completos

@@ -36,7 +36,7 @@ func setup(text_key: String, on: bool) -> void:
 func _on_pressed() -> void:
 	value = not value
 	Audio.play(&"ui_click")
-	Audio.vibrate(Params.haptic_tick_ms)
+	Haptics.play(&"tick")
 	toggled_value.emit(value)
 
 

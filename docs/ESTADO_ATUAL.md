@@ -103,6 +103,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 **Animações (05/11/2026, branch `feat/animacoes-nave`):** parâmetros em `Params` (`anim_intensity`, `entry_*`, `exit_*`, `break_*`, `weapon_spawn_*`, `impact_*`, `tilt_*`, `companion_retreat_*`). O corpo nasce do núcleo (entrada) e recolhe nele (troca voluntária); a perda quebra em pedaços (`BodyFx`, pool). A auxiliar recolhe junto do núcleo sem nave principal e volta animada. Armas têm surgimento (`Weapon.play_spawn`, carga, órbita se formando, mísseis nascendo), faíscas de acerto (`HitSpark`, pool), clarão de tiro, rastro da órbita e chama dos mísseis. Pseudo-3D no movimento: `Player.bank/pitch`, sombra deslocada. Tudo em tempo de jogo (acompanha a câmera lenta).
 
+**Vibração (`Haptics`, autoload):** padrões nomeados em `Params.haptic_patterns` (passos `[ms, intensidade]`), usando `Input.vibrate_handheld(ms, amplitude)`. Prioridade, intervalo por padrão, intervalo global e orçamento de motor ligado por segundo (`haptic_budget_*`). Dano ao chefe acumula numa janela de 0,25 s e vira 3 faixas. Configurações: ligar/desligar e intensidade baixa/média/alta (`haptic_level`). Se a amplitude não funcionar no aparelho, `haptic_amplitude_supported = false` simula com pulsos.
+
 **Inimigos (9):** Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador, Caçador, **Pulsar** (anéis finos em espiral) e **Fissor** (parte-se em 3 ao morrer). Ondas em formação: LINE, V, COLUMN, SIDE, DIAGONAL, GRID, PINCER, CIRCLE, com balanço, curva e escala de velocidade por onda (`WaveData`).
 
 **Chefes:**

@@ -218,7 +218,7 @@ func _finish_stage_clear() -> void:
 	_match_over = true
 	pause_menu.disable()
 	Audio.play(&"stage_clear")
-	Audio.vibrate(Params.haptic_stage_clear_ms)
+	Haptics.play(&"fase_completa")
 	var stage: StageData = Session.stage()
 	var first_time: bool = not SaveGame.is_completed(stage.id)
 	var chapter_cleared_before: bool = SaveGame.is_chapter_cleared(Session.planet_index)
@@ -292,7 +292,7 @@ func _on_spawning_finished() -> void:
 func _on_boss_killed(killed: Enemy) -> void:
 	state.add_kill(killed.points())
 	Audio.play(&"boss_explode")
-	Audio.vibrate(Params.haptic_boss_kill_ms)
+	Haptics.play(&"explosao_chefe")
 	context.boss = null
 	hud.set_boss(null, "")
 	for item in enemy_bullets.active.duplicate():
@@ -315,7 +315,7 @@ func _switch_to(index: int, invulnerable_seconds: float) -> void:
 
 func _on_body_chosen(index: int) -> void:
 	Audio.play(&"ship_switch")
-	Audio.vibrate(Params.haptic_tick_ms)
+	Haptics.play(&"troca_nave")
 	# Troca voluntária começa a recarga; a escolha forçada (corpo destruído) não
 	if not switcher.forced:
 		state.start_switch_cooldown()
@@ -337,7 +337,7 @@ func _on_player_hit(damage: int) -> void:
 		player.start_invulnerability(invulnerability)
 		return
 	Audio.play(&"hit_player")
-	Audio.vibrate()
+	Haptics.play(&"dano_jogador")
 	hud.flash_hit()
 	state.damage_current(damage)
 	if state.is_alive(state.current):
@@ -349,7 +349,7 @@ func _on_special_pressed() -> void:
 		return
 	state.use_special()
 	Audio.play(&"special_fire")
-	Audio.vibrate(Params.haptic_special_ms)
+	Haptics.play(&"especial")
 	SpecialAttack.trigger(player.body.weapon, player, context, self)
 
 
@@ -368,7 +368,7 @@ func _on_powerup_collected(kind: PowerUp.Kind) -> void:
 		player.weapon.set_level(state.weapon_levels[state.current])
 		player.pulse_level_up()
 		Audio.play(&"weapon_levelup")
-		Audio.vibrate(Params.haptic_level_up_ms)
+		Haptics.play(&"nivel_arma")
 
 
 ## Power-up raro da auxiliar: sobe o nível dela e avisa na tela qual é o efeito.
@@ -377,7 +377,7 @@ func _on_companion_powerup() -> void:
 		return
 	companion.set_level(state.companion_level)
 	Audio.play(&"weapon_levelup", 0.0, 1.2)
-	Audio.vibrate(Params.haptic_level_up_ms)
+	Haptics.play(&"nivel_arma")
 	var level_text: String = tr("COMPANION_LEVEL_MAX") if not state.companion_can_level() else tr("COMPANION_LEVEL") % state.companion_level
 	hud.show_toast("%s %s: %s\n%s" % [tr("SQUAD_COMPANION"), tr(companion.body.name_key), level_text, tr(companion.body.companion_upgrade_key)], Params.companion_powerup_color)
 
@@ -385,7 +385,7 @@ func _on_companion_powerup() -> void:
 ## Corpo destruído: explode, o núcleo racha e o jogador escolhe outro corpo vivo.
 func _on_body_destroyed(index: int) -> void:
 	Audio.play(&"body_break")
-	Audio.vibrate(Params.haptic_body_break_ms)
+	Haptics.play(&"perda_nave")
 	Audio.play(&"core_crack")
 	_explode(player.position, Params.ship_size.y * 0.5, state.bodies[index].color)
 	_body_fx(state.bodies[index], true)
@@ -460,6 +460,7 @@ func _create_enemy() -> PoolItem:
 	enemy.killed.connect(func(killed: Enemy) -> void: state.add_kill(killed.points()))
 	enemy.killed.connect(func(killed: Enemy) -> void:
 		Audio.explosion(killed.radius)
+		Haptics.play(&"explosao_grande" if killed.radius >= Params.explosion_reference_radius * 1.4 else &"explosao_pequena")
 		_explode(killed.position, killed.radius, killed.tint()))
 	enemy.killed.connect(_on_enemy_split)
 	return enemy

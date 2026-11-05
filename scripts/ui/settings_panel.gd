@@ -22,7 +22,8 @@ func _build() -> void:
 	_add_slider("SETTINGS_MASTER", "master")
 	_add_slider("SETTINGS_MUSIC", "music")
 	_add_slider("SETTINGS_SFX", "sfx", func() -> void: Audio.play(&"powerup_pickup"))
-	_add_toggle("SETTINGS_VIBRATION", "vibration")
+	var vibration_row := _add_toggle("SETTINGS_VIBRATION", "vibration")
+	_add_haptic_level(vibration_row)
 	_add_toggle("SETTINGS_EFFECTS", "reduced_effects", true)
 	_add_toggle("SETTINGS_STATS", "show_stats")
 	_add_language()
@@ -63,11 +64,33 @@ func _add_slider(label_key: String, setting: String, preview: Callable = Callabl
 
 ## Interruptor (ligado/desligado). inverted: a configuração guarda o contrário do que a
 ## chave mostra (ex.: "Efeitos visuais" ligado = reduced_effects falso).
-func _add_toggle(label_key: String, setting: String, inverted: bool = false) -> void:
+func _add_toggle(label_key: String, setting: String, inverted: bool = false) -> ToggleRow:
 	var row := ToggleRow.new()
 	row.setup(label_key, bool(SaveGame.setting(setting)) != inverted)
 	row.toggled_value.connect(func(on: bool) -> void: SaveGame.set_setting(setting, on != inverted))
 	add_child(row)
+	return row
+
+
+## Intensidade da vibração (baixa/média/alta): cada toque passa para a próxima e mostra a vibração.
+func _add_haptic_level(vibration_row: ToggleRow) -> void:
+	var button := UiFactory.make_button("")
+	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	button.custom_minimum_size.x = Params.settings_slider_width
+	var names: Array[String] = ["HAPTIC_LOW", "HAPTIC_MEDIUM", "HAPTIC_HIGH"]
+	var refresh := func() -> void:
+		var level: int = clampi(int(SaveGame.setting("haptic_level")), 0, names.size() - 1)
+		button.text = "%s: %s" % [tr("SETTINGS_HAPTIC_LEVEL"), tr(names[level])]
+		button.add_theme_font_size_override("font_size", UiFactory.fit_font_size(button.text,
+			Params.settings_slider_width - Params.ui_button_padding * 2.0, Params.ui_font_size))
+		button.disabled = not bool(SaveGame.setting("vibration"))
+	refresh.call()
+	button.pressed.connect(func() -> void:
+		SaveGame.set_setting("haptic_level", (int(SaveGame.setting("haptic_level")) + 1) % names.size())
+		refresh.call()
+		Haptics.play(&"troca_nave"))
+	vibration_row.toggled_value.connect(func(_on: bool) -> void: refresh.call())
+	add_child(button)
 
 
 ## Botão que abre a lista de idiomas (mostra o atual).
