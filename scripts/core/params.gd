@@ -102,13 +102,14 @@ var squad_hint_width: float = 900.0
 var squad_wingman_columns: int = 5  # escolha da nave auxiliar
 var squad_wingman_size: float = 120.0
 var squad_wingman_font_size: int = 26
+var squad_wingman_label_ratio: float = 1.3  # largura do nome em relação ao ícone
 var squad_name_font_size: int = 46
-var squad_description_font_size: int = 28
+var squad_description_font_size: int = 25
 var squad_button_size: Vector2 = Vector2(420.0, 140.0)
 var back_corner_size: Vector2 = Vector2(104.0, 104.0)  # seta de voltar no canto superior esquerdo
 var back_corner_margin: Vector2 = Vector2(24.0, 48.0)
 var back_top_space: float = 150.0  # espaço no topo das telas para a seta não cobrir o conteúdo
-var back_top_space_squad: float = 60.0  # a tela do esquadrão é a mais cheia
+var back_top_space_squad: float = 0.0  # a tela do esquadrão é a mais cheia
 var stage_button_size: Vector2 = Vector2(260.0, 190.0)
 var stage_grid_columns: int = 3  # fases por linha no seletor (9 fases = 3 x 3)
 var stage_chapter_font_size: int = 72

@@ -33,7 +33,8 @@ func _ready() -> void:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	add_child(scroll)
 	var center := CenterContainer.new()
-	center.custom_minimum_size = get_viewport_rect().size
+	center.custom_minimum_size = Vector2(0.0, get_viewport_rect().size.y)
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(center)
 	var column := UiFactory.make_column()
 	column.add_theme_constant_override("separation", Params.squad_spacing)
@@ -108,6 +109,7 @@ func _build_wingman() -> PanelContainer:
 	box.add_child(hint)
 	var grid := GridContainer.new()
 	grid.columns = Params.squad_wingman_columns
+	grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	grid.add_theme_constant_override("h_separation", Params.squad_spacing)
 	grid.add_theme_constant_override("v_separation", Params.squad_spacing)
 	box.add_child(grid)
@@ -127,8 +129,10 @@ func _build_wingman() -> PanelContainer:
 		label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.add_theme_font_size_override("font_size", Params.squad_wingman_font_size)
-		label.custom_minimum_size.x = Params.squad_wingman_size
-		label.clip_text = true
+		# Largura um pouco maior que o ícone e fonte reduzida: o nome nunca é cortado
+		var label_width: float = Params.squad_wingman_size * Params.squad_wingman_label_ratio
+		label.custom_minimum_size.x = label_width
+		label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(label.text, label_width, Params.squad_wingman_font_size))
 		cell.add_child(label)
 		_wingman_buttons.append(button)
 		_wingman_icons.append(icon)
@@ -190,9 +194,24 @@ func _make_card(body: BodyData) -> Button:
 		description.text = tr("SQUAD_LOCKED_SHIP") % body.unlock_chapter
 	texts.add_child(description)
 
+	# O cartão cresce se o texto (que muda com o idioma) não couber na altura mínima
+	card.resized.connect(_fit_card_height.bind(card, name_label, description))
 	_cards.append(card)
 	_card_icons.append(icon)
 	return card
+
+
+func _fit_card_height(card: Button, name_label: Label, description: Label) -> void:
+	var text_width: float = card.size.x - Params.ui_button_padding * 3.0 - Params.squad_card_icon_size
+	if text_width <= 0.0:
+		return
+	var font: Font = description.get_theme_font("font")
+	var desc_height: float = font.get_multiline_string_size(description.atr(description.text),
+		HORIZONTAL_ALIGNMENT_LEFT, text_width, description.get_theme_font_size("font_size")).y
+	var name_height: float = name_label.get_theme_font("font").get_height(Params.squad_name_font_size)
+	var needed: float = maxf(Params.squad_card_size.y, name_height + desc_height + Params.ui_button_padding * 2.0)
+	if absf(card.custom_minimum_size.y - needed) > 1.0:
+		card.custom_minimum_size.y = needed
 
 
 func _on_card_pressed(body: BodyData) -> void:

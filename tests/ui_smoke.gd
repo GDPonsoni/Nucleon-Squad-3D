@@ -113,6 +113,7 @@ func _check_overflow(root: Node, label: String) -> int:
 		if not control.is_visible_in_tree() or control.size.x <= 0.0:
 			continue
 		count += _check_text_fit(control, label)
+		count += _check_inside_button(control, label)
 		var rect: Rect2 = control.get_global_rect()
 		var height: float = get_viewport().get_visible_rect().size.y
 		var scrolled: bool = _inside_scroll(control)
@@ -327,3 +328,24 @@ func _check_ad_reward_not_lost() -> int:
 			failures += 1
 	host.queue_free()
 	return failures
+
+
+## Texto dentro de um botão/cartão tem que ficar dentro dele (ex.: descrição que passa da borda de baixo).
+func _check_inside_button(control: Control, label: String) -> int:
+	if not (control is Label):
+		return 0
+	var holder: Node = control.get_parent()
+	while holder != null and not (holder is Button):
+		holder = holder.get_parent()
+	if holder == null or (holder as Button).text != "":
+		return 0
+	var inner: Rect2 = (holder as Button).get_global_rect().grow(2.0)
+	var rect: Rect2 = control.get_global_rect()
+	var lbl := control as Label
+	# Altura real do texto (o rótulo pode ser menor que o texto quando o pai o espreme)
+	var font: Font = lbl.get_theme_font("font")
+	var text_h: float = font.get_multiline_string_size(lbl.atr(lbl.text), HORIZONTAL_ALIGNMENT_LEFT, maxf(rect.size.x, 1.0), lbl.get_theme_font_size("font_size")).y if lbl.autowrap_mode != TextServer.AUTOWRAP_OFF else rect.size.y
+	if rect.position.x < inner.position.x or rect.end.x > inner.end.x or rect.position.y < inner.position.y or rect.position.y + maxf(text_h, rect.size.y) > inner.end.y:
+		printerr("TEXTO FORA DO CARTÃO [%s] \"%s\"" % [label, lbl.text.left(40)])
+		return 1
+	return 0
