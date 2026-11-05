@@ -21,7 +21,7 @@ var sfx_gain_db: Dictionary = {
 var sfx_min_gap: Dictionary = {
 	&"shot_beam": 0.2, &"shot_spread": 0.07, &"shot_missile": 0.15, &"shot_orbit": 0.18,
 	&"enemy_hit": 0.05, &"boss_hit": 0.08, &"enemy_explode_small": 0.05, &"enemy_explode_medium": 0.06,
-	&"missile_explode": 0.08, &"ui_click": 0.04, &"slowmo_enter": 0.15, &"slowmo_exit": 0.15,
+	&"missile_explode": 0.08, &"boss_warning": 0.12, &"ui_click": 0.04, &"slowmo_enter": 0.15, &"slowmo_exit": 0.15,
 }
 var sfx_pitch_jitter: float = 0.06  # variação aleatória de tom
 var companion_sound_db: float = -8.0  # a nave auxiliar soa mais baixo
@@ -227,6 +227,15 @@ var body_fx_pool_size: int = 8
 var weapon_spawn_seconds: float = 0.35  # surgimento da arma ao ativar (curto, para não atrapalhar)
 var weapon_spawn_orbit_spin: float = 2.5  # a órbita gira mais rápido enquanto se forma (multiplicador)
 var weapon_charge_orb_scale: float = 0.45  # orbe de carga na ponta (x largura da nave)
+# --- Telegrafia (aviso antes de cada ataque inimigo) ---
+var telegraph_line_length: float = 520.0  # linha tracejada na direção do tiro
+var telegraph_line_width: float = 4.0
+var telegraph_dash: float = 22.0
+var telegraph_alpha: Vector2 = Vector2(0.15, 0.7)  # transparência no começo e no fim do aviso
+var telegraph_ring_scale: float = 1.8  # anel que se contrai no inimigo (x raio)
+var telegraph_big_radius: float = 30.0  # tiros com raio >= isso avisam com um orbe crescendo
+var telegraph_sound_db: float = -4.0
+var telegraph_dive_color: Color = Color(1.0, 0.25, 0.2)
 # --- Pseudo-3D no movimento (só transformações 2D; tilt_intensity 0 desliga) ---
 var tilt_intensity: float = 1.0
 var tilt_max_roll: float = 0.30  # rad de inclinação lateral na velocidade máxima

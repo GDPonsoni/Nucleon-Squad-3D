@@ -11,6 +11,7 @@ enum Pattern {
 @export var pattern: Pattern = Pattern.FAN
 @export var interval: float = 1.5
 @export var first_delay: float = 1.0  # ao começar a fase
+@export var telegraph_seconds: float = 0.7  # aviso antes do ataque (em rajadas, só antes do primeiro; em fluxo contínuo, só no começo)
 @export var count: int = 5  # FAN/RING: tiros por disparo
 @export var spread_degrees: float = 40.0  # FAN: abertura total
 @export var aimed: bool = true  # FAN: mira na nave (senão, para baixo)

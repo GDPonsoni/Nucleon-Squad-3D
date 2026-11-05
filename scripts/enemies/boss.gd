@@ -13,6 +13,11 @@ var _phase: int = -1
 var _timers := PackedFloat32Array()
 var _bursts := PackedInt32Array()
 var _ring_angles := PackedFloat32Array()
+# Telegrafia por ataque: segundos restantes do aviso (< 0 = nenhum), duração, dados travados
+var _attack_tele_left := PackedFloat32Array()
+var _attack_tele_total := PackedFloat32Array()
+var _locked: Array[Dictionary] = []  # {dirs: PackedVector2Array, ...} do disparo avisado
+var _streamed := PackedByteArray()  # fluxo contínuo (intervalo menor que o aviso) já avisado
 var _clock: float = 0.0
 var _entering: bool = true
 var _center_x: float = 0.0
@@ -93,17 +98,23 @@ func _process(delta: float) -> void:
 	_move(phase, delta)
 	for i in phase.attacks.size():
 		_timers[i] -= delta
+		var attack: BossAttack = phase.attacks[i]
+		if _bursts[i] == attack.burst and _attack_tele_left[i] < 0.0 and _locked[i].is_empty() and _timers[i] <= attack.telegraph_seconds:
+			_start_attack_telegraph(i, attack)
+		if _attack_tele_left[i] >= 0.0:
+			_attack_tele_left[i] = maxf(_timers[i], 0.0)
 		if _timers[i] > 0.0:
 			continue
-		var attack: BossAttack = phase.attacks[i]
 		_attack(i, attack)
-		# Rajada: os próximos disparos vêm logo em seguida
+		_attack_tele_left[i] = -1.0
+		# Rajada: os próximos disparos vêm logo em seguida (com a mira travada no aviso)
 		if _bursts[i] > 1:
 			_bursts[i] -= 1
 			_timers[i] += attack.burst_gap
 		else:
 			_bursts[i] = attack.burst
 			_timers[i] += attack.interval
+			_locked[i] = {}
 	queue_redraw()
 
 
@@ -139,14 +150,36 @@ func _update_phase() -> void:
 	_timers.resize(attacks.size())
 	_bursts.resize(attacks.size())
 	_ring_angles.resize(attacks.size())
+	_attack_tele_left.resize(attacks.size())
+	_attack_tele_total.resize(attacks.size())
+	_streamed.resize(attacks.size())
+	_locked.resize(attacks.size())
 	for i in attacks.size():
 		_timers[i] = attacks[i].first_delay
 		_bursts[i] = attacks[i].burst
 		_ring_angles[i] = 0.0
+		_attack_tele_left[i] = -1.0
+		_streamed[i] = 0
+		_locked[i] = {}
 	phase_changed.emit(index)
 
 
-func _attack(index: int, attack: BossAttack) -> void:
+## Aviso do ataque: trava a mira. Fluxo contínuo (intervalo menor que o aviso) só avisa no começo.
+func _start_attack_telegraph(index: int, attack: BossAttack) -> void:
+	var stream: bool = attack.interval < attack.telegraph_seconds and attack.burst <= 1
+	if stream and _streamed[index] == 1:
+		_locked[index] = {"stream": true}
+		return
+	_streamed[index] = 1 if stream else 0
+	var seconds: float = maxf(_timers[index], 0.0)
+	_attack_tele_total[index] = maxf(seconds, 0.01)
+	_attack_tele_left[index] = seconds
+	_locked[index] = {"dirs": _boss_attack_dirs(index, attack)}
+	Audio.play(&"boss_warning", Params.telegraph_sound_db - 6.0, 1.3)
+
+
+func _boss_attack_dirs(index: int, attack: BossAttack) -> PackedVector2Array:
+	var dirs := PackedVector2Array()
 	match attack.pattern:
 		BossAttack.Pattern.FAN:
 			var aim: float = PI * 0.5
@@ -156,10 +189,22 @@ func _attack(index: int, attack: BossAttack) -> void:
 			var spread: float = deg_to_rad(attack.spread_degrees)
 			for i in attack.count:
 				var t: float = 0.0 if attack.count == 1 else float(i) / (attack.count - 1) - 0.5
-				_shoot_bullet(Vector2.from_angle(aim + spread * t), attack)
+				dirs.append(Vector2.from_angle(aim + spread * t))
 		BossAttack.Pattern.RING:
 			for i in attack.count:
-				_shoot_bullet(Vector2.from_angle(_ring_angles[index] + TAU * i / attack.count), attack)
+				dirs.append(Vector2.from_angle(_ring_angles[index] + TAU * i / attack.count))
+	return dirs
+
+
+func _attack(index: int, attack: BossAttack) -> void:
+	match attack.pattern:
+		BossAttack.Pattern.FAN:
+			var dirs: PackedVector2Array = _locked[index].get("dirs", _boss_attack_dirs(index, attack))
+			for dir in dirs:
+				_shoot_bullet(dir, attack)
+		BossAttack.Pattern.RING:
+			for dir in _boss_attack_dirs(index, attack):
+				_shoot_bullet(dir, attack)
 			_ring_angles[index] += deg_to_rad(attack.turn_degrees)
 		BossAttack.Pattern.SUMMON:
 			if attack.wave != null and spawn_wave.is_valid():
@@ -193,3 +238,25 @@ func _draw() -> void:
 	# Núcleo do chefe pulsa mais rápido nas fases finais
 	var pulse: float = 0.5 + 0.5 * sin(_clock * (4.0 + _phase * 3.0))
 	draw_circle(Vector2.ZERO, radius * 0.22, color.lightened(0.3 + pulse * 0.4))
+	_draw_boss_telegraphs()
+
+
+func _draw_boss_telegraphs() -> void:
+	if _phase < 0:
+		return
+	var attacks: Array[BossAttack] = boss_data.phases[_phase].attacks
+	for i in mini(attacks.size(), _attack_tele_left.size()):
+		if _attack_tele_left[i] < 0.0:
+			continue
+		var attack: BossAttack = attacks[i]
+		var t: float = 1.0 - clampf(_attack_tele_left[i] / _attack_tele_total[i], 0.0, 1.0)
+		var dirs: PackedVector2Array = _locked[i].get("dirs", PackedVector2Array())
+		match attack.pattern:
+			BossAttack.Pattern.RING:
+				Telegraph.draw_ring(self, Vector2.ZERO, radius, attack.bullet_color, t)
+			BossAttack.Pattern.SUMMON:
+				Telegraph.draw_ring(self, Vector2.ZERO, radius * 1.2, boss_data.color.lightened(0.4), t)
+			_:
+				if attack.bullet_radius >= Params.telegraph_big_radius and not dirs.is_empty():
+					Telegraph.draw_orb(self, dirs[0] * radius, attack.bullet_radius, attack.bullet_color, t)
+				Telegraph.draw_lines(self, Vector2.ZERO, dirs, radius * 0.8, attack.bullet_color, t)

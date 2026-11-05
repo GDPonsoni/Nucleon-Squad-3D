@@ -26,7 +26,28 @@ func _process(_delta: float) -> bool:
 			elif resource is GDScript and not (resource as GDScript).can_instantiate():
 				failures += 1
 				printerr("NÃO COMPILA: ", path)
+			elif not _telegraph_ok(resource):
+				failures += 1
+				printerr("ATAQUE SEM TELEGRAFIA: ", path)
 	print("validate_project: %d arquivos, %d com erro" % [count, failures])
+	return true
+
+
+## Nenhum ataque sem aviso: inimigos que atiram ou mergulham e todo ataque de chefe.
+## Usa get() para não depender das classes no momento da compilação (script -s).
+func _telegraph_ok(resource: Resource) -> bool:
+	var script: Script = resource.get_script()
+	if script == null:
+		return true
+	var name: StringName = script.get_global_name()
+	if name == &"EnemyData":
+		var attacks: bool = int(resource.get("fire_pattern")) != 0 or int(resource.get("movement")) == 2
+		return not attacks or float(resource.get("telegraph_seconds")) > 0.0
+	if name == &"BossData":
+		for phase: Resource in resource.get("phases"):
+			for attack: Resource in phase.get("attacks"):
+				if float(attack.get("telegraph_seconds")) <= 0.0:
+					return false
 	return true
 
 

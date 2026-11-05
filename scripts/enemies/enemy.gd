@@ -18,6 +18,10 @@ var _fire_cooldown: float = 0.0
 var _ring_angle: float = 0.0
 var _flash_left: float = 0.0
 var _hover_left: float = -1.0  # HOVER: < 0 = ainda descendo até a altura de parada
+# Telegrafia: direções travadas no começo do aviso (o tiro sai exatamente onde a linha mostrou)
+var _tele_left: float = -1.0  # < 0 = sem aviso em curso
+var _tele_total: float = 0.0
+var _tele_dirs := PackedVector2Array()
 # Movimento da onda (WaveData): balanço lateral, curva e velocidade
 var _speed_scale: float = 1.0
 var _fire_scale: float = 1.0  # cadência de tiro da fase (StageData.enemy_fire_scale)
@@ -42,6 +46,8 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 	_ring_angle = 0.0
 	_flash_left = 0.0
 	_hover_left = -1.0
+	_tele_left = -1.0
+	_tele_dirs.resize(0)
 	_speed_scale = 1.0
 	_fire_scale = 1.0
 	_sway_amplitude = 0.0
@@ -133,9 +139,18 @@ func _process(delta: float) -> void:
 
 	if on_screen and data.fire_pattern != EnemyData.FirePattern.NONE:
 		_fire_cooldown -= delta
+		if _tele_left < 0.0 and _fire_cooldown <= data.telegraph_seconds:
+			_start_telegraph(maxf(_fire_cooldown, 0.0))
+		if _tele_left >= 0.0:
+			_tele_left = _fire_cooldown
+			queue_redraw()
 		if _fire_cooldown <= 0.0:
 			_fire_cooldown += data.fire_interval / _fire_scale
 			_shoot()
+			_tele_left = -1.0
+			queue_redraw()
+	elif data.movement == EnemyData.Movement.DIVE and _age < data.dive_delay and _age >= data.dive_delay - data.telegraph_seconds:
+		queue_redraw()
 
 	_update_flash(delta)
 
@@ -171,24 +186,44 @@ func _hover(delta: float) -> void:
 			_velocity = Vector2(0.0, data.speed * _speed_scale)
 
 
-func _shoot() -> void:
+## Começa o aviso: trava as direções do próximo disparo.
+func _start_telegraph(seconds: float) -> void:
+	_tele_total = maxf(seconds, 0.01)
+	_tele_left = seconds
+	_tele_dirs = _attack_dirs()
+	if data.telegraph_sound:
+		Audio.play(&"boss_warning", Params.telegraph_sound_db, 1.5)
+
+
+## Direções dos tiros do próximo disparo, conforme o padrão.
+func _attack_dirs() -> PackedVector2Array:
+	var dirs := PackedVector2Array()
 	match data.fire_pattern:
 		EnemyData.FirePattern.STRAIGHT:
-			_fire(Vector2.DOWN)
+			dirs.append(Vector2.DOWN)
 		EnemyData.FirePattern.AIMED:
 			var player: Player = context.player
-			_fire(Vector2.DOWN if player == null else (player.position - position).normalized())
+			dirs.append(Vector2.DOWN if player == null else (player.position - position).normalized())
 		EnemyData.FirePattern.FAN:
 			var player: Player = context.player
 			var aim: float = PI * 0.5 if player == null else (player.position - position).angle()
 			var spread: float = deg_to_rad(data.fan_degrees)
 			for i in data.fan_count:
 				var t: float = 0.0 if data.fan_count == 1 else float(i) / (data.fan_count - 1) - 0.5
-				_fire(Vector2.from_angle(aim + spread * t))
+				dirs.append(Vector2.from_angle(aim + spread * t))
 		EnemyData.FirePattern.RING:
 			for i in data.ring_count:
-				_fire(Vector2.from_angle(_ring_angle + TAU * i / data.ring_count))
-			_ring_angle += deg_to_rad(data.ring_turn_degrees)
+				dirs.append(Vector2.from_angle(_ring_angle + TAU * i / data.ring_count))
+	return dirs
+
+
+func _shoot() -> void:
+	var dirs: PackedVector2Array = _tele_dirs if not _tele_dirs.is_empty() else _attack_dirs()
+	for dir in dirs:
+		_fire(dir)
+	_tele_dirs.resize(0)
+	if data.fire_pattern == EnemyData.FirePattern.RING:
+		_ring_angle += deg_to_rad(data.ring_turn_degrees)
 
 
 func _fire(direction: Vector2) -> void:
@@ -221,3 +256,27 @@ func _draw() -> void:
 		inner.append(dir * radius * 0.45)
 	draw_colored_polygon(outer, color)
 	draw_colored_polygon(inner, color.darkened(0.5))
+	_draw_telegraph()
+
+
+## Aviso do próximo ataque (direções em coordenadas globais, desfeita a rotação do inimigo).
+func _draw_telegraph() -> void:
+	if data.movement == EnemyData.Movement.DIVE and _age < data.dive_delay and _age >= data.dive_delay - data.telegraph_seconds:
+		var td: float = 1.0 - (data.dive_delay - _age) / maxf(data.telegraph_seconds, 0.01)
+		var player: Player = context.player
+		draw_circle(Vector2.ZERO, radius * 0.6, Color(Params.telegraph_dive_color, 0.5 * td))
+		if player != null:
+			var dir: Vector2 = (player.position - position).normalized().rotated(-rotation)
+			Telegraph.draw_lines(self, Vector2.ZERO, PackedVector2Array([dir]), radius, Params.telegraph_dive_color, td)
+	if _tele_left < 0.0:
+		return
+	var t: float = 1.0 - clampf(_tele_left / _tele_total, 0.0, 1.0)
+	var dirs := PackedVector2Array()
+	for dir in _tele_dirs:
+		dirs.append(dir.rotated(-rotation))
+	if data.fire_pattern == EnemyData.FirePattern.RING:
+		Telegraph.draw_ring(self, Vector2.ZERO, radius, data.bullet_color, t)
+		return
+	if data.bullet_radius >= Params.telegraph_big_radius and not dirs.is_empty():
+		Telegraph.draw_orb(self, dirs[0] * radius, data.bullet_radius, data.bullet_color, t)
+	Telegraph.draw_lines(self, Vector2.ZERO, dirs, radius, data.bullet_color, t)

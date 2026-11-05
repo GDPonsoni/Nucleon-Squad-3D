@@ -43,6 +43,8 @@ enum FirePattern {
 @export var bullet_radius: float = 14.0
 @export var bullet_damage: int = 1
 @export var bullet_color: Color = Color(1.0, 0.35, 0.75)
+@export var telegraph_seconds: float = 0.4  # aviso antes de cada disparo (e antes do mergulho, em DIVE)
+@export var telegraph_sound: bool = false  # o aviso também toca som (tiros grandes)
 @export var ring_count: int = 12  # RING: tiros por anel
 @export var ring_turn_degrees: float = 15.0  # RING: giro do anel a cada disparo
 @export var fan_count: int = 5  # FAN: tiros por leque
