@@ -81,6 +81,17 @@ func _tick_spawn(delta: float) -> bool:
 	return _spawn_left > 0.0
 
 
+## Clarão curto na ponta logo depois de atirar (left = segundos restantes).
+func _draw_muzzle_flash(left: float) -> void:
+	if left <= 0.0:
+		return
+	var t: float = left / Params.muzzle_flash_seconds
+	var tip := Vector2(0.0, -muzzle_offset)
+	var r: float = Params.ship_size.x * Params.muzzle_flash_scale * (0.6 + 0.4 * t) * minf(Params.anim_intensity, 1.5)
+	draw_circle(tip, r, Color(data.color, 0.55 * t))
+	draw_circle(tip, r * 0.5, Color(1.0, 1.0, 1.0, 0.9 * t))
+
+
 ## Carregamento na ponta: orbe que cresce e anel que converge.
 func _draw_charge() -> void:
 	if _spawn_left <= 0.0:

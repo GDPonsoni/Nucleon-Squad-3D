@@ -41,6 +41,7 @@ func _player_bullets_vs_enemies() -> void:
 			if bullet.position.distance_squared_to(enemy.position) > reach * reach:
 				continue
 			enemy.take_damage(bullet.damage)
+			_context.spark(bullet.position, bullet.color(), 1.0)
 			if bullet.splash_radius > 0.0:
 				_splash(bullet, enemy)
 			if bullet.pierce_left > 0:

@@ -7,6 +7,7 @@ const MAX_LENGTH: float = 4000.0  # passa da tela em qualquer ângulo
 
 var _lengths := PackedFloat32Array()
 var _ticks := PackedFloat32Array()
+var _hits := PackedByteArray()  # 1 = o raio k está acertando um inimigo
 
 
 func apply_stats(values: WeaponLevel) -> void:
@@ -16,6 +17,8 @@ func apply_stats(values: WeaponLevel) -> void:
 	_lengths.fill(0.0)
 	_ticks.resize(count)
 	_ticks.fill(0.0)
+	_hits.resize(count)
+	_hits.fill(0)
 
 
 func _process(delta: float) -> void:
@@ -42,11 +45,13 @@ func _process(delta: float) -> void:
 				hit = stop
 				target = enemy
 		_lengths[k] = hit
+		_hits[k] = 1 if target != null else 0
 		_ticks[k] = maxf(_ticks[k] - delta, 0.0)
 		if target != null and _ticks[k] == 0.0 and not is_spawning():
 			_ticks[k] = stats.beam_tick_seconds / rate()
 			target.take_damage(damage())
 			Audio.shot(data.kind, sound_db)
+			context.spark(origin + dir * hit, data.color, 0.8)
 	queue_redraw()
 
 
@@ -69,4 +74,19 @@ func _draw() -> void:
 		draw_rect(Rect2(-width * 0.5, -length, width, length), glow)
 		draw_rect(Rect2(-width * 0.2, -length, width * 0.4, length), core)
 	draw_set_transform(Vector2.ZERO)
+	# Origem do raio brilha e o ponto de acerto pulsa com fagulhas
+	var pulse: float = 0.75 + 0.25 * sin(Time.get_ticks_msec() * 0.03)
+	for k in stats.beam_angles.size():
+		var width: float = stats.beam_widths[k] * ease(clampf((spawn_progress() - 0.3) / 0.7, 0.0, 1.0), 0.5)
+		var base: Vector2 = tip + Vector2(stats.beam_offsets[k], 0.0)
+		draw_circle(base, width * 0.9 * pulse, Color(data.color, 0.45))
+		draw_circle(base, width * 0.4, Color(1.0, 1.0, 1.0, 0.85))
+		if _hits[k] == 1:
+			var end: Vector2 = base + _direction(k) * _lengths[k]
+			var r: float = width * Params.beam_impact_scale * pulse
+			draw_circle(end, r, Color(data.color, 0.5))
+			draw_circle(end, r * 0.5, Color(1.0, 1.0, 1.0, 0.9))
+			for s in 3:
+				var a: float = randf() * TAU
+				draw_line(end, end + Vector2.from_angle(a) * r * randf_range(1.0, 2.2), Color(data.color.lightened(0.5), 0.8), 2.0)
 	_draw_charge()

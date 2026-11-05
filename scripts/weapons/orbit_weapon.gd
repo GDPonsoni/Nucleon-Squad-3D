@@ -37,6 +37,7 @@ func _process(delta: float) -> void:
 			if center.distance_squared_to(enemy.position) <= reach * reach:
 				_cooldowns[enemy] = stats.orbit_hit_seconds / rate()
 				enemy.take_damage(damage())
+				context.spark(center, data.color, 0.8)
 				Audio.shot(data.kind, sound_db)
 	queue_redraw()
 
@@ -75,5 +76,13 @@ func _draw() -> void:
 	var grow: float = _grow()
 	draw_arc(pivot, stats.orbit_radius * grow, 0.0, TAU, 64, Color(data.color, 0.15 + 0.3 * (1.0 - spawn_progress())), 3.0)
 	for i in stats.orbit_count:
+		# Rastro de cometa: arco que some atrás da esfera
+		var a0: float = _angle + TAU * i / stats.orbit_count
+		var steps: int = 6
+		for j in steps:
+			var from_a: float = a0 - Params.orbit_trail_radians * (j + 1) / steps
+			var to_a: float = a0 - Params.orbit_trail_radians * j / steps
+			draw_arc(pivot, stats.orbit_radius * grow, from_a, to_a, 4, Color(data.color, 0.5 * (1.0 - float(j) / steps)), stats.orbit_size * 0.6 * (1.0 - float(j) / steps))
+		draw_circle(pivot + _offset(i), stats.orbit_size * 0.8 * minf(grow, 1.0), Color(data.color, 0.25))
 		draw_circle(pivot + _offset(i), stats.orbit_size * 0.5 * minf(grow, 1.0), data.color)
 		draw_circle(pivot + _offset(i), stats.orbit_size * 0.2 * minf(grow, 1.0), Color.WHITE)

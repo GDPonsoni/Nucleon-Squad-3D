@@ -37,6 +37,8 @@ func _ready() -> void:
 	_targets = NodePool.new(TrainingTarget.new, Params.inspect_target_positions.size())
 	_world.add_child(_targets)
 	_context.enemies = _targets
+	_context.impacts = NodePool.new(HitSpark.new, 16)
+	_world.add_child(_context.impacts)
 	_context.enemy_bullets = NodePool.new(Bullet.new, 1)
 	_world.add_child(_context.enemy_bullets)
 	_context.power_ups = NodePool.new(PowerUp.new, 1)

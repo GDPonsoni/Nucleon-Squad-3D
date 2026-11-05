@@ -180,6 +180,11 @@ func _draw() -> void:
 				draw_arc(Vector2.ZERO, _size.x * 0.75, 0.0, TAU, 24, Color(_color, 0.8), 3.0)
 		Shape.TRIANGLE:
 			var half: Vector2 = _size * 0.5
+			if target_finder.is_valid() and homing_turn_rate > 0.0:
+				# Chama do propulsor, atrás do míssil (a forma aponta para cima)
+				var len: float = _size.y * Params.missile_flame_length * randf_range(0.7, 1.2)
+				draw_colored_polygon(PackedVector2Array([Vector2(-half.x * 0.6, half.y), Vector2(half.x * 0.6, half.y), Vector2(0.0, half.y + len)]), Color(1.0, 0.6, 0.2, 0.8))
+				draw_colored_polygon(PackedVector2Array([Vector2(-half.x * 0.3, half.y), Vector2(half.x * 0.3, half.y), Vector2(0.0, half.y + len * 0.55)]), Color(1.0, 0.95, 0.7, 0.95))
 			draw_colored_polygon(PackedVector2Array([
 				Vector2(0.0, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y),
 			]), _color)

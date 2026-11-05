@@ -39,6 +39,7 @@ func _discharge() -> void:
 		points.append(target.position)
 		current = target.position
 		target.take_damage(amount)
+		context.spark(target.position, data.color, 0.9)
 		amount *= stats.chain_falloff
 	if points.size() > 1:
 		_bolts.append({"points": points, "age": 0.0})
@@ -69,6 +70,11 @@ func _draw() -> void:
 		var points: PackedVector2Array = bolt["points"]
 		for i in points.size() - 1:
 			_draw_bolt(to_local(points[i]), to_local(points[i + 1]), fade)
+		# Brilho em cada ponto de acerto; a ponta da nave faísca na descarga
+		for i in points.size():
+			var r: float = (14.0 if i > 0 else 20.0) * fade
+			draw_circle(to_local(points[i]), r, Color(data.color, 0.5 * fade))
+			draw_circle(to_local(points[i]), r * 0.45, Color(1.0, 1.0, 1.0, fade))
 
 
 ## Raio quebrado entre dois pontos: brilho largo na cor da arma e miolo branco.

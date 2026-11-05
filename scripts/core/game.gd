@@ -77,6 +77,12 @@ func _ready() -> void:
 	explosions.name = "Explosions"
 	add_child(explosions)
 
+	# Faíscas de acerto, acima dos inimigos
+	var impacts := NodePool.new(HitSpark.new, Params.impact_pool_size)
+	impacts.name = "Impacts"
+	add_child(impacts)
+	context.impacts = impacts
+
 	# Corpos que saem de cena (troca e quebra), atrás da nave
 	body_fx = NodePool.new(BodyFx.new, Params.body_fx_pool_size)
 	body_fx.name = "BodyFx"

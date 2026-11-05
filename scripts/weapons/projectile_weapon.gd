@@ -5,6 +5,7 @@ extends Weapon
 ## Versões auxiliares podem atirar em ângulos fixos (fire_angles) ou mirar no grupo mais denso.
 
 var _cooldown: float = 0.0
+var _flash_left: float = 0.0
 
 
 func _process(delta: float) -> void:
@@ -13,6 +14,9 @@ func _process(delta: float) -> void:
 		_cooldown = 0.0  # carrega e atira assim que o carregamento termina
 		return
 	_cooldown -= delta
+	if _flash_left > 0.0:
+		_flash_left -= delta
+		queue_redraw()
 	if _cooldown > 0.0:
 		return
 	_cooldown += 1.0 / (stats.fire_rate * rate())
@@ -21,10 +25,12 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	_draw_charge()
+	_draw_muzzle_flash(_flash_left)
 
 
 func _fire() -> void:
 	Audio.shot(data.kind, sound_db)
+	_flash_left = Params.muzzle_flash_seconds
 	var origin: Vector2 = muzzle()
 	var base: float = -PI * 0.5
 	# Auxiliar de área: mira o grupo mais denso (sem inimigos, atira para cima)

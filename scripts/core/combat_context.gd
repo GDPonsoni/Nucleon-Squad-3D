@@ -6,9 +6,19 @@ var player_bullets: NodePool
 var enemy_bullets: NodePool
 var enemies: NodePool
 var power_ups: NodePool
+var impacts: NodePool  # faíscas de acerto (pode ser null em testes)
 var player: Player
 var boss: Boss  # fora do pool; null quando não há chefe
 var boosts: PlayerBoosts = PlayerBoosts.new()  # evolução do núcleo (neutro em testes)
+
+
+## Faísca de acerto no ponto (ignora se o contexto não tem o pool).
+func spark(pos: Vector2, color: Color, size: float = 1.0) -> void:
+	if impacts == null:
+		return
+	var item := impacts.acquire() as HitSpark
+	if item != null:
+		item.activate(pos, color, size)
 
 
 ## Alvos atingíveis: inimigos ativos e, se houver, o chefe.

@@ -8,6 +8,7 @@ enum Phase { COOLDOWN, AIMING }
 var _phase: Phase = Phase.COOLDOWN
 var _timer: float = 0.0
 var _aim_angle: float = -PI * 0.5  # direção para onde os mísseis da onda apontam
+var _launch_flash: float = 0.0
 
 
 func apply_stats(values: WeaponLevel) -> void:
@@ -27,6 +28,7 @@ func _process(delta: float) -> void:
 	_tick_spawn(delta)
 	# delta escalado: as ondas também desaceleram na câmera lenta
 	_timer -= delta
+	_launch_flash = maxf(_launch_flash - delta, 0.0)
 	if _phase == Phase.COOLDOWN:
 		if _timer <= 0.0:
 			_phase = Phase.AIMING
@@ -43,6 +45,7 @@ func _process(delta: float) -> void:
 
 
 func _launch_wave() -> void:
+	_launch_flash = Params.muzzle_flash_seconds * 2.0
 	Audio.shot(data.kind, sound_db)
 	var dir := Vector2.from_angle(_aim_angle)
 	for i in stats.projectile_count:
@@ -68,6 +71,10 @@ func _slot(index: int) -> Vector2:
 
 
 func _draw() -> void:
+	if _launch_flash > 0.0:
+		# Onda de choque curta no anel de lançamento
+		var u: float = 1.0 - _launch_flash / (Params.muzzle_flash_seconds * 2.0)
+		draw_arc(Vector2.ZERO, stats.launch_radius * (1.0 + u * 0.8), 0.0, TAU, 32, Color(data.color.lightened(0.4), (1.0 - u) * 0.8), 4.0)
 	if _phase != Phase.AIMING:
 		return
 	# Os mísseis crescem enquanto miram
