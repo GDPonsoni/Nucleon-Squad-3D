@@ -4,7 +4,11 @@ extends Node2D
 ## Controle relativo: a nave segue o deslocamento do dedo desde o toque inicial.
 
 var body: BodyData  # null = só o núcleo (corpo destruído, aguardando escolha)
-var weapon: Weapon
+var mount: WeaponMount  # armas do corpo ativo
+## Arma principal do corpo ativo (null sem corpo).
+var weapon: Weapon:
+	get:
+		return mount.primary() if mount != null else null
 var cracks: int = 0:  # rachaduras no núcleo, uma por corpo perdido
 	set(value):
 		cracks = value
@@ -45,6 +49,11 @@ func _ready() -> void:
 
 func setup(context: CombatContext) -> void:
 	_context = context
+	mount = WeaponMount.new()
+	mount.name = "WeaponMount"
+	mount.show_behind_parent = true
+	mount.setup(context)
+	add_child(mount)
 
 
 func bind_input(touch: TouchInput) -> void:
@@ -56,23 +65,19 @@ func bind_input(touch: TouchInput) -> void:
 func set_body(data: BodyData, weapon_level: int, invulnerable_seconds: float) -> void:
 	clear_body()
 	body = data
-	weapon = Weapon.create(data.weapon, _context, weapon_level)
-	weapon.show_behind_parent = true
-	add_child(weapon)
-	weapon.set_active(false)
+	mount.set_active(false)
+	mount.equip(data.weapon, weapon_level)
 	start_invulnerability(invulnerable_seconds)
 	_build_tween = create_tween()
 	_build_tween.tween_method(_set_build, 0.0, 1.0, Params.body_rebuild_seconds)
-	_build_tween.finished.connect(weapon.set_active.bind(true))
+	_build_tween.finished.connect(mount.set_active.bind(true))
 
 
 ## Fica só o núcleo (corpo destruído).
 func clear_body() -> void:
 	if _build_tween != null:
 		_build_tween.kill()
-	if weapon != null:
-		weapon.queue_free()
-		weapon = null
+	mount.clear()
 	body = null
 	_set_build(0.0)
 

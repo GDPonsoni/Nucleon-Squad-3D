@@ -5,6 +5,7 @@ class_name SpecialAttack
 ## que se expande pela tela, limpa os tiros e causa dano. Lança: leque de lanças gigantes
 ## que atravessam tudo. Artilharia: bombardeio de explosões pela tela. Tesla: tempestade
 ## de raios em todos os inimigos. Ricochete: orbes que ricocheteiam entre os inimigos.
+## O especial pertence à arma (WeaponData) e sai do portador (player: qualquer Node2D).
 
 
 ## Dano do especial com a evolução do núcleo (dano geral e dano de especial).
@@ -12,7 +13,7 @@ static func damage_of(data: WeaponData, context: CombatContext) -> float:
 	return data.special_damage * context.boosts.damage * context.boosts.special_damage
 
 
-static func trigger(data: WeaponData, player: Player, context: CombatContext, world: Node) -> void:
+static func trigger(data: WeaponData, player: Node2D, context: CombatContext, world: Node) -> void:
 	match data.kind:
 		WeaponData.Kind.BEAM:
 			var beam := GiantBeam.new()
@@ -48,7 +49,7 @@ static func _shockwave(context: CombatContext, world: Node, center: Vector2, rad
 
 
 ## Leque de lanças gigantes que atravessam todos os inimigos.
-static func _lances(data: WeaponData, player: Player, context: CombatContext) -> void:
+static func _lances(data: WeaponData, player: Node2D, context: CombatContext) -> void:
 	var spread: float = deg_to_rad(Params.special_lance_spread_degrees)
 	var size := Vector2(data.special_width, data.special_width * Params.special_lance_length_ratio)
 	for i in data.special_count:
@@ -62,7 +63,7 @@ static func _lances(data: WeaponData, player: Player, context: CombatContext) ->
 
 
 ## Orbes em 360° que ricocheteiam entre os inimigos e nas laterais da tela.
-static func _pinball(data: WeaponData, player: Player, context: CombatContext) -> void:
+static func _pinball(data: WeaponData, player: Node2D, context: CombatContext) -> void:
 	for i in data.special_count:
 		var bullet := context.player_bullets.acquire() as Bullet
 		if bullet == null:
@@ -77,7 +78,7 @@ static func _pinball(data: WeaponData, player: Player, context: CombatContext) -
 
 
 ## Anéis de projéteis em 360°, um pouco defasados entre si.
-static func _burst(data: WeaponData, player: Player, context: CombatContext) -> void:
+static func _burst(data: WeaponData, player: Node2D, context: CombatContext) -> void:
 	var per_ring: int = maxi(data.special_count / Params.special_burst_rings, 1)
 	for ring in Params.special_burst_rings:
 		var offset: float = TAU / per_ring * ring / Params.special_burst_rings
@@ -91,7 +92,7 @@ static func _burst(data: WeaponData, player: Player, context: CombatContext) -> 
 
 
 ## Dois mísseis por inimigo na tela (até special_count), cada um preso ao seu alvo.
-static func _missile_rain(data: WeaponData, player: Player, context: CombatContext) -> void:
+static func _missile_rain(data: WeaponData, player: Node2D, context: CombatContext) -> void:
 	var targets: Array[Enemy] = []
 	for item in context.hostiles():
 		var enemy := item as Enemy

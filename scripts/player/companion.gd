@@ -5,7 +5,7 @@ extends Node2D
 ## Perto da borda da tela, troca de lado para não sair da tela.
 
 var body: BodyData
-var weapon: Weapon
+var mount: WeaponMount
 
 var _player: Player
 var _side: float = -1.0  # -1 = à esquerda da nave, 1 = à direita
@@ -14,12 +14,15 @@ var _side: float = -1.0  # -1 = à esquerda da nave, 1 = à direita
 func setup(data: BodyData, context: CombatContext) -> void:
 	body = data
 	_player = context.player
-	weapon = Weapon.create_companion(data.weapon, context)
-	weapon.power = context.boosts.companion_damage
-	weapon.sound_db = Params.companion_sound_db
-	weapon.muzzle_offset = Params.ship_size.y * 0.5 * Params.companion_scale
-	weapon.show_behind_parent = true
-	add_child(weapon)
+	mount = WeaponMount.new()
+	mount.name = "WeaponMount"
+	mount.show_behind_parent = true
+	mount.setup(context, WeaponMount.Variant.COMPANION)
+	mount.power = context.boosts.companion_damage
+	mount.sound_db = Params.companion_sound_db
+	mount.muzzle_offset = Params.ship_size.y * 0.5 * Params.companion_scale
+	add_child(mount)
+	mount.equip(data.weapon)
 	position = _goal()
 
 
@@ -34,8 +37,8 @@ func _process(delta: float) -> void:
 	position = position.lerp(_goal(), weight)
 	# Sem corpo na nave principal (aguardando a escolha), a auxiliar não atira
 	var active: bool = _player.body != null
-	if weapon.is_processing() != active:
-		weapon.set_active(active)
+	if mount.is_active() != active:
+		mount.set_active(active)
 	modulate.a = Params.companion_alpha if active else Params.companion_alpha * 0.4
 	queue_redraw()
 

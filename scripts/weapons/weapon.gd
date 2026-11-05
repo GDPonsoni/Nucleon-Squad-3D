@@ -1,11 +1,13 @@
 class_name Weapon
 extends Node2D
-## Base das armas. Fica como filho da nave e dispara sozinha enquanto está ativa.
+## Base das armas: componente independente (dados em WeaponData) que fica num WeaponMount
+## de qualquer portador (nave principal ou auxiliar) e dispara sozinho enquanto está ativo.
 
 var data: WeaponData
 var context: CombatContext
 var level: int = 1
 var stats: WeaponLevel  # valores do nível atual
+var variant: int = 0  # WeaponMount.Variant: completa ou da nave auxiliar
 var power: float = 1.0  # multiplicador de dano próprio (nave auxiliar)
 var sound_db: float = 0.0  # ajuste de volume dos disparos (nave auxiliar soa mais baixo)
 var muzzle_offset: float = Params.ship_size.y * 0.5  # distância do centro até a ponta
@@ -27,13 +29,6 @@ static func create(weapon_data: WeaponData, combat_context: CombatContext, start
 	weapon.data = weapon_data
 	weapon.context = combat_context
 	weapon.set_level(start_level)
-	return weapon
-
-
-## Arma da nave auxiliar: usa a versão simples e fraca (WeaponData.companion), sem níveis.
-static func create_companion(weapon_data: WeaponData, combat_context: CombatContext) -> Weapon:
-	var weapon := create(weapon_data, combat_context, 1)
-	weapon.apply_stats(weapon_data.companion if weapon_data.companion != null else weapon_data.level(1))
 	return weapon
 
 
