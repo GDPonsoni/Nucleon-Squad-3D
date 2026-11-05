@@ -171,4 +171,3 @@ INSPECT_REMOVE,Remove from squad,Tirar do esquadrão,Quitar del escuadrón
 INSPECT_SET_AUX,Use as wingman,Usar como auxiliar,Usar como auxiliar
 INSPECT_CLEAR_AUX,Remove wingman,Tirar auxiliar,Quitar auxiliar
 INSPECT_UPGRADE,Wingman power-up: %s,Power-up da auxiliar: %s,Power-up de la auxiliar: %s
-INSPECT_SPECIAL,Special,Especial,Especial

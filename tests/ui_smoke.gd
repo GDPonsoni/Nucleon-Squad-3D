@@ -90,7 +90,12 @@ func _ready() -> void:
 						overflow += _check_overflow(inspect, "inspeção %s %s" % [body.id, language])
 					# Especial na demonstração (pega erros dos efeitos fora da partida)
 					inspect.call("_on_special_pressed")
-					await get_tree().create_timer(0.5, true, false, true).timeout
+					await get_tree().create_timer(Params.inspect_special_refill_seconds + 0.2, true, false, true).timeout
+					if float(inspect.get("_special_charge")) < 1.0:
+						printerr("FALHOU: especial da inspeção não recarregou")
+						failures += 1
+					inspect.call("_on_special_pressed")  # de novo
+					await get_tree().create_timer(0.3, true, false, true).timeout
 					inspect.call("_on_companion_pressed")
 					inspect.call("_on_squad_pressed")
 					inspect.close()

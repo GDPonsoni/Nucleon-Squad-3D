@@ -22,8 +22,8 @@ var _mode_buttons: Array[Button] = []
 var _level_row: HBoxContainer
 var _demo: WeaponDemo
 var _description: Label
-var _special_button: Button
-var _special_wait: float = 0.0
+var _special_button: SpecialButton
+var _special_charge: float = 1.0
 var _squad_button: Button
 var _companion_button: Button
 
@@ -73,8 +73,19 @@ func _build_body() -> void:
 	_level_row.add_theme_constant_override("separation", Params.dialog_spacing)
 	body.add_child(_level_row)
 
-	_demo = WeaponDemo.new(Vector2(content_width, content_width * Params.inspect_demo_height_ratio))
-	body.add_child(_demo)
+	# Demonstração com o mesmo botão de especial da partida no canto inferior esquerdo
+	var demo_size := Vector2(content_width, content_width * Params.inspect_demo_height_ratio)
+	var demo_holder := Control.new()
+	demo_holder.custom_minimum_size = demo_size
+	body.add_child(demo_holder)
+	_demo = WeaponDemo.new(demo_size)
+	demo_holder.add_child(_demo)
+	_special_button = SpecialButton.new()
+	_special_button.body = ship
+	_special_button.charge = 1.0
+	_special_button.position = Vector2(Params.inspect_special_margin, demo_size.y - Params.special_button_size - Params.inspect_special_margin)
+	_special_button.pressed.connect(_on_special_pressed)
+	demo_holder.add_child(_special_button)
 
 	_description = Label.new()
 	_description.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -107,11 +118,10 @@ func _build_locked() -> void:
 
 func _process(delta: float) -> void:
 	super(delta)
-	# Espera entre especiais na demonstração (tempo real), para não acumular efeitos
-	if _special_wait > 0.0:
-		_special_wait -= delta / maxf(Engine.time_scale, 0.01)
-		if _special_wait <= 0.0 and _special_button != null:
-			_special_button.disabled = false
+	# Depois de usar, o anel do especial recarrega rápido (tempo real) para testar de novo
+	if _special_button != null and _special_charge < 1.0:
+		_special_charge = minf(_special_charge + delta / maxf(Engine.time_scale, 0.01) / Params.inspect_special_refill_seconds, 1.0)
+		_special_button.charge = _special_charge
 
 
 func _action_button(row: HBoxContainer, action: Callable) -> Button:
@@ -145,22 +155,14 @@ func _build_levels() -> void:
 		button.pressed.connect(_set_level.bind(i + 1))
 		_level_row.add_child(button)
 	# Especial: só a arma principal tem
-	if _mode == Mode.MAIN:
-		_special_button = UiFactory.make_primary_button("INSPECT_SPECIAL")
-		_special_button.custom_minimum_size = Vector2(Params.inspect_special_button_width, Params.inspect_level_button_size)
-		UiFactory.fit_button_text(_special_button)
-		_special_button.disabled = _special_wait > 0.0
-		_special_button.pressed.connect(_on_special_pressed)
-		_level_row.add_child(_special_button)
-	else:
-		_special_button = null
+	_special_button.visible = _mode == Mode.MAIN
 
 
 func _set_level(level: int) -> void:
 	_level = level
 	var index: int = 0
 	for child in _level_row.get_children():
-		if child.is_queued_for_deletion() or child == _special_button:
+		if child.is_queued_for_deletion():
 			continue
 		(child as Button).theme_type_variation = &"PrimaryButton" if index == level - 1 else &""
 		index += 1
@@ -190,10 +192,12 @@ func _refresh_texts() -> void:
 
 
 func _on_special_pressed() -> void:
+	if _special_charge < 1.0:
+		return
 	Audio.play(&"special_fire")
 	_demo.trigger_special(ship)
-	_special_button.disabled = true
-	_special_wait = Params.inspect_special_wait_seconds
+	_special_charge = 0.0
+	_special_button.charge = 0.0
 
 
 func _on_squad_pressed() -> void:
