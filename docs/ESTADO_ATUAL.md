@@ -45,6 +45,8 @@ $G --headless --path . -s res://scripts/tools/validate_project.gd
 $G --headless --path . -s res://tests/run_tests.gd
 # Abre todas as telas e a partida em PT e EN, clicando nos botões
 $G --headless --path . -s res://tests/ui_smoke_run.gd
+# Regressões da partida (toques no especial, alvos liberados quando o chefe morre)
+$G --headless --path . -s res://tests/match_regressions_run.gd
 # Joga fases com piloto automático e mede dificuldade (hits que levaria, duração de chefe)
 $G --headless --path . --fixed-fps 60 -s res://scripts/tools/simulate_stages.gd -- --chapter 5 --level 1 --seed 1
 # Regera as 45 fases (sobrescreve data/stages, planets e campaign.tres)
@@ -176,6 +178,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - **Intervalo mínimo de som:** tiros e acertos disparam muitas vezes por segundo; novos sons de alta frequência precisam entrar em `sfx_min_gap`.
 - **Campanha gerada:** editar `data/stages/*.tres` à mão se perde ao rodar o gerador de novo.
 - **Arquivos `.uid`:** versione-os junto com os scripts.
+- **O chefe é liberado da memória ao morrer** (não é pooled). Qualquer lista ou dicionário que guarde inimigos precisa checar `is_instance_valid` e não usar laço tipado (`for e: Enemy in ...`), senão dá "previously freed instance" a cada quadro (aconteceu na Órbita).
+- **Erros no celular:** `adb logcat -d -s godot:*` mostra os SCRIPT ERROR da última partida.
 
 ---
 

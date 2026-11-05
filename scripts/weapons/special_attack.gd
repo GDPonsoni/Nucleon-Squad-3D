@@ -113,6 +113,6 @@ static func _missile_rain(data: WeaponData, player: Node2D, context: CombatConte
 			bullet.target_finder = context.nearest_enemy
 		else:
 			var target: Enemy = targets[i % targets.size()]
-			# Persegue o alvo dele; se ele morrer, o inimigo mais próximo
+			# Persegue o alvo dele; se ele morrer (o chefe é liberado da memória), o mais próximo
 			bullet.target_finder = func(from: Vector2) -> Enemy:
-				return target if target.visible else context.nearest_enemy(from)
+				return target if is_instance_valid(target) and target.visible else context.nearest_enemy(from)

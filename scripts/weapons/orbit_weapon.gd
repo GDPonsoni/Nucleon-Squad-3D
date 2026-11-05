@@ -10,9 +10,13 @@ var _cooldowns: Dictionary = {}  # Enemy -> segundos até poder levar dano de no
 func _process(delta: float) -> void:
 	_angle = wrapf(_angle + deg_to_rad(stats.orbit_speed_degrees) * delta, 0.0, TAU)
 
-	for enemy: Enemy in _cooldowns.keys():
+	# Sem tipo no laço: o chefe é liberado da memória ao morrer e a chave fica inválida
+	for enemy in _cooldowns.keys():
+		if not is_instance_valid(enemy):
+			_cooldowns.erase(enemy)
+			continue
 		_cooldowns[enemy] -= delta
-		if _cooldowns[enemy] <= 0.0 or not enemy.visible:
+		if _cooldowns[enemy] <= 0.0 or not (enemy as Enemy).visible:
 			_cooldowns.erase(enemy)
 
 	var enemies: Array[PoolItem] = context.hostiles()
