@@ -49,7 +49,7 @@ func _process(delta: float) -> void:
 		_ticks[k] = maxf(_ticks[k] - delta, 0.0)
 		if target != null and _ticks[k] == 0.0 and not is_spawning():
 			_ticks[k] = stats.beam_tick_seconds / rate()
-			target.take_damage(damage())
+			target.take_damage(damage(), data.kind, origin + dir * hit)
 			Audio.shot(data.kind, sound_db)
 			context.spark(origin + dir * hit, data.color, 0.8)
 	queue_redraw()

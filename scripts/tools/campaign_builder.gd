@@ -31,6 +31,9 @@ const HP_SCALE: PackedFloat32Array = [1.4, 1.45, 1.55, 1.55, 1.65]  # vida dos i
 const FIRE_SCALE: PackedFloat32Array = [1.35, 1.32, 1.32, 1.3, 1.32]  # cadência de tiro por capítulo
 # Reforço de dificuldade por capítulo (os primeiros estavam fáceis demais)
 const DIFFICULTY_BOOST: PackedFloat32Array = [0.8, 0.5, 0.35, 0.2, 0.0]
+const METEOR_STAGE: int = 6  # índice da fase 7: campo de meteoros em todo capítulo
+const METEOR_WAVE_GAP: float = 1.45  # no campo de meteoros, ondas mais espaçadas
+const ROCKS_FROM_STAGE: int = 6  # capítulo 1: rochas esparsas a partir da fase 7 (depois, em todas)
 const OLD_MOTIF_DECAY: float = 0.65  # peso dos motivos de capítulos anteriores, por capítulo de distância
 const PLANET_KEYS: PackedStringArray = ["PLANET_1_NAME", "PLANET_2_NAME", "PLANET_3_NAME", "PLANET_4_NAME", "PLANET_5_NAME"]
 const BACKGROUNDS: PackedColorArray = [
@@ -47,7 +50,8 @@ var _current_stage: StageData
 
 
 func _ready() -> void:
-	for id in ["drone", "aimer", "kamikaze", "tank", "spreader", "splitter", "hunter", "pulsar", "fissor"]:
+	for id in ["drone", "aimer", "kamikaze", "tank", "spreader", "splitter", "hunter", "pulsar", "fissor",
+			"rock_large", "rock_medium", "rock_small"]:
 		_e[id] = load("res://data/enemies/%s.tres" % id)
 	_define_motifs()
 	var planets: Array[PlanetData] = []
@@ -104,6 +108,7 @@ func _build_stage(c: int, s: int) -> StageData:
 	else:
 		stage.duration_seconds = 75.0 + 9.0 * s + 12.0 * c
 	_set_filler(stage, c, s, d)
+	_set_rocks(stage, c, s)
 	stage.waves = _compose(c, s, d, stage.duration_seconds)
 	return stage
 
@@ -137,11 +142,29 @@ func _set_filler(stage: StageData, c: int, s: int, d: float) -> void:
 	stage.spawn_margin_x = 90.0
 
 
+## Rochas: esparsas a partir da 1-7 (fora das fases de chefe) e um campo de meteoros na
+## fase 7 de cada capítulo, com menos inimigos aleatórios (as rochas são o desafio).
+func _set_rocks(stage: StageData, c: int, s: int) -> void:
+	if s == MIDBOSS_STAGE or s == BOSS_STAGE or (c == 0 and s < ROCKS_FROM_STAGE):
+		return
+	stage.rocks = [_e["rock_large"], _e["rock_medium"], _e["rock_small"]]
+	if s == METEOR_STAGE:
+		stage.rock_weights = PackedFloat32Array([1.0, 1.0, 0.6])
+		stage.rock_interval_min = maxf(2.6 - 0.1 * c, 2.0)
+		stage.rock_interval_max = maxf(3.8 - 0.15 * c, 3.0)
+		stage.spawn_interval_min *= 1.4
+		stage.spawn_interval_max *= 1.4
+	else:
+		stage.rock_weights = PackedFloat32Array([0.4, 1.0, 1.0])
+		stage.rock_interval_min = 9.0
+		stage.rock_interval_max = 14.0
+
+
 ## Linha do tempo: um motivo a cada intervalo, em ciclo; perto do fim, dois de uma vez.
 func _compose(c: int, s: int, d: float, duration: float) -> Array[WaveData]:
 	var chosen: Array[Dictionary] = _choose_motifs(c, s)
 	_log_stage(_current_stage, chosen)
-	var gap: float = GAP_BASE - GAP_PER_DIFFICULTY * d
+	var gap: float = (GAP_BASE - GAP_PER_DIFFICULTY * d) * (METEOR_WAVE_GAP if s == METEOR_STAGE else 1.0)
 	var bonus: int = int(d / COUNT_STEP)
 	var waves: Array[WaveData] = []
 	var t: float = 4.0

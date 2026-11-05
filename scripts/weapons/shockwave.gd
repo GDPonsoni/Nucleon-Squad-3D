@@ -40,7 +40,7 @@ func _process(delta: float) -> void:
 				continue
 			if enemy.position.distance_to(position) <= _radius + enemy.radius:
 				_hit[enemy] = true
-				enemy.take_damage(_damage)
+				enemy.take_damage(_damage, Enemy.SOURCE_SPECIAL)
 
 	queue_redraw()
 	if t >= 1.0:

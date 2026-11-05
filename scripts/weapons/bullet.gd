@@ -6,6 +6,7 @@ enum Shape { RECT, CIRCLE, TRIANGLE }
 
 var velocity: Vector2
 var damage: float = 1.0
+var source: int = -1  # arma que disparou (WeaponData.Kind) ou Enemy.SOURCE_SPECIAL
 var radius: float = 0.0  # raio de colisão
 
 ## Teleguiado: giro máximo em rad/s (0 = reto) e função (posição) -> alvo ou null.
@@ -43,6 +44,7 @@ func activate(pos: Vector2, vel: Vector2, dmg: float, size: Vector2, color: Colo
 	position = pos
 	velocity = vel
 	damage = dmg
+	source = -1
 	radius = (size.x + size.y) * 0.25
 	homing_turn_rate = 0.0
 	homing_turn_growth = 0.0
@@ -104,7 +106,7 @@ func ricochet(hit: Node, hostiles: Array[PoolItem]) -> bool:
 	var best: Node2D = null
 	var best_distance: float = bounce_range * bounce_range
 	for item in hostiles:
-		if item == hit or not item.visible or _pierced.has(item):
+		if item == hit or not item.visible or _pierced.has(item) or not (item as Enemy).is_target():
 			continue
 		var distance: float = position.distance_squared_to(item.position)
 		if distance < best_distance:

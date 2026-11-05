@@ -53,6 +53,7 @@ func _fire() -> void:
 			return
 		bullet.activate(origin, Vector2.from_angle(angle) * stats.projectile_speed, damage(),
 			stats.projectile_size, data.color, stats.projectile_shape)
+		bullet.source = data.kind
 		bullet.life_left = stats.projectile_lifetime
 		bullet.pierce_left = stats.pierce
 		bullet.splash_radius = stats.splash_radius

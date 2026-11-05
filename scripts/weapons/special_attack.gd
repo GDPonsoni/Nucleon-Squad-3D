@@ -59,6 +59,7 @@ static func _lances(data: WeaponData, player: Node2D, context: CombatContext) ->
 		var t: float = 0.0 if data.special_count == 1 else float(i) / (data.special_count - 1) - 0.5
 		var dir := Vector2.from_angle(-PI * 0.5 + spread * t)
 		bullet.activate(player.position, dir * Params.special_lance_speed, damage_of(data, context), size, data.color, Bullet.Shape.RECT)
+		bullet.source = Enemy.SOURCE_SPECIAL
 		bullet.pierce_left = Params.special_lance_pierce
 
 
@@ -71,6 +72,7 @@ static func _pinball(data: WeaponData, player: Node2D, context: CombatContext) -
 		var dir := Vector2.from_angle(-PI * 0.5 + TAU * i / data.special_count)
 		bullet.activate(player.position, dir * Params.special_pinball_speed, damage_of(data, context),
 			Params.special_pinball_size, data.color, Bullet.Shape.CIRCLE)
+		bullet.source = Enemy.SOURCE_SPECIAL
 		bullet.bounce_left = Params.special_pinball_bounces
 		bullet.wall_bounce_left = Params.special_pinball_wall_bounces
 		bullet.bounce_range = Params.special_pinball_range
@@ -89,6 +91,7 @@ static func _burst(data: WeaponData, player: Node2D, context: CombatContext) -> 
 			var dir := Vector2.from_angle(offset + TAU * i / per_ring)
 			var speed: float = Params.special_burst_speed * (1.0 - ring * 0.15)
 			bullet.activate(player.position, dir * speed, damage_of(data, context), Params.special_burst_size, data.color, Bullet.Shape.CIRCLE)
+			bullet.source = Enemy.SOURCE_SPECIAL
 
 
 ## Dois mísseis por inimigo na tela (até special_count), cada um preso ao seu alvo.
@@ -96,7 +99,7 @@ static func _missile_rain(data: WeaponData, player: Node2D, context: CombatConte
 	var targets: Array[Enemy] = []
 	for item in context.hostiles():
 		var enemy := item as Enemy
-		if enemy.visible and enemy.is_on_screen():
+		if enemy.visible and enemy.is_on_screen() and enemy.is_target():
 			targets.append(enemy)
 	var count: int = data.special_count if targets.is_empty() else mini(targets.size() * 2, data.special_count)
 	for i in count:
@@ -106,6 +109,7 @@ static func _missile_rain(data: WeaponData, player: Node2D, context: CombatConte
 		var dir := Vector2.from_angle(-PI * 0.5 + TAU * i / count)
 		bullet.activate(player.position + dir * Params.ship_size.y, dir * Params.special_missile_speed,
 			damage_of(data, context), Params.special_missile_size, data.color, Bullet.Shape.TRIANGLE)
+		bullet.source = Enemy.SOURCE_SPECIAL
 		bullet.life_left = Params.special_missile_lifetime
 		bullet.homing_turn_rate = deg_to_rad(Params.special_missile_turn_degrees)
 		bullet.homing_turn_growth = deg_to_rad(Params.special_missile_turn_degrees)

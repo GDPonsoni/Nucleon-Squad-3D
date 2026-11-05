@@ -9,6 +9,7 @@ signal finished
 var _stage: StageData
 var _enemies: NodePool
 var _cooldown: float = 0.0
+var _rock_cooldown: float = 0.0
 var _elapsed: float = 0.0
 var _finished: bool = false
 ## Surgimentos agendados, em ordem de tempo: {time, data, pos, velocity, delay, wave, member}
@@ -19,6 +20,7 @@ func setup(stage: StageData, enemies: NodePool) -> void:
 	_stage = stage
 	_enemies = enemies
 	_cooldown = stage.start_delay
+	_rock_cooldown = stage.start_delay + stage.rock_interval_min
 	for wave in stage.waves:
 		spawn_wave(wave, wave.time_seconds)
 
@@ -119,11 +121,30 @@ func _process(delta: float) -> void:
 		_finished = true
 		finished.emit()
 		return
+	_update_rocks(delta)
 	_cooldown -= delta
 	if _cooldown > 0.0:
 		return
 	_cooldown += randf_range(_stage.spawn_interval_min, _stage.spawn_interval_max)
 	_spawn_random()
+
+
+## Rochas: caem do topo em intervalos sorteados, com deriva lateral e giro próprios.
+func _update_rocks(delta: float) -> void:
+	if _stage.rocks.is_empty() or _stage.rock_interval_max <= 0.0:
+		return
+	_rock_cooldown -= delta
+	if _rock_cooldown > 0.0:
+		return
+	_rock_cooldown += randf_range(_stage.rock_interval_min, _stage.rock_interval_max)
+	var rock := _enemies.acquire() as Enemy
+	if rock == null:
+		return
+	var data: EnemyData = _pick_from(_stage.rocks, _stage.rock_weights)
+	var rect: Rect2 = get_viewport().get_visible_rect()
+	var x: float = randf_range(rect.position.x + data.radius, rect.end.x - data.radius)
+	rock.activate(data, Vector2(x, rect.position.y - data.radius), Vector2(randf_range(-data.drift_x, data.drift_x), data.speed))
+	rock.apply_stage(_stage)
 
 
 func _spawn_random() -> void:
@@ -147,9 +168,12 @@ func _spawn_random() -> void:
 
 ## Sorteio ponderado por spawn_weights (sem pesos: todos iguais).
 func _pick() -> EnemyData:
-	var weights: PackedFloat32Array = _stage.spawn_weights
-	if weights.size() != _stage.enemies.size():
-		return _stage.enemies.pick_random()
+	return _pick_from(_stage.enemies, _stage.spawn_weights)
+
+
+func _pick_from(list: Array[EnemyData], weights: PackedFloat32Array) -> EnemyData:
+	if weights.size() != list.size():
+		return list.pick_random()
 	var total: float = 0.0
 	for w in weights:
 		total += w
@@ -157,5 +181,5 @@ func _pick() -> EnemyData:
 	for i in weights.size():
 		roll -= weights[i]
 		if roll <= 0.0:
-			return _stage.enemies[i]
-	return _stage.enemies.back()
+			return list[i]
+	return list.back()

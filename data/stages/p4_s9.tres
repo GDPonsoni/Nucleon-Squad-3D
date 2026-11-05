@@ -273,3 +273,4 @@ spawn_interval_max = 2.089999998658895
 spawn_margin_x = 90.0
 enemy_hp_scale = 1.55
 enemy_fire_scale = 1.3
+rock_weights = PackedFloat32Array()

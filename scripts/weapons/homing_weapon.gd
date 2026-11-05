@@ -54,6 +54,7 @@ func _launch_wave() -> void:
 			return
 		bullet.activate(global_position + _slot(i), dir * stats.projectile_speed, damage(),
 			stats.projectile_size, data.color, stats.projectile_shape)
+		bullet.source = data.kind
 		bullet.life_left = stats.projectile_lifetime
 		bullet.homing_turn_rate = deg_to_rad(stats.homing_turn_degrees)
 		bullet.homing_turn_growth = deg_to_rad(stats.homing_turn_growth_degrees)

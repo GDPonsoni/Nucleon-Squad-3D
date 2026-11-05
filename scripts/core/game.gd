@@ -469,7 +469,7 @@ func _create_enemy() -> PoolItem:
 ## Inimigos com fissão viram pedaços ao serem destruídos.
 func _on_enemy_split(killed: Enemy) -> void:
 	var data: EnemyData = killed.data
-	if data.death_spawn != null and data.death_spawn_count > 0:
+	if data.death_spawn != null and data.death_spawn_count > 0 and not killed.crushed:
 		spawner.spawn_burst(data.death_spawn, killed.position, data.death_spawn_count, data.death_spawn_spread_degrees)
 
 

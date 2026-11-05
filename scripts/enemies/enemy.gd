@@ -5,11 +5,15 @@ extends PoolItem
 ## Destruído pelo jogador (não emite ao sair da tela).
 signal killed(enemy: Enemy)
 
+const SOURCE_NONE: int = -1  # dano sem arma (contato, ferramentas)
+const SOURCE_SPECIAL: int = 100  # especiais (ignoram multiplicadores e a blindagem dos momentos de especial)
+
 var data: EnemyData
 var hp: float = 0.0
 var radius: float = 0.0
 var bullets: NodePool  # projéteis inimigos
 var context: CombatContext  # para mirar na nave
+var crushed: bool = false  # destruído ao encostar na nave: não se divide (rochas, fissão)
 
 var _velocity: Vector2
 var _age: float = 0.0
@@ -17,6 +21,9 @@ var _entered: bool = false  # já apareceu na tela (antes disso não sai por "sa
 var _fire_cooldown: float = 0.0
 var _ring_angle: float = 0.0
 var _flash_left: float = 0.0
+var _flash_color: Color = Color.WHITE  # branco = normal; dourado = fraco contra a arma; cinza = resistente
+var _spin: float = 0.0  # rad/s do desenho (rochas)
+var _rock_shape := PackedVector2Array()  # contorno irregular sorteado (rochas)
 var _hover_left: float = -1.0  # HOVER: < 0 = ainda descendo até a altura de parada
 # Telegrafia: direções travadas no começo do aviso (o tiro sai exatamente onde a linha mostrou)
 var _tele_left: float = -1.0  # < 0 = sem aviso em curso
@@ -48,13 +55,31 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 	_hover_left = -1.0
 	_tele_left = -1.0
 	_tele_dirs.resize(0)
+	crushed = false
 	_speed_scale = 1.0
 	_fire_scale = 1.0
 	_sway_amplitude = 0.0
 	_curve_left = 0.0
 	rotation = 0.0
+	_spin = deg_to_rad(data.spin_degrees) * (1.0 if randf() < 0.5 else -1.0)
+	if data.look == EnemyData.Look.ROCK:
+		_build_rock_shape()
 	queue_redraw()
 	_set_active()
+
+
+## Contorno de rocha: polígono com raios sorteados (cada rocha é diferente).
+func _build_rock_shape() -> void:
+	var points: int = Params.rock_points
+	_rock_shape.resize(points)
+	for i in points:
+		var r: float = radius * randf_range(Params.rock_roughness, 1.08)
+		_rock_shape[i] = Vector2.from_angle(TAU * i / points + randf_range(-0.2, 0.2)) * r
+
+
+## Pode ser escolhido como alvo (mísseis, Tesla, ricochete, mira)? Rochas não.
+func is_target() -> bool:
+	return data == null or data.targetable
 
 
 ## Movimento comum da onda (chamar depois de activate). member = posição na onda.
@@ -95,20 +120,36 @@ func tint() -> Color:
 
 ## Encostou na nave: inimigos comuns são destruídos (o chefe sobrescreve).
 func on_player_contact() -> void:
+	crushed = true
 	take_damage(hp)
 
 
-func take_damage(amount: float) -> void:
+## source = WeaponData.Kind da arma (ou SOURCE_SPECIAL / SOURCE_NONE); from = de onde veio o acerto.
+func take_damage(amount: float, source: int = SOURCE_NONE, from: Vector2 = Vector2.INF) -> void:
 	if not visible:
 		return
+	var mult: float = _damage_multiplier(source)
+	amount *= mult
 	hp -= amount
 	_flash_left = Params.enemy_hit_flash_seconds
+	_flash_color = Color.WHITE
+	if mult >= Params.weakness_flash_threshold:
+		_flash_color = Params.weakness_flash_color
+	elif mult <= Params.resist_flash_threshold:
+		_flash_color = Params.resist_flash_color
 	queue_redraw()
 	if hp <= 0:
 		killed.emit(self)
 		expire()
 	else:
 		Audio.play(_hit_sound())
+
+
+## Multiplicador de dano por fonte (o chefe sobrescreve).
+func _damage_multiplier(source: int) -> float:
+	if source == SOURCE_SPECIAL or source < 0:
+		return 1.0
+	return data.multiplier_for(source)
 
 
 ## Som de quando leva um acerto sem morrer (o chefe usa outro).
@@ -130,6 +171,8 @@ func _process(delta: float) -> void:
 	if _sway_amplitude > 0.0 and _age > 0.0:
 		drift.x = _sway_amplitude * _sway_omega * cos(_sway_omega * _age + _sway_phase)
 	position += (_velocity + drift) * delta
+	if _spin != 0.0:
+		rotation += _spin * delta
 
 	var on_screen: bool = is_on_screen()
 	_entered = _entered or on_screen
@@ -246,7 +289,10 @@ func _find_player(_from: Vector2) -> Node2D:
 
 
 func _draw() -> void:
-	var color: Color = Color.WHITE if _flash_left > 0.0 else data.color
+	var color: Color = _flash_color if _flash_left > 0.0 else data.color
+	if data.look == EnemyData.Look.ROCK:
+		_draw_rock(color)
+		return
 	var outer := PackedVector2Array()
 	var inner := PackedVector2Array()
 	for i in data.sides:
@@ -257,6 +303,16 @@ func _draw() -> void:
 	draw_colored_polygon(outer, color)
 	draw_colored_polygon(inner, color.darkened(0.5))
 	_draw_telegraph()
+
+
+## Rocha: contorno irregular, borda escura e crateras.
+func _draw_rock(color: Color) -> void:
+	draw_colored_polygon(_rock_shape, color)
+	var outline := _rock_shape.duplicate()
+	outline.append(_rock_shape[0])
+	draw_polyline(outline, color.darkened(0.45), 4.0)
+	draw_circle(Vector2(radius * 0.25, -radius * 0.2), radius * 0.18, color.darkened(0.25))
+	draw_circle(Vector2(-radius * 0.3, radius * 0.25), radius * 0.12, color.darkened(0.25))
 
 
 ## Aviso do próximo ataque (direções em coordenadas globais, desfeita a rotação do inimigo).

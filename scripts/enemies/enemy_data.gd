@@ -9,6 +9,10 @@ enum Movement {
 	DIVE,  ## desce um pouco e depois mergulha na nave
 	HOVER,  ## desce até uma altura, para por um tempo e depois segue descendo
 }
+enum Look {
+	POLYGON,  ## polígono regular (naves)
+	ROCK,  ## rocha irregular que gira
+}
 enum FirePattern {
 	NONE,
 	STRAIGHT,  ## para baixo
@@ -24,6 +28,12 @@ enum FirePattern {
 @export var radius: float = 48.0  # colisão e desenho
 @export var sides: int = 6  # polígono do placeholder
 @export var color: Color = Color(0.95, 0.2, 0.35)
+@export var look: Look = Look.POLYGON
+## false = obstáculo (rocha): bloqueia tiros e machuca ao encostar, mas mísseis, Tesla,
+## ricochete e mira automática não o escolhem como alvo.
+@export var targetable: bool = true
+## Dano recebido por arma (WeaponData.Kind -> multiplicador; ausente = 1). Ex.: {0: 1.4} = Raio +40%.
+@export var weapon_multipliers: Dictionary = {}
 
 @export_group("Movimento")
 @export var movement: Movement = Movement.DESCEND
@@ -34,6 +44,8 @@ enum FirePattern {
 @export var dive_turn_degrees: float = 200.0  # giro por segundo ao perseguir a nave
 @export var hover_y_ratio: float = 0.22  # HOVER: altura onde para (0 = topo, 1 = base)
 @export var hover_seconds: float = 4.0  # HOVER: tempo parado
+@export var spin_degrees: float = 0.0  # giro do desenho por segundo (sorteia o sentido)
+@export var drift_x: float = 0.0  # deriva lateral aleatória (px/s, até esse valor para cada lado) ao surgir sozinho
 
 @export_group("Tiro")
 @export var fire_pattern: FirePattern = FirePattern.STRAIGHT
@@ -57,6 +69,11 @@ enum FirePattern {
 @export var bullet_split_radius: float = 11.0
 @export var bullet_homing_time: float = 0.0  # > 0: o tiro persegue a nave por esse tempo
 @export var bullet_homing_turn_degrees: float = 140.0
+
+## Multiplicador de dano de uma fonte (WeaponData.Kind; outras fontes = 1).
+func multiplier_for(source: int) -> float:
+	return float(weapon_multipliers.get(source, 1.0))
+
 
 @export_group("Ao ser destruído")
 @export var death_spawn: EnemyData  # fissão: vira esses inimigos ao ser destruído (vazio = nada)

@@ -5,316 +5,254 @@
 [ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="3_tjr3t"]
 [ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="4_ns871"]
 [ext_resource type="Resource" path="res://data/enemies/hunter.tres" id="5_kcgbp"]
+[ext_resource type="Resource" path="res://data/enemies/rock_large.tres" id="6_7sjee"]
 [ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="6_wiwl6"]
 [ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="7_7sjee"]
+[ext_resource type="Resource" path="res://data/enemies/rock_medium.tres" id="7_awk32"]
+[ext_resource type="Resource" path="res://data/enemies/rock_small.tres" id="8_0mo6j"]
 [ext_resource type="Resource" path="res://data/enemies/fissor.tres" id="8_awk32"]
 [ext_resource type="Resource" path="res://data/enemies/pulsar.tres" id="10_ns871"]
 [ext_resource type="Resource" path="res://data/enemies/splitter.tres" id="10_tjr3t"]
 
-[sub_resource type="Resource" id="Resource_tjr3t"]
+[sub_resource type="Resource" id="Resource_wiwl6"]
 script = ExtResource("7_7sjee")
 time_seconds = 4.0
 enemy = ExtResource("10_ns871")
 formation = 0
 count = 1
 
-[sub_resource type="Resource" id="Resource_ns871"]
+[sub_resource type="Resource" id="Resource_7sjee"]
 script = ExtResource("7_7sjee")
-time_seconds = 11.5
+time_seconds = 13.5
 enemy = ExtResource("8_awk32")
 formation = 4
 count = 4
 spacing = 170.0
 side = 0
-
-[sub_resource type="Resource" id="Resource_kcgbp"]
-script = ExtResource("7_7sjee")
-time_seconds = 13.0
-enemy = ExtResource("2_5eutt")
-formation = 0
-count = 7
-spacing = 165.0
-
-[sub_resource type="Resource" id="Resource_wiwl6"]
-script = ExtResource("7_7sjee")
-time_seconds = 16.0
-enemy = ExtResource("10_ns871")
-formation = 0
-count = 2
-spacing = 560.0
-
-[sub_resource type="Resource" id="Resource_7sjee"]
-script = ExtResource("7_7sjee")
-time_seconds = 23.5
-enemy = ExtResource("10_tjr3t")
-formation = 0
-count = 2
-spacing = 520.0
 
 [sub_resource type="Resource" id="Resource_awk32"]
 script = ExtResource("7_7sjee")
-time_seconds = 25.0
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 1
+time_seconds = 15.0
+enemy = ExtResource("2_5eutt")
+formation = 0
+count = 7
+spacing = 165.0
 
 [sub_resource type="Resource" id="Resource_0mo6j"]
 script = ExtResource("7_7sjee")
-time_seconds = 31.1
+time_seconds = 20.1
 enemy = ExtResource("10_ns871")
 formation = 0
-count = 1
+count = 2
+spacing = 560.0
 
 [sub_resource type="Resource" id="Resource_v1n0h"]
 script = ExtResource("7_7sjee")
-time_seconds = 38.6
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 1
+time_seconds = 29.6
+enemy = ExtResource("10_tjr3t")
+formation = 0
+count = 2
+spacing = 520.0
 
 [sub_resource type="Resource" id="Resource_avd51"]
 script = ExtResource("7_7sjee")
-time_seconds = 40.1
-enemy = ExtResource("2_5eutt")
-formation = 0
-count = 7
-spacing = 165.0
+time_seconds = 31.1
+enemy = ExtResource("8_awk32")
+formation = 4
+count = 4
+spacing = 170.0
+side = 1
 
 [sub_resource type="Resource" id="Resource_qpcit"]
 script = ExtResource("7_7sjee")
-time_seconds = 43.1
+time_seconds = 39.2
 enemy = ExtResource("10_ns871")
 formation = 0
-count = 2
-spacing = 560.0
+count = 1
 
 [sub_resource type="Resource" id="Resource_j30j5"]
 script = ExtResource("7_7sjee")
-time_seconds = 50.6
-enemy = ExtResource("10_tjr3t")
-formation = 0
-count = 2
-spacing = 520.0
+time_seconds = 48.7
+enemy = ExtResource("8_awk32")
+formation = 4
+count = 4
+spacing = 170.0
+side = 1
 
 [sub_resource type="Resource" id="Resource_cxf17"]
 script = ExtResource("7_7sjee")
-time_seconds = 52.1
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 0
+time_seconds = 50.2
+enemy = ExtResource("2_5eutt")
+formation = 0
+count = 7
+spacing = 165.0
 
 [sub_resource type="Resource" id="Resource_d0erv"]
 script = ExtResource("7_7sjee")
-time_seconds = 58.1
+time_seconds = 55.300000000000004
 enemy = ExtResource("10_ns871")
 formation = 0
-count = 1
+count = 2
+spacing = 560.0
 
 [sub_resource type="Resource" id="Resource_gysic"]
 script = ExtResource("7_7sjee")
-time_seconds = 65.60000000000001
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 0
+time_seconds = 64.8
+enemy = ExtResource("10_tjr3t")
+formation = 0
+count = 2
+spacing = 520.0
 
 [sub_resource type="Resource" id="Resource_apbae"]
 script = ExtResource("7_7sjee")
-time_seconds = 67.10000000000001
-enemy = ExtResource("2_5eutt")
-formation = 0
-count = 7
-spacing = 165.0
+time_seconds = 66.3
+enemy = ExtResource("8_awk32")
+formation = 4
+count = 4
+spacing = 170.0
+side = 0
 
 [sub_resource type="Resource" id="Resource_t62i6"]
 script = ExtResource("7_7sjee")
-time_seconds = 70.2
+time_seconds = 74.4
 enemy = ExtResource("10_ns871")
 formation = 0
-count = 2
-spacing = 560.0
+count = 1
 
 [sub_resource type="Resource" id="Resource_2ohg8"]
 script = ExtResource("7_7sjee")
-time_seconds = 77.7
-enemy = ExtResource("10_tjr3t")
-formation = 0
-count = 2
-spacing = 520.0
+time_seconds = 83.9
+enemy = ExtResource("8_awk32")
+formation = 4
+count = 4
+spacing = 170.0
+side = 0
 
 [sub_resource type="Resource" id="Resource_8vhra"]
 script = ExtResource("7_7sjee")
-time_seconds = 79.2
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 1
+time_seconds = 85.4
+enemy = ExtResource("2_5eutt")
+formation = 0
+count = 7
+spacing = 165.0
 
 [sub_resource type="Resource" id="Resource_5h26m"]
 script = ExtResource("7_7sjee")
-time_seconds = 85.2
+time_seconds = 90.5
 enemy = ExtResource("10_ns871")
 formation = 0
-count = 1
+count = 2
+spacing = 560.0
 
 [sub_resource type="Resource" id="Resource_6hk0u"]
 script = ExtResource("7_7sjee")
-time_seconds = 92.7
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 1
+time_seconds = 100.0
+enemy = ExtResource("10_tjr3t")
+formation = 0
+count = 2
+spacing = 520.0
 
 [sub_resource type="Resource" id="Resource_ndnhl"]
 script = ExtResource("7_7sjee")
-time_seconds = 94.2
-enemy = ExtResource("2_5eutt")
-formation = 0
-count = 7
-spacing = 165.0
+time_seconds = 101.5
+enemy = ExtResource("8_awk32")
+formation = 4
+count = 4
+spacing = 170.0
+side = 1
 
 [sub_resource type="Resource" id="Resource_u5m5k"]
 script = ExtResource("7_7sjee")
-time_seconds = 97.2
+time_seconds = 109.60000000000001
 enemy = ExtResource("10_ns871")
 formation = 0
-count = 2
-spacing = 560.0
+count = 1
 
 [sub_resource type="Resource" id="Resource_7o431"]
 script = ExtResource("7_7sjee")
-time_seconds = 104.7
-enemy = ExtResource("10_tjr3t")
-formation = 0
-count = 2
-spacing = 520.0
+time_seconds = 119.10000000000001
+enemy = ExtResource("8_awk32")
+formation = 4
+count = 4
+spacing = 170.0
+side = 1
 
 [sub_resource type="Resource" id="Resource_8jrk1"]
 script = ExtResource("7_7sjee")
-time_seconds = 106.2
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 0
+time_seconds = 120.60000000000001
+enemy = ExtResource("2_5eutt")
+formation = 0
+count = 7
+spacing = 165.0
 
 [sub_resource type="Resource" id="Resource_e123o"]
 script = ExtResource("7_7sjee")
-time_seconds = 112.2
+time_seconds = 125.7
 enemy = ExtResource("10_ns871")
 formation = 0
-count = 1
+count = 2
+spacing = 560.0
 
 [sub_resource type="Resource" id="Resource_cwvvk"]
 script = ExtResource("7_7sjee")
-time_seconds = 119.80000000000001
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 0
+time_seconds = 135.20000000000002
+enemy = ExtResource("10_tjr3t")
+formation = 0
+count = 2
+spacing = 520.0
 
 [sub_resource type="Resource" id="Resource_thggf"]
 script = ExtResource("7_7sjee")
-time_seconds = 121.30000000000001
-enemy = ExtResource("2_5eutt")
-formation = 0
-count = 7
-spacing = 165.0
-
-[sub_resource type="Resource" id="Resource_lh17w"]
-script = ExtResource("7_7sjee")
-time_seconds = 124.30000000000001
-enemy = ExtResource("10_ns871")
-formation = 0
-count = 2
-spacing = 560.0
-
-[sub_resource type="Resource" id="Resource_th88q"]
-script = ExtResource("7_7sjee")
-time_seconds = 131.8
-enemy = ExtResource("10_tjr3t")
-formation = 0
-count = 2
-spacing = 520.0
-
-[sub_resource type="Resource" id="Resource_cukml"]
-script = ExtResource("7_7sjee")
-time_seconds = 133.3
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 1
-
-[sub_resource type="Resource" id="Resource_5q5wv"]
-script = ExtResource("7_7sjee")
-time_seconds = 139.3
-enemy = ExtResource("10_ns871")
-formation = 0
-count = 1
-
-[sub_resource type="Resource" id="Resource_fjstp"]
-script = ExtResource("7_7sjee")
-time_seconds = 146.8
-enemy = ExtResource("8_awk32")
-formation = 4
-count = 4
-spacing = 170.0
-side = 1
-
-[sub_resource type="Resource" id="Resource_n7rw7"]
-script = ExtResource("7_7sjee")
-time_seconds = 148.3
-enemy = ExtResource("2_5eutt")
-formation = 0
-count = 7
-spacing = 165.0
-
-[sub_resource type="Resource" id="Resource_73rgw"]
-script = ExtResource("7_7sjee")
-time_seconds = 151.3
-enemy = ExtResource("10_ns871")
-formation = 0
-count = 2
-spacing = 560.0
-
-[sub_resource type="Resource" id="Resource_uyndg"]
-script = ExtResource("7_7sjee")
-time_seconds = 158.8
-enemy = ExtResource("10_tjr3t")
-formation = 0
-count = 2
-spacing = 520.0
-
-[sub_resource type="Resource" id="Resource_rjfby"]
-script = ExtResource("7_7sjee")
-time_seconds = 160.3
+time_seconds = 136.70000000000002
 enemy = ExtResource("8_awk32")
 formation = 4
 count = 4
 spacing = 170.0
 side = 0
 
-[sub_resource type="Resource" id="Resource_ljbd6"]
+[sub_resource type="Resource" id="Resource_lh17w"]
 script = ExtResource("7_7sjee")
-time_seconds = 166.4
+time_seconds = 144.70000000000002
 enemy = ExtResource("10_ns871")
 formation = 0
 count = 1
 
-[sub_resource type="Resource" id="Resource_uj71d"]
+[sub_resource type="Resource" id="Resource_th88q"]
 script = ExtResource("7_7sjee")
-time_seconds = 167.9
+time_seconds = 154.3
+enemy = ExtResource("8_awk32")
+formation = 4
+count = 4
+spacing = 170.0
+side = 0
+
+[sub_resource type="Resource" id="Resource_cukml"]
+script = ExtResource("7_7sjee")
+time_seconds = 155.8
+enemy = ExtResource("2_5eutt")
+formation = 0
+count = 7
+spacing = 165.0
+
+[sub_resource type="Resource" id="Resource_5q5wv"]
+script = ExtResource("7_7sjee")
+time_seconds = 160.8
+enemy = ExtResource("10_ns871")
+formation = 0
+count = 2
+spacing = 560.0
+
+[sub_resource type="Resource" id="Resource_fjstp"]
+script = ExtResource("7_7sjee")
+time_seconds = 170.4
+enemy = ExtResource("10_tjr3t")
+formation = 0
+count = 2
+spacing = 520.0
+
+[sub_resource type="Resource" id="Resource_n7rw7"]
+script = ExtResource("7_7sjee")
+time_seconds = 171.9
 enemy = ExtResource("8_awk32")
 formation = 4
 count = 4
@@ -327,10 +265,14 @@ id = &"p5_s7"
 duration_seconds = 177.0
 enemies = Array[ExtResource("1_g83rj")]([ExtResource("2_5eutt"), ExtResource("3_tjr3t"), ExtResource("4_ns871"), ExtResource("5_kcgbp")])
 spawn_weights = PackedFloat32Array(3, 1.5, 1.5, 0.7)
-waves = Array[ExtResource("7_7sjee")]([SubResource("Resource_tjr3t"), SubResource("Resource_ns871"), SubResource("Resource_kcgbp"), SubResource("Resource_wiwl6"), SubResource("Resource_7sjee"), SubResource("Resource_awk32"), SubResource("Resource_0mo6j"), SubResource("Resource_v1n0h"), SubResource("Resource_avd51"), SubResource("Resource_qpcit"), SubResource("Resource_j30j5"), SubResource("Resource_cxf17"), SubResource("Resource_d0erv"), SubResource("Resource_gysic"), SubResource("Resource_apbae"), SubResource("Resource_t62i6"), SubResource("Resource_2ohg8"), SubResource("Resource_8vhra"), SubResource("Resource_5h26m"), SubResource("Resource_6hk0u"), SubResource("Resource_ndnhl"), SubResource("Resource_u5m5k"), SubResource("Resource_7o431"), SubResource("Resource_8jrk1"), SubResource("Resource_e123o"), SubResource("Resource_cwvvk"), SubResource("Resource_thggf"), SubResource("Resource_lh17w"), SubResource("Resource_th88q"), SubResource("Resource_cukml"), SubResource("Resource_5q5wv"), SubResource("Resource_fjstp"), SubResource("Resource_n7rw7"), SubResource("Resource_73rgw"), SubResource("Resource_uyndg"), SubResource("Resource_rjfby"), SubResource("Resource_ljbd6"), SubResource("Resource_uj71d")])
+waves = Array[ExtResource("7_7sjee")]([SubResource("Resource_wiwl6"), SubResource("Resource_7sjee"), SubResource("Resource_awk32"), SubResource("Resource_0mo6j"), SubResource("Resource_v1n0h"), SubResource("Resource_avd51"), SubResource("Resource_qpcit"), SubResource("Resource_j30j5"), SubResource("Resource_cxf17"), SubResource("Resource_d0erv"), SubResource("Resource_gysic"), SubResource("Resource_apbae"), SubResource("Resource_t62i6"), SubResource("Resource_2ohg8"), SubResource("Resource_8vhra"), SubResource("Resource_5h26m"), SubResource("Resource_6hk0u"), SubResource("Resource_ndnhl"), SubResource("Resource_u5m5k"), SubResource("Resource_7o431"), SubResource("Resource_8jrk1"), SubResource("Resource_e123o"), SubResource("Resource_cwvvk"), SubResource("Resource_thggf"), SubResource("Resource_lh17w"), SubResource("Resource_th88q"), SubResource("Resource_cukml"), SubResource("Resource_5q5wv"), SubResource("Resource_fjstp"), SubResource("Resource_n7rw7")])
 start_delay = 2.0
-spawn_interval_min = 1.1240000000000003
-spawn_interval_max = 1.9549999999999998
+spawn_interval_min = 1.5736000000000003
+spawn_interval_max = 2.7369999999999997
 spawn_margin_x = 90.0
 enemy_hp_scale = 1.65
 enemy_fire_scale = 1.32
+rocks = Array[ExtResource("1_g83rj")]([ExtResource("6_7sjee"), ExtResource("7_awk32"), ExtResource("8_0mo6j")])
+rock_weights = PackedFloat32Array(1, 1, 0.6)
+rock_interval_min = 2.2
+rock_interval_max = 3.1999999999999997

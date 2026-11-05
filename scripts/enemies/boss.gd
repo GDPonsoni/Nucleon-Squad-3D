@@ -73,13 +73,17 @@ func _hit_sound() -> StringName:
 	return &"boss_hit"
 
 
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, source: int = SOURCE_NONE, from: Vector2 = Vector2.INF) -> void:
 	# Invulnerável enquanto entra na tela
 	if _entering:
 		return
 	var dealt: float = amount * context.boosts.boss_damage
 	Haptics.boss_damage(dealt / maxf(boss_data.max_hp, 1.0))
-	super(dealt)
+	super(dealt, source, from)
+
+
+func _damage_multiplier(_source: int) -> float:
+	return 1.0
 
 
 func _process(delta: float) -> void:

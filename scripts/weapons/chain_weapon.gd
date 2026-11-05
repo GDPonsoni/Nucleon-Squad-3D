@@ -37,8 +37,8 @@ func _discharge() -> void:
 			break
 		hit[target] = true
 		points.append(target.position)
+		target.take_damage(amount, data.kind, current)
 		current = target.position
-		target.take_damage(amount)
 		context.spark(target.position, data.color, 0.9)
 		amount *= stats.chain_falloff
 	if points.size() > 1:
@@ -52,7 +52,7 @@ func _next_target(from: Vector2, reach: float, hit: Dictionary, ahead_only: bool
 	var best_distance: float = reach * reach
 	for item in context.hostiles():
 		var enemy := item as Enemy
-		if not enemy.visible or hit.has(enemy) or not enemy.is_on_screen():
+		if not enemy.visible or hit.has(enemy) or not enemy.is_on_screen() or not enemy.is_target():
 			continue
 		if ahead_only and enemy.position.y > from.y:
 			continue

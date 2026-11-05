@@ -209,7 +209,7 @@ func _count_virtual_hits(player: Player, context: CombatContext, delta: float) -
 		var reach: float = enemy.radius + Params.nucleus_radius
 		if enemy.visible and enemy.position.distance_squared_to(center) <= reach * reach:
 			if not enemy is Boss:
-				enemy.take_damage(enemy.hp)
+				enemy.on_player_contact()
 			_register_hit()
 			return
 

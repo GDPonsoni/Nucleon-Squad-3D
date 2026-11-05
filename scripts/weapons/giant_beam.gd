@@ -45,7 +45,7 @@ func _process(delta: float) -> void:
 		for item in _context.hostiles():
 			var enemy := item as Enemy
 			if enemy.visible and enemy.position.y < tip_y and absf(enemy.position.x - global_position.x) <= half + enemy.radius:
-				enemy.take_damage(_damage)
+				enemy.take_damage(_damage, Enemy.SOURCE_SPECIAL)
 	queue_redraw()
 
 

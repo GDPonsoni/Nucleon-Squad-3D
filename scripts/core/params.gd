@@ -227,6 +227,14 @@ var body_fx_pool_size: int = 8
 var weapon_spawn_seconds: float = 0.35  # surgimento da arma ao ativar (curto, para não atrapalhar)
 var weapon_spawn_orbit_spin: float = 2.5  # a órbita gira mais rápido enquanto se forma (multiplicador)
 var weapon_charge_orb_scale: float = 0.45  # orbe de carga na ponta (x largura da nave)
+# --- Rochas e fraquezas ---
+var rock_points: int = 9  # vértices do contorno
+var rock_roughness: float = 0.85  # raio mínimo de cada vértice (x raio); o máximo passa um pouco do raio de colisão
+var rock_spread_degrees: float = 300.0  # pedaços de rocha saem quase em círculo
+var weakness_flash_threshold: float = 1.2  # multiplicador a partir do qual o acerto pisca dourado
+var weakness_flash_color: Color = Color(1.0, 0.85, 0.3)
+var resist_flash_threshold: float = 0.8  # abaixo disso, pisca cinza (arma fraca contra ele)
+var resist_flash_color: Color = Color(0.55, 0.55, 0.6)
 # --- Telegrafia (aviso antes de cada ataque inimigo) ---
 var telegraph_line_length: float = 520.0  # linha tracejada na direção do tiro
 var telegraph_line_width: float = 4.0

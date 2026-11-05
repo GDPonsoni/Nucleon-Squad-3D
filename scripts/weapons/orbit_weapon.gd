@@ -36,7 +36,7 @@ func _process(delta: float) -> void:
 			var reach: float = enemy.radius + stats.orbit_size * 0.5 * _grow()
 			if center.distance_squared_to(enemy.position) <= reach * reach:
 				_cooldowns[enemy] = stats.orbit_hit_seconds / rate()
-				enemy.take_damage(damage())
+				enemy.take_damage(damage(), data.kind, center)
 				context.spark(center, data.color, 0.8)
 				Audio.shot(data.kind, sound_db)
 	queue_redraw()

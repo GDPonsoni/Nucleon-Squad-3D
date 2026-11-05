@@ -40,7 +40,7 @@ func _player_bullets_vs_enemies() -> void:
 			var reach: float = bullet.radius + enemy.radius
 			if bullet.position.distance_squared_to(enemy.position) > reach * reach:
 				continue
-			enemy.take_damage(bullet.damage)
+			enemy.take_damage(bullet.damage, bullet.source, bullet.position - bullet.velocity.normalized() * enemy.radius)
 			_context.spark(bullet.position, bullet.color(), 1.0)
 			if bullet.splash_radius > 0.0:
 				_splash(bullet, enemy)
@@ -62,7 +62,7 @@ func _splash(bullet: Bullet, direct: Enemy) -> void:
 		if enemy == direct or not enemy.visible:
 			continue
 		if enemy.position.distance_to(center) <= bullet.splash_radius + enemy.radius * 0.5:
-			enemy.take_damage(bullet.damage)
+			enemy.take_damage(bullet.damage, bullet.source)
 	splashed.emit(center, bullet.splash_radius, bullet.color())
 
 

@@ -13,7 +13,7 @@ func place(enemy_data: EnemyData, pos: Vector2, phase: float) -> void:
 	_clock = phase
 
 
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, _source: int = SOURCE_NONE, _from: Vector2 = Vector2.INF) -> void:
 	if not visible:
 		return
 	hp -= amount

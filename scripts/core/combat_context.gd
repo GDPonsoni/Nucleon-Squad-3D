@@ -37,7 +37,7 @@ func nearest_enemy(from: Vector2) -> Enemy:
 	var best_distance: float = INF
 	for item in hostiles():
 		var enemy := item as Enemy
-		if not enemy.visible or not enemy.is_on_screen():
+		if not enemy.visible or not enemy.is_on_screen() or not enemy.is_target():
 			continue
 		var distance: float = from.distance_squared_to(enemy.position)
 		if distance < best_distance:
@@ -51,7 +51,7 @@ func strongest_enemy(_from: Vector2 = Vector2.ZERO) -> Enemy:
 	var best: Enemy = null
 	for item in hostiles():
 		var enemy := item as Enemy
-		if not enemy.visible or not enemy.is_on_screen():
+		if not enemy.visible or not enemy.is_on_screen() or not enemy.is_target():
 			continue
 		if best == null or enemy.hp > best.hp:
 			best = enemy
@@ -66,7 +66,7 @@ func densest_enemy(radius: float) -> Enemy:
 	var reach: float = radius * radius
 	for item in list:
 		var enemy := item as Enemy
-		if not enemy.visible or not enemy.is_on_screen():
+		if not enemy.visible or not enemy.is_on_screen() or not enemy.is_target():
 			continue
 		var count: int = 0
 		for other_item in list:

@@ -37,11 +37,11 @@ func _strike() -> void:
 	var top: float = get_viewport_rect().position.y
 	for item in _context.hostiles().duplicate():
 		var enemy := item as Enemy
-		if not enemy.visible or not enemy.is_on_screen():
+		if not enemy.visible or not enemy.is_on_screen() or not enemy.is_target():
 			continue
 		var from := Vector2(enemy.position.x + randf_range(-120.0, 120.0), top)
 		_flashes.append({"from": from, "to": enemy.position, "age": 0.0})
-		enemy.take_damage(_damage)
+		enemy.take_damage(_damage, Enemy.SOURCE_SPECIAL)
 
 
 func _draw() -> void:

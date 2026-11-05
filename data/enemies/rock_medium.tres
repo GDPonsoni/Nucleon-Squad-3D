@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+[ext_resource type="Resource" path="res://data/enemies/rock_small.tres" id="2_small"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"rock_medium"
+max_hp = 30
+score = 4
+contact_damage = 1
+radius = 60.0
+color = Color(0.5, 0.44, 0.4, 1)
+look = 1
+targetable = false
+weapon_multipliers = {0: 1.3, 2: 0.7, 4: 1.3, 5: 1.3}
+movement = 0
+speed = 140.0
+spin_degrees = 50.0
+drift_x = 45.0
+fire_pattern = 0
+death_spawn = ExtResource("2_small")
+death_spawn_count = 3
+death_spawn_spread_degrees = 300.0
