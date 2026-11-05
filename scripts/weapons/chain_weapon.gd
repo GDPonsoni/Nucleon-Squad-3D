@@ -10,8 +10,12 @@ var _bolts: Array[Dictionary] = []  # {points: PackedVector2Array (globais), age
 
 func _process(delta: float) -> void:
 	# delta escalado: a cadência também desacelera na câmera lenta
-	_cooldown -= delta
-	if _cooldown <= 0.0:
+	var charging: bool = _tick_spawn(delta)
+	if charging:
+		_cooldown = 0.0
+	else:
+		_cooldown -= delta
+	if not charging and _cooldown <= 0.0:
 		_cooldown += 1.0 / (stats.fire_rate * rate())
 		_discharge()
 	for i in range(_bolts.size() - 1, -1, -1):
@@ -59,6 +63,7 @@ func _next_target(from: Vector2, reach: float, hit: Dictionary, ahead_only: bool
 
 
 func _draw() -> void:
+	_draw_charge()
 	for bolt in _bolts:
 		var fade: float = 1.0 - bolt["age"] / Params.chain_bolt_seconds
 		var points: PackedVector2Array = bolt["points"]

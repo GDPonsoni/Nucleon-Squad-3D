@@ -11,6 +11,7 @@ var variant: int = 0  # WeaponMount.Variant: completa ou da nave auxiliar
 var power: float = 1.0  # multiplicador de dano próprio (nave auxiliar)
 var sound_db: float = 0.0  # ajuste de volume dos disparos (nave auxiliar soa mais baixo)
 var muzzle_offset: float = Params.ship_size.y * 0.5  # distância do centro até a ponta
+var _spawn_left: float = 0.0  # animação de surgimento ao ativar
 
 
 static func create(weapon_data: WeaponData, combat_context: CombatContext, start_level: int) -> Weapon:
@@ -44,8 +45,53 @@ func apply_stats(values: WeaponLevel) -> void:
 
 
 func set_active(active: bool) -> void:
+	var was_visible: bool = visible
 	visible = active
 	set_process(active)
+	if active and not was_visible:
+		play_spawn()
+
+
+## Inicia a animação de surgimento (a arma já ligou, o ataque espera ela terminar).
+func play_spawn() -> void:
+	_spawn_left = Params.weapon_spawn_seconds
+	_on_spawn()
+
+
+## Gancho para armas que precisam preparar algo ao surgir.
+func _on_spawn() -> void:
+	pass
+
+
+## 0 = acabou de ligar, 1 = pronta. Em tempo de jogo: acompanha a câmera lenta.
+func spawn_progress() -> float:
+	return 1.0 - clampf(_spawn_left / Params.weapon_spawn_seconds, 0.0, 1.0)
+
+
+func is_spawning() -> bool:
+	return _spawn_left > 0.0
+
+
+## Avança o surgimento; devolve true enquanto ainda surge.
+func _tick_spawn(delta: float) -> bool:
+	if _spawn_left <= 0.0:
+		return false
+	_spawn_left = maxf(_spawn_left - delta, 0.0)
+	queue_redraw()
+	return _spawn_left > 0.0
+
+
+## Carregamento na ponta: orbe que cresce e anel que converge.
+func _draw_charge() -> void:
+	if _spawn_left <= 0.0:
+		return
+	var t: float = spawn_progress()
+	var k: float = minf(Params.anim_intensity, 1.5)
+	var tip := Vector2(0.0, -muzzle_offset)
+	var orb: float = Params.ship_size.x * Params.weapon_charge_orb_scale * t * k
+	draw_circle(tip, orb, Color(data.color, 0.5))
+	draw_circle(tip, orb * 0.5, Color(1.0, 1.0, 1.0, 0.9))
+	draw_arc(tip, Params.ship_size.x * lerpf(0.9, 0.15, ease(t, 0.5)) * k, 0.0, TAU, 24, Color(data.color.lightened(0.4), (1.0 - t) * 0.9), 3.0)
 
 
 ## Ponta da nave, em coordenadas globais.

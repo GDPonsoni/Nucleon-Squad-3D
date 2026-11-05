@@ -19,6 +19,7 @@ func apply_stats(values: WeaponLevel) -> void:
 
 
 func _process(delta: float) -> void:
+	_tick_spawn(delta)
 	var tip: Vector2 = muzzle()
 	for k in stats.beam_angles.size():
 		var origin := Vector2(tip.x + stats.beam_offsets[k], tip.y)
@@ -42,7 +43,7 @@ func _process(delta: float) -> void:
 				target = enemy
 		_lengths[k] = hit
 		_ticks[k] = maxf(_ticks[k] - delta, 0.0)
-		if target != null and _ticks[k] == 0.0:
+		if target != null and _ticks[k] == 0.0 and not is_spawning():
 			_ticks[k] = stats.beam_tick_seconds / rate()
 			target.take_damage(damage())
 			Audio.shot(data.kind, sound_db)
@@ -59,10 +60,13 @@ func _draw() -> void:
 	var glow := Color(data.color, 0.35)
 	var core: Color = data.color.lightened(0.6)
 	for k in stats.beam_angles.size():
-		var width: float = stats.beam_widths[k]
+		# Surgimento: o raio abre de uma linha fina até a largura cheia, depois do orbe de carga
+		var grow: float = ease(clampf((spawn_progress() - 0.3) / 0.7, 0.0, 1.0), 0.5)
+		var width: float = stats.beam_widths[k] * grow
 		var length: float = _lengths[k]
 		# Desenha em pé e gira para o ângulo do raio
 		draw_set_transform(tip + Vector2(stats.beam_offsets[k], 0.0), deg_to_rad(stats.beam_angles[k]))
 		draw_rect(Rect2(-width * 0.5, -length, width, length), glow)
 		draw_rect(Rect2(-width * 0.2, -length, width * 0.4, length), core)
 	draw_set_transform(Vector2.ZERO)
+	_draw_charge()

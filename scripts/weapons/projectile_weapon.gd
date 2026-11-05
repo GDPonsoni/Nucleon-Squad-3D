@@ -9,11 +9,18 @@ var _cooldown: float = 0.0
 
 func _process(delta: float) -> void:
 	# delta escalado: a cadência também desacelera na câmera lenta
+	if _tick_spawn(delta):
+		_cooldown = 0.0  # carrega e atira assim que o carregamento termina
+		return
 	_cooldown -= delta
 	if _cooldown > 0.0:
 		return
 	_cooldown += 1.0 / (stats.fire_rate * rate())
 	_fire()
+
+
+func _draw() -> void:
+	_draw_charge()
 
 
 func _fire() -> void:

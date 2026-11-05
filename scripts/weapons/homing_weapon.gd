@@ -16,7 +16,15 @@ func apply_stats(values: WeaponLevel) -> void:
 	_timer = 0.0
 
 
+## Ao surgir, a primeira onda já nasce em anel e mira (os mísseis crescem saindo da nave).
+func _on_spawn() -> void:
+	if stats != null:
+		_phase = Phase.AIMING
+		_timer = maxf(stats.aim_seconds, Params.weapon_spawn_seconds)
+
+
 func _process(delta: float) -> void:
+	_tick_spawn(delta)
 	# delta escalado: as ondas também desaceleram na câmera lenta
 	_timer -= delta
 	if _phase == Phase.COOLDOWN:
@@ -65,8 +73,9 @@ func _draw() -> void:
 	# Os mísseis crescem enquanto miram
 	var grow: float = 1.0 - clampf(_timer / stats.aim_seconds, 0.0, 1.0)
 	var half: Vector2 = stats.projectile_size * 0.5 * lerpf(0.3, 1.0, grow)
+	var out: float = ease(spawn_progress(), 0.5)  # no surgimento os mísseis saem do centro até o anel
 	for i in stats.projectile_count:
-		draw_set_transform(_slot(i), _aim_angle + PI * 0.5)
+		draw_set_transform(_slot(i) * out, _aim_angle + PI * 0.5)
 		draw_colored_polygon(PackedVector2Array([
 			Vector2(0.0, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y),
 		]), data.color)

@@ -8,7 +8,10 @@ var _cooldowns: Dictionary = {}  # Enemy -> segundos até poder levar dano de no
 
 
 func _process(delta: float) -> void:
-	_angle = wrapf(_angle + deg_to_rad(stats.orbit_speed_degrees) * delta, 0.0, TAU)
+	var spin: float = 1.0
+	if _tick_spawn(delta):
+		spin += (Params.weapon_spawn_orbit_spin - 1.0) * (1.0 - spawn_progress())
+	_angle = wrapf(_angle + deg_to_rad(stats.orbit_speed_degrees) * spin * delta, 0.0, TAU)
 
 	# Sem tipo no laço: o chefe é liberado da memória ao morrer e a chave fica inválida
 	for enemy in _cooldowns.keys():
@@ -30,7 +33,7 @@ func _process(delta: float) -> void:
 			var enemy := enemies[j] as Enemy
 			if _cooldowns.has(enemy):
 				continue
-			var reach: float = enemy.radius + stats.orbit_size * 0.5
+			var reach: float = enemy.radius + stats.orbit_size * 0.5 * _grow()
 			if center.distance_squared_to(enemy.position) <= reach * reach:
 				_cooldowns[enemy] = stats.orbit_hit_seconds / rate()
 				enemy.take_damage(damage())
@@ -55,12 +58,22 @@ func _pivot() -> Vector2:
 
 
 func _offset(index: int) -> Vector2:
-	return Vector2.from_angle(_angle + TAU * index / stats.orbit_count) * stats.orbit_radius
+	return Vector2.from_angle(_angle + TAU * index / stats.orbit_count) * stats.orbit_radius * _grow()
+
+
+## Formação: as esferas saem do centro até o raio cheio (com leve excesso) e crescem.
+func _grow() -> float:
+	if not is_spawning():
+		return 1.0
+	var x: float = spawn_progress()
+	var c1: float = 1.70158
+	return clampf(1.0 + (c1 + 1.0) * pow(x - 1.0, 3.0) + c1 * pow(x - 1.0, 2.0), 0.0, 1.3)
 
 
 func _draw() -> void:
 	var pivot: Vector2 = to_local(_pivot())
-	draw_arc(pivot, stats.orbit_radius, 0.0, TAU, 64, Color(data.color, 0.15), 3.0)
+	var grow: float = _grow()
+	draw_arc(pivot, stats.orbit_radius * grow, 0.0, TAU, 64, Color(data.color, 0.15 + 0.3 * (1.0 - spawn_progress())), 3.0)
 	for i in stats.orbit_count:
-		draw_circle(pivot + _offset(i), stats.orbit_size * 0.5, data.color)
-		draw_circle(pivot + _offset(i), stats.orbit_size * 0.2, Color.WHITE)
+		draw_circle(pivot + _offset(i), stats.orbit_size * 0.5 * minf(grow, 1.0), data.color)
+		draw_circle(pivot + _offset(i), stats.orbit_size * 0.2 * minf(grow, 1.0), Color.WHITE)
