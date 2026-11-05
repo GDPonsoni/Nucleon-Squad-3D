@@ -62,7 +62,8 @@ func _draw() -> void:
 	if locked:
 		_draw_lock(center + Vector2(radius * 0.62, -radius * 0.62), radius * 0.3)
 	if number > 0:
-		_draw_badge(center + Vector2(radius * 0.72, -radius * 0.72), radius * 0.32, str(number), Params.ui_accent_color)
+		# Mesmo canto da marca "A" da auxiliar (o canto direito é do ⓘ na grade)
+		_draw_badge(center + Vector2(-radius * 0.72, -radius * 0.72), radius * 0.32, str(number), Params.ui_accent_color)
 	if auxiliary:
 		_draw_badge(center + Vector2(-radius * 0.72, -radius * 0.72), radius * 0.32, "A", Params.quark_color)
 
