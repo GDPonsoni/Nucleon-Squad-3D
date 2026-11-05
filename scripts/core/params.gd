@@ -315,6 +315,9 @@ var inspect_target_sway: float = 40.0
 var inspect_target_sway_speed: float = 1.3
 var inspect_level_button_size: float = 96.0
 var inspect_mode_button_height: float = 110.0
+var inspect_special_button_width: float = 250.0
+var inspect_special_wait_seconds: float = 3.0  # entre especiais na demonstração
+var inspect_locked_icon_scale: float = 1.4
 var inspect_text_font_size: int = 36
 
 # --- Especial (valores de cada arma ficam em data/weapons/) ---

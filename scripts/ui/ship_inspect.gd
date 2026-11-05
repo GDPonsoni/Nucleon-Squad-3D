@@ -1,8 +1,9 @@
 class_name ShipInspect
 extends Dialog
 ## Inspeção de uma nave (botão ⓘ na tela de esquadrão): nave grande, demonstração ao
-## vivo da arma (principal ou auxiliar, com níveis), descrição curta do modo escolhido
-## e botões para pôr/tirar do esquadrão ou usar como auxiliar.
+## vivo da arma (principal ou auxiliar, com níveis, e o especial), descrição curta do modo
+## escolhido e botões para pôr/tirar do esquadrão ou usar como auxiliar.
+## Nave bloqueada: só a nave grande e como liberá-la (sem demonstração).
 
 enum Mode { MAIN, COMPANION }
 
@@ -21,6 +22,8 @@ var _mode_buttons: Array[Button] = []
 var _level_row: HBoxContainer
 var _demo: WeaponDemo
 var _description: Label
+var _special_button: Button
+var _special_wait: float = 0.0
 var _squad_button: Button
 var _companion_button: Button
 
@@ -41,6 +44,9 @@ func show_on(parent: Node) -> void:
 
 
 func _build_body() -> void:
+	if not unlocked:
+		_build_locked()
+		return
 	# Nave grande + escolha do modo (principal / auxiliar)
 	var header := HBoxContainer.new()
 	header.add_theme_constant_override("separation", Params.dialog_spacing)
@@ -76,13 +82,36 @@ func _build_body() -> void:
 	_description.add_theme_font_size_override("font_size", Params.inspect_text_font_size)
 	body.add_child(_description)
 
-	if unlocked:
-		var actions := HBoxContainer.new()
-		actions.add_theme_constant_override("separation", Params.dialog_spacing)
-		body.add_child(actions)
-		_squad_button = _action_button(actions, _on_squad_pressed)
-		_companion_button = _action_button(actions, _on_companion_pressed)
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", Params.dialog_spacing)
+	body.add_child(actions)
+	_squad_button = _action_button(actions, _on_squad_pressed)
+	_companion_button = _action_button(actions, _on_companion_pressed)
 	_set_mode(Mode.MAIN)
+
+
+## Nave bloqueada: nave grande com o cadeado e o capítulo que a libera.
+func _build_locked() -> void:
+	var center := CenterContainer.new()
+	body.add_child(center)
+	var icon := ShipIcon.new()
+	icon.body = ship
+	icon.locked = true
+	icon.custom_minimum_size = Vector2.ONE * Params.inspect_icon_size * Params.inspect_locked_icon_scale
+	center.add_child(icon)
+	var text := UiFactory.make_subtitle("")
+	text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	text.text = tr("SQUAD_LOCKED_SHIP") % ship.unlock_chapter
+	body.add_child(text)
+
+
+func _process(delta: float) -> void:
+	super(delta)
+	# Espera entre especiais na demonstração (tempo real), para não acumular efeitos
+	if _special_wait > 0.0:
+		_special_wait -= delta / maxf(Engine.time_scale, 0.01)
+		if _special_wait <= 0.0 and _special_button != null:
+			_special_button.disabled = false
 
 
 func _action_button(row: HBoxContainer, action: Callable) -> Button:
@@ -115,13 +144,23 @@ func _build_levels() -> void:
 		button.custom_minimum_size = Vector2.ONE * Params.inspect_level_button_size
 		button.pressed.connect(_set_level.bind(i + 1))
 		_level_row.add_child(button)
+	# Especial: só a arma principal tem
+	if _mode == Mode.MAIN:
+		_special_button = UiFactory.make_primary_button("INSPECT_SPECIAL")
+		_special_button.custom_minimum_size = Vector2(Params.inspect_special_button_width, Params.inspect_level_button_size)
+		UiFactory.fit_button_text(_special_button)
+		_special_button.disabled = _special_wait > 0.0
+		_special_button.pressed.connect(_on_special_pressed)
+		_level_row.add_child(_special_button)
+	else:
+		_special_button = null
 
 
 func _set_level(level: int) -> void:
 	_level = level
 	var index: int = 0
 	for child in _level_row.get_children():
-		if child.is_queued_for_deletion():
+		if child.is_queued_for_deletion() or child == _special_button:
 			continue
 		(child as Button).theme_type_variation = &"PrimaryButton" if index == level - 1 else &""
 		index += 1
@@ -148,6 +187,13 @@ func _refresh_texts() -> void:
 	var width: float = (content_width - Params.dialog_spacing) * 0.5
 	UiFactory.fit_button_text(_squad_button, width)
 	UiFactory.fit_button_text(_companion_button, width)
+
+
+func _on_special_pressed() -> void:
+	Audio.play(&"special_fire")
+	_demo.trigger_special(ship)
+	_special_button.disabled = true
+	_special_wait = Params.inspect_special_wait_seconds
 
 
 func _on_squad_pressed() -> void:

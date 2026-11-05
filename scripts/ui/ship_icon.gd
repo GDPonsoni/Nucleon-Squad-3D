@@ -60,7 +60,7 @@ func _draw() -> void:
 		points.append(center + point * radius * Params.switch_icon_shape_scale)
 	draw_colored_polygon(points, Color(color, 0.5) if locked else color)
 	if locked:
-		_draw_lock(center + Vector2(radius * 0.62, -radius * 0.62), radius * 0.3)
+		_draw_lock(center, radius * 0.4)
 	if number > 0:
 		# Mesmo canto da marca "A" da auxiliar (o canto direito é do ⓘ na grade)
 		_draw_badge(center + Vector2(-radius * 0.72, -radius * 0.72), radius * 0.32, str(number), Params.ui_accent_color)

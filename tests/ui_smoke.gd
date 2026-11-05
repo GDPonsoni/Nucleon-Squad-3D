@@ -88,10 +88,28 @@ func _ready() -> void:
 						inspect.call("_set_mode", mode)
 						await get_tree().create_timer(0.3, true, false, true).timeout
 						overflow += _check_overflow(inspect, "inspeção %s %s" % [body.id, language])
+					# Especial na demonstração (pega erros dos efeitos fora da partida)
+					inspect.call("_on_special_pressed")
+					await get_tree().create_timer(0.5, true, false, true).timeout
 					inspect.call("_on_companion_pressed")
 					inspect.call("_on_squad_pressed")
 					inspect.close()
 					await get_tree().process_frame
+				# Nave bloqueada: só a nave e o aviso, sem demonstração
+				SaveGame.unlock_everything = false
+				for body in scene.get("_roster"):
+					if not SaveGame.is_ship_unlocked(body):
+						scene.call("_open_inspect", body)
+						var locked: Dialog = scene.find_children("*", "ShipInspect", true, false)[0]
+						await get_tree().create_timer(0.3, true, false, true).timeout
+						if not locked.find_children("*", "WeaponDemo", true, false).is_empty():
+							printerr("FALHOU: nave bloqueada mostra demonstração")
+							failures += 1
+						overflow += _check_overflow(locked, "inspeção bloqueada %s" % language)
+						locked.close()
+						await get_tree().process_frame
+						break
+				SaveGame.unlock_everything = true
 			# Seletor: confere cada capítulo
 			if scene.has_method("_show_chapter"):
 				for c in Session.campaign.planets.size():

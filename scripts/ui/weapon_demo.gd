@@ -72,6 +72,13 @@ func show_main(body: BodyData, level: int) -> void:
 	_player.set_body(body, level, 0.0)
 
 
+## Dispara o especial da arma a partir da nave da demonstração.
+func trigger_special(body: BodyData) -> void:
+	if _player.body == null:
+		return
+	SpecialAttack.trigger(body.weapon, _player, _context, _world)
+
+
 ## Mostra a versão auxiliar no nível dado (só o núcleo da nave principal, sem arma).
 func show_companion(body: BodyData, level: int) -> void:
 	_player.clear_body()
