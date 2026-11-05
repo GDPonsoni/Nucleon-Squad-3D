@@ -115,6 +115,9 @@ func _make_close_row() -> Control:
 	_close_button = UiFactory.make_button("MENU_BACK")
 	_close_button.text = ""  # só o X; a chave serve ao som do botão
 	_close_button.custom_minimum_size = Vector2.ONE * Params.dialog_close_size
+	# Discreto: sem fundo de botão, só o X; a área de toque continua grande
+	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
+		_close_button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
 	_close_button.draw.connect(_draw_close_icon)
 	_close_button.pressed.connect(request_close)
 	_close_button.disabled = _close_blocked
@@ -124,9 +127,9 @@ func _make_close_row() -> Control:
 
 func _draw_close_icon() -> void:
 	var c: Vector2 = _close_button.size * 0.5
-	var h: float = _close_button.size.y * 0.2
-	var width: float = maxf(_close_button.size.y * 0.07, 4.0)
-	var color: Color = Params.ui_text_color
+	var h: float = _close_button.size.y * Params.dialog_close_icon_ratio
+	var width: float = maxf(_close_button.size.y * 0.04, 3.0)
+	var color: Color = Params.ui_muted_text_color
 	_close_button.draw_line(c + Vector2(-h, -h), c + Vector2(h, h), color, width)
 	_close_button.draw_line(c + Vector2(-h, h), c + Vector2(h, -h), color, width)
 
