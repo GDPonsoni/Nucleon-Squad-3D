@@ -74,9 +74,10 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 **Partida:**
 - Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3) com moldura azul.
-- **Barra de troca de nave** fixa na base, translúcida enquanto o dedo move a nave e nítida na câmera lenta. A troca é um **toque curto** num corpo; se o dedo andar ou demorar mais que 0,35 s, vira arraste normal (evita trocas sem querer). A nave não desce além da barra. Hits e nível de cada corpo aparecem na própria barra.
+- **Barra de troca de nave** fixa na base, translúcida enquanto o dedo move a nave e nítida na câmera lenta. A troca é um **toque curto** num corpo; se o dedo andar ou demorar mais que 0,35 s, vira arraste normal (evita trocas sem querer). A nave não desce além da barra. Hits e nível de cada corpo aparecem na própria barra. **Recarga entre trocas** voluntárias (`switch_cooldown_seconds`, 4 s) com setor escuro nos ícones; invulnerabilidade da troca de 1,0 s. As duas contam em tempo de jogo (escalam com a câmera lenta).
 - Esquadrão de 4 corpos (`Params.squad_size`), 3 hits cada (mais com o Casco da evolução). O núcleo é a hitbox.
-- **Nave auxiliar** (opcional, espaço liberado ao concluir o capítulo 1): versão pequena de uma nave que acompanha a principal ao lado, não leva dano e atira uma versão fraca da arma (`WeaponData.companion`).
+- **Nave auxiliar** (opcional, espaço liberado ao concluir o capítulo 1): versão pequena de uma nave que acompanha a principal ao lado, não leva dano e atira uma versão fraca da arma (`WeaponData.companion_levels`, 3 níveis). Cada arma tem um papel como auxiliar: Raio foco, Leque flancos, Mísseis caça-grandões, Órbita escudo em volta da nave principal, Lança perfuração, Artilharia área, Tesla defesa próxima (360°), Ricochete enxame. Power-up raro lilás (`companion_powerup_chance`) sobe o nível dela na partida, com aviso na tela.
+- **Tela de esquadrão:** 4 vagas + vaga da auxiliar no topo; toque numa vaga e depois numa nave (troca de lugar se já estava em outra vaga). Cartões mostram o papel como principal e como auxiliar.
 - **8 naves:**
 
   | Nave | Arma | Especial | Liberada |
@@ -91,7 +92,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
   | Ricochete | BOUNCE | 16 orbes que ricocheteiam | cap. 5 |
 
   "Liberada" = concluir o capítulo (fase 9). Está em `BodyData.unlock_chapter`.
-- 5 níveis de arma por power-up, kits médicos, especial que carrega com o tempo, revive por anúncio simulado (`AdService`).
+- 5 níveis de arma por power-up, kits médicos, especial que carrega com o tempo (`special_charge_multiplier`, hoje 1,5), revive por anúncio simulado (`AdService`).
 - **Quarks:** 10% da pontuação de cada inimigo/chefe, mais bônus ao concluir a fase (dobrado na 1ª vez). Guardados ao fim da partida, mesmo ao perder ou sair.
 - **Evolução do núcleo** (`upgrades.tscn`, `data/upgrade_tree.tres`, `data/upgrades/*.tres`): 12 nós em 3 ramos (Ataque, Defesa, Suporte) + **Sobrecarga**, sem limite de níveis (custo linear). Bônus calculados em `UpgradeTreeData.boosts_for` → `PlayerBoosts` (no `CombatContext` e no `MatchState`).
 - **Áudio** (`Audio`, autoload): 28 efeitos em `assets/audio/sfx`, com ganho por som em `Params.sfx_gain_db` e intervalo mínimo em `Params.sfx_min_gap`. **Músicas** em `assets/audio/music` (menu e um tema por capítulo, em laço, com troca suave), geradas por `python3 scripts/tools/gen_music.py` (Python puro). Barramentos SFX e Música.
@@ -132,7 +133,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Nave auxiliar | `scripts/player/companion.gd` |
 | Barra de troca e toque curto | `body_switcher.gd`, `touch_input.gd` |
 | Campanha (gerador) | `scripts/tools/campaign_builder.gd` |
-| Armas | `scripts/weapons/*` + `data/weapons/*.tres` (`WeaponData` com 5 `WeaponLevel`) |
+| Armas | `scripts/weapons/*` + `data/weapons/*.tres` (`WeaponData` com 5 `WeaponLevel` e 3 da auxiliar). Cada portador (nave e auxiliar) tem um `WeaponMount` que guarda as armas (hoje 1; pronto para várias) |
 | Especiais | `special_attack.gd`, `giant_beam.gd`, `shockwave.gd`, `bombardment.gd` |
 | Inimigos / ondas / fases | `scripts/enemies/*` + `data/enemies`, `data/stages` |
 | Chefes | `boss.gd`, `boss_phase.gd`, `boss_attack.gd` + `data/bosses` |
@@ -199,6 +200,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 **Ainda não feito:**
 - músicas definitivas (as atuais são sintetizadas)
 - `bomb_global.wav` não usado (a bomba global do GDD ainda não existe)
+- especial global carregável por tempo: engavetado pelo Gabriel (05/11/2026)
+- meteoros e obstáculos: o Gabriel vai pedir num próximo prompt
 - anúncio real (SDK)
 - arte final (hoje tudo são placeholders desenhados por código)
 - pacote definitivo (`com.example` ainda)
