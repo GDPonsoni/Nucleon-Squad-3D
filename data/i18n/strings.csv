@@ -47,7 +47,7 @@ SHIP_ARTILLERY_NAME,Artillery,Artilharia,Artillería
 SHIP_ARTILLERY_DESC,Shells that explode in an area. Special: bombardment.,Projéteis que explodem em área. Especial: bombardeio.,Proyectiles que explotan en área. Especial: bombardeo.
 MENU_SQUAD,Squad,Esquadrão,Escuadrón
 SQUAD_TITLE,Squad,Esquadrão,Escuadrón
-SQUAD_HINT,Tap the ships to build a squad of 4. The first one starts the stage.,Toque nas naves para montar o esquadrão de 4. A primeira começa a fase.,Toca las naves para armar un escuadrón de 4. La primera empieza la fase.
+SQUAD_HINT,"Tap a slot, then the ship that goes there. Slot 1 starts the stage.",Toque numa vaga e depois na nave que vai ocupá-la. A vaga 1 começa a fase.,Toca una vaga y luego la nave que irá allí. La vaga 1 empieza la fase.
 SQUAD_SAVE,Save,Salvar,Guardar
 PLANET_4_NAME,Singularity,Singularidade,Singularidad
 BOSS_4_NAME,Hydra,Hidra,Hidra
@@ -101,7 +101,6 @@ UPG_WINGMAN_DESC,wingman damage %s,dano da nave auxiliar %s,daño de la nave aux
 UPG_OVERDRIVE_NAME,Overdrive,Sobrecarga,Sobrecarga
 UPG_OVERDRIVE_DESC,overall damage %s (no level limit),dano geral %s (sem limite de nível),daño general %s (sin límite de nivel)
 SQUAD_COMPANION,Wingman,Auxiliar,Auxiliar
-SQUAD_COMPANION_HINT,Pick a ship that is not in the squad. It is optional.,Escolha uma nave que não está no esquadrão. É opcional.,Elige una nave que no esté en el escuadrón. Es opcional.
 SQUAD_COMPANION_LOCKED,Clear chapter %d to unlock the wingman slot.,Conclua o capítulo %d para liberar o espaço da nave auxiliar.,Completa el capítulo %d para desbloquear la nave auxiliar.
 SQUAD_LOCKED_SHIP,Clear chapter %d to unlock.,Conclua o capítulo %d para liberar.,Completa el capítulo %d para desbloquear.
 SHIP_TESLA_NAME,Tesla,Tesla,Tesla
@@ -135,10 +134,7 @@ SETTINGS_OFF,Off,Desligada,Desactivada
 LANGUAGE_AUTO,Automatic,Automático,Automático
 LANGUAGE_PT_BR,Português,Português,Português
 LANGUAGE_EN,English,English,English
-SQUAD_COMPANION_IN_SQUAD,The wingman must be a ship that is not in the squad.,A auxiliar precisa ser uma nave que não está no esquadrão.,La auxiliar debe ser una nave que no esté en el escuadrón.
 LANGUAGE_ES,Español,Español,Español
-SQUAD_COMPANION_TITLE,Wingman (optional),Nave auxiliar (opcional),Nave auxiliar (opcional)
-SQUAD_COMPANION_NONE,None,Nenhuma,Ninguna
 SQUAD_SLOTS_TITLE,Squad,Esquadrão,Escuadrón
 SETTINGS_PICK_LANGUAGE,Choose the language,Escolha o idioma,Elige el idioma
 ADS_EARN_BUTTON,Watch ad: +%d quarks,Ver anúncio: +%d quarks,Ver anuncio: +%d quarks
@@ -169,3 +165,6 @@ SHIP_TESLA_AUX,Close defense: zaps any enemy that gets near.,Defesa próxima: ac
 SHIP_TESLA_AUX_UP,more bolts,mais descargas,más descargas
 SHIP_RICOCHET_AUX,Swarm: shots bounce across many weak enemies.,Enxame: tiros ricocheteiam por muitos inimigos.,Enjambre: disparos rebotan entre muchos enemigos.
 SHIP_RICOCHET_AUX_UP,more bounces,mais ricochetes,más rebotes
+SQUAD_AUX_CLEAR,Remove,Remover,Quitar
+SQUAD_SLOT_MAIN,Slot %d: main ship (you play with one at a time and switch).,Vaga %d: nave principal (você joga com uma de cada vez e troca).,Vaga %d: nave principal (juegas con una a la vez y cambias).
+SQUAD_SLOT_AUX,Wingman (optional): flies beside you with a weaker version that has its own role.,"Auxiliar (opcional): voa ao seu lado com uma versão mais fraca, com papel próprio.","Auxiliar (opcional): vuela a tu lado con una versión más débil, con su propio papel."

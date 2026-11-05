@@ -76,6 +76,11 @@ func _ready() -> void:
 					await get_tree().process_frame
 					overflow += _check_overflow(scene, "upgrades %s %s" % [node.id, language])
 				SaveGame.unlock_everything = true
+			# Esquadrão: vaga da auxiliar e troca de lugar entre vagas
+			if scene.has_method("_on_card_pressed"):
+				failures += _check_squad_slots(scene, language)
+				await get_tree().process_frame
+				overflow += _check_overflow(scene, "squad trocas %s" % language)
 			# Seletor: confere cada capítulo
 			if scene.has_method("_show_chapter"):
 				for c in Session.campaign.planets.size():
@@ -347,5 +352,28 @@ func _check_inside_button(control: Control, label: String) -> int:
 	var text_h: float = font.get_multiline_string_size(lbl.atr(lbl.text), HORIZONTAL_ALIGNMENT_LEFT, maxf(rect.size.x, 1.0), lbl.get_theme_font_size("font_size")).y if lbl.autowrap_mode != TextServer.AUTOWRAP_OFF else rect.size.y
 	if rect.position.x < inner.position.x or rect.end.x > inner.end.x or rect.position.y < inner.position.y or rect.position.y + maxf(text_h, rect.size.y) > inner.end.y:
 		printerr("TEXTO FORA DO CARTÃO [%s] \"%s\"" % [label, lbl.text.left(40)])
+		return 1
+	return 0
+
+
+func _check_squad_slots(scene: Node, language: String) -> int:
+	var roster: Array = scene.get("_roster")
+	var chosen: Array = scene.get("_chosen")
+	var spare: BodyData = null
+	for body in roster:
+		if not chosen.has(body):
+			spare = body
+			break
+	var first: BodyData = chosen[0]
+	scene.call("_on_slot_pressed", -1)
+	scene.call("_on_card_pressed", spare)
+	var ok: bool = scene.get("_companion") == spare
+	scene.call("_on_slot_pressed", 0)
+	scene.call("_on_card_pressed", spare)
+	ok = ok and scene.get("_chosen")[0] == spare and scene.get("_companion") == first
+	scene.call("_on_aux_clear_pressed")
+	ok = ok and scene.get("_companion") == null and not (scene.get("_save_button") as Button).disabled
+	if not ok:
+		printerr("FALHOU: vagas do esquadrão [%s]" % language)
 		return 1
 	return 0
