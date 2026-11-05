@@ -24,7 +24,7 @@ func _process(delta: float) -> void:
 			_phase = Phase.AIMING
 			_timer = stats.aim_seconds
 	else:
-		var target: Enemy = context.nearest_enemy(global_position)
+		var target: Enemy = _finder().call(global_position)
 		var goal: float = -PI * 0.5 if target == null else (target.position - global_position).angle()
 		_aim_angle = rotate_toward(_aim_angle, goal, TAU * delta)
 		if _timer <= 0.0:
@@ -46,7 +46,12 @@ func _launch_wave() -> void:
 		bullet.life_left = stats.projectile_lifetime
 		bullet.homing_turn_rate = deg_to_rad(stats.homing_turn_degrees)
 		bullet.homing_turn_growth = deg_to_rad(stats.homing_turn_growth_degrees)
-		bullet.target_finder = context.nearest_enemy
+		bullet.target_finder = _finder()
+
+
+## Alvo dos mísseis: o mais próximo ou (auxiliar caça-grandões) o com mais vida.
+func _finder() -> Callable:
+	return context.strongest_enemy if stats.target_strongest else context.nearest_enemy
 
 
 ## Posição de cada míssil no anel, relativa à nave.

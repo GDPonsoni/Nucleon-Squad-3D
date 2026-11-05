@@ -17,6 +17,8 @@ var _flash: ColorRect
 var _boss: Boss
 var _boss_label: Label
 var _warning: Label
+var _toast: Label
+var _toast_tween: Tween
 var _special: SpecialButton
 var _shown_quarks: int = -1
 
@@ -69,6 +71,18 @@ func _ready() -> void:
 	_warning.visible = false
 	_canvas.add_child(_warning)
 
+	# Aviso curto (ex.: auxiliar subiu de nível), acima do meio da tela
+	_toast = UiFactory.make_title("")
+	_toast.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	_toast.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_toast.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_toast.add_theme_font_size_override("font_size", Params.hud_toast_font_size)
+	_toast.add_theme_constant_override("outline_size", 10)
+	_toast.add_theme_color_override("font_outline_color", Params.nucleus_outline_color)
+	_toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_toast.visible = false
+	_canvas.add_child(_toast)
+
 	# Especial: canto inferior esquerdo, logo acima da barra de troca (place_special)
 	_special = SpecialButton.new()
 	_special.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
@@ -117,6 +131,24 @@ func show_warning(text_key: String) -> void:
 		tween.tween_property(_warning, "modulate:a", 1.0, Params.boss_warning_seconds / Params.hud_warning_blinks * 0.5)
 		tween.tween_property(_warning, "modulate:a", 0.15, Params.boss_warning_seconds / Params.hud_warning_blinks * 0.5)
 	tween.tween_callback(_warning.hide)
+
+
+## Texto curto que aparece, fica um pouco e some (tempo real, mesmo na câmera lenta).
+func show_toast(text: String, color: Color) -> void:
+	_toast.text = text
+	_toast.add_theme_color_override("font_color", color)
+	_toast.offset_left = Params.hud_margin.x
+	_toast.offset_right = -Params.hud_margin.x
+	_toast.offset_top = get_viewport().get_visible_rect().size.y * Params.hud_toast_y
+	_toast.visible = true
+	_toast.modulate.a = 0.0
+	if _toast_tween != null:
+		_toast_tween.kill()
+	_toast_tween = create_tween().set_ignore_time_scale(true)
+	_toast_tween.tween_property(_toast, "modulate:a", 1.0, 0.15)
+	_toast_tween.tween_interval(Params.hud_toast_seconds)
+	_toast_tween.tween_property(_toast, "modulate:a", 0.0, 0.35)
+	_toast_tween.tween_callback(_toast.hide)
 
 
 ## Flash vermelho rápido (em tempo real, mesmo na câmera lenta).

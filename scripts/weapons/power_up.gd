@@ -1,9 +1,10 @@
 class_name PowerUp
 extends PoolItem
 ## Item que desce devagar e é coletado ao encostar na nave.
-## WEAPON sobe o nível da arma do corpo ativo; HEAL (medkit) recupera 1 hit.
+## WEAPON sobe o nível da arma do corpo ativo; HEAL (medkit) recupera 1 hit;
+## COMPANION (raro) sobe o nível da nave auxiliar.
 
-enum Kind { WEAPON, HEAL }
+enum Kind { WEAPON, HEAL, COMPANION }
 
 var kind: Kind = Kind.WEAPON
 
@@ -25,7 +26,7 @@ func _process(delta: float) -> void:
 		return
 	# Power-up gira; ambos pulsam para chamar atenção
 	_clock += delta
-	rotation = _clock * Params.powerup_spin_speed if kind == Kind.WEAPON else 0.0
+	rotation = _clock * Params.powerup_spin_speed if kind != Kind.HEAL else 0.0
 	scale = Vector2.ONE * (1.0 + Params.powerup_pulse * sin(_clock * Params.powerup_pulse_speed))
 
 
@@ -34,11 +35,16 @@ func _draw() -> void:
 		_draw_medkit()
 		return
 	var radius: float = Params.powerup_radius
-	draw_circle(Vector2.ZERO, radius, Color(Params.powerup_color, 0.25))
+	# Auxiliar: lilás, maior e com anel extra (é raro e precisa se destacar)
+	var companion: bool = kind == Kind.COMPANION
+	var color: Color = Params.companion_powerup_color if companion else Params.powerup_color
+	draw_circle(Vector2.ZERO, radius, Color(color, 0.25))
+	if companion:
+		draw_arc(Vector2.ZERO, radius * 1.3, 0.0, TAU, 32, Color(color, 0.8), 4.0)
 	var r: float = radius * 0.75
 	draw_colored_polygon(PackedVector2Array([
 		Vector2(0.0, -r), Vector2(r, 0.0), Vector2(0.0, r), Vector2(-r, 0.0),
-	]), Params.powerup_color)
+	]), color)
 	# Sinal de "+"
 	var arm: float = radius * 0.4
 	draw_line(Vector2(-arm, 0.0), Vector2(arm, 0.0), Color.WHITE, 5.0)

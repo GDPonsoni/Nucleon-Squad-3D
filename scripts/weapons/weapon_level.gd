@@ -48,3 +48,11 @@ extends Resource
 @export var orbit_size: float = 40.0
 @export var orbit_hit_seconds: float = 0.15  # intervalo de dano no mesmo inimigo
 @export var clears_projectiles: bool = false  # orbitais destroem tiros inimigos
+
+@export_group("Papel da nave auxiliar")  # comportamentos usados nas versões auxiliares
+@export var fire_angles: PackedFloat32Array = PackedFloat32Array()  # Projéteis: um tiro por ângulo (graus, 0 = para cima); vazio = leque normal
+@export var aim_at_cluster: bool = false  # Projéteis: mira o grupo mais denso de inimigos
+@export var cluster_radius: float = 220.0  # raio usado para contar vizinhos do grupo
+@export var target_strongest: bool = false  # Mísseis: miram o inimigo com mais vida
+@export var orbit_around_player: bool = false  # Órbita: gira em volta da nave principal
+@export var chain_any_direction: bool = false  # Tesla: 1ª descarga em qualquer direção (não só à frente)

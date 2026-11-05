@@ -103,6 +103,8 @@ func _ready() -> void:
 		add_child(companion)
 		move_child(companion, player.get_index())
 		companion.setup(companion_body, context)
+		state.companion = companion_body
+		dropper.companion_can_level = state.companion_can_level
 
 	# Power-ups e tiros inimigos por cima da nave e do raio, para ficarem sempre visíveis
 	add_child(power_ups)
@@ -343,12 +345,26 @@ func _on_powerup_collected(kind: PowerUp.Kind) -> void:
 		if state.heal_current(Params.medkit_heal):
 			player.pulse(Params.medkit_color)
 		return
+	if kind == PowerUp.Kind.COMPANION:
+		_on_companion_powerup()
+		return
 	state.powerups_collected += 1
 	if state.level_up_current() and player.weapon != null:
 		player.weapon.set_level(state.weapon_levels[state.current])
 		player.pulse_level_up()
 		Audio.play(&"weapon_levelup")
 		Audio.vibrate(Params.haptic_level_up_ms)
+
+
+## Power-up raro da auxiliar: sobe o nível dela e avisa na tela qual é o efeito.
+func _on_companion_powerup() -> void:
+	if companion == null or not state.level_up_companion():
+		return
+	companion.set_level(state.companion_level)
+	Audio.play(&"weapon_levelup", 0.0, 1.2)
+	Audio.vibrate(Params.haptic_level_up_ms)
+	var level_text: String = tr("COMPANION_LEVEL_MAX") if not state.companion_can_level() else tr("COMPANION_LEVEL") % state.companion_level
+	hud.show_toast("%s %s: %s\n%s" % [tr("SQUAD_COMPANION"), tr(companion.body.name_key), level_text, tr(companion.body.companion_upgrade_key)], Params.companion_powerup_color)
 
 
 ## Corpo destruído: explode, o núcleo racha e o jogador escolhe outro corpo vivo.

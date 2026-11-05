@@ -48,14 +48,36 @@ chain_range = 1100.0
 chain_jump = 380.0
 chain_falloff = 0.82
 
-[sub_resource type="Resource" id="WeaponLevel_companion"]
+
+[sub_resource type="Resource" id="WeaponLevel_companion1"]
 script = ExtResource("2_level")
 damage = 1
-fire_rate = 1.6
+fire_rate = 2.0
 chain_targets = 2
-chain_range = 750.0
+chain_range = 420.0
 chain_jump = 260.0
 chain_falloff = 0.7
+chain_any_direction = true
+
+[sub_resource type="Resource" id="WeaponLevel_companion2"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 2.5
+chain_targets = 3
+chain_range = 440.0
+chain_jump = 270.0
+chain_falloff = 0.7
+chain_any_direction = true
+
+[sub_resource type="Resource" id="WeaponLevel_companion3"]
+script = ExtResource("2_level")
+damage = 2
+fire_rate = 3.0
+chain_targets = 3
+chain_range = 460.0
+chain_jump = 280.0
+chain_falloff = 0.7
+chain_any_direction = true
 
 [resource]
 script = ExtResource("1_script")
@@ -63,7 +85,7 @@ id = &"tesla"
 kind = 6
 color = Color(0.7, 0.8, 1, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])
-companion = SubResource("WeaponLevel_companion")
+companion_levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_companion1"), SubResource("WeaponLevel_companion2"), SubResource("WeaponLevel_companion3")])
 special_charge_seconds = 18.0
 special_damage = 9
 special_duration = 1.4

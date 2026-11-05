@@ -149,3 +149,23 @@ SETTINGS_STATS,On-screen stats,Estatísticas na tela,Estadísticas en pantalla
 ADS_EARN_TITLE,Earn quarks,Ganhar quarks,Ganar quarks
 ADS_EARN_HINT,Watch a short ad to earn quarks for upgrading the core.,Assista a um anúncio curto para ganhar quarks e evoluir o núcleo.,Mira un anuncio corto para ganar quarks y mejorar el núcleo.
 UPGRADES_NO_QUARKS,Not enough quarks: you need %d more.,Saldo insuficiente: faltam %d quarks.,Saldo insuficiente: faltan %d quarks.
+COMPANION_LEVEL,level %d,nível %d,nivel %d
+COMPANION_LEVEL_MAX,max level!,nível máximo!,¡nivel máximo!
+SQUAD_MAIN_LABEL,Main,Principal,Principal
+SQUAD_AUX_LABEL,Wingman,Auxiliar,Auxiliar
+SHIP_BEAM_AUX,Focus: a thin beam straight ahead.,Foco: raio fino à frente.,Foco: rayo fino al frente.
+SHIP_BEAM_AUX_UP,faster beam,raio mais rápido,rayo más rápido
+SHIP_SPREAD_AUX,Flanks: diagonal shots to both sides.,Flancos: tiros em diagonal para os lados.,Flancos: disparos en diagonal a los lados.
+SHIP_SPREAD_AUX_UP,more side shots,mais tiros laterais,más disparos laterales
+SHIP_HOMING_AUX,Big-game hunter: missiles go for the toughest enemy.,Caça-grandões: mísseis vão no inimigo com mais vida.,Cazagigantes: misiles van al enemigo con más vida.
+SHIP_HOMING_AUX_UP,more missiles,mais mísseis,más misiles
+SHIP_ORBIT_AUX,Shield: orbs around your ship erase enemy shots.,Escudo: orbes em volta da sua nave apagam tiros.,Escudo: orbes alrededor de tu nave borran disparos.
+SHIP_ORBIT_AUX_UP,+1 orb,+1 orbe,+1 orbe
+SHIP_LANCE_AUX,Piercer: slow shot that goes through everything.,Perfuração: tiro lento que atravessa tudo.,Perforación: disparo lento que atraviesa todo.
+SHIP_LANCE_AUX_UP,faster lances,lanças mais rápidas,lanzas más rápidas
+SHIP_ARTILLERY_AUX,Area: shells aimed at the biggest group.,Área: projéteis no maior grupo de inimigos.,Área: proyectiles al grupo más grande.
+SHIP_ARTILLERY_AUX_UP,bigger blasts,explosões maiores,explosiones mayores
+SHIP_TESLA_AUX,Close defense: zaps any enemy that gets near.,Defesa próxima: acerta quem chega perto.,Defensa cercana: golpea a quien se acerque.
+SHIP_TESLA_AUX_UP,more bolts,mais descargas,más descargas
+SHIP_RICOCHET_AUX,Swarm: shots bounce across many weak enemies.,Enxame: tiros ricocheteiam por muitos inimigos.,Enjambre: disparos rebotan entre muchos enemigos.
+SHIP_RICOCHET_AUX_UP,more bounces,mais ricochetes,más rebotes

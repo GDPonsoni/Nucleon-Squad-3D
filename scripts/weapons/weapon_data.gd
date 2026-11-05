@@ -9,8 +9,9 @@ enum Kind { BEAM, SPREAD, HOMING, ORBIT, PIERCE, BLAST, CHAIN, BOUNCE }
 @export var kind: Kind = Kind.SPREAD
 @export var color: Color = Color.WHITE
 @export var levels: Array[WeaponLevel] = []
-## Versão simples e fraca usada pela nave auxiliar (sem níveis). Vazio = nível 1.
-@export var companion: WeaponLevel
+## Versão simples e fraca usada pela nave auxiliar, com níveis próprios (power-up raro).
+## Vazio = usa o nível 1 da arma.
+@export var companion_levels: Array[WeaponLevel] = []
 
 @export_group("Especial")  # cada tipo usa só parte dos campos
 @export var special_charge_seconds: float = 20.0  # tempo (com o corpo ativo) para encher
@@ -28,3 +29,14 @@ func max_level() -> int:
 ## Nível começa em 1.
 func level(number: int) -> WeaponLevel:
 	return levels[clampi(number, 1, max_level()) - 1]
+
+
+func companion_max_level() -> int:
+	return maxi(companion_levels.size(), 1)
+
+
+## Nível da versão auxiliar (começa em 1).
+func companion_level(number: int) -> WeaponLevel:
+	if companion_levels.is_empty():
+		return level(1)
+	return companion_levels[clampi(number, 1, companion_levels.size()) - 1]

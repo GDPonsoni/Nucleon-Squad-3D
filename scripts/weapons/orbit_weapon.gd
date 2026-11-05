@@ -16,8 +16,9 @@ func _process(delta: float) -> void:
 			_cooldowns.erase(enemy)
 
 	var enemies: Array[PoolItem] = context.hostiles()
+	var pivot: Vector2 = _pivot()
 	for i in stats.orbit_count:
-		var center: Vector2 = global_position + _offset(i)
+		var center: Vector2 = pivot + _offset(i)
 		if stats.clears_projectiles:
 			_clear_projectiles(center)
 		# De trás para frente: o inimigo pode morrer e sair da lista
@@ -42,12 +43,20 @@ func _clear_projectiles(center: Vector2) -> void:
 			context.enemy_bullets.release(bullet)
 
 
+## Centro da órbita: a própria nave ou (auxiliar escudo) a nave principal.
+func _pivot() -> Vector2:
+	if stats.orbit_around_player and context.player != null:
+		return context.player.global_position
+	return global_position
+
+
 func _offset(index: int) -> Vector2:
 	return Vector2.from_angle(_angle + TAU * index / stats.orbit_count) * stats.orbit_radius
 
 
 func _draw() -> void:
-	draw_arc(Vector2.ZERO, stats.orbit_radius, 0.0, TAU, 64, Color(data.color, 0.15), 3.0)
+	var pivot: Vector2 = to_local(_pivot())
+	draw_arc(pivot, stats.orbit_radius, 0.0, TAU, 64, Color(data.color, 0.15), 3.0)
 	for i in stats.orbit_count:
-		draw_circle(_offset(i), stats.orbit_size * 0.5, data.color)
-		draw_circle(_offset(i), stats.orbit_size * 0.2, Color.WHITE)
+		draw_circle(pivot + _offset(i), stats.orbit_size * 0.5, data.color)
+		draw_circle(pivot + _offset(i), stats.orbit_size * 0.2, Color.WHITE)

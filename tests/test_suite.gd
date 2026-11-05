@@ -178,6 +178,21 @@ func test_switch_cooldown_and_special_charge() -> void:
 	check(is_equal_approx(state.special_seconds(), base * Params.special_charge_multiplier), "carga do especial com o multiplicador")
 
 
+func test_companion_versions() -> void:
+	var roster: Array[BodyData] = (load(Params.roster_path) as FormationData).bodies
+	for body in roster:
+		var weapon: WeaponData = body.weapon
+		check(weapon.companion_levels.size() == 3, "%s: 3 níveis de auxiliar" % body.id)
+		for key in [body.companion_description_key, body.companion_upgrade_key]:
+			check(not key.is_empty() and TranslationServer.translate(key) != key, "%s: texto %s" % [body.id, key])
+	var formation := load(Params.formation_path) as FormationData
+	var state := MatchState.new(formation)
+	check(not state.companion_can_level(), "sem auxiliar não sobe nível")
+	state.companion = roster[0]
+	check(state.level_up_companion() and state.level_up_companion(), "auxiliar sobe até o 3")
+	check(state.companion_level == 3 and not state.level_up_companion(), "auxiliar para no 3")
+
+
 func test_every_sound_has_a_file_and_gain() -> void:
 	for sound: StringName in Params.sfx_gain_db:
 		check(ResourceLoader.exists("res://assets/audio/sfx/%s.wav" % sound), "arquivo de %s" % sound)

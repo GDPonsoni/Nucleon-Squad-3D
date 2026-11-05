@@ -68,18 +68,42 @@ bounces = 3
 wall_bounces = 3
 bounce_range = 520.0
 
-[sub_resource type="Resource" id="WeaponLevel_companion"]
+
+[sub_resource type="Resource" id="WeaponLevel_companion1"]
 script = ExtResource("2_level")
 damage = 1
-fire_rate = 1.4
+fire_rate = 1.6
 projectile_speed = 1400.0
 projectile_size = Vector2(12, 12)
 projectile_shape = 1
 projectile_count = 1
-spread_degrees = 0.0
-bounces = 1
+bounces = 3
 wall_bounces = 1
-bounce_range = 380.0
+bounce_range = 420.0
+
+[sub_resource type="Resource" id="WeaponLevel_companion2"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 2.0
+projectile_speed = 1450.0
+projectile_size = Vector2(12, 12)
+projectile_shape = 1
+projectile_count = 1
+bounces = 4
+wall_bounces = 1
+bounce_range = 440.0
+
+[sub_resource type="Resource" id="WeaponLevel_companion3"]
+script = ExtResource("2_level")
+damage = 1
+fire_rate = 2.4
+projectile_speed = 1500.0
+projectile_size = Vector2(13, 13)
+projectile_shape = 1
+projectile_count = 1
+bounces = 5
+wall_bounces = 2
+bounce_range = 460.0
 
 [resource]
 script = ExtResource("1_script")
@@ -87,7 +111,7 @@ id = &"ricochet"
 kind = 7
 color = Color(0.8, 1, 0.35, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])
-companion = SubResource("WeaponLevel_companion")
+companion_levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_companion1"), SubResource("WeaponLevel_companion2"), SubResource("WeaponLevel_companion3")])
 special_charge_seconds = 18.0
 special_damage = 6
 special_count = 16

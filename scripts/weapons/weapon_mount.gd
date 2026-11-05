@@ -25,10 +25,9 @@ func setup(combat_context: CombatContext, weapon_variant: Variant = Variant.MAIN
 
 ## Anexa uma arma e devolve o componente criado.
 func equip(data: WeaponData, level: int = 1) -> Weapon:
-	var weapon: Weapon = Weapon.create(data, context, level)
-	if variant == Variant.COMPANION:
-		weapon.apply_stats(data.companion if data.companion != null else data.level(1))
+	var weapon: Weapon = Weapon.create(data, context, 1)
 	weapon.variant = variant
+	_apply_level(weapon, level)
 	weapon.power = power
 	weapon.sound_db = sound_db
 	weapon.muzzle_offset = muzzle_offset
@@ -37,6 +36,20 @@ func equip(data: WeaponData, level: int = 1) -> Weapon:
 	weapon.set_active(_active)
 	_weapons.append(weapon)
 	return weapon
+
+
+## Muda o nível de todas as armas (da versão completa ou da auxiliar, conforme o portador).
+func set_level(level: int) -> void:
+	for weapon in _weapons:
+		_apply_level(weapon, level)
+
+
+func _apply_level(weapon: Weapon, level: int) -> void:
+	if variant == Variant.COMPANION:
+		weapon.level = clampi(level, 1, weapon.data.companion_max_level())
+		weapon.apply_stats(weapon.data.companion_level(level))
+	else:
+		weapon.set_level(level)
 
 
 ## Remove todas as armas.

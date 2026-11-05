@@ -11,6 +11,7 @@ signal game_over
 signal weapon_level_changed(index: int, level: int)
 signal score_changed(score: int)
 signal shields_changed(shields: int)
+signal companion_level_changed(level: int)
 
 var bodies: Array[BodyData] = []
 var hits_left: PackedInt32Array = PackedInt32Array()
@@ -22,6 +23,9 @@ var boosts: PlayerBoosts
 var max_hits: int = 0  # hits de cada corpo (com a evolução do núcleo)
 var start_level: int = 1  # nível das armas ao começar (e ao perder o corpo)
 var shields: int = 0  # hits absorvidos antes de tirar vida (evolução do núcleo)
+var companion: BodyData  # nave auxiliar (null = sem auxiliar)
+var companion_level: int = 1  # sobe com o power-up raro; não se perde durante a partida
+var companion_powerups: int = 0
 var switch_cooldown_left: float = 0.0  # segundos (de jogo) até poder trocar de corpo de novo
 
 # Estatísticas da partida (HUD e telas de resultado)
@@ -135,6 +139,21 @@ func level_up_current() -> bool:
 		return false
 	weapon_levels[current] += 1
 	weapon_level_changed.emit(current, weapon_levels[current])
+	return true
+
+
+## A auxiliar ainda pode subir de nível (existe e não está no máximo).
+func companion_can_level() -> bool:
+	return companion != null and companion_level < companion.weapon.companion_max_level()
+
+
+## Sobe o nível da auxiliar. Retorna false se não há auxiliar ou já está no máximo.
+func level_up_companion() -> bool:
+	if not companion_can_level():
+		return false
+	companion_level += 1
+	companion_powerups += 1
+	companion_level_changed.emit(companion_level)
 	return true
 
 

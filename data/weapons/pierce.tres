@@ -58,15 +58,36 @@ projectile_count = 3
 spread_degrees = 10.0
 pierce = 99
 
-[sub_resource type="Resource" id="WeaponLevel_companion"]
+
+[sub_resource type="Resource" id="WeaponLevel_companion1"]
 script = ExtResource("2_level")
 damage = 3
-fire_rate = 1.2
+fire_rate = 1.0
 projectile_speed = 2400.0
-projectile_size = Vector2(8, 50)
+projectile_size = Vector2(8, 60)
 projectile_shape = 0
 projectile_count = 1
-pierce = 1
+pierce = 999
+
+[sub_resource type="Resource" id="WeaponLevel_companion2"]
+script = ExtResource("2_level")
+damage = 3
+fire_rate = 1.3
+projectile_speed = 2400.0
+projectile_size = Vector2(9, 64)
+projectile_shape = 0
+projectile_count = 1
+pierce = 999
+
+[sub_resource type="Resource" id="WeaponLevel_companion3"]
+script = ExtResource("2_level")
+damage = 4
+fire_rate = 1.6
+projectile_speed = 2500.0
+projectile_size = Vector2(10, 70)
+projectile_shape = 0
+projectile_count = 1
+pierce = 999
 
 [resource]
 script = ExtResource("1_script")
@@ -74,7 +95,7 @@ id = &"pierce"
 kind = 4
 color = Color(0.4, 0.55, 1, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])
-companion = SubResource("WeaponLevel_companion")
+companion_levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_companion1"), SubResource("WeaponLevel_companion2"), SubResource("WeaponLevel_companion3")])
 special_charge_seconds = 18.0
 special_damage = 12
 special_count = 7

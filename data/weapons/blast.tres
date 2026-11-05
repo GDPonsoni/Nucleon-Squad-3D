@@ -58,15 +58,39 @@ projectile_count = 3
 spread_degrees = 24.0
 splash_radius = 190.0
 
-[sub_resource type="Resource" id="WeaponLevel_companion"]
+
+[sub_resource type="Resource" id="WeaponLevel_companion1"]
 script = ExtResource("2_level")
 damage = 2
-fire_rate = 0.9
-projectile_speed = 900.0
+fire_rate = 0.8
+projectile_speed = 1000.0
 projectile_size = Vector2(18, 18)
 projectile_shape = 1
 projectile_count = 1
-splash_radius = 75.0
+splash_radius = 120.0
+aim_at_cluster = true
+
+[sub_resource type="Resource" id="WeaponLevel_companion2"]
+script = ExtResource("2_level")
+damage = 2
+fire_rate = 0.95
+projectile_speed = 1050.0
+projectile_size = Vector2(20, 20)
+projectile_shape = 1
+projectile_count = 1
+splash_radius = 140.0
+aim_at_cluster = true
+
+[sub_resource type="Resource" id="WeaponLevel_companion3"]
+script = ExtResource("2_level")
+damage = 3
+fire_rate = 1.1
+projectile_speed = 1100.0
+projectile_size = Vector2(22, 22)
+projectile_shape = 1
+projectile_count = 1
+splash_radius = 160.0
+aim_at_cluster = true
 
 [resource]
 script = ExtResource("1_script")
@@ -74,7 +98,7 @@ id = &"blast"
 kind = 5
 color = Color(1, 0.45, 0.3, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])
-companion = SubResource("WeaponLevel_companion")
+companion_levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_companion1"), SubResource("WeaponLevel_companion2"), SubResource("WeaponLevel_companion3")])
 special_charge_seconds = 20.0
 special_damage = 20
 special_count = 12

@@ -5,6 +5,8 @@ extends Resource
 @export var id: StringName
 @export var name_key: String  # tradução do nome (tela de esquadrão)
 @export var description_key: String  # tradução da descrição curta
+@export var companion_description_key: String  # papel da nave como auxiliar
+@export var companion_upgrade_key: String  # o que melhora a cada nível da auxiliar
 @export var color: Color = Color.WHITE
 ## Contorno em unidades (-0.5..0.5, ponta em y = -0.5), escalado por Params.ship_size.
 @export var shape: PackedVector2Array = PackedVector2Array()

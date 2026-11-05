@@ -1,13 +1,16 @@
 class_name PowerUpDropper
 extends Node
 ## Solta itens na posição do último inimigo destruído: um power-up a cada
-## powerup_every_kills e um medkit (mais raro) a cada medkit_every_kills.
+## powerup_every_kills, um medkit (mais raro) a cada medkit_every_kills e, por sorteio,
+## o power-up raro da nave auxiliar (companion_powerup_chance por inimigo).
 
 var _pool: NodePool
 var _kills: int = 0
 var _heal_kills: int = 0
 var _powerup_every: int = 1
 var _medkit_every: int = 1
+## Diz se a auxiliar ainda pode subir de nível (sem auxiliar ou no máximo, não cai).
+var companion_can_level: Callable = func() -> bool: return false
 
 
 ## Os bônus da evolução do núcleo adiantam os drops.
@@ -27,6 +30,8 @@ func on_enemy_killed(enemy: Enemy) -> void:
 		_heal_kills = 0
 		# Se cair junto com um power-up, sai um pouco ao lado
 		_drop(enemy.position + Vector2(Params.powerup_radius * 2.5, 0.0), PowerUp.Kind.HEAL)
+	if companion_can_level.call() and randf() < Params.companion_powerup_chance:
+		_drop(enemy.position - Vector2(Params.powerup_radius * 2.5, 0.0), PowerUp.Kind.COMPANION)
 
 
 func _drop(pos: Vector2, kind: PowerUp.Kind) -> void:

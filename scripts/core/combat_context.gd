@@ -34,3 +34,36 @@ func nearest_enemy(from: Vector2) -> Enemy:
 			best_distance = distance
 			best = enemy
 	return best
+
+
+## Inimigo visível com mais vida (null se não houver). Mesma assinatura de nearest_enemy.
+func strongest_enemy(_from: Vector2 = Vector2.ZERO) -> Enemy:
+	var best: Enemy = null
+	for item in hostiles():
+		var enemy := item as Enemy
+		if not enemy.visible or not enemy.is_on_screen():
+			continue
+		if best == null or enemy.hp > best.hp:
+			best = enemy
+	return best
+
+
+## Centro do grupo mais denso: o inimigo com mais vizinhos dentro do raio (null se não houver).
+func densest_enemy(radius: float) -> Enemy:
+	var list: Array[PoolItem] = hostiles()
+	var best: Enemy = null
+	var best_count: int = -1
+	var reach: float = radius * radius
+	for item in list:
+		var enemy := item as Enemy
+		if not enemy.visible or not enemy.is_on_screen():
+			continue
+		var count: int = 0
+		for other_item in list:
+			var other := other_item as Enemy
+			if other.visible and enemy.position.distance_squared_to(other.position) <= reach:
+				count += 1
+		if count > best_count:
+			best_count = count
+			best = enemy
+	return best

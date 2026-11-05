@@ -28,7 +28,7 @@ func _discharge() -> void:
 	var amount: float = damage()
 	var current: Vector2 = from
 	for k in stats.chain_targets:
-		var target: Enemy = _next_target(current, stats.chain_range if k == 0 else stats.chain_jump, hit, k == 0)
+		var target: Enemy = _next_target(current, stats.chain_range if k == 0 else stats.chain_jump, hit, k == 0 and not stats.chain_any_direction)
 		if target == null:
 			break
 		hit[target] = true

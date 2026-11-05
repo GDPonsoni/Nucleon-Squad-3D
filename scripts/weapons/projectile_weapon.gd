@@ -2,6 +2,7 @@ class_name ProjectileWeapon
 extends Weapon
 ## Dispara projéteis retos do pool: um ou vários em leque, que podem atravessar
 ## inimigos (Lança), explodir em área (Artilharia) ou ricochetear (Ricochete).
+## Versões auxiliares podem atirar em ângulos fixos (fire_angles) ou mirar no grupo mais denso.
 
 var _cooldown: float = 0.0
 
@@ -18,11 +19,22 @@ func _process(delta: float) -> void:
 func _fire() -> void:
 	Audio.shot(data.kind, sound_db)
 	var origin: Vector2 = muzzle()
-	var count: int = maxi(stats.projectile_count, 1)
+	var base: float = -PI * 0.5
+	# Auxiliar de área: mira o grupo mais denso (sem inimigos, atira para cima)
+	if stats.aim_at_cluster:
+		var target: Enemy = context.densest_enemy(stats.cluster_radius)
+		if target != null:
+			base = (target.position - origin).angle()
+	var fixed: bool = not stats.fire_angles.is_empty()
+	var count: int = stats.fire_angles.size() if fixed else maxi(stats.projectile_count, 1)
 	for i in count:
-		# -0.5..0.5 ao longo do leque (0 com um projétil só)
-		var t: float = 0.0 if count == 1 else float(i) / (count - 1) - 0.5
-		var angle: float = -PI * 0.5 + deg_to_rad(stats.spread_degrees) * t
+		var angle: float
+		if fixed:
+			angle = base + deg_to_rad(stats.fire_angles[i])
+		else:
+			# -0.5..0.5 ao longo do leque (0 com um projétil só)
+			var t: float = 0.0 if count == 1 else float(i) / (count - 1) - 0.5
+			angle = base + deg_to_rad(stats.spread_degrees) * t
 		var bullet := context.player_bullets.acquire() as Bullet
 		if bullet == null:
 			return
