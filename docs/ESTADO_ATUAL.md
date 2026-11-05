@@ -139,6 +139,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Planetas / campanha | `data/planets/*.tres`, `data/campaign.tres` (geradas) |
 | Naves e esquadrão | `data/bodies`, `data/formations/{default,roster}.tres` |
 | Textos (PT-BR / EN) | `data/i18n/strings.csv`. Campos com vírgula vão entre aspas |
+| Diálogos (pausa, revive, resultado, ganhar quarks, configurações na pausa) | `scripts/ui/dialog.gd` (`Dialog`): X de 144 px, Voltar/Esc fecham só o do topo da pilha, corpo com quebra de linha e rolagem. Params `dialog_*` |
 | UI | `scripts/ui/*`. Tema em `ui_theme.gd` / `ui_factory.gd` |
 
 **Autoloads:** `Params`, `Session`, `SaveGame`, `SceneTransition`, `AdService`, `Audio`.
@@ -192,6 +193,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - trocar a tela de boot (splash) do Godot
 - medir o FPS no aparelho com carga máxima
 - mesclar a branch na `main` e dar `push` (depende do "pode mesclar na main")
+
+**Diálogos (05/11/2026):** todos usam `Dialog`. Telas que tratam o Voltar (menu, seletor, esquadrão, evolução, configurações) ignoram o Voltar enquanto `Dialog.is_open()`. A janela de ganhar quarks não fecha durante o anúncio (senão a recompensa se perde). Revive: X e Voltar recusam. Resultado: sem X; o Voltar vai ao seletor de fases. O `ui_smoke` confere os diálogos em 20:9, 19,5:9 e 16:9.
 
 **Ainda não feito:**
 - músicas definitivas (as atuais são sintetizadas)

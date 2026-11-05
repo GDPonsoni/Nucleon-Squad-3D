@@ -250,10 +250,10 @@ func _go_back() -> void:
 
 func _notification(what: int) -> void:
 	# Botão Voltar do Android volta ao menu sem salvar
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not Dialog.is_open():
 		_go_back()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") and not Dialog.is_open():
 		_go_back()

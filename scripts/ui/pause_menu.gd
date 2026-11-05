@@ -1,10 +1,11 @@
 class_name PauseMenu
 extends CanvasLayer
 ## Botão de pausa sempre visível e menu de pausa (continuar / recomeçar a fase / voltar ao menu).
+## O menu é um Dialog: o X e o Voltar do Android continuam a partida.
 
 var _pause_button: Button
-var _overlay: ColorRect
-var _settings_overlay: ColorRect
+var _dialog: Dialog
+var _settings_dialog: Dialog
 var _enabled: bool = true
 
 
@@ -26,35 +27,6 @@ func _ready() -> void:
 	_pause_button.pressed.connect(Audio.play.bind(&"ui_click"))
 	add_child(_pause_button)
 
-	_overlay = UiFactory.make_overlay()
-	_overlay.visible = false
-	add_child(_overlay)
-
-	var column := UiFactory.make_column()
-	_overlay.add_child(UiFactory.make_centered(UiFactory.make_panel(column)))
-	column.add_child(UiFactory.make_title("PAUSE_TITLE"))
-
-	var resume_button := UiFactory.make_button("PAUSE_RESUME")
-	resume_button.pressed.connect(close)
-	column.add_child(resume_button)
-
-	var restart_button := UiFactory.make_button("PAUSE_RESTART")
-	restart_button.pressed.connect(_restart_stage)
-	column.add_child(restart_button)
-
-	var settings_button := UiFactory.make_button("MENU_SETTINGS")
-	settings_button.pressed.connect(_open_settings)
-	column.add_child(settings_button)
-
-	var exit_button := UiFactory.make_button("PAUSE_EXIT_TO_MENU")
-	exit_button.pressed.connect(_exit_to_menu)
-	column.add_child(exit_button)
-
-	# Configurações por cima da pausa
-	_settings_overlay = UiFactory.make_overlay()
-	_settings_overlay.visible = false
-	add_child(_settings_overlay)
-
 
 ## Duas barras verticais desenhadas sobre o botão.
 func _draw_pause_icon() -> void:
@@ -67,28 +39,51 @@ func _draw_pause_icon() -> void:
 
 
 func _open_settings() -> void:
-	for child in _settings_overlay.get_children():
-		child.queue_free()
+	if _dialog == null or _settings_dialog != null:
+		return
+	_settings_dialog = Dialog.open(self, "", true, layer + 1)
 	var panel := SettingsPanel.new()
-	panel.back_pressed.connect(func() -> void:
-		_settings_overlay.visible = false
-		_overlay.visible = true)
-	_settings_overlay.add_child(UiFactory.make_centered(UiFactory.make_panel(panel)))
-	UiFactory.add_corner_back(_settings_overlay, panel.go_back)
-	_overlay.visible = false
-	_settings_overlay.visible = true
+	_settings_dialog.body.add_child(panel)
+	# X / Voltar: da lista de idiomas para as configurações; delas, para a pausa
+	_settings_dialog.back_handler = panel.go_back
+	panel.back_pressed.connect(_settings_dialog.close)
+	_settings_dialog.closed.connect(func() -> void:
+		_settings_dialog = null
+		if _dialog != null:
+			_dialog.visible = true)
+	_dialog.visible = false
 
 
 func open() -> void:
+	if _dialog != null:
+		return
 	get_tree().paused = true
-	_overlay.visible = true
 	_pause_button.visible = false
+	_dialog = Dialog.open(self, "PAUSE_TITLE", true, layer)
+	_dialog.closed.connect(_on_dialog_closed)
+	_add_action(_dialog, "PAUSE_RESUME", _dialog.close)
+	_add_action(_dialog, "PAUSE_RESTART", _restart_stage)
+	_add_action(_dialog, "MENU_SETTINGS", _open_settings)
+	_add_action(_dialog, "PAUSE_EXIT_TO_MENU", _exit_to_menu)
+
+
+func _add_action(dialog: Dialog, key: String, action: Callable) -> void:
+	var button := UiFactory.make_button(key)
+	button.pressed.connect(action)
+	dialog.body.add_child(button)
 
 
 func close() -> void:
+	if _settings_dialog != null:
+		_settings_dialog.close()
+	if _dialog != null:
+		_dialog.close()
+
+
+func _on_dialog_closed() -> void:
+	_dialog = null
 	get_tree().paused = false
-	_overlay.visible = false
-	_pause_button.visible = true
+	_pause_button.visible = _enabled
 
 
 ## Desliga a pausa (ex.: no fim de jogo).
@@ -106,20 +101,20 @@ func enable() -> void:
 func toggle() -> void:
 	if not _enabled:
 		return
-	if _overlay.visible:
+	if _dialog != null:
 		close()
 	else:
 		open()
 
 
 func _notification(what: int) -> void:
-	# Botão Voltar do Android abre/fecha a pausa
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	# Botão Voltar do Android abre a pausa; com um diálogo aberto, ele é quem trata o Voltar
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not Dialog.is_open():
 		toggle()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") and not Dialog.is_open():
 		toggle()
 		get_viewport().set_input_as_handled()
 

@@ -187,7 +187,7 @@ func _on_buy_pressed() -> void:
 
 ## Janela de ganhar quarks (toque no saldo ou compra sem saldo).
 func _open_ad_offer(warning: String = "") -> void:
-	var popup := AdOfferPopup.open(self, warning)
+	var popup := AdOfferPopup.open_offer(self, warning)
 	popup.quarks_changed.connect(func() -> void:
 		_balance.set_amount(SaveGame.quarks, true)
 		_refresh())
@@ -201,10 +201,10 @@ func _go_back() -> void:
 
 func _notification(what: int) -> void:
 	# Botão Voltar do Android volta para a tela anterior
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not Dialog.is_open():
 		_go_back()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") and not Dialog.is_open():
 		_go_back()

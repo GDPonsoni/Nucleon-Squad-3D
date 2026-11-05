@@ -33,11 +33,10 @@ func _ready() -> void:
 			if scene.has_method("_finish_stage_clear"):
 				var pause: PauseMenu = scene.get("pause_menu")
 				pause.open()
-				await get_tree().process_frame
+				await get_tree().create_timer(0.8, true, false, true).timeout
 				overflow += _check_overflow(pause, "pausa %s" % language)
 				pause.call("_open_settings")
-				for i in 3:
-					await get_tree().process_frame
+				await get_tree().create_timer(0.8, true, false, true).timeout
 				overflow += _check_overflow(pause, "configurações na pausa %s" % language)
 				pause.close()
 				scene.call("_finish_stage_clear")
@@ -88,6 +87,8 @@ func _ready() -> void:
 			scene.queue_free()
 			await get_tree().process_frame
 	failures += await _check_ship_switch()
+	failures += await _check_dialogs()
+	failures += await _check_ad_reward_not_lost()
 	# Painel de configurações: mexe em tudo
 	var panel := SettingsPanel.new()
 	get_tree().root.add_child(panel)
@@ -224,3 +225,109 @@ func _touch(pos: Vector2, pressed: bool) -> void:
 	Input.parse_input_event(event)
 	await get_tree().process_frame
 	await get_tree().process_frame
+
+
+## Diálogos: X >= 144 px, fecha pelo Voltar, texto dentro do painel e dentro da tela
+## em 20:9 (Galaxy S24), 19,5:9 e 16:9, nos três idiomas.
+func _check_dialogs() -> int:
+	var failures: int = 0
+	for size in [Vector2i(1080, 2400), Vector2i(1080, 2340), Vector2i(1080, 1920)]:
+		get_tree().root.size = size
+		for language in ["pt_BR", "en", "es"]:
+			SaveGame.settings["language"] = language
+			Audio.apply_settings()
+			var host := Control.new()
+			get_tree().root.add_child(host)
+			var label := "diálogo %dx%d %s" % [size.x, size.y, language]
+			# Ganhar quarks, com aviso longo
+			var popup := AdOfferPopup.open_offer(host, "Quarks insuficientes: faltam 99999 quarks para esta evolução do núcleo")
+			failures += await _check_dialog(popup, label + " ads", true)
+			# Pausa e revive
+			var revive := ReviveOffer.new()
+			host.add_child(revive)
+			revive.open()
+			failures += await _check_dialog(revive.find_children("*", "Dialog", true, false)[0], label + " revive", true)
+			get_tree().paused = false
+			host.queue_free()
+			await get_tree().process_frame
+			# Pausa (e configurações por cima) e resultado, dentro da partida
+			var game: Node = (load("res://scenes/game.tscn") as PackedScene).instantiate()
+			get_tree().root.add_child(game)
+			await get_tree().create_timer(0.5, true, false, true).timeout
+			var pause: PauseMenu = game.get("pause_menu")
+			pause.open()
+			failures += await _check_dialog(pause.find_children("*", "Dialog", true, false)[0], label + " pausa", true)
+			if get_tree().paused:
+				printerr("PAUSA NÃO RETOMOU PELO VOLTAR [%s]" % label)
+				failures += 1
+			pause.open()
+			pause.call("_open_settings")
+			failures += await _check_dialog(pause.get("_settings_dialog"), label + " config", true)
+			pause.close()
+			game.call("_finish_stage_clear")
+			var results: ResultsMenu = game.get("results_menu")
+			failures += await _check_dialog(results.find_children("*", "Dialog", true, false)[0], label + " resultado", false)
+			get_tree().paused = false
+			game.queue_free()
+			await get_tree().process_frame
+	get_tree().root.size = Vector2i(1080, 2340)
+	return failures
+
+
+func _check_dialog(dialog: Dialog, label: String, expect_close: bool) -> int:
+	await get_tree().create_timer(0.6, true, false, true).timeout
+	var failures: int = _check_overflow(dialog, label)
+	var panel_rect: Rect2 = dialog.panel.get_global_rect()
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	if panel_rect.end.y > view.y + 2.0 or panel_rect.position.y < -2.0:
+		printerr("DIÁLOGO MAIS ALTO QUE A TELA [%s] %s" % [label, panel_rect])
+		failures += 1
+	for node in dialog.body.find_children("*", "Control", true, false):
+		var control := node as Control
+		if control.is_visible_in_tree() and control.get_global_rect().end.x > panel_rect.end.x + 2.0:
+			printerr("VAZA DO PAINEL [%s] %s" % [label, control.name])
+			failures += 1
+	if expect_close:
+		var close_button: Button = null
+		for button in dialog.find_children("*", "Button", true, false):
+			if (button as Button).text.is_empty():
+				close_button = button
+				break
+		if close_button == null or close_button.size.x < 144.0 or close_button.size.y < 144.0:
+			printerr("SEM X (>= 144 px) [%s]" % label)
+			failures += 1
+		dialog.call("_on_back")
+		await get_tree().create_timer(0.1, true, false, true).timeout
+		if is_instance_valid(dialog) and not dialog.is_queued_for_deletion():
+			printerr("NÃO FECHOU PELO VOLTAR [%s]" % label)
+			failures += 1
+	return failures
+
+
+## Fechar durante o anúncio é bloqueado e a recompensa é concedida ao fim dele.
+func _check_ad_reward_not_lost() -> int:
+	SaveGame.settings["language"] = "pt_BR"
+	var host := Control.new()
+	get_tree().root.add_child(host)
+	var popup := AdOfferPopup.open_offer(host)
+	await get_tree().create_timer(0.3, true, false, true).timeout
+	var before: int = SaveGame.quarks
+	popup.get("_ad_button").pressed.emit()
+	await get_tree().process_frame
+	popup.request_close()
+	var failures: int = 0
+	if not is_instance_valid(popup) or popup.is_queued_for_deletion():
+		printerr("FECHOU DURANTE O ANÚNCIO")
+		failures += 1
+	await get_tree().create_timer(Params.ad_simulated_seconds + 0.5, true, false, true).timeout
+	if SaveGame.quarks <= before:
+		printerr("ANÚNCIO NÃO CONCEDEU QUARKS")
+		failures += 1
+	if is_instance_valid(popup):
+		popup.request_close()
+		await get_tree().process_frame
+		if is_instance_valid(popup) and not popup.is_queued_for_deletion():
+			printerr("NÃO FECHOU DEPOIS DO ANÚNCIO")
+			failures += 1
+	host.queue_free()
+	return failures

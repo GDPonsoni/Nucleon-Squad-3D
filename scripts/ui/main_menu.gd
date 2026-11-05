@@ -30,7 +30,7 @@ func _ready() -> void:
 	badge.offset_right = -Params.hud_margin.x
 	badge.offset_top = Params.pause_button_margin.y
 	badge.pressed.connect(func() -> void:
-		var popup := AdOfferPopup.open(self)
+		var popup := AdOfferPopup.open_offer(self)
 		popup.quarks_changed.connect(func() -> void: badge.set_amount(SaveGame.quarks, true)))
 	add_child(badge)
 
@@ -61,12 +61,12 @@ func _ready() -> void:
 
 func _notification(what: int) -> void:
 	# Botão Voltar do Android no menu fecha o jogo
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not Dialog.is_open():
 		get_tree().quit()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel"):
+	if event.is_action_pressed("ui_cancel") and not Dialog.is_open():
 		get_tree().quit()
 
 

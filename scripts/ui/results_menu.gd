@@ -5,16 +5,13 @@ extends CanvasLayer
 ## recompensas de capítulo (naves, espaço auxiliar) e os próximos passos.
 ## summary: {"quarks_kills": int, "quarks_bonus": int, "rewards": PackedStringArray}
 
-var _overlay: ColorRect
+var _dialog: Dialog
 
 
 func _ready() -> void:
 	# Funciona com a árvore pausada
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 60
-	_overlay = UiFactory.make_overlay()
-	_overlay.visible = false
-	add_child(_overlay)
 
 
 func show_stage_clear(state: MatchState, seconds: float, record: bool, summary: Dictionary) -> void:
@@ -40,9 +37,12 @@ func show_game_over(state: MatchState, seconds: float, summary: Dictionary) -> v
 
 
 func _open(title_key: String, state: MatchState, seconds: float, record: bool, summary: Dictionary, buttons: Array[Button]) -> void:
-	var column := UiFactory.make_column()
+	get_tree().paused = true
+	# Sem X: o resultado já foi salvo, e o Voltar do Android leva ao seletor de fases
+	_dialog = Dialog.open(self, title_key, false, layer)
+	_dialog.back_handler = _go.bind(ScenePaths.STAGE_SELECT)
+	var column: VBoxContainer = _dialog.body
 	column.add_theme_constant_override("separation", Params.results_spacing)
-	column.add_child(UiFactory.make_title(title_key))
 	var stage_name := UiFactory.make_subtitle("")
 	stage_name.text = "%s  %s" % [tr(Session.planet().name_key), Session.stage_label(Session.planet_index, Session.stage_index)]
 	column.add_child(stage_name)
@@ -87,16 +87,12 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, s
 		button.custom_minimum_size.y = Params.results_button_height
 		column.add_child(button)
 
-	var center := UiFactory.make_centered(UiFactory.make_panel(column))
-	_overlay.add_child(center)
-	get_tree().paused = true
-	_overlay.visible = true
-	UiFactory.animate_in(center)
-
 
 func _add_stat(grid: GridContainer, key: String, value: String, color: Color = Params.ui_text_color) -> void:
 	var name_label := UiFactory.make_subtitle(key)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_child(name_label)
 	var value_label := Label.new()
 	value_label.text = value
@@ -132,9 +128,3 @@ func _on_next_pressed() -> void:
 
 func _go(path: String) -> void:
 	SceneTransition.go_to(path)
-
-
-func _notification(what: int) -> void:
-	# Botão Voltar do Android no resultado vai para o seletor de fases
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST and _overlay.visible:
-		_go(ScenePaths.STAGE_SELECT)
