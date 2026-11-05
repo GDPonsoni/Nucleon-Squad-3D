@@ -141,14 +141,13 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(_pulse_color, 1.0 - t), Params.level_up_pulse_width * (1.0 - t * 0.5))
 
 
-## Entrada do corpo: sobe de baixo crescendo (com um leve excesso), com brilho e um anel que converge.
+## Entrada do corpo: nasce do núcleo crescendo (com um leve excesso), com brilho e um anel que converge.
 func _draw_body() -> void:
 	var k: float = Params.anim_intensity
 	var grow: float = lerpf(Params.entry_start_scale, 1.0, _ease_out_back(_build)) if _build < 1.0 else 1.0
-	var offset := Vector2(0.0, Params.entry_slide_distance * k * (1.0 - ease(_build, 0.35)))
 	var points := PackedVector2Array()
 	for point in body.shape:
-		points.append(point * Params.ship_size * grow + offset)
+		points.append(point * Params.ship_size * grow)
 	draw_colored_polygon(points, body.color)
 	if _build < 1.0:
 		var glow: float = sin(_build * PI) * Params.entry_glow_alpha * minf(k, 1.0)

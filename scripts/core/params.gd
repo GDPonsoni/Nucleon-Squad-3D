@@ -227,15 +227,12 @@ var body_max_hits: int = 3
 var body_rebuild_seconds: float = 0.35
 # --- Animações de nave (entrada, saída por troca, quebra) ---
 var anim_intensity: float = 1.0  # multiplica deslocamentos e brilhos de todas as animações de nave (0 = sem)
-var entry_slide_distance: float = 90.0  # o corpo novo sobe de baixo até a posição
-var entry_start_scale: float = 0.35
+var entry_start_scale: float = 0.0  # o corpo novo nasce do núcleo e cresce
 var entry_glow_alpha: float = 0.75  # brilho branco no meio da entrada
 var entry_ring_scale: float = 1.9  # anel que converge para a nave (x altura da nave)
 var body_fx_pool_size: int = 8
-var exit_seconds: float = 0.3  # saída por troca voluntária: sobe, afina e se dissolve
-var exit_slide_distance: float = 130.0
-var exit_end_scale_x: float = 0.25
-var exit_end_scale_y: float = 1.25
+var exit_seconds: float = 0.3  # saída por troca voluntária: o corpo recolhe de volta para o núcleo
+var exit_spin: float = 2.5  # rad de giro enquanto recolhe (x intensidade)
 var break_seconds: float = 0.75  # perda: o corpo se parte em pedaços que giram e somem
 var break_speed_min: float = 160.0
 var break_speed_max: float = 420.0
@@ -287,6 +284,11 @@ var companion_offset: Vector2 = Vector2(115.0, 70.0)  # posição relativa à na
 var companion_follow_rate: float = 9.0  # quão rápido acompanha a nave (maior = mais grudada)
 var companion_side_margin: float = 230.0  # perto da borda, passa para o outro lado
 var companion_alpha: float = 0.9
+var companion_retreat_offset: Vector2 = Vector2(34.0, 18.0)  # sem nave principal, recolhe para junto do núcleo
+var companion_retreat_scale: float = 0.6
+var companion_retreat_rate: float = 4.5  # quão rápido sai/volta da formação (1/s)
+var companion_roll: float = 0.5  # rad de inclinação durante o voo de saída/retorno (x intensidade)
+var companion_arrive_pulse_seconds: float = 0.3
 
 # --- Projéteis do jogador ---
 var player_bullet_pool_size: int = 160

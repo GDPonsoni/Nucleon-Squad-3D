@@ -74,17 +74,15 @@ func _draw() -> void:
 
 func _draw_exit(t: float) -> void:
 	var k: float = Params.anim_intensity
-	var e: float = ease(t, -2.0)  # começa devagar e acelera para cima
-	var scale_v := Vector2(lerpf(1.0, Params.exit_end_scale_x, e), lerpf(1.0, Params.exit_end_scale_y, e))
-	var offset := Vector2(0.0, -Params.exit_slide_distance * k * e)
-	draw_set_transform(offset, 0.0, scale_v)
-	var fade: float = 1.0 - t
+	var e: float = ease(t, -2.0)  # começa devagar e acelera para dentro do núcleo
+	draw_set_transform(Vector2.ZERO, Params.exit_spin * k * e, Vector2.ONE * (1.0 - e))
+	var fade: float = 1.0 - t * t
 	draw_colored_polygon(_points, Color(_color.lightened(0.3 * t), fade))
-	# Brilho branco no início da saída
-	draw_colored_polygon(_points, Color(1.0, 1.0, 1.0, maxf(0.0, 0.6 - t * 1.5) * k))
+	draw_colored_polygon(_points, Color(1.0, 1.0, 1.0, sin(t * PI) * 0.6 * minf(k, 1.0)))
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	# Anel fino que sobe junto
-	draw_arc(offset * 0.5, Params.ship_size.y * (0.4 + 0.6 * t), 0.0, TAU, 32, Color(_color.lightened(0.4), fade * 0.6 * k), 4.0)
+	# Anel que converge para o núcleo
+	var ring: float = Params.ship_size.y * lerpf(0.9, 0.2, e)
+	draw_arc(Vector2.ZERO, ring, 0.0, TAU, 32, Color(_color.lightened(0.4), (1.0 - t) * 0.7 * minf(k, 1.0)), 4.0)
 
 
 func _draw_break(t: float) -> void:
