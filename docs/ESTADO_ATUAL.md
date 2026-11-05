@@ -101,6 +101,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - **Anúncios (simulados, `AdService`):** janela "Ganhar quarks" (`AdOfferPopup`) ao tocar no saldo (menu inicial e Núcleo) ou ao tentar comprar sem saldo (5 por dia, 120 + 60 por capítulo concluído). Banner reservado no rodapé do menu inicial com 90 dp de altura (cabe o padrão de 50 dp e o adaptativo do AdMob), em `make_banner_placeholder`, a trocar pelo SDK.
 - **Configurações** (menu e pausa): volume geral/música/efeitos, vibração, efeitos visuais reduzidos, estatísticas na tela (FPS e contadores, para esconder ao mostrar a demo), idioma (lista: automático, português, inglês, espanhol). Salvas em `SaveGame.settings`.
 
+**Animações (05/11/2026, branch `feat/animacoes-nave`):** parâmetros em `Params` (`anim_intensity`, `entry_*`, `exit_*`, `break_*`, `weapon_spawn_*`, `impact_*`, `tilt_*`, `companion_retreat_*`). O corpo nasce do núcleo (entrada) e recolhe nele (troca voluntária); a perda quebra em pedaços (`BodyFx`, pool). A auxiliar recolhe junto do núcleo sem nave principal e volta animada. Armas têm surgimento (`Weapon.play_spawn`, carga, órbita se formando, mísseis nascendo), faíscas de acerto (`HitSpark`, pool), clarão de tiro, rastro da órbita e chama dos mísseis. Pseudo-3D no movimento: `Player.bank/pitch`, sombra deslocada. Tudo em tempo de jogo (acompanha a câmera lenta).
+
 **Inimigos (9):** Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador, Caçador, **Pulsar** (anéis finos em espiral) e **Fissor** (parte-se em 3 ao morrer). Ondas em formação: LINE, V, COLUMN, SIDE, DIAGONAL, GRID, PINCER, CIRCLE, com balanço, curva e escala de velocidade por onda (`WaveData`).
 
 **Chefes:**
