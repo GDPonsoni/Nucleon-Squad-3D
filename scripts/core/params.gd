@@ -232,7 +232,11 @@ var invulnerability_blink_hz: float = 12.0
 var invulnerability_alpha: float = 0.3
 
 # --- Troca de corpo: barra fixa na base da tela (nítida na câmera lenta) ---
-var switch_invulnerability_seconds: float = 2.0
+# Invulnerabilidade e recarga da troca contam em TEMPO DE JOGO (escalam com a câmera lenta):
+# a 30% da velocidade, 1 s de jogo = ~3,3 s reais, mas cobre o mesmo avanço dos tiros.
+var switch_invulnerability_seconds: float = 1.0  # testar até ~0,5 (o corpo reconstruindo também protege: body_rebuild_seconds)
+var switch_cooldown_seconds: float = 4.0  # entre trocas voluntárias (faixa sugerida: 3 a 5)
+var switch_cooldown_color: Color = Color(0.0, 0.0, 0.0, 0.62)  # setor escuro sobre os ícones em recarga
 var switch_icon_radius: float = 82.0
 var switch_icon_max_spacing_ratio: float = 0.36  # com muitos corpos, o raio diminui para caber
 var switch_strip_bottom: float = 150.0  # centro da barra, a partir da base da tela
@@ -291,6 +295,9 @@ var cross_band_top: float = 0.08  # faixa da tela (0-1) onde os inimigos laterai
 var cross_band_bottom: float = 0.45
 
 # --- Especial (valores de cada arma ficam em data/weapons/) ---
+## Multiplica o tempo de carga de todos os especiais de arma (special_charge_seconds de cada
+## WeaponData). 1,5 = +50%. Conta em tempo de jogo, só com o corpo ativo.
+var special_charge_multiplier: float = 1.5
 var special_button_size: float = 150.0
 var special_button_gap: float = 28.0  # acima da barra de troca
 var special_ring_width: float = 9.0

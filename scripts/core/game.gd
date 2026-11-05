@@ -181,6 +181,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if not _match_over and player.body != null:
 		state.charge_special(delta)
+		# Tempo de jogo: na câmera lenta a recarga da troca também desacelera
+		state.tick_switch_cooldown(delta)
 	var special_ready: bool = player.body != null and state.special_ready()
 	if special_ready and not _special_was_ready:
 		Audio.play(&"special_ready")
@@ -300,6 +302,9 @@ func _switch_to(index: int, invulnerable_seconds: float) -> void:
 func _on_body_chosen(index: int) -> void:
 	Audio.play(&"ship_switch")
 	Audio.vibrate(Params.haptic_tick_ms)
+	# Troca voluntária começa a recarga; a escolha forçada (corpo destruído) não
+	if not switcher.forced:
+		state.start_switch_cooldown()
 	switcher.forced = false
 	time_controller.forced_slow = false
 	_switch_to(index, Params.switch_invulnerability_seconds)

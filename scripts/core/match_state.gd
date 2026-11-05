@@ -22,6 +22,7 @@ var boosts: PlayerBoosts
 var max_hits: int = 0  # hits de cada corpo (com a evolução do núcleo)
 var start_level: int = 1  # nível das armas ao começar (e ao perder o corpo)
 var shields: int = 0  # hits absorvidos antes de tirar vida (evolução do núcleo)
+var switch_cooldown_left: float = 0.0  # segundos (de jogo) até poder trocar de corpo de novo
 
 # Estatísticas da partida (HUD e telas de resultado)
 var score: int = 0
@@ -72,6 +73,24 @@ func dead_count() -> int:
 func select(index: int) -> void:
 	current = index
 	body_changed.emit(index)
+
+
+## Troca voluntária: começa a recarga. A escolha após um corpo destruído não passa por aqui.
+func start_switch_cooldown() -> void:
+	switch_cooldown_left = Params.switch_cooldown_seconds
+
+
+func tick_switch_cooldown(delta: float) -> void:
+	switch_cooldown_left = maxf(switch_cooldown_left - delta, 0.0)
+
+
+func can_switch() -> bool:
+	return switch_cooldown_left <= 0.0
+
+
+## 0 a 1: quanto ainda falta da recarga da troca (1 = acabou de trocar).
+func switch_cooldown_ratio() -> float:
+	return switch_cooldown_left / Params.switch_cooldown_seconds if Params.switch_cooldown_seconds > 0.0 else 0.0
 
 
 ## Tira hits do corpo ativo. Emite body_destroyed e, se acabaram os corpos, game_over.
@@ -129,7 +148,7 @@ func add_kill(points: int) -> void:
 
 ## Segundos para encher o especial do corpo ativo (com a evolução do núcleo).
 func special_seconds() -> float:
-	return current_body().weapon.special_charge_seconds * boosts.special_charge
+	return current_body().weapon.special_charge_seconds * Params.special_charge_multiplier * boosts.special_charge
 
 
 ## O especial do corpo ativo carrega com o tempo (de jogo) enquanto ele está ativo.

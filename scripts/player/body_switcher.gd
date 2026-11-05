@@ -97,8 +97,13 @@ func _on_tap_pending_changed(pos: Vector2, pending: bool) -> void:
 
 func _on_tapped(pos: Vector2) -> void:
 	var index: int = slot_at(pos)
-	if index >= 0 and _state.is_alive(index) and index != _state.current:
-		body_chosen.emit(index)
+	if index < 0 or not _state.is_alive(index) or index == _state.current:
+		return
+	# Em recarga: recusa (a escolha forçada após perder um corpo ignora a recarga)
+	if not forced and not _state.can_switch():
+		Audio.play(&"ui_back")
+		return
+	body_chosen.emit(index)
 
 
 func _draw() -> void:
@@ -123,8 +128,21 @@ func _draw() -> void:
 		_draw_level_ring(center, radius + Params.switch_level_ring_offset, i, body)
 		_draw_shape(center, radius, body, body.color)
 		_draw_hits(center, radius, i)
+		if not current and not forced and not _state.can_switch():
+			_draw_cooldown(center, radius)
 	if forced:
 		_draw_choose_hint()
+
+
+## Recarga da troca: setor escuro que esvazia no sentido horário a partir do topo.
+func _draw_cooldown(center: Vector2, radius: float) -> void:
+	var ratio: float = _state.switch_cooldown_ratio()
+	var start: float = -PI * 0.5 + TAU * (1.0 - ratio)
+	var points := PackedVector2Array([center])
+	var steps: int = maxi(int(ceil(48.0 * ratio)), 2)
+	for k in steps + 1:
+		points.append(center + Vector2.from_angle(lerpf(start, -PI * 0.5 + TAU, float(k) / steps)) * radius)
+	draw_colored_polygon(points, Params.switch_cooldown_color)
 
 
 ## Hits restantes em bolinhas embaixo do formato da nave (cheias e vazias).

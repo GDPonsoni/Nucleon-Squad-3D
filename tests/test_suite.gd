@@ -165,6 +165,19 @@ func test_match_state_applies_boosts() -> void:
 	check(not state.is_alive(0) and state.weapon_levels[0] == 2, "corpo perdido volta ao nível inicial")
 
 
+func test_switch_cooldown_and_special_charge() -> void:
+	var state := MatchState.new(load(Params.formation_path) as FormationData)
+	check(state.can_switch(), "começa podendo trocar")
+	state.start_switch_cooldown()
+	check(not state.can_switch() and is_equal_approx(state.switch_cooldown_ratio(), 1.0), "recarga cheia ao trocar")
+	state.tick_switch_cooldown(Params.switch_cooldown_seconds * 0.5)
+	check(not state.can_switch() and is_equal_approx(state.switch_cooldown_ratio(), 0.5), "metade da recarga")
+	state.tick_switch_cooldown(Params.switch_cooldown_seconds)
+	check(state.can_switch(), "recarga terminou")
+	var base: float = state.current_body().weapon.special_charge_seconds
+	check(is_equal_approx(state.special_seconds(), base * Params.special_charge_multiplier), "carga do especial com o multiplicador")
+
+
 func test_every_sound_has_a_file_and_gain() -> void:
 	for sound: StringName in Params.sfx_gain_db:
 		check(ResourceLoader.exists("res://assets/audio/sfx/%s.wav" % sound), "arquivo de %s" % sound)
