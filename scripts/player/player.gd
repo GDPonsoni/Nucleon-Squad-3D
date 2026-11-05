@@ -38,6 +38,8 @@ var _build_tween: Tween
 var _invulnerable_left: float = 0.0
 var _blink_clock: float = 0.0
 var _level_pulse_left: float = 0.0
+var bank: float = 0.0  # -1..1: velocidade lateral suavizada (inclinação); lida pela auxiliar
+var pitch: float = 0.0  # -1..1: velocidade vertical suavizada (+ = descendo)
 var _pulse_color: Color
 
 
@@ -109,7 +111,9 @@ func is_vulnerable() -> bool:
 
 func _process(delta: float) -> void:
 	# delta já vem escalado pelo time scale: a nave reflete a câmera lenta
+	var before: Vector2 = position
 	position = position.move_toward(_target, Params.ship_speed * delta)
+	_update_tilt(position - before, delta)
 
 	if _invulnerable_left > 0.0:
 		_invulnerable_left -= delta
@@ -141,6 +145,16 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(_pulse_color, 1.0 - t), Params.level_up_pulse_width * (1.0 - t * 0.5))
 
 
+## Inclinação a partir da velocidade (tudo suavizado, volta ao repouso sozinho).
+func _update_tilt(moved: Vector2, delta: float) -> void:
+	if delta <= 0.0:
+		return
+	var vel: Vector2 = moved / delta / maxf(Params.ship_speed, 1.0)
+	var weight: float = 1.0 - exp(-Params.tilt_smooth_rate * delta)
+	bank = lerpf(bank, clampf(vel.x, -1.0, 1.0), weight)
+	pitch = lerpf(pitch, clampf(vel.y, -1.0, 1.0), weight)
+
+
 ## Entrada do corpo: nasce do núcleo crescendo (com um leve excesso), com brilho e um anel que converge.
 func _draw_body() -> void:
 	var k: float = Params.anim_intensity
@@ -148,12 +162,25 @@ func _draw_body() -> void:
 	var points := PackedVector2Array()
 	for point in body.shape:
 		points.append(point * Params.ship_size * grow)
-	draw_colored_polygon(points, body.color)
+	# Pseudo-3D: rola para o lado do movimento, afina em X e alonga/encurta em Y
+	var tilt: float = Params.tilt_intensity
+	var squash := Vector2(1.0 - absf(bank) * Params.tilt_squash * tilt, 1.0 - pitch * Params.tilt_pitch_stretch * tilt)
+	var roll: float = bank * Params.tilt_max_roll * tilt
+	# Sombra deslocada: desliza para o lado oposto ao da inclinação e afasta ao subir
+	var shadow_pos := Vector2(Params.ship_shadow_offset.x - bank * Params.ship_shadow_shift * tilt,
+		Params.ship_shadow_offset.y * (1.0 - pitch * 0.25 * tilt))
+	draw_set_transform(shadow_pos * grow, roll * 0.5, squash)
+	draw_colored_polygon(points, Color(0.0, 0.0, 0.0, Params.ship_shadow_alpha * minf(_build * 2.0, 1.0)))
+	draw_set_transform(Vector2.ZERO, roll, squash)
+	var shade: float = -pitch * Params.tilt_brightness * tilt
+	var tint: Color = body.color.lightened(shade) if shade >= 0.0 else body.color.darkened(-shade)
+	draw_colored_polygon(points, tint)
 	if _build < 1.0:
 		var glow: float = sin(_build * PI) * Params.entry_glow_alpha * minf(k, 1.0)
 		draw_colored_polygon(points, Color(1.0, 1.0, 1.0, glow))
 		var ring: float = Params.ship_size.y * lerpf(Params.entry_ring_scale, 0.5, ease(_build, 0.4))
 		draw_arc(Vector2.ZERO, ring, 0.0, TAU, 40, Color(body.color.lightened(0.4), sin(_build * PI) * 0.8 * minf(k, 1.0)), 5.0)
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 
 
 func _ease_out_back(x: float) -> float:

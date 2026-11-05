@@ -72,6 +72,7 @@ func _draw() -> void:
 	var size: Vector2 = Params.ship_size * Params.companion_scale
 	# Inclina durante o voo de saída/retorno e encolhe ao recolher
 	var roll: float = sin(_away * PI) * Params.companion_roll * Params.anim_intensity * -_side
+	roll += _player.bank * Params.tilt_max_roll * Params.tilt_intensity * Params.companion_tilt_share
 	draw_set_transform(Vector2.ZERO, roll, Vector2.ONE * lerpf(1.0, Params.companion_retreat_scale, _away))
 	var points := PackedVector2Array()
 	for point in body.shape:

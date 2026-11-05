@@ -234,6 +234,17 @@ var body_fx_pool_size: int = 8
 var weapon_spawn_seconds: float = 0.35  # surgimento da arma ao ativar (curto, para não atrapalhar)
 var weapon_spawn_orbit_spin: float = 2.5  # a órbita gira mais rápido enquanto se forma (multiplicador)
 var weapon_charge_orb_scale: float = 0.45  # orbe de carga na ponta (x largura da nave)
+# --- Pseudo-3D no movimento (só transformações 2D; tilt_intensity 0 desliga) ---
+var tilt_intensity: float = 1.0
+var tilt_max_roll: float = 0.30  # rad de inclinação lateral na velocidade máxima
+var tilt_squash: float = 0.16  # afina o corpo no eixo X ao virar
+var tilt_pitch_stretch: float = 0.10  # alonga/encurta no eixo Y ao subir/descer
+var tilt_brightness: float = 0.14  # clareia ao subir, escurece ao descer
+var tilt_smooth_rate: float = 9.0  # quão rápido segue o movimento e volta ao repouso (1/s)
+var ship_shadow_offset: Vector2 = Vector2(10.0, 22.0)  # sombra no repouso
+var ship_shadow_shift: float = 16.0  # a sombra desliza para o lado oposto da inclinação
+var ship_shadow_alpha: float = 0.32
+var companion_tilt_share: float = 0.8  # fração da inclinação da nave principal que a auxiliar copia
 var impact_pool_size: int = 40  # faíscas de acerto (todas as armas)
 var impact_seconds: float = 0.22
 var impact_sparks: int = 5
