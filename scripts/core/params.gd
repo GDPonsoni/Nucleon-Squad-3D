@@ -225,6 +225,22 @@ var roster_path: String = "res://data/formations/roster.tres"  # todas as naves 
 var squad_size: int = 4
 var body_max_hits: int = 3
 var body_rebuild_seconds: float = 0.35
+# --- Animações de nave (entrada, saída por troca, quebra) ---
+var anim_intensity: float = 1.0  # multiplica deslocamentos e brilhos de todas as animações de nave (0 = sem)
+var entry_slide_distance: float = 90.0  # o corpo novo sobe de baixo até a posição
+var entry_start_scale: float = 0.35
+var entry_glow_alpha: float = 0.75  # brilho branco no meio da entrada
+var entry_ring_scale: float = 1.9  # anel que converge para a nave (x altura da nave)
+var body_fx_pool_size: int = 8
+var exit_seconds: float = 0.3  # saída por troca voluntária: sobe, afina e se dissolve
+var exit_slide_distance: float = 130.0
+var exit_end_scale_x: float = 0.25
+var exit_end_scale_y: float = 1.25
+var break_seconds: float = 0.75  # perda: o corpo se parte em pedaços que giram e somem
+var break_speed_min: float = 160.0
+var break_speed_max: float = 420.0
+var break_spin_max: float = 7.0  # rad/s
+var break_gravity: float = 380.0  # os pedaços caem um pouco
 var hit_invulnerability_seconds: float = 1.0  # após levar hit ([EM ABERTO] no GDD)
 var game_over_delay_seconds: float = 0.8
 var revive_offer_seconds: float = 20.0  # tempo para aceitar continuar com anúncio

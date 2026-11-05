@@ -127,10 +127,7 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	if body != null and _build > 0.0:
-		var points := PackedVector2Array()
-		for point in body.shape:
-			points.append(point * Params.ship_size * _build)
-		draw_colored_polygon(points, body.color)
+		_draw_body()
 
 	_draw_nucleus()
 	if body != null:
@@ -142,6 +139,28 @@ func _draw() -> void:
 		var t: float = 1.0 - _level_pulse_left / Params.level_up_pulse_seconds
 		var radius: float = Params.ship_size.y * (0.4 + t * Params.level_up_pulse_growth)
 		draw_arc(Vector2.ZERO, radius, 0.0, TAU, 48, Color(_pulse_color, 1.0 - t), Params.level_up_pulse_width * (1.0 - t * 0.5))
+
+
+## Entrada do corpo: sobe de baixo crescendo (com um leve excesso), com brilho e um anel que converge.
+func _draw_body() -> void:
+	var k: float = Params.anim_intensity
+	var grow: float = lerpf(Params.entry_start_scale, 1.0, _ease_out_back(_build)) if _build < 1.0 else 1.0
+	var offset := Vector2(0.0, Params.entry_slide_distance * k * (1.0 - ease(_build, 0.35)))
+	var points := PackedVector2Array()
+	for point in body.shape:
+		points.append(point * Params.ship_size * grow + offset)
+	draw_colored_polygon(points, body.color)
+	if _build < 1.0:
+		var glow: float = sin(_build * PI) * Params.entry_glow_alpha * minf(k, 1.0)
+		draw_colored_polygon(points, Color(1.0, 1.0, 1.0, glow))
+		var ring: float = Params.ship_size.y * lerpf(Params.entry_ring_scale, 0.5, ease(_build, 0.4))
+		draw_arc(Vector2.ZERO, ring, 0.0, TAU, 40, Color(body.color.lightened(0.4), sin(_build * PI) * 0.8 * minf(k, 1.0)), 5.0)
+
+
+func _ease_out_back(x: float) -> float:
+	var c1: float = 1.70158
+	var c3: float = c1 + 1.0
+	return 1.0 + c3 * pow(x - 1.0, 3.0) + c1 * pow(x - 1.0, 2.0)
 
 
 ## Núcleo (que também é a hitbox): anel pulsando, borda escura e miolo claro.

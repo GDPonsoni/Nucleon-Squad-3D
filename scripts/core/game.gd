@@ -16,6 +16,7 @@ var combat: CombatSystem
 var power_ups: NodePool
 var dropper: PowerUpDropper
 var explosions: NodePool
+var body_fx: NodePool
 var pause_menu: PauseMenu
 var results_menu: ResultsMenu
 var revive_offer: ReviveOffer
@@ -75,6 +76,11 @@ func _ready() -> void:
 	explosions = NodePool.new(Explosion.new, Params.explosion_pool_size)
 	explosions.name = "Explosions"
 	add_child(explosions)
+
+	# Corpos que saem de cena (troca e quebra), atrás da nave
+	body_fx = NodePool.new(BodyFx.new, Params.body_fx_pool_size)
+	body_fx.name = "BodyFx"
+	add_child(body_fx)
 
 	power_ups = NodePool.new(PowerUp.new, Params.powerup_pool_size)
 	power_ups.name = "PowerUps"
@@ -307,6 +313,9 @@ func _on_body_chosen(index: int) -> void:
 	# Troca voluntária começa a recarga; a escolha forçada (corpo destruído) não
 	if not switcher.forced:
 		state.start_switch_cooldown()
+	# Troca voluntária: o corpo que sai se dissolve (a perda usa a quebra)
+	if player.body != null and player.body != state.bodies[index]:
+		_body_fx(player.body, false)
 	switcher.forced = false
 	time_controller.forced_slow = false
 	_switch_to(index, Params.switch_invulnerability_seconds)
@@ -373,6 +382,7 @@ func _on_body_destroyed(index: int) -> void:
 	Audio.vibrate(Params.haptic_body_break_ms)
 	Audio.play(&"core_crack")
 	_explode(player.position, Params.ship_size.y * 0.5, state.bodies[index].color)
+	_body_fx(state.bodies[index], true)
 	player.clear_body()
 	player.cracks = state.dead_count()
 	var alive: Array[int] = state.alive_indices()
@@ -418,6 +428,17 @@ func _revive() -> void:
 	_match_over = false
 	pause_menu.enable()
 	get_tree().paused = false
+
+## Corpo que se despede: quebra (perdido) ou saída (troca voluntária).
+func _body_fx(data: BodyData, broken: bool) -> void:
+	var fx := body_fx.acquire() as BodyFx
+	if fx == null:
+		return
+	if broken:
+		fx.activate_break(player.position, data)
+	else:
+		fx.activate_exit(player.position, data)
+
 
 func _explode(pos: Vector2, radius: float, color: Color) -> void:
 	var explosion := explosions.acquire() as Explosion
