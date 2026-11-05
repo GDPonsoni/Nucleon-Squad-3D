@@ -1,23 +1,22 @@
 extends Control
-## Montar o esquadrão: no topo, 4 vagas do esquadrão (a 1ª começa a fase) e 1 vaga de
-## auxiliar, de outro formato. Toque numa vaga e depois numa nave da lista para colocá-la
-## ali; se a nave já estava em outra vaga, as duas trocam de lugar. Cada cartão mostra o
-## que a nave faz como principal e como auxiliar. A auxiliar é opcional e tem botão de
-## remover. Salvar grava tudo; Voltar sai sem salvar.
+## Montar o esquadrão. No topo, 4 vagas do esquadrão (a 1ª começa a fase) e a vaga da
+## auxiliar. Embaixo, a grade de naves (ícone grande, nome e ⓘ para inspecionar).
+## Tocar numa nave a põe na 1ª vaga livre do esquadrão; com o esquadrão cheio, ela vai
+## para a vaga da auxiliar. Tocar numa nave escolhida (ou na vaga dela) tira. A nave voa
+## animada entre a grade e a vaga. Salvar grava; Voltar sai sem salvar.
 
-const AUX_SLOT: int = -1  # índice da vaga da auxiliar em _selected
+const AUX_SLOT: int = -1
+const OUTSIDE: int = -2
 
 var _roster: Array[BodyData] = []
-var _chosen: Array[BodyData] = []  # 4 vagas do esquadrão (pode ter null enquanto monta)
+var _chosen: Array[BodyData] = []  # vagas do esquadrão (null = livre)
 var _companion: BodyData
-var _selected: int = 0  # vaga escolhida: 0..3 ou AUX_SLOT
-var _slot_icons: Array[ShipIcon] = []
-var _aux_icon: ShipIcon
-var _aux_clear: Button
-var _slot_info: Label
-var _cards: Array[Button] = []
-var _card_icons: Array[ShipIcon] = []
+var _slot_icons: Array[ShipIcon] = []  # 0..3 esquadrão, 4 = auxiliar
+var _cell_icons: Array[ShipIcon] = []
+var _cell_buttons: Array[Button] = []
+var _hint: Label
 var _save_button: Button
+var _hint_tween: Tween
 
 
 func _ready() -> void:
@@ -29,6 +28,8 @@ func _ready() -> void:
 
 	_roster = (load(Params.roster_path) as FormationData).bodies
 	_chosen = SaveGame.squad_formation().bodies.duplicate()
+	while _chosen.size() < Params.squad_size:
+		_chosen.append(null)
 	_companion = SaveGame.companion_body()
 
 	# Rolável: cabe todas as naves mesmo em telas mais baixas
@@ -45,85 +46,59 @@ func _ready() -> void:
 	center.add_child(column)
 	UiFactory.add_top_space(column, Params.back_top_space_squad)
 	column.add_child(UiFactory.make_title("SQUAD_TITLE"))
-	var hint := UiFactory.make_subtitle("SQUAD_HINT")
-	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hint.custom_minimum_size.x = Params.squad_hint_width
-	hint.add_theme_font_size_override("font_size", Params.squad_hint_font_size)
-	column.add_child(hint)
 
 	column.add_child(_build_slots())
-	_slot_info = UiFactory.make_subtitle("")
-	_slot_info.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	_slot_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_slot_info.custom_minimum_size.x = Params.squad_hint_width
-	_slot_info.add_theme_font_size_override("font_size", Params.squad_description_font_size)
-	column.add_child(_slot_info)
+	_hint = UiFactory.make_subtitle("SQUAD_HINT")
+	_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_hint.custom_minimum_size.x = Params.squad_hint_width
+	_hint.add_theme_font_size_override("font_size", Params.squad_hint_font_size)
+	column.add_child(_hint)
 
 	var grid := GridContainer.new()
 	grid.columns = Params.squad_columns
 	grid.add_theme_constant_override("h_separation", Params.squad_spacing)
 	grid.add_theme_constant_override("v_separation", Params.squad_spacing)
+	grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	column.add_child(grid)
 	for body in _roster:
-		grid.add_child(_make_card(body))
+		grid.add_child(_make_cell(body))
 
-	var buttons := HBoxContainer.new()
-	buttons.alignment = BoxContainer.ALIGNMENT_CENTER
-	buttons.add_theme_constant_override("separation", Params.squad_spacing)
-	column.add_child(buttons)
 	UiFactory.add_corner_back(self, _go_back)
 	_save_button = UiFactory.make_primary_button("SQUAD_SAVE")
 	_save_button.custom_minimum_size = Params.squad_button_size
+	_save_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	_save_button.pressed.connect(_on_save_pressed)
-	buttons.add_child(_save_button)
+	column.add_child(_save_button)
 
 	UiFactory.animate_in(center)
 	_refresh()
 
 
-## Fileira de vagas: 4 do esquadrão, um separador e a vaga da auxiliar (com rótulos embaixo).
+## Fileira de vagas: 4 do esquadrão, divisória e a vaga da auxiliar (rótulos embaixo).
 func _build_slots() -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", Params.squad_spacing)
 	for i in Params.squad_size:
-		var cell := _slot_cell(str(i + 1), Params.ui_muted_text_color)
-		var button := cell.get_child(0) as Button
-		button.pressed.connect(_on_slot_pressed.bind(i))
-		_slot_icons.append(button.get_child(0) as ShipIcon)
-		row.add_child(cell)
+		row.add_child(_slot_cell(i, str(i + 1), Params.ui_muted_text_color))
 	var divider := ColorRect.new()
 	divider.color = Color(Params.companion_powerup_color, 0.5)
 	divider.custom_minimum_size = Vector2(3.0, Params.squad_slot_size * 0.8)
-	divider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	divider.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	row.add_child(divider)
-	var aux_cell := _slot_cell(tr("SQUAD_AUX_LABEL"), Params.companion_powerup_color)
-	var aux_button := aux_cell.get_child(0) as Button
-	aux_button.pressed.connect(_on_slot_pressed.bind(AUX_SLOT))
-	_aux_icon = aux_button.get_child(0) as ShipIcon
-	_aux_icon.auxiliary = true
-	_aux_icon.locked = not SaveGame.is_companion_unlocked()
-	# Remover a auxiliar (ela é opcional)
-	_aux_clear = Button.new()
-	_aux_clear.flat = true
-	_aux_clear.focus_mode = Control.FOCUS_NONE
-	_aux_clear.text = tr("SQUAD_AUX_CLEAR")
-	_aux_clear.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	_aux_clear.add_theme_font_size_override("font_size", Params.squad_slot_label_font_size)
-	_aux_clear.add_theme_color_override("font_color", Params.ui_muted_text_color)
-	_aux_clear.custom_minimum_size.y = Params.squad_aux_clear_height
-	_aux_clear.pressed.connect(_on_aux_clear_pressed)
-	aux_cell.add_child(_aux_clear)
-	row.add_child(aux_cell)
+	row.add_child(_slot_cell(AUX_SLOT, tr("SQUAD_AUX_LABEL"), Params.companion_powerup_color))
+	_slot_icons[Params.squad_size].auxiliary = true
+	_slot_icons[Params.squad_size].locked = not SaveGame.is_companion_unlocked()
 	return row
 
 
-## Vaga: ícone tocável e rótulo embaixo.
-func _slot_cell(label_text: String, label_color: Color) -> VBoxContainer:
+func _slot_cell(slot: int, label_text: String, label_color: Color) -> VBoxContainer:
 	var cell := VBoxContainer.new()
-	cell.alignment = BoxContainer.ALIGNMENT_BEGIN
 	cell.add_theme_constant_override("separation", 4)
-	cell.add_child(_icon_button(Params.squad_slot_size))
+	var button := _icon_button(Params.squad_slot_size)
+	button.pressed.connect(_on_slot_pressed.bind(slot))
+	cell.add_child(button)
+	_slot_icons.append(button.get_child(0) as ShipIcon)
 	var label := Label.new()
 	label.text = label_text
 	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
@@ -140,167 +115,233 @@ func _icon_button(side: float) -> Button:
 	button.flat = true
 	button.focus_mode = Control.FOCUS_NONE
 	button.custom_minimum_size = Vector2.ONE * side
-	button.pressed.connect(Audio.play.bind(&"ui_click"))
 	var icon := ShipIcon.new()
 	icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+	icon.pivot_offset = Vector2.ONE * side * 0.5
 	button.add_child(icon)
 	return button
 
 
-func _make_card(body: BodyData) -> Button:
+## Célula da grade: ícone grande tocável, ⓘ no canto e o nome embaixo.
+func _make_cell(body: BodyData) -> VBoxContainer:
 	var unlocked: bool = SaveGame.is_ship_unlocked(body)
-	var card := UiFactory.make_button("")
-	card.custom_minimum_size = Params.squad_card_size
-	card.toggle_mode = true
-	card.disabled = not unlocked
-	card.pressed.connect(_on_card_pressed.bind(body))
-
-	var row := HBoxContainer.new()
-	row.set_anchors_preset(Control.PRESET_FULL_RECT)
-	row.offset_left = Params.ui_button_padding
-	row.offset_right = -Params.ui_button_padding
-	row.add_theme_constant_override("separation", Params.ui_button_padding)
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	card.add_child(row)
-
-	var icon := ShipIcon.new()
+	var cell := VBoxContainer.new()
+	cell.custom_minimum_size.x = Params.squad_cell_width
+	cell.add_theme_constant_override("separation", 2)
+	var holder := Control.new()
+	holder.custom_minimum_size = Vector2(Params.squad_cell_width, Params.squad_cell_icon_size)
+	cell.add_child(holder)
+	var button := _icon_button(Params.squad_cell_icon_size)
+	button.position = Vector2((Params.squad_cell_width - Params.squad_cell_icon_size) * 0.5, 0.0)
+	button.pressed.connect(_on_ship_pressed.bind(body))
+	holder.add_child(button)
+	var icon := button.get_child(0) as ShipIcon
 	icon.body = body
 	icon.locked = not unlocked
-	icon.custom_minimum_size = Vector2.ONE * Params.squad_card_icon_size
-	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(icon)
-
-	var texts := VBoxContainer.new()
-	texts.alignment = BoxContainer.ALIGNMENT_CENTER
-	texts.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	texts.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	texts.add_theme_constant_override("separation", 2)
-	row.add_child(texts)
+	_cell_icons.append(icon)
+	_cell_buttons.append(button)
+	# ⓘ: inspecionar (área de toque grande, ícone pequeno no canto)
+	var info := Button.new()
+	info.flat = true
+	info.focus_mode = Control.FOCUS_NONE
+	info.size = Vector2.ONE * Params.squad_info_touch_size
+	info.position = Vector2(Params.squad_cell_width - Params.squad_info_touch_size, -Params.squad_info_touch_size * 0.25)
+	info.draw.connect(_draw_info.bind(info))
+	info.pressed.connect(_open_inspect.bind(body))
+	info.pressed.connect(Audio.play.bind(&"ui_click"))
+	holder.add_child(info)
 	var name_label := Label.new()
-	name_label.text = body.name_key
+	name_label.text = tr(body.name_key)
+	name_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_label.add_theme_color_override("font_color", body.color if unlocked else Params.ui_muted_text_color)
-	name_label.add_theme_font_size_override("font_size", Params.squad_name_font_size)
-	texts.add_child(name_label)
-	var lines: Array[Label] = []
-	if unlocked:
-		lines.append(_card_line("%s: %s" % [tr("SQUAD_MAIN_LABEL"), tr(body.description_key)], Params.ui_muted_text_color))
-		lines.append(_card_line("%s: %s" % [tr("SQUAD_AUX_LABEL"), tr(body.companion_description_key)], Params.companion_powerup_color))
+	name_label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(name_label.text, Params.squad_cell_width, Params.squad_cell_name_font_size))
+	cell.add_child(name_label)
+	return cell
+
+
+## Ícone "i" num círculo, no canto superior direito da área de toque.
+func _draw_info(button: Button) -> void:
+	var radius: float = Params.squad_info_icon_radius
+	var c := Vector2(button.size.x - radius - 6.0, radius + Params.squad_info_touch_size * 0.25)
+	button.draw_circle(c, radius, Params.switch_icon_bg_color)
+	button.draw_arc(c, radius, 0.0, TAU, 32, Params.ui_accent_color, 3.0)
+	button.draw_circle(c + Vector2(0.0, -radius * 0.45), radius * 0.13, Params.ui_text_color)
+	button.draw_line(c + Vector2(0.0, -radius * 0.15), c + Vector2(0.0, radius * 0.5), Params.ui_text_color, radius * 0.22)
+
+
+func _open_inspect(body: BodyData) -> void:
+	var dialog := ShipInspect.create(body, SaveGame.is_ship_unlocked(body), SaveGame.is_companion_unlocked())
+	dialog.slot_of = _slot_of
+	dialog.toggle_squad = _toggle_squad
+	dialog.toggle_companion = _toggle_companion
+	dialog.show_on(self)
+
+
+## Toque na nave: tira se já está escolhida; senão põe na 1ª vaga livre (ou na auxiliar).
+func _on_ship_pressed(body: BodyData) -> void:
+	var index: int = _roster.find(body)
+	if not SaveGame.is_ship_unlocked(body):
+		_reject(index)
+		return
+	if _slot_of(body) != OUTSIDE:
+		_remove(body)
+		return
+	var free: int = _chosen.find(null)
+	if free >= 0:
+		_place(body, free)
+	elif _companion == null and SaveGame.is_companion_unlocked():
+		_place(body, AUX_SLOT)
 	else:
-		lines.append(_card_line(tr("SQUAD_LOCKED_SHIP") % body.unlock_chapter, Params.ui_muted_text_color))
-	for line in lines:
-		texts.add_child(line)
-
-	# O cartão cresce se o texto (que muda com o idioma) não couber na altura mínima
-	card.resized.connect(_fit_card_height.bind(card, name_label, lines))
-	_cards.append(card)
-	_card_icons.append(icon)
-	return card
+		_reject(index, "SQUAD_FULL")
 
 
-func _card_line(text: String, color: Color) -> Label:
-	var label := Label.new()
-	label.text = text
-	label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_color_override("font_color", color)
-	label.add_theme_font_size_override("font_size", Params.squad_description_font_size)
-	return label
-
-
-func _fit_card_height(card: Button, name_label: Label, lines: Array[Label]) -> void:
-	var text_width: float = card.size.x - Params.ui_button_padding * 3.0 - Params.squad_card_icon_size
-	if text_width <= 0.0:
-		return
-	var needed: float = name_label.get_theme_font("font").get_height(Params.squad_name_font_size)
-	for line in lines:
-		needed += line.get_theme_font("font").get_multiline_string_size(line.text, HORIZONTAL_ALIGNMENT_LEFT,
-			text_width, Params.squad_description_font_size).y + 2.0
-	needed = maxf(Params.squad_card_size.y, needed + Params.ui_button_padding * 2.0)
-	if absf(card.custom_minimum_size.y - needed) > 1.0:
-		card.custom_minimum_size.y = needed
-
-
+## Toque numa vaga ocupada tira a nave dela.
 func _on_slot_pressed(slot: int) -> void:
-	_selected = slot
-	_refresh()
+	var body: BodyData = _get_slot(slot)
+	if body != null:
+		_remove(body)
+	elif slot == AUX_SLOT and not SaveGame.is_companion_unlocked():
+		_flash_hint(tr("SQUAD_COMPANION_LOCKED") % Params.companion_unlock_chapter)
 
 
-## Coloca a nave na vaga escolhida; se ela estava em outra vaga, as duas trocam.
-func _on_card_pressed(body: BodyData) -> void:
-	if _selected == AUX_SLOT and not SaveGame.is_companion_unlocked():
-		_refresh()
+## Inspeção: pôr/tirar do esquadrão (com o esquadrão cheio, troca com a última vaga).
+func _toggle_squad(body: BodyData) -> void:
+	var slot: int = _slot_of(body)
+	if slot >= 0:
+		_remove(body)
 		return
-	var from: int = _slot_of(body)
-	if from == _selected:
-		_refresh()
+	if slot == AUX_SLOT:
+		_companion = null
+	if not _chosen.has(null):
+		# Esquadrão cheio: a última nave volta para a grade e dá lugar a esta
+		_remove(_chosen[Params.squad_size - 1])
+	_place(body, _chosen.find(null))
+
+
+## Inspeção: usar como auxiliar (sai do esquadrão se estava nele) ou deixar de usar.
+func _toggle_companion(body: BodyData) -> void:
+	if not SaveGame.is_companion_unlocked():
 		return
-	var previous: BodyData = _get_slot(_selected)
-	_set_slot(_selected, body)
-	if from != -2:
-		# A nave saiu da outra vaga: a que estava aqui vai para lá (a auxiliar pode ficar vazia)
-		_set_slot(from, previous)
+	if _companion == body:
+		_remove(body)
+		return
+	if _companion != null:
+		_remove(_companion)
+	var slot: int = _slot_of(body)
+	if slot >= 0:
+		_chosen[slot] = null
+	_place(body, AUX_SLOT)
+
+
+func _place(body: BodyData, slot: int) -> void:
+	_set_slot(slot, body)
 	Audio.play(&"ui_confirm")
-	# Se alguma vaga do esquadrão ficou vazia, ela passa a ser a escolhida
-	var empty: int = _chosen.find(null)
-	if empty >= 0:
-		_selected = empty
+	var target: ShipIcon = _slot_icon(slot)
+	_fly(body, _cell_icons[_roster.find(body)], target, func() -> void: _pop(target))
+	target.modulate.a = 0.0  # aparece quando a nave chega
 	_refresh()
 
 
-func _on_aux_clear_pressed() -> void:
-	_companion = null
+func _remove(body: BodyData) -> void:
+	var slot: int = _slot_of(body)
+	if slot == OUTSIDE:
+		return
+	var source: ShipIcon = _slot_icon(slot)
+	_set_slot(slot, null)
 	Audio.play(&"ui_back")
+	var cell: ShipIcon = _cell_icons[_roster.find(body)]
+	_fly(body, source, cell, func() -> void: _pop(cell))
 	_refresh()
 
 
-## Vaga onde a nave está: 0..3, AUX_SLOT ou -2 (fora).
+## Nave voando de um ícone a outro (cópia por cima de tudo, em tempo real).
+func _fly(body: BodyData, from: Control, to: Control, arrived: Callable) -> void:
+	var flyer := ShipIcon.new()
+	flyer.body = body
+	flyer.top_level = true
+	flyer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	flyer.global_position = from.global_position
+	flyer.size = from.size
+	add_child(flyer)
+	var tween := flyer.create_tween().set_parallel().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_property(flyer, "global_position", to.global_position, Params.squad_fly_seconds)
+	tween.tween_property(flyer, "size", to.size, Params.squad_fly_seconds)
+	tween.chain().tween_callback(func() -> void:
+		flyer.queue_free()
+		arrived.call())
+
+
+## Ícone "pula" ao receber a nave.
+func _pop(icon: ShipIcon) -> void:
+	icon.modulate.a = 1.0
+	icon.pivot_offset = icon.size * 0.5
+	icon.scale = Vector2.ONE * Params.squad_pop_scale
+	icon.create_tween().set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT) \
+		.tween_property(icon, "scale", Vector2.ONE, Params.squad_fly_seconds)
+
+
+## Recusa: a nave balança e a dica mostra o motivo.
+func _reject(index: int, hint_key: String = "") -> void:
+	Audio.play(&"ui_back")
+	var icon: ShipIcon = _cell_icons[index]
+	var tween := icon.create_tween()
+	for i in 3:
+		tween.tween_property(icon, "position:x", Params.squad_shake_px, 0.04)
+		tween.tween_property(icon, "position:x", -Params.squad_shake_px, 0.04)
+	tween.tween_property(icon, "position:x", 0.0, 0.04)
+	if hint_key.is_empty():
+		_flash_hint(tr("SQUAD_LOCKED_SHIP") % _roster[index].unlock_chapter)
+	else:
+		_flash_hint(tr(hint_key))
+
+
+## Troca a dica por um aviso por alguns segundos.
+func _flash_hint(text: String) -> void:
+	_hint.text = text
+	_hint.add_theme_color_override("font_color", Params.hud_warning_color)
+	if _hint_tween != null:
+		_hint_tween.kill()
+	_hint_tween = create_tween()
+	_hint_tween.tween_interval(Params.squad_hint_flash_seconds)
+	_hint_tween.tween_callback(func() -> void:
+		_hint.text = "SQUAD_HINT"
+		_hint.remove_theme_color_override("font_color"))
+
+
 func _slot_of(body: BodyData) -> int:
-	if body == _companion:
+	if body != null and body == _companion:
 		return AUX_SLOT
 	var index: int = _chosen.find(body)
-	return index if index >= 0 else -2
+	return index if index >= 0 else OUTSIDE
 
 
 func _get_slot(slot: int) -> BodyData:
-	if slot == AUX_SLOT:
-		return _companion
-	return _chosen[slot] if slot < _chosen.size() else null
+	return _companion if slot == AUX_SLOT else _chosen[slot]
 
 
 func _set_slot(slot: int, body: BodyData) -> void:
 	if slot == AUX_SLOT:
 		_companion = body
-		return
-	while _chosen.size() <= slot:
-		_chosen.append(null)
-	_chosen[slot] = body
+	else:
+		_chosen[slot] = body
 
 
-## Vagas, destaque da vaga escolhida, marcas nos cartões e botão Salvar.
+func _slot_icon(slot: int) -> ShipIcon:
+	return _slot_icons[Params.squad_size if slot == AUX_SLOT else slot]
+
+
+## Vagas, marcas na grade (número/A, apagada se escolhida) e botão Salvar.
 func _refresh() -> void:
-	for i in _slot_icons.size():
-		_slot_icons[i].body = _get_slot(i)
-		_slot_icons[i].highlighted = _selected == i
-	_aux_icon.body = _companion
-	_aux_icon.highlighted = _selected == AUX_SLOT
-	_aux_clear.visible = _companion != null
-	_slot_info.text = _slot_text()
-	_slot_info.add_theme_color_override("font_color",
-		Params.companion_powerup_color if _selected == AUX_SLOT else Params.ui_muted_text_color)
+	for i in Params.squad_size:
+		_slot_icons[i].body = _chosen[i]
+	_slot_icons[Params.squad_size].body = _companion
 	for i in _roster.size():
 		var slot: int = _slot_of(_roster[i])
-		_cards[i].set_pressed_no_signal(slot != -2)
-		_card_icons[i].number = slot + 1 if slot >= 0 else 0
-		_card_icons[i].auxiliary = slot == AUX_SLOT
-	_save_button.disabled = _chosen.size() != Params.squad_size or _chosen.has(null)
-
-
-func _slot_text() -> String:
-	if _selected == AUX_SLOT:
-		if not SaveGame.is_companion_unlocked():
-			return tr("SQUAD_COMPANION_LOCKED") % Params.companion_unlock_chapter
-		return tr("SQUAD_SLOT_AUX")
-	return tr("SQUAD_SLOT_MAIN") % (_selected + 1)
+		_cell_icons[i].number = slot + 1 if slot >= 0 else 0
+		_cell_icons[i].auxiliary = slot == AUX_SLOT
+		_cell_icons[i].self_modulate.a = Params.squad_chosen_alpha if slot != OUTSIDE else 1.0
+	_save_button.disabled = _chosen.has(null)
 
 
 func _on_save_pressed() -> void:

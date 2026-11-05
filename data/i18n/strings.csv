@@ -47,7 +47,7 @@ SHIP_ARTILLERY_NAME,Artillery,Artilharia,Artillería
 SHIP_ARTILLERY_DESC,Shells that explode in an area. Special: bombardment.,Projéteis que explodem em área. Especial: bombardeio.,Proyectiles que explotan en área. Especial: bombardeo.
 MENU_SQUAD,Squad,Esquadrão,Escuadrón
 SQUAD_TITLE,Squad,Esquadrão,Escuadrón
-SQUAD_HINT,"Tap a slot, then the ship that goes there. Slot 1 starts the stage.",Toque numa vaga e depois na nave que vai ocupá-la. A vaga 1 começa a fase.,Toca una vaga y luego la nave que irá allí. La vaga 1 empieza la fase.
+SQUAD_HINT,"Tap ships to add or remove. With 4 in the squad, the next one becomes the wingman.","Toque nas naves para pôr ou tirar. Com 4 no esquadrão, a próxima vira a auxiliar.","Toca las naves para poner o quitar. Con 4 en el escuadrón, la siguiente será la auxiliar."
 SQUAD_SAVE,Save,Salvar,Guardar
 PLANET_4_NAME,Singularity,Singularidade,Singularidad
 BOSS_4_NAME,Hydra,Hidra,Hidra
@@ -165,6 +165,9 @@ SHIP_TESLA_AUX,Close defense: zaps any enemy that gets near.,Defesa próxima: ac
 SHIP_TESLA_AUX_UP,more bolts,mais descargas,más descargas
 SHIP_RICOCHET_AUX,Swarm: shots bounce across many weak enemies.,Enxame: tiros ricocheteiam por muitos inimigos.,Enjambre: disparos rebotan entre muchos enemigos.
 SHIP_RICOCHET_AUX_UP,more bounces,mais ricochetes,más rebotes
-SQUAD_AUX_CLEAR,Remove,Remover,Quitar
-SQUAD_SLOT_MAIN,Slot %d: main ship (you play with one at a time and switch).,Vaga %d: nave principal (você joga com uma de cada vez e troca).,Vaga %d: nave principal (juegas con una a la vez y cambias).
-SQUAD_SLOT_AUX,Wingman (optional): flies beside you with a weaker version that has its own role.,"Auxiliar (opcional): voa ao seu lado com uma versão mais fraca, com papel próprio.","Auxiliar (opcional): vuela a tu lado con una versión más débil, con su propio papel."
+SQUAD_FULL,All slots are full: tap a chosen ship to free one.,Tudo cheio: toque numa nave escolhida para liberar a vaga.,Todo lleno: toca una nave elegida para liberar la vaga.
+INSPECT_ADD,Add to squad,Pôr no esquadrão,Al escuadrón
+INSPECT_REMOVE,Remove from squad,Tirar do esquadrão,Quitar del escuadrón
+INSPECT_SET_AUX,Use as wingman,Usar como auxiliar,Usar como auxiliar
+INSPECT_CLEAR_AUX,Remove wingman,Tirar auxiliar,Quitar auxiliar
+INSPECT_UPGRADE,Wingman power-up: %s,Power-up da auxiliar: %s,Power-up de la auxiliar: %s

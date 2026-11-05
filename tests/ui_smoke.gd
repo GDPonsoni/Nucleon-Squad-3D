@@ -79,8 +79,19 @@ func _ready() -> void:
 			# Esquadrão: vaga da auxiliar e troca de lugar entre vagas
 			if scene.has_method("_on_card_pressed"):
 				failures += _check_squad_slots(scene, language)
-				await get_tree().process_frame
+				await get_tree().create_timer(0.5, true, false, true).timeout
 				overflow += _check_overflow(scene, "squad trocas %s" % language)
+				for body in scene.get("_roster"):
+					scene.call("_open_inspect", body)
+					var inspect: Dialog = scene.find_children("*", "ShipInspect", true, false)[0]
+					for mode in [1, 0]:
+						inspect.call("_set_mode", mode)
+						await get_tree().create_timer(0.3, true, false, true).timeout
+						overflow += _check_overflow(inspect, "inspeção %s %s" % [body.id, language])
+					inspect.call("_on_companion_pressed")
+					inspect.call("_on_squad_pressed")
+					inspect.close()
+					await get_tree().process_frame
 			# Seletor: confere cada capítulo
 			if scene.has_method("_show_chapter"):
 				for c in Session.campaign.planets.size():
@@ -359,20 +370,19 @@ func _check_inside_button(control: Control, label: String) -> int:
 func _check_squad_slots(scene: Node, language: String) -> int:
 	var roster: Array = scene.get("_roster")
 	var chosen: Array = scene.get("_chosen")
-	var spare: BodyData = null
-	for body in roster:
-		if not chosen.has(body):
-			spare = body
-			break
+	var spares: Array = roster.filter(func(b: BodyData) -> bool: return not chosen.has(b))
 	var first: BodyData = chosen[0]
-	scene.call("_on_slot_pressed", -1)
-	scene.call("_on_card_pressed", spare)
-	var ok: bool = scene.get("_companion") == spare
-	scene.call("_on_slot_pressed", 0)
-	scene.call("_on_card_pressed", spare)
-	ok = ok and scene.get("_chosen")[0] == spare and scene.get("_companion") == first
-	scene.call("_on_aux_clear_pressed")
-	ok = ok and scene.get("_companion") == null and not (scene.get("_save_button") as Button).disabled
+	var ok: bool = true
+	scene.call("_on_ship_pressed", spares[0])  # esquadrão cheio: vira auxiliar
+	ok = ok and scene.get("_companion") == spares[0]
+	scene.call("_on_ship_pressed", first)  # tira do esquadrão
+	ok = ok and scene.get("_chosen")[0] == null and (scene.get("_save_button") as Button).disabled
+	scene.call("_on_ship_pressed", spares[1])  # volta a encher a vaga 1
+	ok = ok and scene.get("_chosen")[0] == spares[1] and not (scene.get("_save_button") as Button).disabled
+	scene.call("_on_ship_pressed", spares[2])  # tudo cheio: recusa
+	ok = ok and scene.get("_slot_of").call(spares[2]) == -2
+	scene.call("_on_slot_pressed", -1)  # toque na vaga da auxiliar tira
+	ok = ok and scene.get("_companion") == null
 	if not ok:
 		printerr("FALHOU: vagas do esquadrão [%s]" % language)
 		return 1

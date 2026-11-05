@@ -94,16 +94,21 @@ var ui_button_depth: int = 9  # relevo dos botões (borda de baixo)
 var ui_button_padding: float = 24.0
 var ui_panel_padding: float = 48.0
 var squad_spacing: int = 22
-var squad_columns: int = 2
+var squad_columns: int = 4
+var squad_cell_width: float = 230.0  # célula da grade de naves
+var squad_cell_icon_size: float = 170.0
+var squad_cell_name_font_size: int = 34
+var squad_info_touch_size: float = 100.0  # botão ⓘ: área de toque (o desenho é menor)
+var squad_info_icon_radius: float = 22.0
+var squad_fly_seconds: float = 0.28  # nave voando entre a grade e a vaga
+var squad_pop_scale: float = 1.25
+var squad_shake_px: float = 10.0  # balanço ao recusar
+var squad_hint_flash_seconds: float = 2.2
+var squad_chosen_alpha: float = 0.4  # nave já escolhida fica apagada na grade
 var squad_slot_size: float = 150.0
-var squad_card_size: Vector2 = Vector2(490.0, 225.0)
-var squad_card_icon_size: float = 110.0
 var squad_hint_width: float = 900.0
-var squad_name_font_size: int = 46
 var squad_hint_font_size: int = 38
 var squad_slot_label_font_size: int = 30  # rótulos embaixo das vagas (1..4, Auxiliar)
-var squad_aux_clear_height: float = 56.0  # botão de remover a auxiliar
-var squad_description_font_size: int = 25
 var squad_button_size: Vector2 = Vector2(420.0, 140.0)
 var back_corner_size: Vector2 = Vector2(104.0, 104.0)  # seta de voltar no canto superior esquerdo
 var back_corner_margin: Vector2 = Vector2(24.0, 48.0)
@@ -292,6 +297,25 @@ var explosion_ring_width: float = 16.0
 var explosion_flash_part: float = 0.2  # fração inicial com clarão branco
 var cross_band_top: float = 0.08  # faixa da tela (0-1) onde os inimigos laterais entram
 var cross_band_bottom: float = 0.45
+
+# --- Inspeção da nave (tela de esquadrão): demonstração ao vivo da arma ---
+var inspect_demo_height_ratio: float = 0.78  # altura da demonstração em relação à largura
+var inspect_demo_background: Color = Color(0.03, 0.04, 0.08)
+var inspect_demo_sound_db: float = -14.0
+var inspect_bullet_pool_size: int = 120
+var inspect_target_small: String = "res://data/enemies/drone.tres"
+var inspect_target_big: String = "res://data/enemies/tank.tres"
+var inspect_target_positions: PackedVector2Array = [  # fração da área da demonstração
+	Vector2(0.2, 0.18), Vector2(0.5, 0.12), Vector2(0.8, 0.18), Vector2(0.35, 0.36), Vector2(0.65, 0.36), Vector2(0.15, 0.6),
+]
+var inspect_big_target_index: int = 1
+var inspect_ship_position: Vector2 = Vector2(0.5, 0.8)  # fração da área da demonstração
+var inspect_icon_size: float = 210.0  # nave grande no topo da inspeção
+var inspect_target_sway: float = 40.0
+var inspect_target_sway_speed: float = 1.3
+var inspect_level_button_size: float = 96.0
+var inspect_mode_button_height: float = 110.0
+var inspect_text_font_size: int = 36
 
 # --- Especial (valores de cada arma ficam em data/weapons/) ---
 ## Multiplica o tempo de carga de todos os especiais de arma (special_charge_seconds de cada

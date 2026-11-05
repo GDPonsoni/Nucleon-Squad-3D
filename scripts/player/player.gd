@@ -47,6 +47,12 @@ func _ready() -> void:
 	_target = position
 
 
+## Posiciona a nave parada num ponto (ex.: demonstração da tela de inspeção).
+func place_at(pos: Vector2) -> void:
+	position = pos
+	_target = pos
+
+
 func setup(context: CombatContext) -> void:
 	_context = context
 	mount = WeaponMount.new()

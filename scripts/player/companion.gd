@@ -8,6 +8,7 @@ var body: BodyData
 var mount: WeaponMount
 
 var level: int = 1
+var always_active: bool = false  # demonstração (tela de inspeção): atira mesmo sem corpo na nave principal
 var _player: Player
 var _pulse_left: float = 0.0
 var _side: float = -1.0  # -1 = à esquerda da nave, 1 = à direita
@@ -46,7 +47,7 @@ func _process(delta: float) -> void:
 	var weight: float = 1.0 - exp(-Params.companion_follow_rate * delta)
 	position = position.lerp(_goal(), weight)
 	# Sem corpo na nave principal (aguardando a escolha), a auxiliar não atira
-	var active: bool = _player.body != null
+	var active: bool = always_active or _player.body != null
 	if mount.is_active() != active:
 		mount.set_active(active)
 	modulate.a = Params.companion_alpha if active else Params.companion_alpha * 0.4
