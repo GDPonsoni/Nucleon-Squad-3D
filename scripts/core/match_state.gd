@@ -177,8 +177,14 @@ func charge_special(delta: float) -> void:
 
 
 ## 0 a 1: quanto o especial do corpo ativo já carregou.
+## A carga fica num PackedFloat32Array (32 bits) e o tempo total é float de 64 bits: um tempo
+## que não cabe exato em 32 bits (ex.: 24,3 s) deixava a carga em 0,9999999 e o especial
+## nunca ficava pronto. Por isso a comparação tem folga.
 func special_ratio() -> float:
-	return special_charge[current] / special_seconds()
+	var seconds: float = special_seconds()
+	if special_charge[current] >= seconds - Params.special_ready_epsilon:
+		return 1.0
+	return clampf(special_charge[current] / seconds, 0.0, 1.0)
 
 
 func special_ready() -> bool:

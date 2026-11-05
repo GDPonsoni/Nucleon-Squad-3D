@@ -179,6 +179,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - **Campanha gerada:** editar `data/stages/*.tres` à mão se perde ao rodar o gerador de novo.
 - **Arquivos `.uid`:** versione-os junto com os scripts.
 - **O chefe é liberado da memória ao morrer** (não é pooled). Qualquer lista ou dicionário que guarde inimigos precisa checar `is_instance_valid` e não usar laço tipado (`for e: Enemy in ...`), senão dá "previously freed instance" a cada quadro (aconteceu na Órbita).
+- **Floats de 32 bits:** `PackedFloat32Array` guarda menos precisão que um `float` do GDScript (64 bits). Comparar um valor guardado nela com um calculado (`>=`) pode falhar por 0,0000001; foi o que travava o especial de algumas naves. Compare com folga (`special_ready_epsilon`).
 - **Erros no celular:** `adb logcat -d -s godot:*` mostra os SCRIPT ERROR da última partida.
 
 ---

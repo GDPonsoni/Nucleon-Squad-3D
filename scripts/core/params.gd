@@ -324,6 +324,7 @@ var inspect_text_font_size: int = 36
 ## Multiplica o tempo de carga de todos os especiais de arma (special_charge_seconds de cada
 ## WeaponData). 1,5 = +50%. Conta em tempo de jogo, só com o corpo ativo.
 var special_charge_multiplier: float = 1.5
+var special_ready_epsilon: float = 0.001  # segundos de folga ao comparar a carga (precisão de 32 bits)
 var special_button_size: float = 150.0
 var special_button_gap: float = 28.0  # acima da barra de troca
 var special_ring_width: float = 9.0

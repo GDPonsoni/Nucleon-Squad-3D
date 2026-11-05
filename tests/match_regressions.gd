@@ -33,6 +33,7 @@ func _ready() -> void:
 	failures += await _case(game, "dedo 1 segurando", [[0, at, true], [0, at, false]])
 	await _send([[1, ship, false]])
 	failures += await _case(game, "final", [[0, at, true], [0, at, false]])
+	failures += await _check_special_cycle(game)
 	# Órbita com um alvo liberado da memória (como o chefe ao morrer) não pode quebrar
 	var context: CombatContext = game.get("context")
 	var orbit: Weapon = Weapon.create(load("res://data/weapons/orbit.tres") as WeaponData, context, 1)
@@ -80,3 +81,38 @@ func _send(touches: Array) -> void:
 		Input.parse_input_event(event)
 		await get_tree().process_frame
 	await get_tree().process_frame
+
+
+## Ciclo real do especial: carrega com o tempo, dispara, troca de nave, volta, carrega e dispara de novo.
+func _check_special_cycle(game: Node) -> int:
+	var failures: int = 0
+	var state: MatchState = game.get("state")
+	var switcher: BodySwitcher = game.get("switcher")
+	var hud: Hud = game.get("hud")
+	var at: Vector2 = (hud.get("_special") as Control).get_global_rect().get_center()
+	var saved: float = Params.special_charge_multiplier
+	Params.special_charge_multiplier = 0.05  # ~1 s de jogo para encher
+	for round in 3:
+		state.special_charge[state.current] = 0.0
+		var waited: float = 0.0
+		while not state.special_ready() and waited < 15.0:
+			await get_tree().create_timer(0.1, true, false, true).timeout
+			waited += 0.1
+		if not state.special_ready():
+			printerr("FALHOU: especial não recarregou (rodada %d, nave %d, carga %.2f)" % [round, state.current, state.special_ratio()])
+			failures += 1
+			continue
+		await _send([[0, at, true], [0, at, false]])
+		if state.special_ratio() > 0.5:
+			printerr("FALHOU: especial cheio não disparou (rodada %d, nave %d)" % [round, state.current])
+			failures += 1
+		# Troca para a próxima nave e espera a recarga da troca
+		var next: int = (state.current + 1) % state.bodies.size()
+		state.switch_cooldown_left = 0.0
+		var icon: Vector2 = switcher.get("_positions")[next]
+		await _send([[0, icon, true], [0, icon, false]])
+		if state.current != next:
+			printerr("FALHOU: não trocou para a nave %d" % next)
+			failures += 1
+	Params.special_charge_multiplier = saved
+	return failures

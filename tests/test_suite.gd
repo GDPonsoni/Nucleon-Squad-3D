@@ -193,6 +193,24 @@ func test_companion_versions() -> void:
 	check(state.companion_level == 3 and not state.level_up_companion(), "auxiliar para no 3")
 
 
+func test_special_gets_ready_for_every_ship() -> void:
+	# Tempos que não cabem exatos em 32 bits (bônus de recarga) deixavam o especial travado
+	var roster := load(Params.roster_path) as FormationData
+	for charge_bonus in [1.0, 0.9, 0.81, 0.73]:
+		var boosts := PlayerBoosts.new()
+		boosts.special_charge = charge_bonus
+		var formation := FormationData.new()
+		formation.bodies = roster.bodies.duplicate()
+		var state := MatchState.new(formation, boosts)
+		for i in state.bodies.size():
+			state.select(i)
+			for step in 4000:
+				state.charge_special(1.0 / 60.0)
+			check(state.special_ready(), "%s pronto com recarga %.2f" % [state.bodies[i].id, charge_bonus])
+			state.use_special()
+			check(not state.special_ready() and state.special_ratio() == 0.0, "%s zera ao usar" % state.bodies[i].id)
+
+
 func test_every_sound_has_a_file_and_gain() -> void:
 	for sound: StringName in Params.sfx_gain_db:
 		check(ResourceLoader.exists("res://assets/audio/sfx/%s.wav" % sound), "arquivo de %s" % sound)
