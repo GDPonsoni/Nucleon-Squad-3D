@@ -38,6 +38,7 @@ var banner_fallback_dpi: float = 420.0  # densidade usada fora do Android (S24 ~
 var dialog_width_ratio: float = 0.92  # largura do diálogo em relação à tela
 var dialog_height_ratio: float = 0.92  # altura máxima do diálogo (passando disso, o corpo rola)
 var dialog_close_size: float = 144.0  # botão X (>= 48 dp no S24)
+var dialog_close_overhang: float = 40.0  # quanto o X sai do canto do painel
 var dialog_close_icon_ratio: float = 0.13  # tamanho do X dentro da área de toque
 var dialog_spacing: int = 28
 var dialog_layer: int = 100

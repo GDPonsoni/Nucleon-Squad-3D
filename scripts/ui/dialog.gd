@@ -54,7 +54,7 @@ var close_blocked: bool:
 		_close_blocked = value
 		if _close_button != null:
 			_close_button.disabled = value
-			_close_button.modulate.a = 0.4 if value else 1.0
+			pass
 
 
 func _ready() -> void:
@@ -78,7 +78,7 @@ func _ready() -> void:
 	overlay.add_child(_center)
 
 	if closable:
-		_frame.add_child(_make_close_row())
+		_make_close_button()
 	if not title_key.is_empty():
 		_frame.add_child(_make_title())
 
@@ -107,22 +107,29 @@ func _exit_tree() -> void:
 	_stack.erase(self)
 
 
-func _make_close_row() -> Control:
-	var row := HBoxContainer.new()
-	var spacer := Control.new()
-	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(spacer)
+## O X fica no canto do painel, fora do fluxo, para não aumentar a caixa.
+func _make_close_button() -> void:
 	_close_button = UiFactory.make_button("MENU_BACK")
+	_close_button.name = "CloseButton"
 	_close_button.text = ""  # só o X; a chave serve ao som do botão
 	_close_button.custom_minimum_size = Vector2.ONE * Params.dialog_close_size
+	_close_button.size = _close_button.custom_minimum_size
+	_close_button.top_level = true
 	# Discreto: sem fundo de botão, só o X; a área de toque continua grande
 	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
 		_close_button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
 	_close_button.draw.connect(_draw_close_icon)
 	_close_button.pressed.connect(request_close)
 	_close_button.disabled = _close_blocked
-	row.add_child(_close_button)
-	return row
+	panel.add_child(_close_button)
+
+
+func _process(_delta: float) -> void:
+	# top_level: acompanha o canto superior direito do painel (que se move na animação de entrada)
+	if _close_button != null:
+		var corner: Vector2 = panel.global_position + Vector2(panel.size.x, 0.0)
+		_close_button.global_position = corner + Vector2(-_close_button.size.x + Params.dialog_close_overhang, -Params.dialog_close_overhang)
+		_close_button.modulate.a = panel.get_parent().modulate.a * (0.4 if _close_blocked else 1.0)
 
 
 func _draw_close_icon() -> void:
@@ -137,7 +144,9 @@ func _draw_close_icon() -> void:
 func _make_title() -> Label:
 	var label := UiFactory.make_title(title_key)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(tr(title_key), content_width, Params.title_font_size))
+	# Reserva o canto do X dos dois lados, para o título ficar centrado sem encostar nele
+	var reserve: float = Params.dialog_close_size * 0.8 if closable else 0.0
+	label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(tr(title_key), content_width - reserve * 2.0, Params.title_font_size))
 	return label
 
 

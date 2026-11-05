@@ -288,11 +288,7 @@ func _check_dialog(dialog: Dialog, label: String, expect_close: bool) -> int:
 			printerr("VAZA DO PAINEL [%s] %s" % [label, control.name])
 			failures += 1
 	if expect_close:
-		var close_button: Button = null
-		for button in dialog.find_children("*", "Button", true, false):
-			if (button as Button).text.is_empty():
-				close_button = button
-				break
+		var close_button := dialog.find_child("CloseButton", true, false) as Button
 		if close_button == null or close_button.size.x < 144.0 or close_button.size.y < 144.0:
 			printerr("SEM X (>= 144 px) [%s]" % label)
 			failures += 1
