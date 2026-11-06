@@ -497,3 +497,26 @@ func test_flexible_squad() -> void:
 	save.set_squad([] as Array[BodyData])
 	check(save.squad_formation().bodies.size() == Params.squad_size, "sem nenhuma: volta ao esquadrão inicial")
 	save.free()
+
+
+## Contador de dano: acertos na mesma janela viram um número com a soma; desligado, nada aparece.
+func test_damage_numbers() -> void:
+	var numbers := DamageNumbers.new()
+	add_child(numbers)
+	var target := Node2D.new()
+	add_child(target)
+	SaveGame.settings["damage_numbers"] = true
+	for i in 5:
+		numbers.report(target, 2.0)
+	numbers._process(Params.damage_number_window + 0.01)
+	var pool: NodePool = numbers.get_node("Pool")
+	check(pool.active.size() == 1, "5 acertos na janela viram 1 número (%d)" % pool.active.size())
+	check((pool.active[0] as DamageNumber)._text == "10", "número mostra a soma")
+	pool.active[0].expire()
+	SaveGame.settings["damage_numbers"] = false
+	numbers.report(target, 5.0)
+	numbers._process(1.0)
+	check(pool.active.is_empty(), "desligado não mostra números")
+	SaveGame.settings.erase("damage_numbers")
+	numbers.free()
+	target.free()

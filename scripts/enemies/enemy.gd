@@ -176,6 +176,8 @@ func take_damage(amount: float, source: int = SOURCE_NONE, from: Vector2 = Vecto
 	elif mult <= Params.resist_flash_threshold:
 		_flash_color = Params.resist_flash_color
 	queue_redraw()
+	if context != null and context.damage_numbers != null:
+		context.damage_numbers.report(self, amount, _flash_color)
 	if hp <= 0:
 		killed.emit(self)
 		expire()

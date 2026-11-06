@@ -7,6 +7,7 @@ var enemy_bullets: NodePool
 var enemies: NodePool
 var power_ups: NodePool
 var impacts: NodePool  # faíscas de acerto (pode ser null em testes)
+var damage_numbers: DamageNumbers  # contador de dano (pode ser null em testes)
 var player: Player
 var boss: Boss  # fora do pool; null quando não há chefe
 var boosts: PlayerBoosts = PlayerBoosts.new()  # evolução do núcleo (neutro em testes)

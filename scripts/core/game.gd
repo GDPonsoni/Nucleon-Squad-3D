@@ -85,6 +85,12 @@ func _ready() -> void:
 	add_child(impacts)
 	context.impacts = impacts
 
+	# Números de dano, acima dos inimigos
+	var numbers := DamageNumbers.new()
+	numbers.name = "DamageNumbers"
+	add_child(numbers)
+	context.damage_numbers = numbers
+
 	# Corpos que saem de cena (troca e quebra), atrás da nave
 	body_fx = NodePool.new(BodyFx.new, Params.body_fx_pool_size)
 	body_fx.name = "BodyFx"

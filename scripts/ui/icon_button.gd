@@ -6,7 +6,7 @@ extends Button
 
 signal toggled_value(on: bool)
 
-enum Icon { PLAY, RESTART, GEAR, HOME, SPEAKER, NOTE, BURST, SPARKLE, VIBRATE, CHART, GLOBE, MAP, UPGRADE }
+enum Icon { PLAY, RESTART, GEAR, HOME, SPEAKER, NOTE, BURST, SPARKLE, VIBRATE, CHART, GLOBE, MAP, UPGRADE, DAMAGE }
 
 var kind: Icon = Icon.PLAY
 var caption: String = ""
@@ -140,6 +140,13 @@ func _draw_icon(c: Vector2, s: float, ink: Color) -> void:
 			draw_polyline(PackedVector2Array([a, b, d]), ink, w * 0.8)
 			for point in [a, b, d]:
 				draw_circle(point, s * 0.3, ink)
+		Icon.DAMAGE:
+			# Estrela de impacto: ponta longa e curta alternadas
+			var star := PackedVector2Array()
+			for i in 16:
+				var r: float = s * (1.15 if i % 2 == 0 else 0.55)
+				star.append(c + Vector2.from_angle(TAU * i / 16.0) * r)
+			draw_colored_polygon(star, ink)
 		Icon.UPGRADE:
 			draw_colored_polygon(PackedVector2Array([c + Vector2(0.0, -s * 1.1), c + Vector2(s * 0.95, -s * 0.05), c + Vector2(-s * 0.95, -s * 0.05)]), ink)
 			draw_rect(Rect2(c + Vector2(-s * 0.35, -s * 0.1), Vector2(s * 0.7, s * 1.05)), ink)

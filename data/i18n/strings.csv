@@ -227,3 +227,4 @@ UNLOCK_OK,Great!,Legal!,¡Genial!
 UNLOCK_SHIP,New ship unlocked: %s. Add it to your squad.,Nova nave liberada: %s. Adicione ao seu esquadrão.,Nueva nave desbloqueada: %s. Añádela a tu escuadrón.
 UNLOCK_COMPANION,Wingman slot unlocked! Choose a small ship to fight beside you in the Squad screen.,Espaço da nave auxiliar liberado! Escolha uma nave pequena para lutar ao seu lado na tela Esquadrão.,¡Espacio de nave auxiliar desbloqueado! Elige una nave pequeña para luchar a tu lado en la pantalla Escuadrón.
 UNLOCK_PLANET,Chapter complete! The next planet awaits: %s.,Capítulo concluído! O próximo planeta te espera: %s.,¡Capítulo completado! El siguiente planeta te espera: %s.
+SETTINGS_SHORT_DAMAGE,Damage,Dano,Daño

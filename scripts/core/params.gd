@@ -32,8 +32,15 @@ var sfx_pitch_jitter: float = 0.06  # variação aleatória de tom
 var companion_sound_db: float = -8.0  # a nave auxiliar soa mais baixo
 var default_settings: Dictionary = {
 	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "haptic_level": 1, "reduced_effects": false, "language": "auto",
-	"show_stats": true, "tips_enabled": true,
+	"show_stats": true, "tips_enabled": true, "damage_numbers": true,
 }
+# Contador de dano
+var damage_number_pool_size: int = 40
+var damage_number_window: float = 0.2  # acertos no mesmo alvo dentro dessa janela viram um número
+var damage_number_seconds: float = 0.8
+var damage_number_rise_speed: float = 110.0  # px/s
+var damage_number_font_size: int = 34
+var damage_number_font_bonus: int = 22  # quanto o número cresce com dano alto, no máximo
 # Tutorial e avisos (tempo real)
 var tips_path: String = "res://data/tutorial/tips.json"
 var tip_gap_match_seconds: float = 25.0  # intervalo mínimo entre dicas na partida

@@ -87,12 +87,13 @@ func _add_volume(setting: String, icon: IconButton.Icon, preview: Callable = Cal
 func _add_tiles() -> void:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 40)
+	row.add_theme_constant_override("separation", 24)
 	add_child(row)
 	var size: float = Params.settings_tile_size
 	var vibration := _tile(row, IconButton.Icon.VIBRATE, "SETTINGS_SHORT_VIBRATION", bool(SaveGame.setting("vibration")))
 	var effects := _tile(row, IconButton.Icon.SPARKLE, "SETTINGS_SHORT_EFFECTS", not bool(SaveGame.setting("reduced_effects")))
 	var stats := _tile(row, IconButton.Icon.CHART, "SETTINGS_SHORT_STATS", bool(SaveGame.setting("show_stats")))
+	var damage := _tile(row, IconButton.Icon.DAMAGE, "SETTINGS_SHORT_DAMAGE", bool(SaveGame.setting("damage_numbers")))
 	var level := _haptic_level_button()
 	var level_row := HBoxContainer.new()
 	level_row.add_theme_constant_override("separation", 20)
@@ -106,6 +107,7 @@ func _add_tiles() -> void:
 		level_row.visible = value)
 	effects.toggled_value.connect(func(value: bool) -> void: SaveGame.set_setting("reduced_effects", not value))
 	stats.toggled_value.connect(func(value: bool) -> void: SaveGame.set_setting("show_stats", value))
+	damage.toggled_value.connect(func(value: bool) -> void: SaveGame.set_setting("damage_numbers", value))
 
 
 func _tile(row: HBoxContainer, icon: IconButton.Icon, caption_key: String, on: bool) -> IconButton:
