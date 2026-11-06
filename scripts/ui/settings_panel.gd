@@ -6,7 +6,11 @@ extends VBoxContainer
 
 signal back_pressed
 
-var _in_language_list: bool = false
+## Mostra as ferramentas de teste de progresso (só em build de debug). Ligado pela tela de
+## configurações do menu; a pausa não mostra.
+var debug_tools: bool = false
+var _in_language_list: bool = false  # em qualquer subtela (idioma ou progresso de teste)
+var _confirm_key: String = ""  # ação destrutiva esperando o segundo toque
 
 
 func _ready() -> void:
@@ -27,6 +31,10 @@ func _build() -> void:
 	_add_toggle("SETTINGS_EFFECTS", "reduced_effects", true)
 	_add_toggle("SETTINGS_STATS", "show_stats")
 	_add_language()
+	if debug_tools and OS.is_debug_build():
+		var tools := UiFactory.make_button("DEBUG_PROGRESS_TITLE")
+		tools.pressed.connect(_show_progress_tools)
+		add_child(tools)
 	_in_language_list = false
 
 
@@ -126,3 +134,49 @@ func _show_language_list() -> void:
 			# set_setting aplica o idioma; refaz os textos no idioma novo
 			_build())
 		add_child(option)
+
+
+## Teste (build de debug): desfazer, recuar e avançar o progresso para validar o que muda
+## conforme o avanço (naves, auxiliar, dificuldade, economia).
+func _show_progress_tools() -> void:
+	_in_language_list = true
+	for child in get_children():
+		child.queue_free()
+	add_child(UiFactory.make_title("DEBUG_PROGRESS_TITLE"))
+	var total: int = SaveGame.stage_order().size()
+	var status := Label.new()
+	status.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	status.text = tr("DEBUG_PROGRESS_STATUS") % [SaveGame.progress_count(), total, SaveGame.quarks]
+	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status.add_theme_font_size_override("font_size", Params.settings_label_font_size)
+	status.add_theme_color_override("font_color", Params.ui_accent_color)
+	add_child(status)
+	_add_action("DEBUG_STAGE_BACK", func() -> void: SaveGame.set_progress_count(SaveGame.progress_count() - 1))
+	_add_action("DEBUG_STAGE_FORWARD", func() -> void: SaveGame.set_progress_count(SaveGame.progress_count() + 1))
+	var per_chapter: int = total / maxi(Session.campaign.planets.size(), 1)
+	for c in Session.campaign.planets.size():
+		var start: int = c * per_chapter
+		var button := _add_action("", func() -> void: SaveGame.set_progress_count(start))
+		button.text = tr("DEBUG_CHAPTER_START") % (c + 1)
+	_add_action("DEBUG_ALL_DONE", func() -> void: SaveGame.set_progress_count(total))
+	_add_action("DEBUG_GIVE_QUARKS", func() -> void: SaveGame.add_quarks(Params.debug_quarks_grant))
+	_add_action("DEBUG_RESET_UPGRADES", func() -> void: SaveGame.reset_upgrades(), true)
+	_add_action("DEBUG_RESET_ALL", func() -> void: SaveGame.reset_all(), true)
+
+
+## Botão de ação do painel de teste. confirm: pede um segundo toque antes de executar.
+func _add_action(text_key: String, action: Callable, confirm: bool = false) -> Button:
+	var button := UiFactory.make_button(text_key)
+	var key: String = text_key + str(get_child_count())
+	if confirm:
+		button.theme_type_variation = &"PrimaryButton"
+	button.pressed.connect(func() -> void:
+		if confirm and _confirm_key != key:
+			_confirm_key = key
+			button.text = tr("DEBUG_CONFIRM")
+			return
+		_confirm_key = ""
+		action.call()
+		_show_progress_tools())
+	add_child(button)
+	return button

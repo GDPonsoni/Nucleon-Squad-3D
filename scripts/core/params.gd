@@ -145,6 +145,7 @@ var upgrade_buy_height: float = 130.0
 var upgrade_buy_font_size: int = 46
 var stage_select_spacing: int = 28
 var stage_lock_size: float = 34.0
+var debug_quarks_grant: int = 5000  # botão de teste "dar quarks" (build de debug)
 var debug_unlock_taps: int = 5  # toques no título do seletor (build de debug)
 var ui_enter_seconds: float = 0.45  # entrada dos menus
 var ui_enter_offset: float = 60.0

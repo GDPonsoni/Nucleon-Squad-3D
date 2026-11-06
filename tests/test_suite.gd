@@ -95,6 +95,22 @@ func test_save_round_trip() -> void:
 	copy.free()
 
 
+func test_debug_progress_rewind() -> void:
+	var save := _fresh_save()
+	var total: int = save.stage_order().size()
+	save.set_progress_count(total)
+	check(save.progress_count() == total and save.is_chapter_cleared(0), "concluir tudo")
+	save.set_progress_count(save.progress_count() - 1)
+	check(save.progress_count() == total - 1 and not save.is_chapter_cleared(4), "recuar 1 fase tira o chefe final")
+	save.set_progress_count(9)
+	check(save.progress_count() == 9 and not save.is_chapter_cleared(1), "início do capítulo 2")
+	save.quarks = 50
+	save.upgrades = {"damage": 2}
+	save.reset_all()
+	check(save.progress_count() == 0 and save.quarks == 0 and save.upgrades.is_empty(), "zerar tudo")
+	save.free()
+
+
 func test_companion_needs_unlocked_slot() -> void:
 	var save := _fresh_save()
 	save.companion = "spread_body"

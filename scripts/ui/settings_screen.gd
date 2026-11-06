@@ -12,6 +12,7 @@ func _ready() -> void:
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())
 	var panel := SettingsPanel.new()
+	panel.debug_tools = true
 	panel.back_pressed.connect(_go_back)
 	_panel = panel
 	var center := UiFactory.make_centered(panel)

@@ -177,3 +177,13 @@ INSPECT_REMOVE,Remove from squad,Tirar do esquadrão,Quitar del escuadrón
 INSPECT_SET_AUX,Use as wingman,Usar como auxiliar,Usar como auxiliar
 INSPECT_CLEAR_AUX,Remove wingman,Tirar auxiliar,Quitar auxiliar
 INSPECT_UPGRADE,Wingman power-up: %s,Power-up da auxiliar: %s,Power-up de la auxiliar: %s
+DEBUG_PROGRESS_TITLE,Test progress,Progresso (teste),Progreso (prueba)
+DEBUG_PROGRESS_STATUS,Stages cleared: %d/%d  |  Quarks: %d,Fases concluídas: %d/%d  |  Quarks: %d,Fases completadas: %d/%d  |  Quarks: %d
+DEBUG_STAGE_BACK,Go back 1 stage,Recuar 1 fase,Retroceder 1 fase
+DEBUG_STAGE_FORWARD,Advance 1 stage,Avançar 1 fase,Avanzar 1 fase
+DEBUG_CHAPTER_START,Start of chapter %d,Início do capítulo %d,Inicio del capítulo %d
+DEBUG_ALL_DONE,Clear everything,Concluir tudo,Completar todo
+DEBUG_GIVE_QUARKS,Give quarks,Dar quarks,Dar quarks
+DEBUG_RESET_UPGRADES,Reset upgrades and quarks,Zerar evolução e quarks,Reiniciar mejoras y quarks
+DEBUG_RESET_ALL,Reset all progress,Zerar todo o progresso,Reiniciar todo el progreso
+DEBUG_CONFIRM,Tap again to confirm,Toque de novo para confirmar,Toca de nuevo para confirmar

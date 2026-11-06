@@ -182,6 +182,60 @@ func set_setting(key: String, value: Variant) -> void:
 	settings_changed.emit()
 
 
+## Ids de todas as fases, na ordem da campanha.
+func stage_order() -> PackedStringArray:
+	var ids := PackedStringArray()
+	for planet: PlanetData in Session.campaign.planets:
+		for stage: StageData in planet.stages:
+			ids.append(String(stage.id))
+	return ids
+
+
+## Quantas fases, contadas do início, estão concluídas em sequência.
+func progress_count() -> int:
+	var count: int = 0
+	for id in stage_order():
+		if not completed.has(id):
+			break
+		count += 1
+	return count
+
+
+## Teste: deixa só as `count` primeiras fases da campanha concluídas (recuar, avançar, zerar).
+## Limpa recordes e capítulos concluídos; naves e auxiliar liberam conforme o avanço.
+func set_progress_count(count: int) -> void:
+	var order: PackedStringArray = stage_order()
+	count = clampi(count, 0, order.size())
+	completed.clear()
+	best_scores.clear()
+	cleared_chapters = PackedStringArray()
+	unlock_everything = false
+	for i in count:
+		completed[order[i]] = true
+	save()
+
+
+## Teste: volta tudo ao início (campanha, quarks, evolução, esquadrão, anúncios).
+## As configurações (volume, idioma) ficam.
+func reset_all() -> void:
+	set_progress_count(0)
+	quarks = 0
+	quarks_earned_total = 0
+	upgrades.clear()
+	squad = PackedStringArray()
+	companion = ""
+	ad_day = ""
+	ad_count = 0
+	save()
+
+
+## Teste: zera só a evolução do núcleo e os quarks.
+func reset_upgrades() -> void:
+	upgrades.clear()
+	quarks = 0
+	save()
+
+
 func unlock_all() -> void:
 	unlock_everything = true
 	save()
