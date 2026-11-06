@@ -93,7 +93,7 @@ func _ready() -> void:
 	power_ups = NodePool.new(PowerUp.new, Params.powerup_pool_size)
 	power_ups.name = "PowerUps"
 	context.power_ups = power_ups
-	dropper.setup(power_ups, boosts)
+	dropper.setup(power_ups, boosts, Session.stage().duration_seconds)
 	add_child(dropper)
 
 	player = Player.new()

@@ -262,7 +262,15 @@ y_ratio = 0.16
 
 [sub_resource type="Resource" id="Resource_ka3d1"]
 script = ExtResource("3_wave_script")
-time_seconds = 129.8
+time_seconds = 133.70000000000002
+enemy = ExtResource("9_mlnkh")
+formation = 0
+count = 2
+spacing = 460.0
+
+[sub_resource type="Resource" id="Resource_6nonq"]
+script = ExtResource("3_wave_script")
+time_seconds = 142.1
 enemy = ExtResource("11_6njjo")
 formation = 2
 count = 10
@@ -272,13 +280,59 @@ sway_amplitude = 140.0
 sway_period = 2.6
 sway_phase_step = 0.35
 
+[sub_resource type="Resource" id="Resource_ie8j0"]
+script = ExtResource("3_wave_script")
+time_seconds = 143.6
+enemy = ExtResource("10_hunter")
+formation = 3
+interval = 0.6
+side = 0
+y_ratio = 0.16
+
+[sub_resource type="Resource" id="Resource_6pydw"]
+script = ExtResource("3_wave_script")
+time_seconds = 147.6
+enemy = ExtResource("11_m3ywj")
+formation = 0
+count = 1
+x_ratio = 0.6
+
+[sub_resource type="Resource" id="Resource_1np5k"]
+script = ExtResource("3_wave_script")
+time_seconds = 156.0
+enemy = ExtResource("10_hunter")
+formation = 3
+interval = 0.6
+side = 1
+y_ratio = 0.16
+
+[sub_resource type="Resource" id="Resource_tp53i"]
+script = ExtResource("3_wave_script")
+time_seconds = 161.4
+enemy = ExtResource("9_mlnkh")
+formation = 0
+count = 2
+spacing = 460.0
+
+[sub_resource type="Resource" id="Resource_mbg2d"]
+script = ExtResource("3_wave_script")
+time_seconds = 162.9
+enemy = ExtResource("11_6njjo")
+formation = 2
+count = 10
+interval = 0.36
+x_ratio = 0.35
+sway_amplitude = 140.0
+sway_period = 2.6
+sway_phase_step = 0.35
+
 [resource]
 script = ExtResource("1_script")
 id = &"p4_s4"
-duration_seconds = 138.0
+duration_seconds = 175.0
 enemies = Array[ExtResource("2_enemy_script")]([ExtResource("4_drone"), ExtResource("5_aimer"), ExtResource("6_kamikaze"), ExtResource("10_hunter")])
 spawn_weights = PackedFloat32Array(3, 1.5, 1.5, 0.7)
-waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_6njjo"), SubResource("Resource_gfsoq"), SubResource("Resource_0n7l4"), SubResource("Resource_qqsrb"), SubResource("Resource_qwu5r"), SubResource("Resource_end73"), SubResource("Resource_3chdi"), SubResource("Resource_7wp4k"), SubResource("Resource_bxyau"), SubResource("Resource_o00ra"), SubResource("Resource_bof06"), SubResource("Resource_ftu7k"), SubResource("Resource_j18br"), SubResource("Resource_eecwg"), SubResource("Resource_2u27t"), SubResource("Resource_4u75t"), SubResource("Resource_3lrym"), SubResource("Resource_fljwu"), SubResource("Resource_6yacj"), SubResource("Resource_50o0f"), SubResource("Resource_2ooyh"), SubResource("Resource_togw8"), SubResource("Resource_ejagy"), SubResource("Resource_nmjkw"), SubResource("Resource_wbmmn"), SubResource("Resource_ka3d1")])
+waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_6njjo"), SubResource("Resource_gfsoq"), SubResource("Resource_0n7l4"), SubResource("Resource_qqsrb"), SubResource("Resource_qwu5r"), SubResource("Resource_end73"), SubResource("Resource_3chdi"), SubResource("Resource_7wp4k"), SubResource("Resource_bxyau"), SubResource("Resource_o00ra"), SubResource("Resource_bof06"), SubResource("Resource_ftu7k"), SubResource("Resource_j18br"), SubResource("Resource_eecwg"), SubResource("Resource_2u27t"), SubResource("Resource_4u75t"), SubResource("Resource_3lrym"), SubResource("Resource_fljwu"), SubResource("Resource_6yacj"), SubResource("Resource_50o0f"), SubResource("Resource_2ooyh"), SubResource("Resource_togw8"), SubResource("Resource_ejagy"), SubResource("Resource_nmjkw"), SubResource("Resource_wbmmn"), SubResource("Resource_ka3d1"), SubResource("Resource_6nonq"), SubResource("Resource_ie8j0"), SubResource("Resource_6pydw"), SubResource("Resource_1np5k"), SubResource("Resource_tp53i"), SubResource("Resource_mbg2d")])
 start_delay = 2.0
 spawn_interval_min = 1.5019999989271164
 spawn_interval_max = 2.427499998658895
@@ -289,4 +343,4 @@ rocks = Array[ExtResource("2_enemy_script")]([ExtResource("6_m3ywj"), ExtResourc
 rock_weights = PackedFloat32Array(0.4, 1, 1)
 rock_interval_min = 9.0
 rock_interval_max = 14.0
-star_scores = PackedInt32Array(2550, 3610)
+star_scores = PackedInt32Array(3220, 4560)

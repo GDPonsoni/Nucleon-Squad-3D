@@ -166,22 +166,67 @@ spacing = 100.0
 
 [sub_resource type="Resource" id="Resource_r554i"]
 script = ExtResource("6_ycy0b")
-time_seconds = 119.60000000000001
+time_seconds = 127.60000000000001
 enemy = ExtResource("3_aum7d")
 formation = 2
 interval = 0.5
-x_ratio = 0.12
-curve_degrees = -100.0
+x_ratio = 0.88
+curve_degrees = 100.0
+curve_seconds = 1.6
+curve_delay = 0.6
+
+[sub_resource type="Resource" id="Resource_m5xwf"]
+script = ExtResource("6_ycy0b")
+time_seconds = 137.1
+enemy = ExtResource("4_yx0ib")
+formation = 2
+count = 8
+interval = 0.32
+x_ratio = 0.65
+
+[sub_resource type="Resource" id="Resource_1dftp"]
+script = ExtResource("6_ycy0b")
+time_seconds = 138.6
+enemy = ExtResource("4_yx0ib")
+count = 9
+spacing = 100.0
+
+[sub_resource type="Resource" id="Resource_fc401"]
+script = ExtResource("6_ycy0b")
+time_seconds = 146.6
+enemy = ExtResource("2_n75jo")
+formation = 2
+count = 8
+interval = 0.42
+x_ratio = 0.7
+sway_amplitude = 150.0
+sway_period = 2.6
+
+[sub_resource type="Resource" id="Resource_drfwq"]
+script = ExtResource("6_ycy0b")
+time_seconds = 156.10000000000002
+enemy = ExtResource("4_yx0ib")
+count = 9
+spacing = 100.0
+
+[sub_resource type="Resource" id="Resource_dy3qt"]
+script = ExtResource("6_ycy0b")
+time_seconds = 157.60000000000002
+enemy = ExtResource("3_aum7d")
+formation = 2
+interval = 0.5
+x_ratio = 0.88
+curve_degrees = 100.0
 curve_seconds = 1.6
 curve_delay = 0.6
 
 [resource]
 script = ExtResource("5_8wt3m")
 id = &"p1_s7"
-duration_seconds = 129.0
+duration_seconds = 166.0
 enemies = Array[ExtResource("1_fao4q")]([ExtResource("2_n75jo"), ExtResource("3_aum7d"), ExtResource("4_yx0ib")])
 spawn_weights = PackedFloat32Array(3, 1, 1)
-waves = Array[ExtResource("6_ycy0b")]([SubResource("Resource_yx0ib"), SubResource("Resource_8wt3m"), SubResource("Resource_ycy0b"), SubResource("Resource_nktap"), SubResource("Resource_mls12"), SubResource("Resource_4k3ie"), SubResource("Resource_cn4hd"), SubResource("Resource_401yi"), SubResource("Resource_tlxxx"), SubResource("Resource_evn8o"), SubResource("Resource_rvod7"), SubResource("Resource_pfesb"), SubResource("Resource_r7444"), SubResource("Resource_kbw08"), SubResource("Resource_68wxx"), SubResource("Resource_8nsva"), SubResource("Resource_aqil5"), SubResource("Resource_r554i")])
+waves = Array[ExtResource("6_ycy0b")]([SubResource("Resource_yx0ib"), SubResource("Resource_8wt3m"), SubResource("Resource_ycy0b"), SubResource("Resource_nktap"), SubResource("Resource_mls12"), SubResource("Resource_4k3ie"), SubResource("Resource_cn4hd"), SubResource("Resource_401yi"), SubResource("Resource_tlxxx"), SubResource("Resource_evn8o"), SubResource("Resource_rvod7"), SubResource("Resource_pfesb"), SubResource("Resource_r7444"), SubResource("Resource_kbw08"), SubResource("Resource_68wxx"), SubResource("Resource_8nsva"), SubResource("Resource_aqil5"), SubResource("Resource_r554i"), SubResource("Resource_m5xwf"), SubResource("Resource_1dftp"), SubResource("Resource_fc401"), SubResource("Resource_drfwq"), SubResource("Resource_dy3qt")])
 start_delay = 2.0
 spawn_interval_min = 2.7831999939918517
 spawn_interval_max = 4.248999992489814
@@ -192,4 +237,4 @@ rocks = Array[ExtResource("1_fao4q")]([ExtResource("5_yx0ib"), ExtResource("6_8w
 rock_weights = PackedFloat32Array(1, 1, 0.6)
 rock_interval_min = 2.6
 rock_interval_max = 3.8
-star_scores = PackedInt32Array(1540, 2180)
+star_scores = PackedInt32Array(2000, 2830)

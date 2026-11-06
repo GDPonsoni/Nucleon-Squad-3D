@@ -92,6 +92,7 @@ pierce = 999
 [resource]
 script = ExtResource("1_script")
 id = &"pierce"
+damage_scale = 0.65
 kind = 4
 color = Color(0.4, 0.55, 1, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])

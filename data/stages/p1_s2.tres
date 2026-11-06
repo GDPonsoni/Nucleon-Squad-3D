@@ -98,15 +98,6 @@ speed_scale = 0.85
 
 [sub_resource type="Resource" id="Resource_d68nh"]
 script = ExtResource("3_wave_script")
-time_seconds = 70.2
-enemy = ExtResource("5_aimer")
-formation = 3
-interval = 0.55
-side = 1
-y_ratio = 0.14
-
-[sub_resource type="Resource" id="Resource_q1ncb"]
-script = ExtResource("3_wave_script")
 time_seconds = 75.9
 enemy = ExtResource("4_drone")
 formation = 4
@@ -114,13 +105,60 @@ count = 7
 spacing = 125.0
 side = 0
 
+[sub_resource type="Resource" id="Resource_q1ncb"]
+script = ExtResource("3_wave_script")
+time_seconds = 83.10000000000001
+enemy = ExtResource("4_drone")
+formation = 0
+count = 6
+spacing = 165.0
+
+[sub_resource type="Resource" id="Resource_0khfh"]
+script = ExtResource("3_wave_script")
+time_seconds = 90.30000000000001
+enemy = ExtResource("5_aimer")
+formation = 3
+count = 6
+interval = 0.55
+side = 1
+y_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_3qi4c"]
+script = ExtResource("3_wave_script")
+time_seconds = 97.5
+enemy = ExtResource("4_drone")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_6b1w3"]
+script = ExtResource("3_wave_script")
+time_seconds = 99.0
+enemy = ExtResource("5_aimer")
+formation = 3
+count = 6
+interval = 0.55
+side = 0
+y_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_qxcj8"]
+script = ExtResource("3_wave_script")
+time_seconds = 104.7
+enemy = ExtResource("4_drone")
+formation = 4
+count = 8
+spacing = 125.0
+side = 1
+
 [resource]
 script = ExtResource("1_script")
 id = &"p1_s2"
-duration_seconds = 84.0
+duration_seconds = 111.0
 enemies = Array[ExtResource("2_enemy_script")]([ExtResource("4_drone"), ExtResource("5_aimer")])
 spawn_weights = PackedFloat32Array(3, 1)
-waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_ecnqy"), SubResource("Resource_t1fky"), SubResource("Resource_ko5y5"), SubResource("Resource_waua7"), SubResource("Resource_fhwmb"), SubResource("Resource_wstnp"), SubResource("Resource_emw3i"), SubResource("Resource_dncym"), SubResource("Resource_l22nb"), SubResource("Resource_ponr6"), SubResource("Resource_d68nh"), SubResource("Resource_q1ncb")])
+waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_ecnqy"), SubResource("Resource_t1fky"), SubResource("Resource_ko5y5"), SubResource("Resource_waua7"), SubResource("Resource_fhwmb"), SubResource("Resource_wstnp"), SubResource("Resource_emw3i"), SubResource("Resource_dncym"), SubResource("Resource_l22nb"), SubResource("Resource_ponr6"), SubResource("Resource_d68nh"), SubResource("Resource_q1ncb"), SubResource("Resource_0khfh"), SubResource("Resource_3qi4c"), SubResource("Resource_6b1w3"), SubResource("Resource_qxcj8")])
 start_delay = 2.0
 spawn_interval_min = 2.2579999957084658
 spawn_interval_max = 3.372499994635582
@@ -128,4 +166,4 @@ spawn_margin_x = 90.0
 enemy_hp_scale = 1.4
 enemy_fire_scale = 1.35
 rock_weights = PackedFloat32Array()
-star_scores = PackedInt32Array(780, 1110)
+star_scores = PackedInt32Array(1090, 1550)

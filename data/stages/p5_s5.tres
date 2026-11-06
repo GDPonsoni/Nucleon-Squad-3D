@@ -169,13 +169,69 @@ count = 4
 spacing = 170.0
 side = 1
 
+[sub_resource type="Resource" id="Resource_tosri"]
+script = ExtResource("8_nvpmc")
+time_seconds = 85.10000000000001
+enemy = ExtResource("9_08twg")
+formation = 3
+count = 7
+interval = 0.35
+side = 1
+y_ratio = 0.2
+
+[sub_resource type="Resource" id="Resource_6ibyr"]
+script = ExtResource("8_nvpmc")
+time_seconds = 89.9
+enemy = ExtResource("9_08twg")
+formation = 3
+count = 10
+interval = 0.3
+y_ratio = 0.26
+
+[sub_resource type="Resource" id="Resource_yo18s"]
+script = ExtResource("8_nvpmc")
+time_seconds = 94.60000000000001
+enemy = ExtResource("9_h4nk2")
+formation = 4
+count = 4
+spacing = 170.0
+side = 0
+
+[sub_resource type="Resource" id="Resource_lqrpn"]
+script = ExtResource("8_nvpmc")
+time_seconds = 99.4
+enemy = ExtResource("9_08twg")
+formation = 3
+count = 7
+interval = 0.35
+side = 0
+y_ratio = 0.2
+
+[sub_resource type="Resource" id="Resource_je6nr"]
+script = ExtResource("8_nvpmc")
+time_seconds = 104.2
+enemy = ExtResource("9_08twg")
+formation = 3
+count = 10
+interval = 0.3
+y_ratio = 0.26
+
+[sub_resource type="Resource" id="Resource_40d3o"]
+script = ExtResource("8_nvpmc")
+time_seconds = 108.9
+enemy = ExtResource("9_h4nk2")
+formation = 4
+count = 4
+spacing = 170.0
+side = 1
+
 [resource]
 script = ExtResource("7_ayy3b")
 id = &"p5_s5"
-duration_seconds = 87.0
+duration_seconds = 115.0
 enemies = Array[ExtResource("2_h4nk2")]([ExtResource("3_08twg"), ExtResource("4_k2xtv"), ExtResource("5_htn14"), ExtResource("6_jthdj")])
 spawn_weights = PackedFloat32Array(3, 1.5, 1.5, 0.7)
-waves = Array[ExtResource("8_nvpmc")]([SubResource("Resource_08twg"), SubResource("Resource_k2xtv"), SubResource("Resource_htn14"), SubResource("Resource_jthdj"), SubResource("Resource_ayy3b"), SubResource("Resource_nvpmc"), SubResource("Resource_yu6jd"), SubResource("Resource_qcqgg"), SubResource("Resource_t7a1g"), SubResource("Resource_a2alg"), SubResource("Resource_t3dlk"), SubResource("Resource_55d1u"), SubResource("Resource_df30l"), SubResource("Resource_ph3ts"), SubResource("Resource_gj8ke"), SubResource("Resource_5yc00"), SubResource("Resource_75476")])
+waves = Array[ExtResource("8_nvpmc")]([SubResource("Resource_08twg"), SubResource("Resource_k2xtv"), SubResource("Resource_htn14"), SubResource("Resource_jthdj"), SubResource("Resource_ayy3b"), SubResource("Resource_nvpmc"), SubResource("Resource_yu6jd"), SubResource("Resource_qcqgg"), SubResource("Resource_t7a1g"), SubResource("Resource_a2alg"), SubResource("Resource_t3dlk"), SubResource("Resource_55d1u"), SubResource("Resource_df30l"), SubResource("Resource_ph3ts"), SubResource("Resource_gj8ke"), SubResource("Resource_5yc00"), SubResource("Resource_75476"), SubResource("Resource_tosri"), SubResource("Resource_6ibyr"), SubResource("Resource_yo18s"), SubResource("Resource_lqrpn"), SubResource("Resource_je6nr"), SubResource("Resource_40d3o")])
 boss = ExtResource("1_42c5e")
 start_delay = 2.0
 spawn_interval_min = 1.232
@@ -184,4 +240,4 @@ spawn_margin_x = 90.0
 enemy_hp_scale = 1.65
 enemy_fire_scale = 1.32
 rock_weights = PackedFloat32Array()
-star_scores = PackedInt32Array(2850, 4030)
+star_scores = PackedInt32Array(3560, 5030)

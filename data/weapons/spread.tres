@@ -84,6 +84,7 @@ fire_angles = PackedFloat32Array(-55.0, -40.0, -26.0, -12.0, 12.0, 26.0, 40.0, 5
 [resource]
 script = ExtResource("1_script")
 id = &"spread"
+damage_scale = 1.15
 kind = 1
 color = Color(0.55, 1, 0.5, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])

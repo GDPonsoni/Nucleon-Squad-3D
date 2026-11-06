@@ -9,6 +9,8 @@ enum Kind { BEAM, SPREAD, HOMING, ORBIT, PIERCE, BLAST, CHAIN, BOUNCE }
 @export var kind: Kind = Kind.SPREAD
 @export var color: Color = Color.WHITE
 @export var levels: Array[WeaponLevel] = []
+## Ajuste fino de equilíbrio entre as armas: multiplica o dano de todos os níveis (não os especiais).
+@export_range(0.1, 3.0, 0.05) var damage_scale: float = 1.0
 ## Versão simples e fraca usada pela nave auxiliar, com níveis próprios (power-up raro).
 ## Vazio = usa o nível 1 da arma.
 @export var companion_levels: Array[WeaponLevel] = []

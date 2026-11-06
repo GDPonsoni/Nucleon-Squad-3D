@@ -108,6 +108,7 @@ bounce_range = 460.0
 [resource]
 script = ExtResource("1_script")
 id = &"ricochet"
+damage_scale = 1.4
 kind = 7
 color = Color(0.8, 1, 0.35, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])

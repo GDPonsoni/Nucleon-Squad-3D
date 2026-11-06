@@ -95,6 +95,7 @@ aim_at_cluster = true
 [resource]
 script = ExtResource("1_script")
 id = &"blast"
+damage_scale = 1.25
 kind = 5
 color = Color(1, 0.45, 0.3, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])

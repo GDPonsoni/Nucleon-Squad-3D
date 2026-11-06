@@ -246,15 +246,6 @@ y_ratio = 0.14
 
 [sub_resource type="Resource" id="Resource_5otm3"]
 script = ExtResource("6_kwfar")
-time_seconds = 118.10000000000001
-enemy = ExtResource("3_231lc")
-formation = 3
-count = 7
-interval = 0.5
-y_ratio = 0.18
-
-[sub_resource type="Resource" id="Resource_n8bec"]
-script = ExtResource("6_kwfar")
 time_seconds = 122.9
 enemy = ExtResource("10_vxls5")
 formation = 3
@@ -262,13 +253,99 @@ count = 10
 interval = 0.3
 y_ratio = 0.26
 
+[sub_resource type="Resource" id="Resource_n8bec"]
+script = ExtResource("6_kwfar")
+time_seconds = 129.1
+enemy = ExtResource("3_231lc")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_l48uf"]
+script = ExtResource("6_kwfar")
+time_seconds = 130.6
+enemy = ExtResource("4_vxls5")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
+[sub_resource type="Resource" id="Resource_dopp8"]
+script = ExtResource("6_kwfar")
+time_seconds = 135.4
+enemy = ExtResource("4_vxls5")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
+[sub_resource type="Resource" id="Resource_ddwnm"]
+script = ExtResource("6_kwfar")
+time_seconds = 141.70000000000002
+enemy = ExtResource("3_231lc")
+formation = 3
+count = 6
+interval = 0.55
+side = 1
+y_ratio = 0.14
+
+[sub_resource type="Resource" id="Resource_i3wj5"]
+script = ExtResource("6_kwfar")
+time_seconds = 147.9
+enemy = ExtResource("10_vxls5")
+formation = 3
+count = 10
+interval = 0.3
+y_ratio = 0.26
+
+[sub_resource type="Resource" id="Resource_mmf5o"]
+script = ExtResource("6_kwfar")
+time_seconds = 149.4
+enemy = ExtResource("3_231lc")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_x0cvk"]
+script = ExtResource("6_kwfar")
+time_seconds = 154.20000000000002
+enemy = ExtResource("3_231lc")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
+
+[sub_resource type="Resource" id="Resource_btky7"]
+script = ExtResource("6_kwfar")
+time_seconds = 155.70000000000002
+enemy = ExtResource("4_vxls5")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
+[sub_resource type="Resource" id="Resource_nllfj"]
+script = ExtResource("6_kwfar")
+time_seconds = 160.4
+enemy = ExtResource("4_vxls5")
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
 [resource]
 script = ExtResource("5_pd350")
 id = &"p2_s6"
-duration_seconds = 132.0
+duration_seconds = 169.0
 enemies = Array[ExtResource("1_y872g")]([ExtResource("2_tttdy"), ExtResource("3_231lc"), ExtResource("4_vxls5")])
 spawn_weights = PackedFloat32Array(3, 1.5, 1.5)
-waves = Array[ExtResource("6_kwfar")]([SubResource("Resource_vxls5"), SubResource("Resource_pd350"), SubResource("Resource_kwfar"), SubResource("Resource_cotro"), SubResource("Resource_loman"), SubResource("Resource_033d4"), SubResource("Resource_upji4"), SubResource("Resource_dpfeh"), SubResource("Resource_4b1ec"), SubResource("Resource_j5pfq"), SubResource("Resource_i0api"), SubResource("Resource_bkmly"), SubResource("Resource_7wxx8"), SubResource("Resource_fglx7"), SubResource("Resource_ckt4l"), SubResource("Resource_svss3"), SubResource("Resource_0twla"), SubResource("Resource_qw6rs"), SubResource("Resource_daim0"), SubResource("Resource_wrh63"), SubResource("Resource_w6ahy"), SubResource("Resource_v3ga2"), SubResource("Resource_8ne8r"), SubResource("Resource_tvlik"), SubResource("Resource_bi1w1"), SubResource("Resource_5otm3"), SubResource("Resource_n8bec")])
+waves = Array[ExtResource("6_kwfar")]([SubResource("Resource_vxls5"), SubResource("Resource_pd350"), SubResource("Resource_kwfar"), SubResource("Resource_cotro"), SubResource("Resource_loman"), SubResource("Resource_033d4"), SubResource("Resource_upji4"), SubResource("Resource_dpfeh"), SubResource("Resource_4b1ec"), SubResource("Resource_j5pfq"), SubResource("Resource_i0api"), SubResource("Resource_bkmly"), SubResource("Resource_7wxx8"), SubResource("Resource_fglx7"), SubResource("Resource_ckt4l"), SubResource("Resource_svss3"), SubResource("Resource_0twla"), SubResource("Resource_qw6rs"), SubResource("Resource_daim0"), SubResource("Resource_wrh63"), SubResource("Resource_w6ahy"), SubResource("Resource_v3ga2"), SubResource("Resource_8ne8r"), SubResource("Resource_tvlik"), SubResource("Resource_bi1w1"), SubResource("Resource_5otm3"), SubResource("Resource_n8bec"), SubResource("Resource_l48uf"), SubResource("Resource_dopp8"), SubResource("Resource_ddwnm"), SubResource("Resource_i3wj5"), SubResource("Resource_mmf5o"), SubResource("Resource_x0cvk"), SubResource("Resource_btky7"), SubResource("Resource_nllfj")])
 start_delay = 2.0
 spawn_interval_min = 1.862
 spawn_interval_max = 2.8775
@@ -279,4 +356,4 @@ rocks = Array[ExtResource("1_y872g")]([ExtResource("5_vxls5"), ExtResource("6_pd
 rock_weights = PackedFloat32Array(0.4, 1, 1)
 rock_interval_min = 9.0
 rock_interval_max = 14.0
-star_scores = PackedInt32Array(2810, 3970)
+star_scores = PackedInt32Array(3690, 5230)

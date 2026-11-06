@@ -31,11 +31,11 @@ func _ready() -> void:
 
 
 func setup(data: BossData, bullet_pool: NodePool, combat_context: CombatContext, wave_spawner: Callable) -> void:
-	boss_data = data
+	boss_data = _tuned(data)
 	bullets = bullet_pool
 	context = combat_context
 	spawn_wave = wave_spawner
-	hp = data.max_hp
+	hp = boss_data.max_hp
 	radius = data.radius
 	var rect: Rect2 = get_viewport_rect()
 	_center_x = rect.get_center().x
@@ -43,6 +43,45 @@ func setup(data: BossData, bullet_pool: NodePool, combat_context: CombatContext,
 	position = Vector2(_center_x, rect.position.y - radius)
 	queue_redraw()
 	_set_active()
+
+
+## Cópia do chefe com a dificuldade do balanceamento: vida, cadência por capítulo e uma fase
+## final de fúria (cópia da última, com ataques mais rápidos). O recurso original não muda.
+static func _tuned(data: BossData) -> BossData:
+	var balance: BalanceData = Params.balance
+	var tuned: BossData = data.duplicate()
+	var mini: bool = String(data.id).begins_with("mini")
+	tuned.max_hp = roundi(data.max_hp * (balance.miniboss_hp_multiplier if mini else balance.boss_hp_multiplier))
+	var chapter: int = clampi(Session.planet_index, 0, balance.boss_interval_by_chapter.size() - 1)
+	var interval_scale: float = balance.boss_interval_by_chapter[chapter] if not balance.boss_interval_by_chapter.is_empty() else 1.0
+	var phases: Array[BossPhase] = []
+	for phase in data.phases:
+		phases.append(_scaled_phase(phase, interval_scale, 1.0, 1.0, phase.special_moment))
+	if balance.boss_enrage_ratio > 0.0 and not data.phases.is_empty():
+		var last: BossPhase = data.phases.back()
+		if last.hp_ratio > balance.boss_enrage_ratio:
+			var enrage := _scaled_phase(last, interval_scale * balance.boss_enrage_interval_scale,
+					balance.boss_enrage_bullet_speed_scale, balance.boss_enrage_sway_scale, false)
+			enrage.hp_ratio = balance.boss_enrage_ratio
+			phases.append(enrage)
+	tuned.phases = phases
+	return tuned
+
+
+static func _scaled_phase(phase: BossPhase, interval_scale: float, speed_scale: float, sway_scale: float, moment: bool) -> BossPhase:
+	var copy: BossPhase = phase.duplicate()
+	copy.special_moment = moment
+	copy.sway_speed_scale = phase.sway_speed_scale * sway_scale
+	var attacks: Array[BossAttack] = []
+	for attack in phase.attacks:
+		var changed: BossAttack = attack.duplicate()
+		# Só ataques em intervalos (fluxos contínuos curtos mantêm o ritmo e o aviso)
+		if attack.interval >= 1.0:
+			changed.interval = attack.interval * interval_scale
+		changed.bullet_speed = attack.bullet_speed * speed_scale
+		attacks.append(changed)
+	copy.attacks = attacks
+	return copy
 
 
 func is_entering() -> bool:

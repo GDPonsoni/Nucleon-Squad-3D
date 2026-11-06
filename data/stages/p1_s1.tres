@@ -89,19 +89,59 @@ speed_scale = 0.85
 
 [sub_resource type="Resource" id="Resource_ca3bn"]
 script = ExtResource("3_wave_script")
-time_seconds = 64.10000000000001
+time_seconds = 69.9
 enemy = ExtResource("4_drone")
 formation = 0
 count = 6
 spacing = 165.0
 
+[sub_resource type="Resource" id="Resource_xlgmu"]
+script = ExtResource("3_wave_script")
+time_seconds = 77.2
+enemy = ExtResource("4_drone")
+formation = 2
+count = 7
+interval = 0.42
+x_ratio = 0.3
+sway_amplitude = 150.0
+sway_period = 2.6
+
+[sub_resource type="Resource" id="Resource_krm7u"]
+script = ExtResource("3_wave_script")
+time_seconds = 84.5
+enemy = ExtResource("4_drone")
+formation = 4
+count = 7
+spacing = 125.0
+side = 0
+
+[sub_resource type="Resource" id="Resource_bhqkj"]
+script = ExtResource("3_wave_script")
+time_seconds = 86.0
+enemy = ExtResource("4_drone")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
+[sub_resource type="Resource" id="Resource_ygh78"]
+script = ExtResource("3_wave_script")
+time_seconds = 91.80000000000001
+enemy = ExtResource("4_drone")
+formation = 5
+count = 8
+spacing = 160.0
+columns = 4
+speed_scale = 0.85
+
 [resource]
 script = ExtResource("1_script")
 id = &"p1_s1"
-duration_seconds = 75.0
+duration_seconds = 100.0
 enemies = Array[ExtResource("2_enemy_script")]([ExtResource("4_drone")])
 spawn_weights = PackedFloat32Array(3)
-waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_grx6n"), SubResource("Resource_n324p"), SubResource("Resource_gh76a"), SubResource("Resource_6dcqa"), SubResource("Resource_yxo64"), SubResource("Resource_6dnih"), SubResource("Resource_i37jy"), SubResource("Resource_j4hvx"), SubResource("Resource_30wvv"), SubResource("Resource_ca3bn")])
+waves = Array[ExtResource("3_wave_script")]([SubResource("Resource_grx6n"), SubResource("Resource_n324p"), SubResource("Resource_gh76a"), SubResource("Resource_6dcqa"), SubResource("Resource_yxo64"), SubResource("Resource_6dnih"), SubResource("Resource_i37jy"), SubResource("Resource_j4hvx"), SubResource("Resource_30wvv"), SubResource("Resource_ca3bn"), SubResource("Resource_xlgmu"), SubResource("Resource_krm7u"), SubResource("Resource_bhqkj"), SubResource("Resource_ygh78")])
 start_delay = 2.0
 spawn_interval_min = 2.3119999957084656
 spawn_interval_max = 3.4399999946355817
@@ -109,4 +149,4 @@ spawn_margin_x = 90.0
 enemy_hp_scale = 1.4
 enemy_fire_scale = 1.35
 rock_weights = PackedFloat32Array()
-star_scores = PackedInt32Array(550, 780)
+star_scores = PackedInt32Array(800, 1140)

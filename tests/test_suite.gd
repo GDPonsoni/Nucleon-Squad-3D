@@ -458,3 +458,28 @@ func test_unlock_notices() -> void:
 			ships += 1
 	check(ships == 1, "capítulo 2 libera 1 nave")
 	SaveGame.tips_seen = save_seen
+
+
+## Power-ups por tempo: 15 em 75% da fase; o bônus do núcleo encurta, nunca abaixo de 40%.
+func test_powerup_pacing() -> void:
+	var balance: BalanceData = Params.balance
+	var interval: float = balance.powerup_interval(120.0)
+	check(is_equal_approx(interval * balance.powerups_per_stage, 120.0 * balance.powerup_span), "15 power-ups cobrem 75% da fase")
+	check(balance.powerup_interval(120.0, 3) < interval, "bônus do núcleo encurta o intervalo")
+	check(balance.powerup_interval(120.0, 100) >= interval * 0.4 - 0.001, "intervalo tem piso")
+	check(balance.powerups_per_stage >= 12, "dá para pôr 3 armas no nível 5 (4 power-ups cada)")
+
+
+## Chefes: cópia com mais vida e uma fase de fúria extra; o recurso original não muda.
+func test_boss_tuning() -> void:
+	var data := load("res://data/bosses/boss_1.tres") as BossData
+	var before_hp: int = data.max_hp
+	var phases: int = data.phases.size()
+	Session.planet_index = 0
+	var tuned: BossData = Boss._tuned(data)
+	check(tuned.max_hp > before_hp, "chefe tem mais vida")
+	check(data.max_hp == before_hp and data.phases.size() == phases, "recurso original intacto")
+	check(tuned.phases.size() == phases + 1, "fase de fúria extra")
+	check(tuned.phases.back().hp_ratio == Params.balance.boss_enrage_ratio, "fúria na fração configurada")
+	check(not tuned.phases.back().special_moment, "fúria não rearma o momento de especial")
+	check(tuned.phases.back().attacks[0].interval <= data.phases.back().attacks[0].interval, "ataques da fúria não ficam mais lentos")

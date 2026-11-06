@@ -112,7 +112,7 @@ func muzzle() -> Vector2:
 
 ## Dano de cada acerto, já com a evolução do núcleo.
 func damage() -> float:
-	return stats.damage * context.boosts.damage * power
+	return stats.damage * context.boosts.damage * power * data.damage_scale
 
 
 ## Multiplicador de cadência da evolução do núcleo.

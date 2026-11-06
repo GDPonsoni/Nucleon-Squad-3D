@@ -71,6 +71,7 @@ beam_tick_seconds = 0.09
 [resource]
 script = ExtResource("1_script")
 id = &"beam"
+damage_scale = 0.7
 kind = 0
 color = Color(0.45, 0.9, 1, 1)
 levels = Array[ExtResource("2_level")]([SubResource("WeaponLevel_lv1"), SubResource("WeaponLevel_lv2"), SubResource("WeaponLevel_lv3"), SubResource("WeaponLevel_lv4"), SubResource("WeaponLevel_lv5")])

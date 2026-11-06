@@ -14,12 +14,32 @@ extends Resource
 @export_range(0.0, 0.5, 0.01) var enemy_hp_per_stage: float = 0.05
 
 @export_group("Drops (1 a cada N inimigos; maior = mais raro)")
-@export_range(1, 200) var powerup_every_kills: int = 24
 @export_range(1, 200) var medkit_every_kills: int = 30
 ## Chance por inimigo abatido do power-up raro da auxiliar.
 @export_range(0.0, 1.0, 0.001) var companion_powerup_chance: float = 0.012
 ## Multiplica todos os "a cada N" acima (2 = metade dos drops). Chance da auxiliar divide.
 @export_range(0.1, 10.0, 0.05) var drop_rarity_multiplier: float = 1.0
+
+@export_group("Power-ups de arma (por tempo de fase)")
+## Quantos power-ups de arma a fase solta ao longo de `powerup_span` da duração. 15 permite
+## 3 armas no nível 5 (4 power-ups cada = 12) com folga para os que o jogador perde.
+@export_range(1, 60) var powerups_per_stage: int = 15
+## Fração da duração da fase em que esses power-ups são soltos (0,75 = até 75% da fase).
+@export_range(0.2, 1.0, 0.05) var powerup_span: float = 0.75
+## Cada bônus da evolução do núcleo ("power-up N inimigos antes") encurta o intervalo nesta fração.
+@export_range(0.0, 0.2, 0.005) var powerup_bonus_step: float = 0.04
+
+@export_group("Chefes")
+## Multiplicador da vida do chefe de capítulo e do intermediário (sobre BossData.max_hp).
+@export_range(0.5, 6.0, 0.05) var boss_hp_multiplier: float = 1.6
+@export_range(0.5, 6.0, 0.05) var miniboss_hp_multiplier: float = 1.5
+## Ataques com intervalo >= 1 s ficam mais rápidos por capítulo (índice 0 = capítulo 1): intervalo x fator.
+@export var boss_interval_by_chapter: PackedFloat32Array = [0.95, 0.9, 0.85, 0.8, 0.75]
+## Fase final extra de fúria: começa com esta fração da vida (0 desliga). Copia a última fase.
+@export_range(0.0, 0.6, 0.01) var boss_enrage_ratio: float = 0.25
+@export_range(0.3, 1.0, 0.05) var boss_enrage_interval_scale: float = 0.7
+@export_range(1.0, 2.0, 0.05) var boss_enrage_bullet_speed_scale: float = 1.12
+@export_range(1.0, 2.0, 0.05) var boss_enrage_sway_scale: float = 1.2
 
 @export_group("Fase")
 ## Escala o tempo da fase (ondas e duração). Ondas extras que preencham o tempo dependem da
@@ -39,8 +59,10 @@ func enemy_hp_factor(chapter_index: int, stage_index: int) -> float:
 	return enemy_hp_multiplier * chapter * (1.0 + enemy_hp_per_stage * stage_index)
 
 
-func powerup_kills(bonus: int = 0) -> int:
-	return maxi(roundi(powerup_every_kills * drop_rarity_multiplier) - bonus, 1)
+## Segundos de jogo entre power-ups de arma numa fase de `stage_seconds`.
+func powerup_interval(stage_seconds: float, kills_bonus: int = 0) -> float:
+	var base: float = stage_seconds * powerup_span / maxf(powerups_per_stage, 1) * drop_rarity_multiplier
+	return base * maxf(1.0 - powerup_bonus_step * kills_bonus, 0.4)
 
 
 func medkit_kills(bonus: int = 0) -> int:
