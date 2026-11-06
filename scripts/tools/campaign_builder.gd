@@ -31,6 +31,7 @@ const HP_SCALE: PackedFloat32Array = [1.4, 1.45, 1.55, 1.55, 1.65]  # vida dos i
 const FIRE_SCALE: PackedFloat32Array = [1.35, 1.32, 1.32, 1.3, 1.32]  # cadência de tiro por capítulo
 # Reforço de dificuldade por capítulo (os primeiros estavam fáceis demais)
 const DIFFICULTY_BOOST: PackedFloat32Array = [0.8, 0.5, 0.35, 0.2, 0.0]
+# Duração alvo da partida: 5 min (300 s). Fases com chefe: ondas mais curtas, a luta completa o tempo.
 const CYCLE_LEVEL_CAP: int = 4  # voltas do ciclo de motivos que ainda aumentam as ondas (fases longas repetem o tamanho)
 # Camada de ação: ondas que não atiram (kamikazes, faíscas, enxames, serpentes) entre os motivos.
 # Mais movimento e abates na tela sem mais tiros. Surtos a cada minuto juntam várias de uma vez.
@@ -114,13 +115,13 @@ func _build_stage(c: int, s: int) -> StageData:
 	stage.enemy_fire_scale = FIRE_SCALE[c]
 	stage.start_delay = 2.0
 	if s == MIDBOSS_STAGE:
-		stage.duration_seconds = 240.0 + 20.0 * c
+		stage.duration_seconds = 210.0
 		stage.boss = load("res://data/bosses/mini_%d.tres" % (c + 1))
 	elif s == BOSS_STAGE:
-		stage.duration_seconds = 360.0 + 20.0 * c
+		stage.duration_seconds = 200.0 - 25.0 * c  # chefes de capítulo mais longos pedem ondas mais curtas
 		stage.boss = load("res://data/bosses/boss_%d.tres" % (c + 1))
 	else:
-		stage.duration_seconds = 330.0 + 16.0 * s + 10.0 * c
+		stage.duration_seconds = 300.0
 	_set_filler(stage, c, s, d)
 	_set_rocks(stage, c, s)
 	stage.waves = _compose(c, s, d, stage.duration_seconds)
