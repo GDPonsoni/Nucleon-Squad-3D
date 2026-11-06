@@ -23,7 +23,7 @@ extends Node
 const LOOKAHEAD := [0.0, 0.12, 0.24, 0.38]
 const NEAR_BULLETS: float = 650.0
 const VIRTUAL_INVULNERABILITY: float = 1.0
-const SAFETY_SECONDS: float = 420.0
+const SAFETY_SECONDS: float = 1000.0
 
 var _queue: Array[Vector2i] = []
 var _level: int = 1

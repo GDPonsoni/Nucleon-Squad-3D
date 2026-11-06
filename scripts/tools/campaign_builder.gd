@@ -105,13 +105,13 @@ func _build_stage(c: int, s: int) -> StageData:
 	stage.enemy_fire_scale = FIRE_SCALE[c]
 	stage.start_delay = 2.0
 	if s == MIDBOSS_STAGE:
-		stage.duration_seconds = 75.0 + 10.0 * c
+		stage.duration_seconds = 240.0 + 20.0 * c
 		stage.boss = load("res://data/bosses/mini_%d.tres" % (c + 1))
 	elif s == BOSS_STAGE:
-		stage.duration_seconds = 105.0 + 12.0 * c
+		stage.duration_seconds = 360.0 + 20.0 * c
 		stage.boss = load("res://data/bosses/boss_%d.tres" % (c + 1))
 	else:
-		stage.duration_seconds = 100.0 + 11.0 * s + 14.0 * c
+		stage.duration_seconds = 330.0 + 16.0 * s + 10.0 * c
 	_set_filler(stage, c, s, d)
 	_set_rocks(stage, c, s)
 	stage.waves = _compose(c, s, d, stage.duration_seconds)
