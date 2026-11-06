@@ -36,6 +36,9 @@ var _target: Vector2
 var _build: float = 1.0  # 0 = só o núcleo, 1 = corpo completo
 var _build_tween: Tween
 var _invulnerable_left: float = 0.0
+## Fim de fase: movida por código (tween), ignora o dedo, não atira e não leva dano.
+var scripted: bool = false
+var _scripted_last: Vector2
 var _blink_clock: float = 0.0
 var _level_pulse_left: float = 0.0
 var bank: float = 0.0  # -1..1: velocidade lateral suavizada (inclinação); lida pela auxiliar
@@ -105,15 +108,26 @@ func start_invulnerability(seconds: float) -> void:
 	_invulnerable_left = maxf(_invulnerable_left, seconds)
 
 
+func begin_scripted() -> void:
+	scripted = true
+	_scripted_last = position
+	if mount != null:
+		mount.set_active(false)
+
+
 func is_vulnerable() -> bool:
-	return body != null and _build >= 1.0 and _invulnerable_left <= 0.0
+	return not scripted and body != null and _build >= 1.0 and _invulnerable_left <= 0.0
 
 
 func _process(delta: float) -> void:
 	# delta já vem escalado pelo time scale: a nave reflete a câmera lenta
-	var before: Vector2 = position
-	position = position.move_toward(_target, Params.ship_speed * delta)
-	_update_tilt(position - before, delta)
+	if scripted:
+		_update_tilt(position - _scripted_last, delta)
+		_scripted_last = position
+	else:
+		var before: Vector2 = position
+		position = position.move_toward(_target, Params.ship_speed * delta)
+		_update_tilt(position - before, delta)
 
 	if _invulnerable_left > 0.0:
 		_invulnerable_left -= delta
@@ -247,12 +261,16 @@ func _set_build(value: float) -> void:
 
 
 func _on_touch_started(pos: Vector2) -> void:
+	if scripted:
+		return
 	_touch_origin = pos
 	_ship_origin = position
 	_target = position
 
 
 func _on_touch_moved(pos: Vector2) -> void:
+	if scripted:
+		return
 	var raw: Vector2 = _ship_origin + (pos - _touch_origin) * Params.drag_sensitivity
 	_target = _clamp_to_screen(raw)
 	# Na borda, reancora para a nave responder assim que o dedo voltar

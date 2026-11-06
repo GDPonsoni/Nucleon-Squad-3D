@@ -11,6 +11,8 @@ var music_chapter_path: String = "res://assets/audio/music/chapter_%d.wav"
 var music_volume_db: float = -14.0  # a música fica bem abaixo dos efeitos
 var music_silent_db: float = -40.0
 var music_fade_seconds: float = 0.6
+var music_clear_path: String = "res://assets/audio/music/clear.wav"  # fim de fase
+var music_clear_fade_seconds: float = 1.5
 var sfx_gain_db: Dictionary = {
 	&"body_break": -4.1, &"bomb_global": -1.0, &"boss_explode": -1.8, &"boss_hit": -11.2,
 	&"boss_warning": -8.7, &"core_crack": -4.8, &"enemy_explode_medium": -6.3, &"enemy_explode_small": -6.9,
@@ -344,6 +346,13 @@ var player_bullet_pool_size: int = 160
 # --- Inimigos e fase (tipos e ondas ficam em data/) ---
 var campaign_path: String = "res://data/campaign.tres"
 var stage_clear_timeout: float = 6.0  # após o tempo da fase, espera no máximo isso pelos inimigos restantes
+## Fim de fase: pausa -> nave sai da tela -> resultado (tempo real, imune a dano o tempo todo).
+var clear_pause_seconds: float = 1.6  # depois do último inimigo/chefe, antes da nave partir
+var clear_ship_center_seconds: float = 0.5  # nave vai ao centro da tela
+var clear_ship_exit_seconds: float = 1.4  # acelera para cima e sai da tela
+var clear_results_delay: float = 0.5  # após a nave sair, antes do resultado
+var clear_ship_exit_margin: float = 3.0  # quantas alturas de nave acima do topo
+var clear_wipe_gap: float = 0.04  # segundos entre as explosões que limpam os inimigos restantes
 var enemy_pool_size: int = 64
 var enemy_bullet_pool_size: int = 500
 var enemy_hit_flash_seconds: float = 0.06

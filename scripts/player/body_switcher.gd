@@ -40,13 +40,17 @@ func setup(state: MatchState, touch: TouchInput) -> void:
 
 
 ## Topo da barra em coordenadas de tela: a nave não desce além disso.
+## Fim de fase: barra apagada e sem troca.
+var disabled: bool = false
+
+
 func top() -> float:
 	return _strip.position.y
 
 
 ## Nítida e aceitando a troca: dedo solto (câmera lenta) ou corpo destruído.
 func is_interactive() -> bool:
-	return forced or not _touch.is_touching()
+	return not disabled and (forced or not _touch.is_touching())
 
 
 func _process(_delta: float) -> void:

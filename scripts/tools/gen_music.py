@@ -4,13 +4,15 @@ Uso: python3 scripts/tools/gen_music.py   (só Python padrão, sem numpy)
 Saída: assets/audio/music/<nome>.wav (mono, 22050 Hz, 16 bits), em laço perfeito.
 Cada faixa: progressão de acordes, baixo, arpejo, pad e bateria, com timbre e andamento próprios.
 """
-import math, os, random, struct, wave
+import math, os, random, struct, sys, wave
+
+ONLY = sys.argv[1:]  # python3 gen_music.py clear  -> gera só essas faixas
 
 SR = 22050
 OUT = os.path.join(os.path.dirname(__file__), "..", "..", "assets", "audio", "music")
 NOTES = {"C": 0, "C#": 1, "D": 2, "D#": 3, "E": 4, "F": 5, "F#": 6, "G": 7, "G#": 8, "A": 9, "A#": 10, "B": 11}
 SCALES = {"minor": [0, 2, 3, 5, 7, 8, 10], "dorian": [0, 2, 3, 5, 7, 9, 10], "phrygian": [0, 1, 3, 5, 7, 8, 10],
-          "harmonic": [0, 2, 3, 5, 7, 8, 11]}
+          "harmonic": [0, 2, 3, 5, 7, 8, 11], "major": [0, 2, 4, 5, 7, 9, 11]}
 
 def freq(midi): return 440.0 * 2 ** ((midi - 69) / 12)
 
@@ -52,6 +54,8 @@ def add_drum(buf, start, kind, vol):
             buf[(n0 + i) % total] += hp * math.exp(-t * 70) * vol
 
 def track(name, bpm, key, scale, prog, bars, style):
+    if ONLY and name not in ONLY:
+        return
     beat = 60.0 / bpm; bar = beat * 4; length = bar * bars
     buf = [0.0] * int(length * SR)
     root = 48 + NOTES[key]; sc = SCALES[scale]
@@ -116,3 +120,7 @@ track("chapter_4", 148, "F#", "minor", [0, 6, 5, 4], 16, {**DRIVE, "pad": "squar
 track("chapter_5", 156, "G", "harmonic", [0, 5, 3, 4], 16, {**DRIVE, "arp_wave": "saw", "arp_vol": 0.09, "arp_div": 4,
       "bass": [1, 1, 1, 1, 1, 1, 1, 1], "bass_wave": "saw", "bass_vol": 0.38, "lead_vol": 0.15,
       "drums": ["kh", "kh", "skh", "kh", "kh", "kh", "skh", "skh"], "drum_vol": 0.75})
+# Conclusão de fase: tom maior, andamento médio, brilhante e sem bateria pesada
+track("clear", 112, "D", "major", [0, 4, 5, 3], 8, {**CALM, "lead_from": 0, "lead_wave": "square", "lead_vol": 0.1, "lead_cut": 0.45,
+      "lead_density": 0.8, "pad": "saw", "pad_vol": 0.1, "arp_wave": "tri", "arp_vol": 0.12, "arp_div": 4, "bass": [1, 0, 1, 0, 1, 0, 1, 0],
+      "bass_wave": "saw", "bass_vol": 0.3, "drums": ["k", "", "h", "", "ks", "", "h", "h"], "drum_vol": 0.5})

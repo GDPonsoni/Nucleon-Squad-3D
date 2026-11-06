@@ -47,6 +47,7 @@ func _ready() -> void:
 		printerr("FALHOU: órbita não descartou o alvo liberado")
 		failures += 1
 	orbit.queue_free()
+	failures += await _check_clear_sequence(game)
 	print("match_regressions: %d falhas" % failures)
 	get_tree().quit(1 if failures > 0 else 0)
 
@@ -115,4 +116,34 @@ func _check_special_cycle(game: Node) -> int:
 			printerr("FALHOU: não trocou para a nave %d" % next)
 			failures += 1
 	Params.balance.special_charge_multiplier = saved
+	return failures
+
+
+## Fim de fase: a nave fica imune, tiros e inimigos somem, a nave sai por cima e o resultado aparece.
+func _check_clear_sequence(game: Node) -> int:
+	var failures: int = 0
+	var player: Player = game.get("player")
+	var state: MatchState = game.get("state")
+	var hits_before: int = state.hits_left[state.current]
+	game.call("_finish_stage_clear")
+	await get_tree().process_frame
+	if player.is_vulnerable():
+		printerr("FALHOU: nave vulnerável no fim de fase")
+		failures += 1
+	var bullets: NodePool = game.get("enemy_bullets")
+	var bullet := bullets.acquire() as Bullet
+	if bullet != null:
+		bullet.position = player.position
+	await get_tree().create_timer(0.3, true, false, true).timeout
+	if state.hits_left[state.current] != hits_before:
+		printerr("FALHOU: nave levou dano durante a sequência")
+		failures += 1
+	await get_tree().create_timer(Params.clear_pause_seconds + Params.clear_ship_center_seconds
+			+ Params.clear_ship_exit_seconds + Params.clear_results_delay + 1.0, true, false, true).timeout
+	if player.position.y > 0.0:
+		printerr("FALHOU: nave não saiu da tela (y=%.0f)" % player.position.y)
+		failures += 1
+	if not Dialog.is_open():
+		printerr("FALHOU: resultado não apareceu")
+		failures += 1
 	return failures

@@ -251,9 +251,52 @@ func _finish_stage_clear() -> void:
 	var rewards := PackedStringArray()
 	if not chapter_cleared_before and SaveGame.is_chapter_cleared(Session.planet_index):
 		rewards = _chapter_rewards(Session.planet_index)
-	results_menu.show_stage_clear(state, spawner.elapsed(), record, {
-		"quarks_kills": kills_quarks, "quarks_bonus": bonus, "rewards": rewards,
-	})
+	var summary := {"quarks_kills": kills_quarks, "quarks_bonus": bonus, "rewards": rewards}
+	await _play_clear_sequence()
+	results_menu.show_stage_clear(state, spawner.elapsed(), record, summary)
+
+
+## Sequência de fim de fase (tempo real): limpa a tela, a nave sobe e sai, só então o resultado.
+## A nave fica imune desde o primeiro quadro (Player.scripted) e o dedo não mexe mais nela.
+func _play_clear_sequence() -> void:
+	spawner.set_process(false)  # ondas agendadas do chefe não entram mais
+	time_controller.lock_normal()
+	switcher.disabled = true
+	player.begin_scripted()
+	Audio.play_clear_music()
+	_wipe_field()
+	var tree := get_tree()
+	await tree.create_timer(Params.clear_pause_seconds, false).timeout
+	var rect: Rect2 = get_viewport_rect()
+	var tween := create_tween()
+	tween.tween_property(player, "position", Vector2(rect.get_center().x, player.position.y), Params.clear_ship_center_seconds)\
+			.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	var exit_y: float = rect.position.y - Params.ship_size.y * Params.clear_ship_exit_margin
+	tween.tween_property(player, "position:y", exit_y, Params.clear_ship_exit_seconds)\
+			.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	await tween.finished
+	await tree.create_timer(Params.clear_results_delay, false).timeout
+
+
+## Tiros, inimigos restantes e itens somem (os inimigos explodem em sequência).
+func _wipe_field() -> void:
+	for item in enemy_bullets.active.duplicate():
+		enemy_bullets.release(item)
+	for item in power_ups.active.duplicate():
+		power_ups.release(item)
+	var wiped: int = 0
+	for item in enemies.active.duplicate():
+		var enemy := item as Enemy
+		if enemy.is_on_screen():
+			_explode_later(enemy.position, enemy.radius, enemy.tint(), wiped * Params.clear_wipe_gap)
+			wiped += 1
+		enemies.release(enemy)
+
+
+func _explode_later(pos: Vector2, radius: float, color: Color, delay: float) -> void:
+	if delay > 0.0:
+		await get_tree().create_timer(delay, false).timeout
+	_explode(pos, radius, color)
 
 
 ## Bônus em quarks por concluir a fase (dobra na primeira vez).

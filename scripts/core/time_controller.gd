@@ -11,6 +11,9 @@ var forced_slow: bool = false:
 		forced_slow = value
 		_target = Params.slow_time_scale if value or not _touch.is_touching() else NORMAL_TIME_SCALE
 
+## Fim de fase: velocidade normal travada, o dedo não muda mais a câmera lenta.
+var locked_normal: bool = false
+
 var _target: float = NORMAL_TIME_SCALE
 var _last_usec: int = 0
 var _touch: TouchInput
@@ -41,7 +44,14 @@ func _exit_tree() -> void:
 	Engine.time_scale = NORMAL_TIME_SCALE
 
 
+func lock_normal() -> void:
+	locked_normal = true
+	_target = NORMAL_TIME_SCALE
+
+
 func _on_touch_started(_pos: Vector2) -> void:
+	if locked_normal:
+		return
 	if not forced_slow:
 		if _target < NORMAL_TIME_SCALE:
 			Audio.play(&"slowmo_exit")
@@ -49,6 +59,8 @@ func _on_touch_started(_pos: Vector2) -> void:
 
 
 func _on_touch_ended() -> void:
+	if locked_normal:
+		return
 	if _target >= NORMAL_TIME_SCALE:
 		Audio.play(&"slowmo_enter")
 	_target = Params.slow_time_scale

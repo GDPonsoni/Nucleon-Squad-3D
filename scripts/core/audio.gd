@@ -97,19 +97,24 @@ func _free_voice() -> AudioStreamPlayer:
 	return _voices[_next_voice]
 
 
-## Música de fundo em laço, com transição suave (sai a atual, entra a nova).
-func play_music(stream: AudioStream) -> void:
+## Música de fundo em laço, com crossfade: a faixa nova entra enquanto a atual sai (sem corte seco).
+func play_music(stream: AudioStream, fade_seconds: float = -1.0) -> void:
 	if _music.stream == stream and _music.playing:
 		return
-	var tween := create_tween().set_ignore_time_scale(true)
-	if _music.playing:
-		tween.tween_property(_music, "volume_db", Params.music_silent_db, Params.music_fade_seconds)
-	tween.tween_callback(func() -> void:
-		_music.stream = stream
-		_music.volume_db = Params.music_silent_db
-		if stream != null:
-			_music.play())
-	tween.tween_property(_music, "volume_db", Params.music_volume_db, Params.music_fade_seconds)
+	var fade: float = Params.music_fade_seconds if fade_seconds < 0.0 else fade_seconds
+	var old: AudioStreamPlayer = _music
+	_music = AudioStreamPlayer.new()
+	_music.bus = MUSIC_BUS
+	_music.stream = stream
+	_music.volume_db = Params.music_silent_db
+	add_child(_music)
+	if stream != null:
+		_music.play()
+	var tween := create_tween().set_ignore_time_scale(true).set_parallel()
+	if old.playing:
+		tween.tween_property(old, "volume_db", Params.music_silent_db, fade)
+	tween.tween_property(_music, "volume_db", Params.music_volume_db, fade)
+	tween.chain().tween_callback(old.queue_free)
 
 
 ## Tema dos menus (continua tocando de uma tela de menu para outra).
@@ -120,6 +125,11 @@ func play_menu_music() -> void:
 ## Tema do capítulo (0 = Aurora).
 func play_chapter_music(chapter: int) -> void:
 	play_music(_load_music(Params.music_chapter_path % (chapter + 1)))
+
+
+## Faixa de conclusão da fase (crossfade mais longo que o das trocas de tela).
+func play_clear_music() -> void:
+	play_music(_load_music(Params.music_clear_path), Params.music_clear_fade_seconds)
 
 
 func _load_music(path: String) -> AudioStream:

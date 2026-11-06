@@ -295,7 +295,7 @@ func test_campaign_structure() -> void:
 
 
 func test_music_tracks_loop() -> void:
-	var paths: Array[String] = [Params.music_menu_path]
+	var paths: Array[String] = [Params.music_menu_path, Params.music_clear_path]
 	for c in Session.campaign.planets.size():
 		paths.append(Params.music_chapter_path % (c + 1))
 	for path in paths:
