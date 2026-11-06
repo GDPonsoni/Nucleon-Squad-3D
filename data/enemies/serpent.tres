@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"serpent"
+max_hp = 8
+score = 8
+contact_damage = 1
+radius = 34.0
+sides = 6
+color = Color(0.95, 0.55, 0.2, 1)
+weapon_multipliers = {3: 0.8, 4: 1.4, 6: 1.6, 7: 3.5}
+movement = 0
+speed = 200.0
+fire_pattern = 0

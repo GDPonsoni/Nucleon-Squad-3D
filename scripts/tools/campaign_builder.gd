@@ -51,7 +51,7 @@ var _current_stage: StageData
 
 func _ready() -> void:
 	for id in ["drone", "aimer", "kamikaze", "tank", "spreader", "splitter", "hunter", "pulsar", "fissor",
-			"rock_large", "rock_medium", "rock_small"]:
+			"rock_large", "rock_medium", "rock_small", "spark", "swarm", "colossus", "shielder", "serpent"]:
 		_e[id] = load("res://data/enemies/%s.tres" % id)
 	_define_motifs()
 	var planets: Array[PlanetData] = []
@@ -333,6 +333,14 @@ func _define_motifs() -> void:
 	_motif("drone_twin_snake", 1, 3, 1.0, 1.6, false, false, func(t: float, l: int, _m: bool) -> Array[WaveData]:
 		return [_wave(t, "drone", WaveData.Formation.COLUMN, mini(4 + l, 7), {"x_ratio": 0.25, "interval": 0.45, "sway_amplitude": 120.0, "sway_period": 2.4}),
 			_wave(t, "drone", WaveData.Formation.COLUMN, mini(4 + l, 7), {"x_ratio": 0.75, "interval": 0.45, "sway_amplitude": 120.0, "sway_period": 2.4})])
+	# Counters do capítulo 2: Faísca (rápida) e Enxame (muitos e pequenos)
+	_motif("spark_rush", 1, 1, 1.1, 2.4, false, true, func(t: float, l: int, m: bool) -> Array[WaveData]:
+		return [_wave(t, "spark", WaveData.Formation.SIDE, mini(4 + l, 7), {"side": _side(m), "interval": 0.35, "y_ratio": 0.2})])
+	_motif("spark_pincer", 1, 4, 0.8, 2.8, false, false, func(t: float, l: int, _m: bool) -> Array[WaveData]:
+		return [_wave(t, "spark", WaveData.Formation.SIDE, mini(6 + 2 * l, 10), {"side": WaveData.EntrySide.BOTH, "interval": 0.3, "y_ratio": 0.26})])
+	_motif("swarm_cloud", 1, 2, 1.0, 3.0, false, true, func(t: float, l: int, m: bool) -> Array[WaveData]:
+		return [_wave(t, "swarm", WaveData.Formation.SWARM, mini(12 + 2 * l, 18), {"x_ratio": _x(0.45, m), "spacing": 120.0,
+			"sway_amplitude": 60.0, "sway_period": 2.0, "sway_phase_step": 0.9})])
 	# --- Capítulo 3: Atiradores ---
 	_motif("spreader_pair", 2, 0, 1.0, 3.6, true, true, func(t: float, _l: int, _m: bool) -> Array[WaveData]:
 		return [_wave(t, "spreader", WaveData.Formation.LINE, 2, {"spacing": 540.0})])
@@ -341,6 +349,14 @@ func _define_motifs() -> void:
 	_motif("drone_wave_line", 2, 1, 1.0, 1.6, false, false, func(t: float, l: int, _m: bool) -> Array[WaveData]:
 		return [_wave(t, "drone", WaveData.Formation.LINE, mini(5 + l, 7), {"spacing": 150.0, "sway_amplitude": 90.0,
 			"sway_period": 2.2, "sway_phase_step": 0.6})])
+	# Counters do capítulo 3: Colosso (muita vida, regenera) e Escudeiro (escudo frontal)
+	_motif("colossus_solo", 2, 1, 1.0, 4.4, true, true, func(t: float, _l: int, m: bool) -> Array[WaveData]:
+		return [_wave(t, "colossus", WaveData.Formation.LINE, 1, {"x_ratio": _x(0.4, m)})])
+	_motif("shielder_pair", 2, 2, 0.6, 3.8, false, true, func(t: float, _l: int, _m: bool) -> Array[WaveData]:
+		return [_wave(t, "shielder", WaveData.Formation.LINE, 2, {"spacing": 480.0}),
+			_wave(t + 0.4, "drone", WaveData.Formation.LINE, 4, {"spacing": 200.0})])
+	_motif("shielder_trio", 2, 5, 0.5, 5.0, false, false, func(t: float, _l: int, _m: bool) -> Array[WaveData]:
+		return [_wave(t, "shielder", WaveData.Formation.LINE, 3, {"spacing": 320.0})])
 	# --- Capítulo 4: Caçadores e Semeadores ---
 	_motif("hunter_side", 3, 0, 1.2, 3.0, false, true, func(t: float, l: int, m: bool) -> Array[WaveData]:
 		return [_wave(t, "hunter", WaveData.Formation.SIDE, mini(3 + l, 5), {"side": _side(m), "interval": 0.6, "y_ratio": 0.16})])
@@ -351,6 +367,10 @@ func _define_motifs() -> void:
 	_motif("hunter_arc", 3, 3, 0.8, 3.0, false, false, func(t: float, l: int, m: bool) -> Array[WaveData]:
 		return [_wave(t, "hunter", WaveData.Formation.COLUMN, mini(3 + l, 4), {"x_ratio": _x(0.12, m), "interval": 0.6,
 			"curve_degrees": 100.0 if m else -100.0, "curve_seconds": 1.6, "curve_delay": 0.6})])
+	# Counter do capítulo 4: Serpente (fila de segmentos que ondula)
+	_motif("serpent", 3, 2, 1.1, 3.0, false, true, func(t: float, l: int, m: bool) -> Array[WaveData]:
+		return [_wave(t, "serpent", WaveData.Formation.COLUMN, mini(7 + l, 10), {"x_ratio": _x(0.35, m), "interval": 0.36,
+			"sway_amplitude": 140.0, "sway_period": 2.6, "sway_phase_step": 0.35})])
 	# --- Capítulo 5: Pulsares e Fissores ---
 	_motif("fissor_line", 4, 0, 1.2, 3.2, true, true, func(t: float, _l: int, _m: bool) -> Array[WaveData]:
 		return [_wave(t, "fissor", WaveData.Formation.LINE, 3, {"spacing": 300.0})])

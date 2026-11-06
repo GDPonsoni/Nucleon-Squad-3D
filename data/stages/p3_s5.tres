@@ -12,21 +12,21 @@
 script = ExtResource("7_2pa0l")
 time_seconds = 4.0
 enemy = ExtResource("4_65qn7")
-formation = 3
+formation = 2
 count = 4
-interval = 0.55
-side = 0
-y_ratio = 0.14
+interval = 0.5
+x_ratio = 0.12
+curve_degrees = -100.0
+curve_seconds = 1.6
+curve_delay = 0.6
 
 [sub_resource type="Resource" id="Resource_1teny"]
 script = ExtResource("7_2pa0l")
 time_seconds = 9.8
-enemy = ExtResource("5_xm556")
-formation = 6
-count = 8
-interval = 0.4
-x_ratio = 0.18
-dive_stagger = 0.0
+enemy = ExtResource("4_65qn7")
+formation = 3
+interval = 0.5
+y_ratio = 0.18
 
 [sub_resource type="Resource" id="Resource_ng4sw"]
 script = ExtResource("7_2pa0l")
@@ -43,20 +43,21 @@ sway_phase_step = 0.6
 script = ExtResource("7_2pa0l")
 time_seconds = 21.5
 enemy = ExtResource("4_65qn7")
-formation = 3
-interval = 0.55
-side = 1
-y_ratio = 0.14
+formation = 2
+interval = 0.5
+x_ratio = 0.88
+curve_degrees = 100.0
+curve_seconds = 1.6
+curve_delay = 0.6
 
 [sub_resource type="Resource" id="Resource_xm556"]
 script = ExtResource("7_2pa0l")
 time_seconds = 27.3
-enemy = ExtResource("5_xm556")
-formation = 6
-count = 10
-interval = 0.4
-x_ratio = 0.18
-dive_stagger = 0.0
+enemy = ExtResource("4_65qn7")
+formation = 3
+count = 6
+interval = 0.5
+y_ratio = 0.18
 
 [sub_resource type="Resource" id="Resource_4yh0r"]
 script = ExtResource("7_2pa0l")
@@ -73,21 +74,21 @@ sway_phase_step = 0.6
 script = ExtResource("7_2pa0l")
 time_seconds = 39.0
 enemy = ExtResource("4_65qn7")
-formation = 3
-count = 6
-interval = 0.55
-side = 0
-y_ratio = 0.14
+formation = 2
+interval = 0.5
+x_ratio = 0.12
+curve_degrees = -100.0
+curve_seconds = 1.6
+curve_delay = 0.6
 
 [sub_resource type="Resource" id="Resource_30kth"]
 script = ExtResource("7_2pa0l")
 time_seconds = 44.800000000000004
-enemy = ExtResource("5_xm556")
-formation = 6
-count = 10
-interval = 0.4
-x_ratio = 0.18
-dive_stagger = 0.0
+enemy = ExtResource("4_65qn7")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
 
 [sub_resource type="Resource" id="Resource_7toys"]
 script = ExtResource("7_2pa0l")
@@ -104,21 +105,21 @@ sway_phase_step = 0.6
 script = ExtResource("7_2pa0l")
 time_seconds = 56.5
 enemy = ExtResource("4_65qn7")
-formation = 3
-count = 6
-interval = 0.55
-side = 1
-y_ratio = 0.14
+formation = 2
+interval = 0.5
+x_ratio = 0.88
+curve_degrees = 100.0
+curve_seconds = 1.6
+curve_delay = 0.6
 
 [sub_resource type="Resource" id="Resource_2rs7d"]
 script = ExtResource("7_2pa0l")
 time_seconds = 62.300000000000004
-enemy = ExtResource("5_xm556")
-formation = 6
-count = 10
-interval = 0.4
-x_ratio = 0.18
-dive_stagger = 0.0
+enemy = ExtResource("4_65qn7")
+formation = 3
+count = 7
+interval = 0.5
+y_ratio = 0.18
 
 [resource]
 script = ExtResource("6_4yh0r")

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"swarm"
+max_hp = 3
+score = 3
+contact_damage = 1
+radius = 16.0
+sides = 4
+color = Color(0.75, 1, 0.45, 1)
+weapon_multipliers = {0: 0.6, 2: 2.2, 4: 0.15, 5: 0.8}
+movement = 0
+speed = 330.0
+fire_pattern = 0

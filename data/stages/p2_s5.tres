@@ -7,87 +7,92 @@
 [ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="5_wyhmt"]
 [ext_resource type="Script" path="res://scripts/enemies/stage_data.gd" id="6_wsjkw"]
 [ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="7_3euvm"]
-
-[sub_resource type="Resource" id="Resource_qqfc0"]
-script = ExtResource("7_3euvm")
-time_seconds = 4.0
-enemy = ExtResource("5_wyhmt")
-count = 7
-spacing = 100.0
+[ext_resource type="Resource" path="res://data/enemies/spark.tres" id="8_cnpaw"]
 
 [sub_resource type="Resource" id="Resource_cnpaw"]
 script = ExtResource("7_3euvm")
+time_seconds = 4.0
+enemy = ExtResource("5_wyhmt")
+formation = 6
+count = 8
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
+
+[sub_resource type="Resource" id="Resource_dfj0y"]
+script = ExtResource("7_3euvm")
 time_seconds = 10.4
+enemy = ExtResource("8_cnpaw")
+formation = 3
+interval = 0.35
+side = 0
+y_ratio = 0.2
+
+[sub_resource type="Resource" id="Resource_sapg2"]
+script = ExtResource("7_3euvm")
+time_seconds = 16.8
 enemy = ExtResource("4_sapg2")
 formation = 3
 interval = 0.5
 y_ratio = 0.18
 
-[sub_resource type="Resource" id="Resource_dfj0y"]
-script = ExtResource("7_3euvm")
-time_seconds = 16.8
-enemy = ExtResource("4_sapg2")
-formation = 2
-count = 4
-interval = 0.5
-x_ratio = 0.12
-curve_degrees = -100.0
-curve_seconds = 1.6
-curve_delay = 0.6
-
-[sub_resource type="Resource" id="Resource_sapg2"]
+[sub_resource type="Resource" id="Resource_wyhmt"]
 script = ExtResource("7_3euvm")
 time_seconds = 23.200000000000003
 enemy = ExtResource("5_wyhmt")
-count = 9
-spacing = 100.0
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
 
-[sub_resource type="Resource" id="Resource_wyhmt"]
+[sub_resource type="Resource" id="Resource_wsjkw"]
 script = ExtResource("7_3euvm")
 time_seconds = 29.5
+enemy = ExtResource("8_cnpaw")
+formation = 3
+count = 6
+interval = 0.35
+side = 1
+y_ratio = 0.2
+
+[sub_resource type="Resource" id="Resource_3euvm"]
+script = ExtResource("7_3euvm")
+time_seconds = 35.9
 enemy = ExtResource("4_sapg2")
 formation = 3
 count = 6
 interval = 0.5
 y_ratio = 0.18
 
-[sub_resource type="Resource" id="Resource_wsjkw"]
-script = ExtResource("7_3euvm")
-time_seconds = 35.9
-enemy = ExtResource("4_sapg2")
-formation = 2
-interval = 0.5
-x_ratio = 0.88
-curve_degrees = 100.0
-curve_seconds = 1.6
-curve_delay = 0.6
-
-[sub_resource type="Resource" id="Resource_3euvm"]
+[sub_resource type="Resource" id="Resource_y00ub"]
 script = ExtResource("7_3euvm")
 time_seconds = 42.300000000000004
 enemy = ExtResource("5_wyhmt")
-count = 9
-spacing = 100.0
+formation = 6
+count = 10
+interval = 0.4
+x_ratio = 0.18
+dive_stagger = 0.0
 
-[sub_resource type="Resource" id="Resource_y00ub"]
+[sub_resource type="Resource" id="Resource_y86e1"]
 script = ExtResource("7_3euvm")
 time_seconds = 48.7
+enemy = ExtResource("8_cnpaw")
+formation = 3
+count = 7
+interval = 0.35
+side = 0
+y_ratio = 0.2
+
+[sub_resource type="Resource" id="Resource_cgiq5"]
+script = ExtResource("7_3euvm")
+time_seconds = 55.1
 enemy = ExtResource("4_sapg2")
 formation = 3
 count = 7
 interval = 0.5
 y_ratio = 0.18
-
-[sub_resource type="Resource" id="Resource_y86e1"]
-script = ExtResource("7_3euvm")
-time_seconds = 55.1
-enemy = ExtResource("4_sapg2")
-formation = 2
-interval = 0.5
-x_ratio = 0.12
-curve_degrees = -100.0
-curve_seconds = 1.6
-curve_delay = 0.6
 
 [resource]
 script = ExtResource("6_wsjkw")
@@ -95,7 +100,7 @@ id = &"p2_s5"
 duration_seconds = 63.0
 enemies = Array[ExtResource("2_cnpaw")]([ExtResource("3_dfj0y"), ExtResource("4_sapg2"), ExtResource("5_wyhmt")])
 spawn_weights = PackedFloat32Array(3, 1.5, 1.5)
-waves = Array[ExtResource("7_3euvm")]([SubResource("Resource_qqfc0"), SubResource("Resource_cnpaw"), SubResource("Resource_dfj0y"), SubResource("Resource_sapg2"), SubResource("Resource_wyhmt"), SubResource("Resource_wsjkw"), SubResource("Resource_3euvm"), SubResource("Resource_y00ub"), SubResource("Resource_y86e1")])
+waves = Array[ExtResource("7_3euvm")]([SubResource("Resource_cnpaw"), SubResource("Resource_dfj0y"), SubResource("Resource_sapg2"), SubResource("Resource_wyhmt"), SubResource("Resource_wsjkw"), SubResource("Resource_3euvm"), SubResource("Resource_y00ub"), SubResource("Resource_y86e1"), SubResource("Resource_cgiq5")])
 boss = ExtResource("1_qqfc0")
 start_delay = 2.0
 spawn_interval_min = 1.9160000000000001

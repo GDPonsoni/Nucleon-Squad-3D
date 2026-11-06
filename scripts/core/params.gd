@@ -235,6 +235,10 @@ var weakness_flash_threshold: float = 1.2  # multiplicador a partir do qual o ac
 var weakness_flash_color: Color = Color(1.0, 0.85, 0.3)
 var resist_flash_threshold: float = 0.8  # abaixo disso, pisca cinza (arma fraca contra ele)
 var resist_flash_color: Color = Color(0.55, 0.55, 0.6)
+var shield_block_flash_seconds: float = 0.15
+var enemy_shield_color: Color = Color(0.45, 0.8, 1.0, 0.9)
+var enemy_shield_width: float = 10.0
+var regen_color: Color = Color(0.35, 1.0, 0.5, 0.9)
 # --- Telegrafia (aviso antes de cada ataque inimigo) ---
 var telegraph_line_length: float = 520.0  # linha tracejada na direção do tiro
 var telegraph_line_width: float = 4.0

@@ -59,7 +59,7 @@ func _splash(bullet: Bullet, direct: Enemy) -> void:
 	var center: Vector2 = bullet.position
 	for item in _context.hostiles():
 		var enemy := item as Enemy
-		if enemy == direct or not enemy.visible:
+		if (enemy == direct and not direct.last_blocked) or not enemy.visible:
 			continue
 		if enemy.position.distance_to(center) <= bullet.splash_radius + enemy.radius * 0.5:
 			enemy.take_damage(bullet.damage, bullet.source)

@@ -45,7 +45,17 @@ enum FirePattern {
 @export var hover_y_ratio: float = 0.22  # HOVER: altura onde para (0 = topo, 1 = base)
 @export var hover_seconds: float = 4.0  # HOVER: tempo parado
 @export var spin_degrees: float = 0.0  # giro do desenho por segundo (sorteia o sentido)
+@export var sway_amplitude: float = 0.0  # zigue-zague próprio (px; a onda pode sobrescrever)
+@export var sway_period: float = 1.0
 @export var drift_x: float = 0.0  # deriva lateral aleatória (px/s, até esse valor para cada lado) ao surgir sozinho
+
+@export_group("Defesa")
+@export var regen_per_second: float = 0.0  # regenera vida se ficar regen_delay sem levar dano
+@export var regen_delay: float = 0.3
+@export var shield_arc_degrees: float = 0.0  # escudo frontal: bloqueia acertos vindos desse arco
+@export var shield_hp: float = 0.0  # vida do escudo (0 = indestrutível); quebrado, volta após shield_regen_seconds sem acertos
+@export var shield_regen_seconds: float = 2.5
+@export var shield_turn_degrees: float = 0.0  # o escudo gira para encarar a nave (graus/s; 0 = fixo para baixo)
 
 @export_group("Tiro")
 @export var fire_pattern: FirePattern = FirePattern.STRAIGHT

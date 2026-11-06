@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = &"shielder"
+max_hp = 20
+score = 40
+contact_damage = 1
+radius = 52.0
+sides = 5
+color = Color(0.3, 0.6, 0.95, 1)
+weapon_multipliers = {0: 0.5, 3: 1.5, 4: 0.8, 5: 2.2, 7: 2.5}
+movement = 3
+speed = 200.0
+hover_y_ratio = 0.35
+hover_seconds = 3.5
+shield_arc_degrees = 150.0
+fire_pattern = 2
+fire_interval = 2.0
+first_shot_delay = 0.8
+shield_turn_degrees = 120.0
+shield_hp = 14.0
+shield_regen_seconds = 3.0

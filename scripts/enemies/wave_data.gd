@@ -12,6 +12,7 @@ enum Formation {
 	GRID,  ## bloco de fileiras com columns membros cada
 	PINCER,  ## duas colunas espelhadas (x_ratio e 1 - x_ratio), em pares (use interval)
 	CIRCLE,  ## anel acima da tela, com spacing de raio
+	SWARM,  ## bando solto: posições sorteadas numa nuvem de largura ~spacing x count / 4
 }
 enum EntrySide { LEFT, RIGHT, BOTH }
 

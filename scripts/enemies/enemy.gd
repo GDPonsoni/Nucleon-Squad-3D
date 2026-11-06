@@ -24,6 +24,12 @@ var _flash_left: float = 0.0
 var _flash_color: Color = Color.WHITE  # branco = normal; dourado = fraco contra a arma; cinza = resistente
 var _spin: float = 0.0  # rad/s do desenho (rochas)
 var _rock_shape := PackedVector2Array()  # contorno irregular sorteado (rochas)
+var _max_hp: float = 0.0
+var _since_hit: float = 0.0  # para a regeneração
+var _block_left: float = 0.0  # escudo acabou de bloquear (brilho)
+var _shield_angle: float = PI * 0.5  # direção para onde o escudo aponta (global)
+var _shield_left: float = 0.0  # vida do escudo
+var last_blocked: bool = false  # o último acerto foi bloqueado pelo escudo (a área passa)
 var _hover_left: float = -1.0  # HOVER: < 0 = ainda descendo até a altura de parada
 # Telegrafia: direções travadas no começo do aviso (o tiro sai exatamente onde a linha mostrou)
 var _tele_left: float = -1.0  # < 0 = sem aviso em curso
@@ -44,6 +50,12 @@ var _curve_left: float = 0.0
 func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_delay: float = 0.0) -> void:
 	data = enemy_data
 	hp = data.max_hp
+	_max_hp = hp
+	_since_hit = 0.0
+	_block_left = 0.0
+	_shield_angle = PI * 0.5
+	_shield_left = data.shield_hp
+	last_blocked = false
 	radius = data.radius
 	position = pos
 	_velocity = velocity
@@ -59,6 +71,10 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 	_speed_scale = 1.0
 	_fire_scale = 1.0
 	_sway_amplitude = 0.0
+	if data.sway_amplitude > 0.0 and data.sway_period > 0.0:
+		_sway_amplitude = data.sway_amplitude
+		_sway_omega = TAU / data.sway_period
+		_sway_phase = randf() * TAU
 	_curve_left = 0.0
 	rotation = 0.0
 	_spin = deg_to_rad(data.spin_degrees) * (1.0 if randf() < 0.5 else -1.0)
@@ -99,6 +115,7 @@ func set_motion(wave: WaveData, member: int) -> void:
 ## Escalas da fase: vida e cadência de tiro dos inimigos (capítulos finais).
 func apply_stage(stage: StageData) -> void:
 	hp *= stage.enemy_hp_scale
+	_max_hp = hp
 	_fire_scale = stage.enemy_fire_scale
 
 
@@ -129,8 +146,19 @@ func take_damage(amount: float, source: int = SOURCE_NONE, from: Vector2 = Vecto
 	if not visible:
 		return
 	var mult: float = _damage_multiplier(source)
+	last_blocked = _blocked_by_shield(from)
+	if last_blocked:
+		# O escudo absorve o acerto (com o multiplicador da arma) e pode quebrar
+		_block_left = Params.shield_block_flash_seconds
+		_since_hit = 0.0
+		if data.shield_hp > 0.0:
+			_shield_left -= amount * mult
+		Audio.play(&"enemy_hit", -4.0, 1.8)
+		queue_redraw()
+		return
 	amount *= mult
 	hp -= amount
+	_since_hit = 0.0
 	_flash_left = Params.enemy_hit_flash_seconds
 	_flash_color = Color.WHITE
 	if mult >= Params.weakness_flash_threshold:
@@ -143,6 +171,20 @@ func take_damage(amount: float, source: int = SOURCE_NONE, from: Vector2 = Vecto
 		expire()
 	else:
 		Audio.play(_hit_sound())
+
+
+## Escudo frontal: bloqueia acertos que chegam pela frente (de baixo). Área e especiais passam (from = INF).
+func _blocked_by_shield(from: Vector2) -> bool:
+	if data == null or data.shield_arc_degrees <= 0.0 or from == Vector2.INF or not shield_up():
+		return false
+	var dir: Vector2 = from - position
+	if dir.length_squared() < 1.0:
+		return false
+	return absf(dir.angle_to(Vector2.from_angle(_shield_angle))) <= deg_to_rad(data.shield_arc_degrees) * 0.5
+
+
+func shield_up() -> bool:
+	return data.shield_hp <= 0.0 or _shield_left > 0.0
 
 
 ## Multiplicador de dano por fonte (o chefe sobrescreve).
@@ -196,6 +238,32 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 	_update_flash(delta)
+	_update_defense(delta)
+
+
+## Regeneração (Colosso) e brilho do escudo depois de bloquear.
+func _update_defense(delta: float) -> void:
+	if _block_left > 0.0:
+		_block_left -= delta
+		queue_redraw()
+	if data.shield_arc_degrees > 0.0 and data.shield_turn_degrees > 0.0 and context != null and context.player != null:
+		var goal: float = (context.player.position - position).angle()
+		_shield_angle = rotate_toward(_shield_angle, goal, deg_to_rad(data.shield_turn_degrees) * delta)
+		queue_redraw()
+	_since_hit += delta
+	# Escudo quebrado volta inteiro depois de um tempo sem acertos
+	if data.shield_hp > 0.0 and _shield_left <= 0.0 and _since_hit >= data.shield_regen_seconds:
+		_shield_left = data.shield_hp
+		queue_redraw()
+	if data.regen_per_second <= 0.0:
+		return
+	if _since_hit >= data.regen_delay and hp < _max_hp:
+		hp = minf(hp + data.regen_per_second * delta, _max_hp)
+		queue_redraw()
+
+
+func is_regenerating() -> bool:
+	return data != null and data.regen_per_second > 0.0 and _since_hit >= data.regen_delay and hp < _max_hp
 
 
 func _update_flash(delta: float) -> void:
@@ -302,7 +370,23 @@ func _draw() -> void:
 		inner.append(dir * radius * 0.45)
 	draw_colored_polygon(outer, color)
 	draw_colored_polygon(inner, color.darkened(0.5))
+	_draw_defense()
 	_draw_telegraph()
+
+
+## Escudo frontal (arco embaixo) e anel verde enquanto regenera, com a vida que falta.
+func _draw_defense() -> void:
+	if data.shield_arc_degrees > 0.0 and shield_up():
+		var half: float = deg_to_rad(data.shield_arc_degrees) * 0.5
+		var base: float = _shield_angle - rotation
+		var glow: float = clampf(_block_left / Params.shield_block_flash_seconds, 0.0, 1.0)
+		draw_arc(Vector2.ZERO, radius * 1.25, base - half, base + half, 24,
+			Params.enemy_shield_color.lerp(Color.WHITE, glow), Params.enemy_shield_width * (1.0 + glow * 0.5))
+	if data.regen_per_second > 0.0:
+		var ratio: float = clampf(hp / maxf(_max_hp, 1.0), 0.0, 1.0)
+		var regen: bool = is_regenerating()
+		var c: Color = Params.regen_color if regen else Color(Params.regen_color, 0.35)
+		draw_arc(Vector2.ZERO, radius * 1.12, -PI * 0.5, -PI * 0.5 + TAU * ratio, 48, c, 6.0 if regen else 4.0)
 
 
 ## Rocha: contorno irregular, borda escura e crateras.
