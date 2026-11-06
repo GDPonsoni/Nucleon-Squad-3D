@@ -6,9 +6,12 @@ extends Resource
 
 @export_group("Vida dos inimigos")
 ## Multiplicador global sobre a vida de todo inimigo (soma-se a StageData.enemy_hp_scale).
-@export_range(0.1, 10.0, 0.05) var enemy_hp_multiplier: float = 2.5
+@export_range(0.1, 10.0, 0.05) var enemy_hp_multiplier: float = 1.0
+## Multiplicador por capítulo (índice 0 = capítulo 1). O jogador evolui com o avanço, então a
+## vida sobe junto; o capítulo 1 fica em 1 para quem começa do zero. Passa do fim = repete o último.
+@export var enemy_hp_by_chapter: PackedFloat32Array = [1.0, 1.4, 1.9, 2.4, 3.0]
 ## Curva por fase: cada fase do capítulo (0 a 8) soma esta fração à vida (1 + n x passo).
-@export_range(0.0, 0.5, 0.01) var enemy_hp_per_stage: float = 0.08
+@export_range(0.0, 0.5, 0.01) var enemy_hp_per_stage: float = 0.05
 
 @export_group("Drops (1 a cada N inimigos; maior = mais raro)")
 @export_range(1, 200) var powerup_every_kills: int = 24
@@ -28,9 +31,12 @@ extends Resource
 @export_range(0.1, 10.0, 0.05) var special_charge_multiplier: float = 1.5
 
 
-## Fator final de vida para a fase `stage_index` (0 a 8) do capítulo.
-func enemy_hp_factor(stage_index: int) -> float:
-	return enemy_hp_multiplier * (1.0 + enemy_hp_per_stage * stage_index)
+## Fator final de vida para a fase `stage_index` (0 a 8) do capítulo `chapter_index` (0 a 4).
+func enemy_hp_factor(chapter_index: int, stage_index: int) -> float:
+	var chapter: float = 1.0
+	if not enemy_hp_by_chapter.is_empty():
+		chapter = enemy_hp_by_chapter[clampi(chapter_index, 0, enemy_hp_by_chapter.size() - 1)]
+	return enemy_hp_multiplier * chapter * (1.0 + enemy_hp_per_stage * stage_index)
 
 
 func powerup_kills(bonus: int = 0) -> int:
