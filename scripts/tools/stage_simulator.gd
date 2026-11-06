@@ -204,6 +204,9 @@ func _count_virtual_hits(player: Player, context: CombatContext, delta: float) -
 			context.enemy_bullets.release(bullet)
 			_register_hit()
 			return
+	if context.boss != null and context.boss.hazard_hits(center, Params.nucleus_radius):
+		_register_hit()
+		return
 	for item in context.hostiles():
 		var enemy := item as Enemy
 		var reach: float = enemy.radius + Params.nucleus_radius
@@ -259,6 +262,11 @@ func _choose_target(player: Player, context: CombatContext) -> Vector2:
 				var d: float = (pos + vel * t).distance_to(c)
 				if d < reach:
 					danger += (reach - d) / (1.0 + t * 4.0)
+		if context.boss != null:
+			for band: Vector2 in context.boss.laser_bands():
+				var inside: float = band.y * 0.5 + Params.nucleus_radius + 30.0 - absf(c.x - band.x)
+				if inside > 0.0:
+					danger += inside * 0.05
 		var edge: float = minf(c.x - rect.position.x, rect.end.x - c.x)
 		var cost: float = danger * 1000.0 + c.distance_to(prefer) * 0.6 + offset.length() * 0.2
 		if edge < 120.0:

@@ -69,13 +69,24 @@ bullet_color = Color(1, 0.6, 0.25, 1)
 homing_time = 1.0
 homing_turn_degrees = 150.0
 
+[sub_resource type="Resource" id="Attack_new_4"]
+script = ExtResource("3_attack")
+pattern = 6
+count = 9
+interval = 5.04
+first_delay = 1.8
+bullet_speed = 430.0
+bullet_radius = 16.0
+bullet_color = Color(1, 0.75, 0.3, 1)
+telegraph_seconds = 0.8
+
 [sub_resource type="Resource" id="Phase_1"]
 script = ExtResource("2_phase")
 hp_ratio = 0.5
 sway_speed_scale = 1.0
 movement = 1
 chase_speed = 260.0
-attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1")])
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_new_4")])
 
 [resource]
 script = ExtResource("1_script")

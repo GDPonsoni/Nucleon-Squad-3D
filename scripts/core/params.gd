@@ -248,6 +248,7 @@ var telegraph_ring_scale: float = 1.8  # anel que se contrai no inimigo (x raio)
 var telegraph_big_radius: float = 30.0  # tiros com raio >= isso avisam com um orbe crescendo
 var telegraph_sound_db: float = -4.0
 var telegraph_dive_color: Color = Color(1.0, 0.25, 0.2)
+var telegraph_gap_color: Color = Color(0.4, 1.0, 0.6)  # brecha segura da cortina
 # --- Pseudo-3D no movimento (só transformações 2D; tilt_intensity 0 desliga) ---
 var tilt_intensity: float = 1.0
 var tilt_max_roll: float = 0.30  # rad de inclinação lateral na velocidade máxima

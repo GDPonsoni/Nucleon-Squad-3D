@@ -90,6 +90,10 @@ func _hazards_vs_player() -> void:
 			player_hit.emit(maxi(roundi(bullet.damage), 1))
 			return
 
+	if _context.boss != null and _context.boss.hazard_hits(center, Params.nucleus_radius):
+		player_hit.emit(1)
+		return
+
 	for item in _context.hostiles():
 		var enemy := item as Enemy
 		var reach: float = enemy.radius + Params.nucleus_radius

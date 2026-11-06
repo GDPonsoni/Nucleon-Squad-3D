@@ -6,6 +6,11 @@ enum Pattern {
 	FAN,  ## leque de tiros (mirado na nave ou para baixo)
 	RING,  ## anel em 360°; com giro e poucos tiros vira espiral
 	SUMMON,  ## chama uma onda de inimigos
+	BIG_SLOW,  ## orbes grandes e lentos (count, spread_degrees, aimed): forçam desvio
+	LASER,  ## raio vertical (laser_width) por laser_seconds, na nave (aimed) ou embaixo do chefe
+	CURTAIN,  ## fileira de count tiros caindo do topo, com uma brecha de gap_width
+	RAIN,  ## count tiros caindo do topo em x sorteados (marcados no aviso)
+	MINES,  ## leque de tiros que freiam (mine_drag), param e explodem em anel (split_*)
 }
 
 @export var pattern: Pattern = Pattern.FAN
@@ -22,6 +27,10 @@ enum Pattern {
 @export var bullet_radius: float = 14.0
 @export var bullet_color: Color = Color(1.0, 0.35, 0.75)
 @export var wave: WaveData  # SUMMON: onda chamada (time_seconds é ignorado)
+@export var laser_width: float = 130.0  # LASER
+@export var laser_seconds: float = 0.6  # LASER: quanto tempo o raio fica ligado
+@export var gap_width: float = 300.0  # CURTAIN: largura da brecha
+@export var mine_drag: float = 2.2  # MINES: frenagem (1/s)
 
 @export_group("Tiros especiais")
 @export var split_time: float = 0.0  # > 0: os tiros se dividem após esse tempo

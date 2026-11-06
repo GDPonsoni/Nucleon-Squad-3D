@@ -69,13 +69,31 @@ interval = 9.0
 first_delay = 2.0
 wave = SubResource("Wave_p1_a1")
 
+[sub_resource type="Resource" id="Attack_new_4"]
+script = ExtResource("3_attack")
+pattern = 7
+count = 4
+spread_degrees = 60.0
+aimed = true
+interval = 5.88
+first_delay = 2.0
+bullet_speed = 720.0
+bullet_radius = 20.0
+mine_drag = 2.2
+split_time = 1.4
+split_count = 8
+split_speed = 300.0
+split_radius = 11.0
+bullet_color = Color(1, 0.55, 0.2, 1)
+telegraph_seconds = 0.7
+
 [sub_resource type="Resource" id="Phase_1"]
 script = ExtResource("2_phase")
 hp_ratio = 0.5
 sway_speed_scale = 1.0
 movement = 1
 chase_speed = 240.0
-attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1")])
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_new_4")])
 
 [resource]
 script = ExtResource("1_script")

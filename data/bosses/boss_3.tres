@@ -99,13 +99,25 @@ bullet_speed = 520.0
 bullet_radius = 14.0
 bullet_color = Color(1, 0.35, 0.75, 1)
 
+[sub_resource type="Resource" id="Attack_new_7"]
+script = ExtResource("3_attack")
+pattern = 5
+count = 12
+interval = 6.72
+first_delay = 2.2
+bullet_speed = 300.0
+bullet_radius = 18.0
+gap_width = 400.0
+bullet_color = Color(0.6, 0.8, 1, 1)
+telegraph_seconds = 0.9
+
 [sub_resource type="Resource" id="Phase_1"]
 script = ExtResource("2_phase")
 movement = 1
 chase_speed = 240.0
 hp_ratio = 0.6
 sway_speed_scale = 1.2
-attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_p1_a2")])
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_p1_a2"), SubResource("Attack_new_7")])
 
 [sub_resource type="Resource" id="Attack_p2_a0"]
 script = ExtResource("3_attack")
@@ -137,13 +149,35 @@ bullet_speed = 300.0
 bullet_radius = 14.0
 bullet_color = Color(1, 0.35, 0.75, 1)
 
+[sub_resource type="Resource" id="Attack_new_8"]
+script = ExtResource("3_attack")
+pattern = 4
+aimed = true
+interval = 5.60
+first_delay = 2.0
+laser_width = 110.0
+laser_seconds = 0.6
+bullet_color = Color(1, 0.3, 0.3, 1)
+telegraph_seconds = 0.9
+
+[sub_resource type="Resource" id="Attack_new_9"]
+script = ExtResource("3_attack")
+pattern = 6
+count = 7
+interval = 5.60
+first_delay = 3.0
+bullet_speed = 430.0
+bullet_radius = 16.0
+bullet_color = Color(1, 0.75, 0.3, 1)
+telegraph_seconds = 0.8
+
 [sub_resource type="Resource" id="Phase_2"]
 script = ExtResource("2_phase")
 movement = 2
 chase_speed = 200.0
 hp_ratio = 0.3
 sway_speed_scale = 1.6
-attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p2_a0"), SubResource("Attack_p2_a1")])
+attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p2_a0"), SubResource("Attack_p2_a1"), SubResource("Attack_new_8"), SubResource("Attack_new_9")])
 
 [resource]
 script = ExtResource("1_script")

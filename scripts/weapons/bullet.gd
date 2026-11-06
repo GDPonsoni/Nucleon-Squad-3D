@@ -26,6 +26,8 @@ var homing_time_left: float = -1.0
 var bounce_left: int = 0
 var wall_bounce_left: int = 0
 var bounce_range: float = 0.0
+## Frenagem (1/s): minas que param no lugar (0 = sem).
+var drag: float = 0.0
 
 # Divisão: ao fim do tempo, vira vários tiros em anel (tiros que se multiplicam)
 var _split_left: float = 0.0
@@ -56,6 +58,7 @@ func activate(pos: Vector2, vel: Vector2, dmg: float, size: Vector2, color: Colo
 	bounce_left = 0
 	wall_bounce_left = 0
 	bounce_range = 0.0
+	drag = 0.0
 	_split_count = 0
 	_pierced.clear()
 	_size = size
@@ -141,6 +144,8 @@ func _process(delta: float) -> void:
 			var angle: float = rotate_toward(velocity.angle(), (target.position - position).angle(), homing_turn_rate * delta)
 			velocity = Vector2.from_angle(angle) * velocity.length()
 			rotation = angle + PI * 0.5
+	if drag > 0.0:
+		velocity *= exp(-drag * delta)
 	position += velocity * delta
 	if wall_bounce_left > 0:
 		_bounce_on_walls()

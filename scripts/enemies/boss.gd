@@ -18,6 +18,7 @@ var _attack_tele_left := PackedFloat32Array()
 var _attack_tele_total := PackedFloat32Array()
 var _locked: Array[Dictionary] = []  # {dirs: PackedVector2Array, ...} do disparo avisado
 var _streamed := PackedByteArray()  # fluxo contínuo (intervalo menor que o aviso) já avisado
+var _lasers: Array[Dictionary] = []  # {x, width, left, total, color} ligados agora
 var _clock: float = 0.0
 var _entering: bool = true
 var _center_x: float = 0.0
@@ -98,6 +99,7 @@ func _process(delta: float) -> void:
 		return
 
 	_update_phase()
+	_update_lasers(delta)
 	var phase: BossPhase = boss_data.phases[_phase]
 	_move(phase, delta)
 	for i in phase.attacks.size():
@@ -178,14 +180,39 @@ func _start_attack_telegraph(index: int, attack: BossAttack) -> void:
 	var seconds: float = maxf(_timers[index], 0.0)
 	_attack_tele_total[index] = maxf(seconds, 0.01)
 	_attack_tele_left[index] = seconds
-	_locked[index] = {"dirs": _boss_attack_dirs(index, attack)}
+	_locked[index] = _lock(index, attack)
 	Audio.play(&"boss_warning", Params.telegraph_sound_db - 6.0, 1.3)
+
+
+## Dados travados no aviso: direções, x do laser, brecha da cortina, pontos da chuva.
+func _lock(index: int, attack: BossAttack) -> Dictionary:
+	var rect: Rect2 = get_viewport_rect()
+	match attack.pattern:
+		BossAttack.Pattern.LASER:
+			var player: Player = context.player
+			var x: float = player.position.x if attack.aimed and player != null else position.x
+			return {"x": clampf(x, rect.position.x + attack.laser_width * 0.5, rect.end.x - attack.laser_width * 0.5)}
+		BossAttack.Pattern.CURTAIN:
+			var margin: float = attack.gap_width * 0.5 + 40.0
+			var gap: float = randf_range(rect.position.x + margin, rect.end.x - margin)
+			var xs := PackedFloat32Array()
+			for i in attack.count:
+				var x: float = rect.position.x + (i + 0.5) * rect.size.x / attack.count
+				if absf(x - gap) > attack.gap_width * 0.5:
+					xs.append(x)
+			return {"gap": gap, "xs": xs}
+		BossAttack.Pattern.RAIN:
+			var xs := PackedFloat32Array()
+			for i in attack.count:
+				xs.append(randf_range(rect.position.x + 60.0, rect.end.x - 60.0))
+			return {"xs": xs}
+	return {"dirs": _boss_attack_dirs(index, attack)}
 
 
 func _boss_attack_dirs(index: int, attack: BossAttack) -> PackedVector2Array:
 	var dirs := PackedVector2Array()
 	match attack.pattern:
-		BossAttack.Pattern.FAN:
+		BossAttack.Pattern.FAN, BossAttack.Pattern.BIG_SLOW, BossAttack.Pattern.MINES:
 			var aim: float = PI * 0.5
 			var player: Player = context.player
 			if attack.aimed and player != null:
@@ -201,11 +228,26 @@ func _boss_attack_dirs(index: int, attack: BossAttack) -> PackedVector2Array:
 
 
 func _attack(index: int, attack: BossAttack) -> void:
+	var locked: Dictionary = _locked[index]
+	if not (locked.has("dirs") or locked.has("x") or locked.has("xs")):
+		locked = _lock(index, attack)
+	var top: float = get_viewport_rect().position.y + 10.0
 	match attack.pattern:
-		BossAttack.Pattern.FAN:
-			var dirs: PackedVector2Array = _locked[index].get("dirs", _boss_attack_dirs(index, attack))
-			for dir in dirs:
+		BossAttack.Pattern.FAN, BossAttack.Pattern.BIG_SLOW:
+			for dir in locked["dirs"]:
 				_shoot_bullet(dir, attack)
+		BossAttack.Pattern.MINES:
+			for dir in locked["dirs"]:
+				var mine: Bullet = _shoot_bullet(dir, attack)
+				if mine != null:
+					mine.drag = attack.mine_drag
+		BossAttack.Pattern.LASER:
+			_lasers.append({"x": locked["x"], "width": attack.laser_width, "left": attack.laser_seconds,
+				"total": attack.laser_seconds, "color": attack.bullet_color})
+			Audio.play(&"shot_beam", 2.0, 0.6)
+		BossAttack.Pattern.CURTAIN, BossAttack.Pattern.RAIN:
+			for x in locked["xs"]:
+				_spawn_bullet(Vector2(x, top), Vector2.DOWN, attack)
 		BossAttack.Pattern.RING:
 			for dir in _boss_attack_dirs(index, attack):
 				_shoot_bullet(dir, attack)
@@ -215,17 +257,49 @@ func _attack(index: int, attack: BossAttack) -> void:
 				spawn_wave.call(attack.wave)
 
 
-func _shoot_bullet(direction: Vector2, attack: BossAttack) -> void:
+func _shoot_bullet(direction: Vector2, attack: BossAttack) -> Bullet:
+	return _spawn_bullet(position + direction * radius * 0.8, direction, attack)
+
+
+func _spawn_bullet(origin: Vector2, direction: Vector2, attack: BossAttack) -> Bullet:
 	var bullet := bullets.acquire() as Bullet
 	if bullet == null:
-		return
+		return null
 	var size := Vector2.ONE * attack.bullet_radius * 2.0
-	bullet.activate(position + direction * radius * 0.8, direction * attack.bullet_speed,
-		1, size, attack.bullet_color, Bullet.Shape.CIRCLE)
+	bullet.activate(origin, direction * attack.bullet_speed, 1, size, attack.bullet_color, Bullet.Shape.CIRCLE)
 	if attack.split_time > 0.0:
 		bullet.add_split(attack.split_time, attack.split_count, attack.split_speed, attack.split_radius, bullets)
 	if attack.homing_time > 0.0:
 		bullet.add_limited_homing(attack.homing_time, attack.homing_turn_degrees, _find_player)
+	return bullet
+
+
+func _update_lasers(delta: float) -> void:
+	for i in range(_lasers.size() - 1, -1, -1):
+		_lasers[i]["left"] -= delta
+		if _lasers[i]["left"] <= 0.0:
+			_lasers.remove_at(i)
+
+
+## Perigos que não são tiros (laser ligado): o ponto (com raio r) está dentro de algum?
+func hazard_hits(point: Vector2, r: float) -> bool:
+	for laser in _lasers:
+		if point.y > position.y and absf(point.x - float(laser["x"])) <= float(laser["width"]) * 0.5 + r:
+			return true
+	return false
+
+
+## Faixas de laser ligadas ou avisadas (x, largura), para o piloto automático do simulador.
+func laser_bands() -> Array[Vector2]:
+	var bands: Array[Vector2] = []
+	for laser in _lasers:
+		bands.append(Vector2(laser["x"], laser["width"]))
+	if _phase >= 0:
+		var attacks: Array[BossAttack] = boss_data.phases[_phase].attacks
+		for i in mini(attacks.size(), _locked.size()):
+			if attacks[i].pattern == BossAttack.Pattern.LASER and _locked[i].has("x"):
+				bands.append(Vector2(_locked[i]["x"], attacks[i].laser_width))
+	return bands
 
 
 func _draw() -> void:
@@ -242,7 +316,19 @@ func _draw() -> void:
 	# Núcleo do chefe pulsa mais rápido nas fases finais
 	var pulse: float = 0.5 + 0.5 * sin(_clock * (4.0 + _phase * 3.0))
 	draw_circle(Vector2.ZERO, radius * 0.22, color.lightened(0.3 + pulse * 0.4))
+	_draw_lasers()
 	_draw_boss_telegraphs()
+
+
+func _draw_lasers() -> void:
+	var bottom: float = to_local(Vector2(0.0, get_viewport_rect().end.y)).y
+	for laser in _lasers:
+		var x: float = to_local(Vector2(laser["x"], 0.0)).x
+		var w: float = laser["width"]
+		var fade: float = clampf(float(laser["left"]) / 0.12, 0.0, 1.0)
+		var pulse: float = 0.85 + 0.15 * sin(_clock * 40.0)
+		draw_rect(Rect2(x - w * 0.5, 0.0, w, bottom), Color(laser["color"], 0.45 * fade))
+		draw_rect(Rect2(x - w * 0.22 * pulse, 0.0, w * 0.44 * pulse, bottom), Color(Color(laser["color"]).lightened(0.6), 0.95 * fade))
 
 
 func _draw_boss_telegraphs() -> void:
@@ -260,6 +346,22 @@ func _draw_boss_telegraphs() -> void:
 				Telegraph.draw_ring(self, Vector2.ZERO, radius, attack.bullet_color, t)
 			BossAttack.Pattern.SUMMON:
 				Telegraph.draw_ring(self, Vector2.ZERO, radius * 1.2, boss_data.color.lightened(0.4), t)
+			BossAttack.Pattern.LASER:
+				if _locked[i].has("x"):
+					var top_local: float = to_local(Vector2(0.0, get_viewport_rect().position.y)).y
+					var bottom_local: float = to_local(Vector2(0.0, get_viewport_rect().end.y)).y
+					Telegraph.draw_band(self, to_local(Vector2(_locked[i]["x"], 0.0)).x, attack.laser_width, maxf(top_local, 0.0), bottom_local, attack.bullet_color, t)
+			BossAttack.Pattern.CURTAIN, BossAttack.Pattern.RAIN:
+				var y: float = to_local(Vector2(0.0, get_viewport_rect().position.y + 60.0)).y
+				var points := PackedVector2Array()
+				for x in _locked[i].get("xs", PackedFloat32Array()):
+					points.append(Vector2(to_local(Vector2(x, 0.0)).x, y))
+				Telegraph.draw_markers(self, points, attack.bullet_radius * 1.4, attack.bullet_color, t)
+				if _locked[i].has("gap"):
+					# Brecha da cortina: faixa clara onde dá para passar
+					var gx: float = to_local(Vector2(_locked[i]["gap"], 0.0)).x
+					var bottom_local: float = to_local(Vector2(0.0, get_viewport_rect().end.y)).y
+					draw_rect(Rect2(gx - attack.gap_width * 0.5, y, attack.gap_width, bottom_local - y), Color(Params.telegraph_gap_color, 0.12 + 0.18 * t))
 			_:
 				if attack.bullet_radius >= Params.telegraph_big_radius and not dirs.is_empty():
 					Telegraph.draw_orb(self, dirs[0] * radius, attack.bullet_radius, attack.bullet_color, t)
