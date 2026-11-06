@@ -107,6 +107,16 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 **Inimigos (9):** Drone, Mirador, Kamikaze, Tanque, Atirador, Semeador, Caçador, **Pulsar** (anéis finos em espiral) e **Fissor** (parte-se em 3 ao morrer). Ondas em formação: LINE, V, COLUMN, SIDE, DIAGONAL, GRID, PINCER, CIRCLE, com balanço, curva e escala de velocidade por onda (`WaveData`).
 
+**Counters, telegrafia, rochas e momentos de especial (05/11/2026, branch `feat/counters-telegrafia`):**
+- **Telegrafia:** todo ataque tem aviso (`EnemyData.telegraph_seconds`, `BossAttack.telegraph_seconds`; desenhos em `scripts/enemies/telegraph.gd`). A mira trava no começo do aviso. `validate_project` e `run_tests` acusam ataque sem aviso.
+- **Fraquezas por arma:** `EnemyData.weapon_multipliers` (`WeaponData.Kind` -> multiplicador). O acerto pisca dourado (fraco contra a arma) ou cinza (resistente). Especiais ignoram multiplicadores. `take_damage(amount, source, from)`: `source` = arma ou `Enemy.SOURCE_SPECIAL`; `from` = de onde veio (escudo frontal).
+- **Inimigos counter:** Faísca (`spark`, atravessa rápida pela lateral), Enxame (`swarm`, formação `SWARM`), Colosso (`colossus`, regenera sem dano contínuo, orbe lento), Escudeiro (`shielder`, escudo frontal que encara a nave, tem vida e volta), Serpente (`serpent`, fila ondulante). Entram nos capítulos 2, 3 e 4.
+- **Matriz inimigo × arma:** `$G --headless --path . --fixed-fps 60 -s res://scripts/tools/counter_matrix.gd -- [--levels 1,3,5] [--weapon beam]`. Mostra % e tempo e um índice relativo (✔ > 1,3, ✖ < 0,7) e avisa se alguma arma ficou sem ✔ ou ✖.
+- **Rochas:** `rock_large/medium/small` (`look = ROCK`, `targetable = false`): bloqueiam tiros, machucam ao encostar e se dividem (não ao bater na nave). `StageData.rocks` e `rock_interval_*`. Esparsas a partir da 1-7; a fase 7 de cada capítulo é um campo de meteoros.
+- **Padrões de chefe novos:** `BIG_SLOW`, `LASER` (perigo fora dos tiros: `Boss.hazard_hits`), `CURTAIN` (brecha verde), `RAIN` (marcadores), `MINES` (`Bullet.drag` + divisão). Em camadas nas fases dos 10 chefes.
+- **Momentos de especial:** `WaveData.special_moment` (clímax da fase 8 de cada capítulo) e `BossPhase.special_moment` (última fase dos chefes de capítulo). Alvos blindados levam 10% do dano normal (`special_moment_armor`) até um especial; ao começar, a carga do especial enche, aparece "USE O ESPECIAL!" e o botão pulsa.
+- **Dificuldade (piloto automático, que não troca de nave nem lê avisos):** subiu, sobretudo nos capítulos 3 a 5 (cap. 3 ≈ 3,3 hits/min, cap. 5 ≈ 4,5) e nos chefes (≈ 1,4×). Falta confirmar no aparelho.
+
 **Chefes:**
 
 | Fase | Chefe |
@@ -210,7 +220,6 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - músicas definitivas (as atuais são sintetizadas)
 - `bomb_global.wav` não usado (a bomba global do GDD ainda não existe)
 - especial global carregável por tempo: engavetado pelo Gabriel (05/11/2026)
-- meteoros e obstáculos: o Gabriel vai pedir num próximo prompt
 - anúncio real (SDK)
 - arte final (hoje tudo são placeholders desenhados por código)
 - pacote definitivo (`com.example` ainda)
