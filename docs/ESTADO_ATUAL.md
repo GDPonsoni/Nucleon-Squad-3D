@@ -149,7 +149,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Sons | `scripts/core/audio.gd`, `assets/audio/sfx/` |
 | Nave auxiliar | `scripts/player/companion.gd` |
 | Barra de troca e toque curto | `body_switcher.gd`, `touch_input.gd` |
-| Seletor de fases (mapa do planeta, cabeçalho fixo) | `stage_select.gd`, `stage_map.gd`, `stage_node.gd` |
+| Seletor de fases (mapa do planeta, cabeçalho fixo, estrelas) | `stage_select.gd`, `stage_map.gd`, `stage_node.gd`, `star_row.gd`. Estrelas: `StageData.star_scores` (2 e 3 estrelas, geradas por `campaign_builder` em % da pontuação possível: `STAR2_RATIO`, `STAR3_RATIO`); 1 estrela = concluir. Tocar numa fase concluída abre a ficha |
 | Pausa e configurações (ícones, quase sem texto) | `pause_menu.gd`, `settings_panel.gd`, `icon_button.gd` (`IconButton`) |
 | Paginação lateral (página acompanha o dedo, snap por distância/velocidade) | `scripts/ui/paged_view.gd` (`PagedView`), params `pager_*`; usada no seletor de fases |
 | Fim de fase (pausa, limpeza, nave sai, música `clear.wav`) | `Game._play_clear_sequence`, params `clear_*`, `Player.begin_scripted` |

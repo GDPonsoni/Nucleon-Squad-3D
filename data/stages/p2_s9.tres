@@ -179,3 +179,4 @@ spawn_margin_x = 90.0
 enemy_hp_scale = 1.45
 enemy_fire_scale = 1.32
 rock_weights = PackedFloat32Array()
+star_scores = PackedInt32Array(1800, 2550)

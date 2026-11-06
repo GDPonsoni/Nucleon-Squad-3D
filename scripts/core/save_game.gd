@@ -67,6 +67,19 @@ func best_score(stage_id: StringName) -> int:
 	return int(best_scores.get(String(stage_id), 0))
 
 
+## Estrelas ganhas na fase (0 = não concluída), pelo melhor recorde.
+func stage_stars(stage: StageData) -> int:
+	return stage.stars_for(best_score(stage.id)) if is_completed(stage.id) else 0
+
+
+## Estrelas ganhas e possíveis num capítulo: [ganhas, total].
+func chapter_stars(planet: PlanetData) -> Vector2i:
+	var earned: int = 0
+	for stage in planet.stages:
+		earned += stage_stars(stage)
+	return Vector2i(earned, planet.stages.size() * 3)
+
+
 ## Marca a fase como concluída (libera a próxima do capítulo) e guarda o recorde.
 ## Retorna true se for recorde novo.
 func complete_stage(stage_id: StringName, score: int) -> bool:

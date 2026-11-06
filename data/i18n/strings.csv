@@ -194,3 +194,5 @@ PAUSE_CAPTION_EXIT,Exit,Sair,Salir
 SETTINGS_SHORT_VIBRATION,Vibration,Vibração,Vibración
 SETTINGS_SHORT_EFFECTS,Effects,Efeitos,Efectos
 SETTINGS_SHORT_STATS,FPS,FPS,FPS
+STAGE_NEXT_STAR,Next star at %d points,Próxima estrela com %d pontos,Próxima estrella con %d puntos
+PAUSE_CAPTION_RESUME,Resume,Continuar,Continuar

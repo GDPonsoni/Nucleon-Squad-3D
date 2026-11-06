@@ -95,6 +95,19 @@ func test_save_round_trip() -> void:
 	copy.free()
 
 
+func test_stage_stars() -> void:
+	var stage := StageData.new()
+	stage.id = &"t"
+	stage.star_scores = PackedInt32Array([500, 900])
+	check(stage.stars_for(0) == 1 and stage.stars_for(499) == 1, "1 estrela ao concluir")
+	check(stage.stars_for(500) == 2 and stage.stars_for(899) == 2, "2 estrelas")
+	check(stage.stars_for(900) == 3 and stage.stars_for(99999) == 3, "3 estrelas")
+	check(stage.next_star_score(1) == 500 and stage.next_star_score(2) == 900 and stage.next_star_score(3) == 0, "meta da próxima estrela")
+	for planet: PlanetData in Session.campaign.planets:
+		for s: StageData in planet.stages:
+			check(s.star_scores.size() == 2 and s.star_scores[0] < s.star_scores[1] and s.star_scores[0] > 0, "metas de %s" % s.id)
+
+
 func test_debug_progress_rewind() -> void:
 	var save := _fresh_save()
 	var total: int = save.stage_order().size()

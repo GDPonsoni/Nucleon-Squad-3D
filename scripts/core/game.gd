@@ -251,7 +251,7 @@ func _finish_stage_clear() -> void:
 	var rewards := PackedStringArray()
 	if not chapter_cleared_before and SaveGame.is_chapter_cleared(Session.planet_index):
 		rewards = _chapter_rewards(Session.planet_index)
-	var summary := {"quarks_kills": kills_quarks, "quarks_bonus": bonus, "rewards": rewards}
+	var summary := {"quarks_kills": kills_quarks, "quarks_bonus": bonus, "rewards": rewards, "stars": stage.stars_for(state.score)}
 	await _play_clear_sequence()
 	results_menu.show_stage_clear(state, spawner.elapsed(), record, summary)
 

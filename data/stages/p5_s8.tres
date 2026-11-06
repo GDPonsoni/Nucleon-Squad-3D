@@ -361,3 +361,4 @@ rocks = Array[ExtResource("1_vq0tq")]([ExtResource("6_kysxk"), ExtResource("7_m0
 rock_weights = PackedFloat32Array(0.4, 1, 1)
 rock_interval_min = 9.0
 rock_interval_max = 14.0
+star_scores = PackedInt32Array(4220, 5970)

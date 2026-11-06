@@ -81,6 +81,12 @@ func _ready() -> void:
 		_make_close_button()
 	if not title_key.is_empty():
 		_frame.add_child(_make_title())
+	elif closable:
+		# Sem título: reserva a faixa do X para ele não cobrir o conteúdo
+		var header := Control.new()
+		header.name = "CloseHeader"
+		header.custom_minimum_size.y = Params.dialog_close_size * 0.55
+		_frame.add_child(header)
 
 	_scroll = ScrollContainer.new()
 	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED

@@ -140,3 +140,4 @@ rocks = Array[ExtResource("2_enemy_script")]([ExtResource("5_hcaxd"), ExtResourc
 rock_weights = PackedFloat32Array(0.4, 1, 1)
 rock_interval_min = 9.0
 rock_interval_max = 14.0
+star_scores = PackedInt32Array(1090, 1540)

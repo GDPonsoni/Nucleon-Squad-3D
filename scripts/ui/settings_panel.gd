@@ -9,7 +9,7 @@ signal back_pressed
 ## Mostra as ferramentas de teste de progresso (só em build de debug). Ligado pela tela de
 ## configurações do menu; a pausa não mostra.
 var debug_tools: bool = false
-var _in_language_list: bool = false  # em qualquer subtela (idioma ou progresso de teste)
+var _in_language_list: bool = false  # na subtela de progresso de teste (debug)
 var _confirm_key: String = ""  # ação destrutiva esperando o segundo toque
 
 
@@ -124,45 +124,47 @@ func _haptic_level_button() -> Button:
 	return button
 
 
-## Seletor curto de idioma: globo + nome atual; abre a lista.
+## Seletor de idioma: globo + nome atual. Tocar abre uma lista logo abaixo (sem trocar de tela);
+## escolher aplica o idioma e fecha a lista.
 func _add_language() -> void:
+	var holder := VBoxContainer.new()
+	holder.add_theme_constant_override("separation", Params.settings_row_spacing)
+	add_child(holder)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 20)
-	add_child(row)
+	holder.add_child(row)
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", Params.settings_row_spacing)
+	list.visible = false
+	holder.add_child(list)
+	var toggle := func() -> void:
+		list.visible = not list.visible
+		Audio.play(&"ui_click")
 	var globe := IconButton.new().setup(IconButton.Icon.GLOBE, Params.settings_icon_size)
-	globe.pressed.connect(_show_language_list)
+	globe.pressed.connect(toggle)
 	row.add_child(globe)
+	var current: String = String(SaveGame.setting("language"))
 	var button := UiFactory.make_button("")
 	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	var current: String = String(SaveGame.setting("language"))
 	button.text = tr("LANGUAGE_" + current.to_upper())
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	button.custom_minimum_size = Vector2(200.0, Params.settings_icon_size)
 	button.add_theme_font_size_override("font_size", Params.settings_label_font_size)
-	button.pressed.connect(_show_language_list)
+	button.pressed.connect(toggle)
 	row.add_child(button)
-
-
-## Lista de idiomas no lugar do painel: tocar num aplica e volta para as configurações.
-func _show_language_list() -> void:
-	_in_language_list = true
-	for child in get_children():
-		child.queue_free()
-	add_child(UiFactory.make_title("SETTINGS_LANGUAGE"))
-	var hint := UiFactory.make_subtitle("SETTINGS_PICK_LANGUAGE")
-	add_child(hint)
-	var current: String = String(SaveGame.setting("language"))
 	for language in Params.languages:
 		var option := UiFactory.make_button("")
 		option.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		option.text = tr("LANGUAGE_" + language.to_upper())
+		option.custom_minimum_size = Vector2(200.0, Params.settings_compact_button_height)
+		option.add_theme_font_size_override("font_size", Params.settings_label_font_size)
 		if language == current:
 			option.theme_type_variation = &"PrimaryButton"
 		option.pressed.connect(func() -> void:
 			SaveGame.set_setting("language", language)
-			# set_setting aplica o idioma; refaz os textos no idioma novo
+			# O idioma novo refaz todos os textos
 			_build())
-		add_child(option)
+		list.add_child(option)
 
 
 ## Teste (build de debug): desfazer, recuar e avançar o progresso para validar o que muda

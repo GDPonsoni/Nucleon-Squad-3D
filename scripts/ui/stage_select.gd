@@ -12,6 +12,7 @@ var _header_chapter: int = -1
 var _number_label: Label
 var _name_label: Label
 var _progress_label: Label
+var _stars_label: Label
 var _reward_label: Label
 var _dots: Control
 
@@ -64,9 +65,17 @@ func _build_header() -> Control:
 	_name_label.mouse_filter = Control.MOUSE_FILTER_STOP
 	_name_label.gui_input.connect(_on_title_input)
 	column.add_child(_name_label)
+	var progress_row := HBoxContainer.new()
+	progress_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	progress_row.add_theme_constant_override("separation", 16)
 	_progress_label = UiFactory.make_subtitle("")
 	_progress_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	column.add_child(_progress_label)
+	progress_row.add_child(_progress_label)
+	progress_row.add_child(StarRow.new().setup(1, Params.stage_header_star_size, 1))
+	_stars_label = UiFactory.make_subtitle("")
+	_stars_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	progress_row.add_child(_stars_label)
+	column.add_child(progress_row)
 	_dots = _chapter_dots()
 	column.add_child(_dots)
 	_reward_label = UiFactory.make_subtitle("")
@@ -91,6 +100,8 @@ func _refresh_header(chapter: int) -> void:
 		if SaveGame.is_completed(stage.id):
 			done += 1
 	_progress_label.text = "%d/%d" % [done, planet.stages.size()]
+	var chapter_stars: Vector2i = SaveGame.chapter_stars(planet)
+	_stars_label.text = "%d/%d" % [chapter_stars.x, chapter_stars.y]
 	var reward: String = _reward_text(chapter)
 	var cleared: bool = SaveGame.is_chapter_cleared(chapter)
 	_reward_label.text = "" if reward.is_empty() or cleared else tr("STAGE_REWARD_SHORT") % reward
@@ -104,6 +115,7 @@ func _build_page(chapter: int) -> Control:
 	var map := StageMap.new()
 	map.setup(chapter)
 	map.stage_chosen.connect(_on_stage_chosen)
+	map.stage_info_requested.connect(_open_stage_sheet)
 	return map
 
 
@@ -147,6 +159,38 @@ func _on_stage_chosen(planet_index: int, stage_index: int) -> void:
 	Session.browsed_chapter = planet_index
 	Audio.play(&"ui_confirm")
 	SceneTransition.go_to(ScenePaths.GAME)
+
+
+## Ficha de uma fase concluída: nome, estrelas, recorde, meta da próxima estrela e Jogar.
+func _open_stage_sheet(planet_index: int, stage_index: int) -> void:
+	var stage: StageData = Session.campaign.planets[planet_index].stages[stage_index]
+	var stars: int = SaveGame.stage_stars(stage)
+	var dialog := Dialog.open(self, "", true)
+	var body: VBoxContainer = dialog.body
+	var title := UiFactory.make_title("")
+	title.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	title.text = Session.stage_label(planet_index, stage_index)
+	body.add_child(title)
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_child(StarRow.new().setup(stars, Params.stage_sheet_star_size))
+	body.add_child(row)
+	var best := UiFactory.make_subtitle("")
+	best.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	best.text = tr("STAGE_BEST") % SaveGame.best_score(stage.id)
+	body.add_child(best)
+	var next_score: int = stage.next_star_score(stars)
+	if next_score > 0:
+		var goal := UiFactory.make_subtitle("")
+		goal.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		goal.text = tr("STAGE_NEXT_STAR") % next_score
+		goal.add_theme_color_override("font_color", Params.powerup_color)
+		body.add_child(goal)
+	var play := UiFactory.make_primary_button("MENU_PLAY")
+	play.pressed.connect(func() -> void:
+		dialog.close()
+		_on_stage_chosen(planet_index, stage_index))
+	body.add_child(play)
 
 
 func _on_title_input(event: InputEvent) -> void:

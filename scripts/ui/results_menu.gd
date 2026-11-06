@@ -46,6 +46,11 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, s
 	var stage_name := UiFactory.make_subtitle("")
 	stage_name.text = "%s  %s" % [tr(Session.planet().name_key), Session.stage_label(Session.planet_index, Session.stage_index)]
 	column.add_child(stage_name)
+	if summary.has("stars"):
+		var stars_row := HBoxContainer.new()
+		stars_row.alignment = BoxContainer.ALIGNMENT_CENTER
+		stars_row.add_child(StarRow.new().setup(int(summary["stars"]), Params.stage_sheet_star_size))
+		column.add_child(stars_row)
 
 	var stats := GridContainer.new()
 	stats.columns = 2

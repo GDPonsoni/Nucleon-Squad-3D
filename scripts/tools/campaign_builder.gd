@@ -31,6 +31,8 @@ const HP_SCALE: PackedFloat32Array = [1.4, 1.45, 1.55, 1.55, 1.65]  # vida dos i
 const FIRE_SCALE: PackedFloat32Array = [1.35, 1.32, 1.32, 1.3, 1.32]  # cadência de tiro por capítulo
 # Reforço de dificuldade por capítulo (os primeiros estavam fáceis demais)
 const DIFFICULTY_BOOST: PackedFloat32Array = [0.8, 0.5, 0.35, 0.2, 0.0]
+const STAR2_RATIO: float = 0.65  # 2 estrelas: fração da pontuação possível da fase
+const STAR3_RATIO: float = 0.92  # 3 estrelas
 const METEOR_STAGE: int = 6  # índice da fase 7: campo de meteoros em todo capítulo
 const SPECIAL_STAGE: int = 7  # índice da fase 8: o clímax vem blindado (momento de especial)
 const METEOR_WAVE_GAP: float = 1.45  # no campo de meteoros, ondas mais espaçadas
@@ -112,7 +114,27 @@ func _build_stage(c: int, s: int) -> StageData:
 	_set_filler(stage, c, s, d)
 	_set_rocks(stage, c, s)
 	stage.waves = _compose(c, s, d, stage.duration_seconds)
+	_set_star_scores(stage)
 	return stage
+
+
+## Metas de 2 e 3 estrelas: frações da pontuação "possível" (ondas + preenchimento + chefe).
+func _set_star_scores(stage: StageData) -> void:
+	var potential: float = 0.0
+	for wave in stage.waves:
+		potential += wave.count * wave.enemy.score
+	var total_weight: float = 0.0
+	var average: float = 0.0
+	for i in stage.enemies.size():
+		total_weight += stage.spawn_weights[i]
+		average += stage.spawn_weights[i] * stage.enemies[i].score
+	if total_weight > 0.0:
+		var interval: float = (stage.spawn_interval_min + stage.spawn_interval_max) * 0.5
+		potential += stage.duration_seconds / interval * average / total_weight
+	if stage.boss != null:
+		potential += stage.boss.score
+	stage.star_scores = PackedInt32Array([
+		roundi(potential * STAR2_RATIO / 10.0) * 10, roundi(potential * STAR3_RATIO / 10.0) * 10])
 
 
 func _log_stage(stage: StageData, chosen: Array[Dictionary]) -> void:

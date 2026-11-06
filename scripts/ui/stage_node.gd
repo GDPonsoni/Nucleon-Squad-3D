@@ -11,6 +11,7 @@ var label: String = ""
 var kind: Kind = Kind.NORMAL
 var unlocked: bool = false
 var completed: bool = false
+var stars: int = 0  # 0 a 3, só nas concluídas
 var is_next: bool = false  # a fase sugerida (primeira não concluída)
 var _clock: float = 0.0
 
@@ -54,7 +55,8 @@ func _draw() -> void:
 		_draw_lock(c, r * 0.5)
 	elif completed:
 		draw_circle(c, r, Color(color, 0.9))
-		_draw_check(c, r * 0.5)
+		_draw_label(c, r, Color(0.04, 0.05, 0.09))
+		_draw_stars(c, r)
 	else:
 		draw_circle(c, r, dark)
 		draw_arc(c, r, 0.0, TAU, 48, color, 6.0)
@@ -65,16 +67,18 @@ func _draw() -> void:
 	_draw_kind(c, r)
 
 
-func _draw_label(c: Vector2, r: float) -> void:
+func _draw_label(c: Vector2, r: float, ink: Color = Params.ui_text_color) -> void:
 	var font: Font = get_theme_default_font()
 	var font_size: int = int(r * (0.62 if kind == Kind.NORMAL else 0.55))
 	var width: float = font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	draw_string(font, Vector2(c.x - width * 0.5, c.y + font_size * 0.35), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Params.ui_text_color)
+	draw_string(font, Vector2(c.x - width * 0.5, c.y + font_size * 0.35), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, ink)
 
 
-func _draw_check(c: Vector2, s: float) -> void:
-	draw_polyline(PackedVector2Array([c + Vector2(-s * 0.7, 0.0), c + Vector2(-s * 0.15, s * 0.55), c + Vector2(s * 0.8, -s * 0.5)]),
-		Color(0.04, 0.05, 0.09), 8.0)
+## Três estrelas pequenas embaixo do nó concluído (as ganhas, cheias).
+func _draw_stars(c: Vector2, r: float) -> void:
+	var radius: float = r * 0.2
+	for i in 3:
+		StarRow.draw_star(self, c + Vector2((i - 1) * radius * 2.4, r + radius * 1.1 - (0.0 if i == 1 else radius * 0.5) + radius * 0.4), radius, i < stars)
 
 
 func _draw_lock(c: Vector2, s: float) -> void:

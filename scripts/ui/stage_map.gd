@@ -3,7 +3,10 @@ extends Control
 ## Página de um planeta no seletor: arte ao fundo e um caminho sinuoso de nós (as fases),
 ## da primeira, embaixo, ao chefe, no alto. A parte do caminho já percorrida acende.
 
+## Toque numa fase liberada ainda não concluída: começa direto.
 signal stage_chosen(planet_index: int, stage_index: int)
+## Toque numa fase concluída: abre a ficha (estrelas, recorde, jogar).
+signal stage_info_requested(planet_index: int, stage_index: int)
 
 var planet_index: int = 0
 var _planet: PlanetData
@@ -32,6 +35,7 @@ func setup(index: int) -> void:
 		node.unlocked = SaveGame.is_unlocked(index, s)
 		node.completed = SaveGame.is_completed(stage.id)
 		node.is_next = s == next_index
+		node.stars = SaveGame.stage_stars(stage)
 		node.kind = StageNode.Kind.NORMAL if stage.boss == null else (StageNode.Kind.BOSS if s == last else StageNode.Kind.MIDBOSS)
 		node.pressed.connect(_on_node_pressed.bind(s, node))
 		add_child(node)
@@ -54,7 +58,10 @@ func _on_node_pressed(stage_index: int, node: StageNode) -> void:
 		Haptics.play(&"tick")
 		node.shake()
 		return
-	stage_chosen.emit(planet_index, stage_index)
+	if node.completed:
+		stage_info_requested.emit(planet_index, stage_index)
+	else:
+		stage_chosen.emit(planet_index, stage_index)
 
 
 func _layout() -> void:
@@ -68,7 +75,9 @@ func _layout() -> void:
 	_points.clear()
 	for i in count:
 		var t: float = float(i) / maxf(count - 1, 1)
-		var x: float = size.x * (0.5 + Params.stage_map_sway * sin(i * Params.stage_map_wave))
+		# Zigue-zague: lados alternados, com amplitude variando um pouco para não ficar mecânico
+		var side: float = -1.0 if i % 2 == 0 else 1.0
+		var x: float = size.x * (0.5 + side * Params.stage_map_sway * (0.85 + 0.15 * sin(i * Params.stage_map_wave)))
 		if i == count - 1:
 			x = size.x * 0.5
 		var point := Vector2(x, size.y - Params.stage_map_margin_bottom - t * span)

@@ -59,21 +59,26 @@ func open() -> void:
 		return
 	get_tree().paused = true
 	_pause_button.visible = false
-	_dialog = Dialog.open(self, "", true, layer)
+	# A fase atual vai no título; continuar grande no meio, ações menores nos cantos de baixo
+	var stage_label: String = Session.stage_label(Session.planet_index, Session.stage_index)
+	_dialog = Dialog.open(self, stage_label, true, layer)
 	_dialog.closed.connect(_on_dialog_closed)
-	# Sem título nem frases: fase atual pequena, continuar grande e três ações com ícone
-	var stage_label := UiFactory.make_subtitle("")
-	stage_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	stage_label.text = Session.stage_label(Session.planet_index, Session.stage_index)
-	_dialog.body.add_child(stage_label)
-	_dialog.body.add_child(_centered(_icon(IconButton.Icon.PLAY, Params.pause_resume_size, "", _dialog.close, true)))
+	var body: VBoxContainer = _dialog.body
+	body.add_theme_constant_override("separation", Params.pause_spacing)
+	body.add_child(_centered(_icon(IconButton.Icon.PLAY, Params.pause_resume_size, tr("PAUSE_CAPTION_RESUME"), _dialog.close, true)))
 	var row := HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 56)
 	row.add_child(_icon(IconButton.Icon.RESTART, Params.pause_action_size, tr("PAUSE_CAPTION_RESTART"), _restart_stage))
+	row.add_child(_expander())
 	row.add_child(_icon(IconButton.Icon.GEAR, Params.pause_action_size, tr("PAUSE_CAPTION_SETTINGS"), _open_settings))
+	row.add_child(_expander())
 	row.add_child(_icon(IconButton.Icon.HOME, Params.pause_action_size, tr("PAUSE_CAPTION_EXIT"), _exit_to_menu))
-	_dialog.body.add_child(row)
+	body.add_child(row)
+
+
+func _expander() -> Control:
+	var space := Control.new()
+	space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return space
 
 
 func _icon(kind: IconButton.Icon, diameter: float, caption: String, action: Callable, primary: bool = false) -> IconButton:
