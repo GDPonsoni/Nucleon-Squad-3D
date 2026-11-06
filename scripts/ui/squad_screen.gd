@@ -342,7 +342,8 @@ func _refresh() -> void:
 		_cell_icons[i].number = slot + 1 if slot >= 0 else 0
 		_cell_icons[i].auxiliary = slot == AUX_SLOT
 		_cell_icons[i].self_modulate.a = Params.squad_chosen_alpha if slot != OUTSIDE else 1.0
-	_save_button.disabled = _chosen.has(null)
+	# Basta 1 nave no esquadrão (as outras vagas podem ficar livres)
+	_save_button.disabled = _chosen.count(null) == _chosen.size()
 
 
 func _on_save_pressed() -> void:

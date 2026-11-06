@@ -49,7 +49,7 @@ SHIP_ARTILLERY_NAME,Artillery,Artilharia,Artillería
 SHIP_ARTILLERY_DESC,Shells that explode in an area. Special: bombardment.,Projéteis que explodem em área. Especial: bombardeio.,Proyectiles que explotan en área. Especial: bombardeo.
 MENU_SQUAD,Squad,Esquadrão,Escuadrón
 SQUAD_TITLE,Squad,Esquadrão,Escuadrón
-SQUAD_HINT,"Tap ships to add or remove. With 4 in the squad, the next one becomes the wingman.","Toque nas naves para pôr ou tirar. Com 4 no esquadrão, a próxima vira a auxiliar.","Toca las naves para poner o quitar. Con 4 en el escuadrón, la siguiente será la auxiliar."
+SQUAD_HINT,"Tap ships to add or remove (1 to 4 in the squad). With 4, the next one becomes the wingman.","Toque nas naves para pôr ou tirar (de 1 a 4 no esquadrão). Com 4, a próxima vira a auxiliar.","Toca las naves para poner o quitar (de 1 a 4 en el escuadrón). Con 4, la siguiente será la auxiliar."
 SQUAD_SAVE,Save,Salvar,Guardar
 PLANET_4_NAME,Singularity,Singularidade,Singularidad
 BOSS_4_NAME,Hydra,Hidra,Hidra

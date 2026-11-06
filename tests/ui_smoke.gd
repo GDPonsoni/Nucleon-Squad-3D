@@ -425,7 +425,7 @@ func _check_squad_slots(scene: Node, language: String) -> int:
 	scene.call("_on_ship_pressed", spares[0])  # esquadrão cheio: vira auxiliar
 	ok = ok and scene.get("_companion") == spares[0]
 	scene.call("_on_ship_pressed", first)  # tira do esquadrão
-	ok = ok and scene.get("_chosen")[0] == null and (scene.get("_save_button") as Button).disabled
+	ok = ok and scene.get("_chosen")[0] == null and not (scene.get("_save_button") as Button).disabled  # 1 nave basta
 	scene.call("_on_ship_pressed", spares[1])  # volta a encher a vaga 1
 	ok = ok and scene.get("_chosen")[0] == spares[1] and not (scene.get("_save_button") as Button).disabled
 	scene.call("_on_ship_pressed", spares[2])  # tudo cheio: recusa

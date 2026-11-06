@@ -483,3 +483,17 @@ func test_boss_tuning() -> void:
 	check(tuned.phases.back().hp_ratio == Params.balance.boss_enrage_ratio, "fúria na fração configurada")
 	check(not tuned.phases.back().special_moment, "fúria não rearma o momento de especial")
 	check(tuned.phases.back().attacks[0].interval <= data.phases.back().attacks[0].interval, "ataques da fúria não ficam mais lentos")
+
+
+## Esquadrão de 1 a 4 naves: salva só as escolhidas (sem vagas livres) e rejeita 0.
+func test_flexible_squad() -> void:
+	var save: Node = _fresh_save()
+	var roster := load(Params.roster_path) as FormationData
+	save.set_squad([null, roster.bodies[2], null, null] as Array[BodyData])
+	check(save.squad.size() == 1, "vagas livres não entram no save")
+	check(save.squad_formation().bodies.size() == 1 and save.squad_formation().bodies[0] == roster.bodies[2], "esquadrão de 1 nave vale")
+	save.set_squad([roster.bodies[0], roster.bodies[1]] as Array[BodyData])
+	check(save.squad_formation().bodies.size() == 2, "esquadrão de 2 naves vale")
+	save.set_squad([] as Array[BodyData])
+	check(save.squad_formation().bodies.size() == Params.squad_size, "sem nenhuma: volta ao esquadrão inicial")
+	save.free()

@@ -93,8 +93,8 @@ func complete_stage(stage_id: StringName, score: int) -> bool:
 	return record
 
 
-## Esquadrão escolhido na tela de esquadrão; sem escolha válida (ou com nave
-## bloqueada), o esquadrão inicial.
+## Esquadrão escolhido na tela de esquadrão (de 1 até Params.squad_size naves); sem escolha
+## válida (ou com nave bloqueada), o esquadrão inicial.
 func squad_formation() -> FormationData:
 	var roster := load(Params.roster_path) as FormationData
 	var formation := FormationData.new()
@@ -102,7 +102,7 @@ func squad_formation() -> FormationData:
 		for body in roster.bodies:
 			if String(body.id) == id and is_ship_unlocked(body):
 				formation.bodies.append(body)
-	if formation.bodies.size() != Params.squad_size:
+	if formation.bodies.is_empty() or formation.bodies.size() > Params.squad_size:
 		return load(Params.formation_path) as FormationData
 	return formation
 
@@ -110,7 +110,8 @@ func squad_formation() -> FormationData:
 func set_squad(bodies: Array[BodyData]) -> void:
 	squad = PackedStringArray()
 	for body in bodies:
-		squad.append(String(body.id))
+		if body != null:  # vagas livres ficam de fora; a ordem das escolhidas se mantém
+			squad.append(String(body.id))
 	save()
 
 
