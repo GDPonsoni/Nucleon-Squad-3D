@@ -93,13 +93,18 @@ func _add_tiles() -> void:
 	var effects := _tile(row, IconButton.Icon.SPARKLE, "SETTINGS_SHORT_EFFECTS", not bool(SaveGame.setting("reduced_effects")))
 	var stats := _tile(row, IconButton.Icon.CHART, "SETTINGS_SHORT_STATS", bool(SaveGame.setting("show_stats")))
 	var level := _haptic_level_button()
-	level.visible = vibration.on
+	var level_row := HBoxContainer.new()
+	level_row.add_theme_constant_override("separation", 20)
+	level_row.add_child(IconButton.new().setup(IconButton.Icon.VIBRATE, Params.settings_icon_size))
+	level.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	level_row.add_child(level)
+	level_row.visible = vibration.on
+	add_child(level_row)
 	vibration.toggled_value.connect(func(value: bool) -> void:
 		SaveGame.set_setting("vibration", value)
-		level.visible = value)
+		level_row.visible = value)
 	effects.toggled_value.connect(func(value: bool) -> void: SaveGame.set_setting("reduced_effects", not value))
 	stats.toggled_value.connect(func(value: bool) -> void: SaveGame.set_setting("show_stats", value))
-	add_child(level)
 
 
 func _tile(row: HBoxContainer, icon: IconButton.Icon, caption_key: String, on: bool) -> IconButton:
@@ -114,13 +119,13 @@ func _tile(row: HBoxContainer, icon: IconButton.Icon, caption_key: String, on: b
 func _haptic_level_button() -> Button:
 	var button := UiFactory.make_button("")
 	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	button.custom_minimum_size = Vector2(Params.settings_panel_width, Params.settings_compact_button_height)
+	button.custom_minimum_size = Vector2(200.0, Params.settings_icon_size)
 	var names: Array[String] = ["HAPTIC_LOW", "HAPTIC_MEDIUM", "HAPTIC_HIGH"]
 	var refresh := func() -> void:
 		var level: int = clampi(int(SaveGame.setting("haptic_level")), 0, names.size() - 1)
-		button.text = "%s: %s" % [tr("SETTINGS_HAPTIC_LEVEL"), tr(names[level])]
+		button.text = tr(names[level])
 		button.add_theme_font_size_override("font_size", UiFactory.fit_font_size(button.text,
-			Params.settings_panel_width - Params.ui_button_padding * 2.0, Params.settings_label_font_size))
+			Params.settings_panel_width - Params.settings_icon_size - 20.0 - Params.ui_button_padding * 2.0, Params.settings_label_font_size))
 	refresh.call()
 	button.pressed.connect(func() -> void:
 		SaveGame.set_setting("haptic_level", (int(SaveGame.setting("haptic_level")) + 1) % names.size())
