@@ -17,6 +17,8 @@ var upgrades: Dictionary = {}  # id do nó da evolução -> nível
 var settings: Dictionary = {}  # configurações alteradas (as outras usam Params.default_settings)
 var ad_day: String = ""  # dia (AAAA-MM-DD) da contagem de anúncios por quarks
 var ad_count: int = 0  # anúncios por quarks vistos nesse dia
+## Dicas do tutorial e avisos de desbloqueio já mostrados (ids). Avisos "unlock_*" nunca se repetem.
+var tips_seen: PackedStringArray = PackedStringArray()
 ## Capítulos concluídos na campanha antiga (migração): contam como concluídos.
 var cleared_chapters: PackedStringArray = PackedStringArray()
 ## false = não grava no aparelho (ferramentas de teste e simulação)
@@ -165,6 +167,28 @@ func grant_ad_quarks() -> int:
 	return reward
 
 
+func is_tip_seen(id: String) -> bool:
+	return tips_seen.has(id)
+
+
+func mark_tip_seen(id: String) -> void:
+	if not tips_seen.has(id):
+		tips_seen.append(id)
+		save()
+
+
+## Rever o tutorial: esquece as dicas (os avisos de desbloqueio ficam) e religa as dicas.
+func reset_tips() -> void:
+	var kept := PackedStringArray()
+	for id in tips_seen:
+		if id.begins_with("unlock_"):
+			kept.append(id)
+	tips_seen = kept
+	settings["tips_enabled"] = true
+	save()
+	settings_changed.emit()
+
+
 func upgrade_level(node: UpgradeData) -> int:
 	return UpgradeTreeData.level_of(node, upgrades)
 
@@ -239,6 +263,7 @@ func reset_all() -> void:
 	companion = ""
 	ad_day = ""
 	ad_count = 0
+	tips_seen = PackedStringArray()
 	save()
 
 
@@ -279,6 +304,7 @@ func to_dict() -> Dictionary:
 		"settings": settings,
 		"ad_day": ad_day,
 		"ad_count": ad_count,
+		"tips_seen": tips_seen,
 	}
 
 
@@ -320,6 +346,9 @@ func from_dict(data: Dictionary) -> void:
 		for key in saved_settings:
 			if Params.default_settings.has(key):
 				settings[String(key)] = saved_settings[key]
+	var seen: Variant = data.get("tips_seen", [])
+	if typeof(seen) == TYPE_ARRAY:
+		tips_seen = PackedStringArray(seen)
 	var cleared: Variant = data.get("cleared_chapters", [])
 	if typeof(cleared) == TYPE_ARRAY:
 		cleared_chapters = PackedStringArray(cleared)

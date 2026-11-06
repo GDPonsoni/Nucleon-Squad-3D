@@ -130,6 +130,11 @@ func place_special(reserved_bottom: float) -> void:
 		_moment_label.offset_top = _moment_label.offset_bottom - Params.hud_toast_font_size * 1.6
 
 
+## Área do botão do especial na tela (para destacar numa dica).
+func special_rect() -> Rect2:
+	return _special.get_global_rect()
+
+
 ## Momento de especial: o botão pulsa em dourado e o aviso fica piscando acima dele.
 func set_special_moment(active: bool) -> void:
 	_special.moment = active

@@ -33,6 +33,7 @@ func _build() -> void:
 	_add_volume("sfx", IconButton.Icon.BURST, func() -> void: Audio.play(&"powerup_pickup"))
 	_add_tiles()
 	_add_language()
+	_add_replay_tutorial()
 	if debug_tools and OS.is_debug_build():
 		var tools := UiFactory.make_button("DEBUG_PROGRESS_TITLE")
 		tools.pressed.connect(_show_progress_tools)
@@ -164,6 +165,18 @@ func _add_language() -> void:
 	box.pressed.connect(open)
 	globe.pressed.connect(open)
 	row.add_child(box)
+
+
+## Rever tutorial: esquece as dicas vistas e religa as dicas. Confirma trocando o texto do botão.
+func _add_replay_tutorial() -> void:
+	var button := UiFactory.make_button("SETTINGS_REPLAY_TUTORIAL")
+	button.custom_minimum_size = Vector2(200.0, Params.settings_icon_size)
+	button.add_theme_font_size_override("font_size", Params.settings_label_font_size)
+	button.pressed.connect(func() -> void:
+		SaveGame.reset_tips()
+		button.text = tr("SETTINGS_TUTORIAL_RESET")
+		button.disabled = true)
+	add_child(button)
 
 
 func _open_dropdown(anchor: Control, current: String) -> void:

@@ -40,6 +40,7 @@ func _ready() -> void:
 	_refresh_header(_chapter)
 	UiFactory.animate_in(root)
 	_back_corner = UiFactory.add_corner_back(self, _go_back)
+	Tutorial.open_screen(self, &"stage_select_open")
 
 
 ## Primeiro capítulo ainda não concluído (ou o último, se todos foram).

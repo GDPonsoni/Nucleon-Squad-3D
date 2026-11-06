@@ -25,6 +25,7 @@ SceneTransition="*res://scripts/ui/scene_transition.gd"
 AdService="*res://scripts/core/ad_service.gd"
 Audio="*res://scripts/core/audio.gd"
 Haptics="*res://scripts/core/haptics.gd"
+Tutorial="*res://scripts/tutorial/tutorial.gd"
 
 [display]
 

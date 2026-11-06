@@ -20,6 +20,7 @@ var body_fx: NodePool
 var pause_menu: PauseMenu
 var results_menu: ResultsMenu
 var revive_offer: ReviveOffer
+var tip_balloon: TipBalloon
 var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
 var companion: Companion  # null = sem nave auxiliar
@@ -190,6 +191,48 @@ func _ready() -> void:
 		add_child(overlay)
 
 	_switch_to(0, 0.0)
+	_setup_tutorial()
+
+
+## Dicas do tutorial: balão sem pausa, só em momento calmo. Os eventos vêm dos gatilhos do jogo.
+func _setup_tutorial() -> void:
+	tip_balloon = TipBalloon.new()
+	tip_balloon.name = "TipBalloon"
+	tip_balloon.safe_check = _tip_is_safe
+	tip_balloon.highlight_rect = _tip_highlight_rect
+	add_child(tip_balloon)
+	Tutorial.attach(Tutorial.MATCH, tip_balloon)
+	touch_input.touch_ended.connect(Tutorial.notify.bind(&"touch_released"))
+	Tutorial.notify(&"match_start", String(Session.stage().id))
+	if companion != null:
+		Tutorial.notify(&"companion_active")
+
+
+## Seguro para uma dica: partida rolando, corpo em campo e nenhum tiro ou inimigo perto da nave.
+func _tip_is_safe() -> bool:
+	if _match_over or get_tree().paused or player.body == null or switcher.forced or time_controller.forced_slow:
+		return false
+	if boss != null and is_instance_valid(boss) and boss.is_entering():
+		return false
+	for item in enemy_bullets.active:
+		if (item as Node2D).position.distance_to(player.position) < Params.tip_safe_bullet_radius:
+			return false
+	for item in enemies.active:
+		if (item as Node2D).position.distance_to(player.position) < Params.tip_safe_enemy_radius:
+			return false
+	if boss != null and is_instance_valid(boss) and boss.position.distance_to(player.position) < Params.tip_safe_enemy_radius * 1.5:
+		return false
+	return true
+
+
+func _tip_highlight_rect(name: String) -> Rect2:
+	match name:
+		"special":
+			return hud.special_rect()
+		"switcher":
+			var view: Vector2 = get_viewport_rect().size
+			return Rect2(0.0, switcher.top(), view.x, view.y - switcher.top())
+	return Rect2()
 
 
 ## Fase concluída quando o tempo acaba e não sobram inimigos (ou após um limite de espera).
@@ -201,6 +244,7 @@ func _process(delta: float) -> void:
 	var special_ready: bool = player.body != null and state.special_ready()
 	if special_ready and not _special_was_ready:
 		Audio.play(&"special_ready")
+		Tutorial.notify(&"special_ready")
 	_special_was_ready = special_ready
 	_update_special_moment()
 	if not _spawning_done or _match_over:
@@ -224,6 +268,7 @@ func _update_special_moment() -> void:
 	_special_moment = active
 	hud.set_special_moment(active)
 	if active:
+		Tutorial.notify(&"special_moment")
 		state.fill_special()
 		hud.show_warning("SPECIAL_MOMENT")
 		Audio.play(&"special_ready", 2.0)
@@ -232,6 +277,7 @@ func _update_special_moment() -> void:
 
 ## Saiu da partida (menu, reiniciar, próxima fase): os quarks ganhos não se perdem.
 func _exit_tree() -> void:
+	Tutorial.detach(Tutorial.MATCH, tip_balloon)
 	_bank_quarks(0)
 
 
@@ -239,6 +285,7 @@ func _exit_tree() -> void:
 func _finish_stage_clear() -> void:
 	_match_over = true
 	pause_menu.disable()
+	tip_balloon.cancel()
 	Audio.play(&"stage_clear")
 	Haptics.play(&"fase_completa")
 	var stage: StageData = Session.stage()
@@ -249,10 +296,16 @@ func _finish_stage_clear() -> void:
 	var bonus: int = _clear_bonus(first_time)
 	_bank_quarks(bonus)
 	var rewards := PackedStringArray()
-	if not chapter_cleared_before and SaveGame.is_chapter_cleared(Session.planet_index):
+	var chapter_just_cleared: bool = not chapter_cleared_before and SaveGame.is_chapter_cleared(Session.planet_index)
+	if chapter_just_cleared:
 		rewards = _chapter_rewards(Session.planet_index)
+	Tutorial.notify(&"stage_clear", String(stage.id))
 	var summary := {"quarks_kills": kills_quarks, "quarks_bonus": bonus, "rewards": rewards, "stars": stage.stars_for(state.score)}
 	await _play_clear_sequence()
+	# Avisos só aqui, com a partida já encerrada: nunca no meio de um desvio
+	if chapter_just_cleared:
+		await Tutorial.show_unlocks(self, Session.planet_index)
+	await Tutorial.show_end_tips(self)
 	results_menu.show_stage_clear(state, spawner.elapsed(), record, summary)
 
 
@@ -393,6 +446,7 @@ func _on_body_chosen(index: int) -> void:
 
 
 func _on_player_hit(damage: int) -> void:
+	Tutorial.notify(&"player_hit")
 	var invulnerability: float = Params.hit_invulnerability_seconds + state.boosts.extra_invulnerability
 	# Escudo da evolução do núcleo absorve o hit inteiro
 	if state.absorb_with_shield():
@@ -420,6 +474,7 @@ func _on_special_pressed() -> void:
 
 func _on_powerup_collected(kind: PowerUp.Kind) -> void:
 	Audio.play(&"powerup_pickup", 0.0, 1.25 if kind == PowerUp.Kind.HEAL else 1.0)
+	Tutorial.notify(&"medkit_collected" if kind == PowerUp.Kind.HEAL else (&"companion_powerup" if kind == PowerUp.Kind.COMPANION else &"powerup_collected"))
 	if kind == PowerUp.Kind.HEAL:
 		state.medkits_collected += 1
 		if state.heal_current(Params.medkit_heal):
@@ -467,6 +522,7 @@ func _on_body_destroyed(index: int) -> void:
 ## Sem corpos vivos: oferece continuar com anúncio (uma vez por partida); senão, fim de jogo.
 func _on_game_over() -> void:
 	Audio.play(&"game_over")
+	tip_balloon.cancel()
 	_match_over = true
 	pause_menu.disable()
 	# Tempo real: na câmera lenta o atraso não se estende

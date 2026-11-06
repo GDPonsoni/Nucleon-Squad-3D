@@ -56,6 +56,7 @@ func _ready() -> void:
 	UiFactory.animate_in(center)
 	# Começa no primeiro nó que dá para evoluir (ou no primeiro da árvore)
 	_select(_first_suggestion())
+	Tutorial.open_screen(self, &"upgrades_open")
 
 
 func _build_detail_panel() -> PanelContainer:

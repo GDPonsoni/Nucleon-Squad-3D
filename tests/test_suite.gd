@@ -403,3 +403,58 @@ func test_every_attack_has_telegraph() -> void:
 		for phase in boss.phases:
 			for attack in phase.attacks:
 				check(attack.telegraph_seconds > 0.0, "%s tem ataque sem aviso" % file)
+
+
+## Tutorial: dicas do JSON têm texto nas 3 línguas, não repetem e o "rever" religa.
+func test_tutorial_tips() -> void:
+	var csv: String = FileAccess.get_file_as_string("res://data/i18n/strings.csv")
+	var ids := {}
+	for tip in Tutorial.tips:
+		check(not ids.has(tip["id"]), "id de dica repetido: %s" % tip["id"])
+		ids[tip["id"]] = true
+		check(csv.contains("\n%s," % tip["text_key"]), "sem texto para %s" % tip["text_key"])
+		check(["match", "screen", "end"].has(tip["context"]), "contexto inválido em %s" % tip["id"])
+	for def in Tutorial.unlock_defs:
+		check(csv.contains("\n%s," % def["text_key"]), "sem texto para %s" % def["text_key"])
+	var save_seen: PackedStringArray = SaveGame.tips_seen
+	SaveGame.tips_seen = PackedStringArray()
+	SaveGame.settings["tips_enabled"] = true
+	Tutorial.attach(&"match", self)
+	Tutorial.notify(&"touch_released")
+	Tutorial.notify(&"touch_released")
+	check(Tutorial._queue[&"match"].size() == 1, "dica não pode entrar duas vezes na fila")
+	Tutorial.notify(&"match_start", "p1_s1")
+	check(Tutorial._queue[&"match"].size() == 2, "dica de fase específica entra na fila")
+	Tutorial.notify(&"match_start", "p9_s9")
+	check(Tutorial._queue[&"match"].size() == 2, "dica de outra fase não entra")
+	SaveGame.mark_tip_seen("tip_slowmo")
+	Tutorial.notify(&"touch_released")
+	check(not Tutorial._is_queued(&"match", "tip_slowmo") or Tutorial._queue[&"match"].size() == 2, "dica vista não volta")
+	Tutorial.disable_tips()
+	check(not Tutorial.tips_enabled() and Tutorial._queue[&"match"].is_empty(), "não mostrar mais esvazia a fila")
+	Tutorial.notify(&"match_start", "p1_s1")
+	check(Tutorial._queue[&"match"].is_empty(), "com dicas desligadas nada entra")
+	SaveGame.mark_tip_seen("unlock_companion")
+	SaveGame.reset_tips()
+	check(Tutorial.tips_enabled() and not SaveGame.is_tip_seen("tip_slowmo"), "rever tutorial religa e esquece as dicas")
+	check(SaveGame.is_tip_seen("unlock_companion"), "avisos de desbloqueio não se repetem após rever")
+	Tutorial.detach(&"match", self)
+	SaveGame.tips_seen = save_seen
+
+
+## Avisos de desbloqueio: cap. 1 libera o espaço auxiliar e o planeta 2; nunca repetem.
+func test_unlock_notices() -> void:
+	var save_seen: PackedStringArray = SaveGame.tips_seen
+	SaveGame.tips_seen = PackedStringArray()
+	var first: Array[Dictionary] = Tutorial.unlock_notices(0)
+	check(first.size() == 2, "capítulo 1: auxiliar + planeta (%d)" % first.size())
+	for notice in first:
+		SaveGame.mark_tip_seen(notice["id"])
+	check(Tutorial.unlock_notices(0).is_empty(), "aviso de desbloqueio não repete")
+	var second: Array[Dictionary] = Tutorial.unlock_notices(1)
+	var ships: int = 0
+	for notice in second:
+		if notice["body"] != null:
+			ships += 1
+	check(ships == 1, "capítulo 2 libera 1 nave")
+	SaveGame.tips_seen = save_seen

@@ -12,6 +12,8 @@ const SCENES: PackedStringArray = [
 func _ready() -> void:
 	SaveGame.persistent = false
 	SaveGame.unlock_everything = true
+	# Dicas e avisos têm teste próprio (_check_tutorial_dialogs); aqui não cobrem as telas
+	SaveGame.settings["tips_enabled"] = false
 	var failures: int = 0
 	var overflow: int = 0
 	for path in SCENES:
@@ -127,6 +129,7 @@ func _ready() -> void:
 			await get_tree().process_frame
 	failures += await _check_ship_switch()
 	failures += await _check_dialogs()
+	failures += await _check_tutorial_dialogs()
 	failures += await _check_ad_reward_not_lost()
 	# Painel de configurações: mexe em tudo
 	var panel := SettingsPanel.new()
@@ -340,6 +343,26 @@ func _check_dialog(dialog: Dialog, label: String, expect_close: bool) -> int:
 		if is_instance_valid(dialog) and not dialog.is_queued_for_deletion():
 			printerr("NÃO FECHOU PELO VOLTAR [%s]" % label)
 			failures += 1
+	return failures
+
+
+## Janelas de dica (todas) e de desbloqueio: cabem na tela, têm X e fecham pelo Voltar. O balão não cobre o botão do especial.
+func _check_tutorial_dialogs() -> int:
+	var failures: int = 0
+	for language in ["pt_BR", "en", "es"]:
+		SaveGame.settings["language"] = language
+		Audio.apply_settings()
+		var host := Control.new()
+		host.set_anchors_preset(Control.PRESET_FULL_RECT)
+		UiFactory.apply_theme(host)
+		get_tree().root.add_child(host)
+		for tip in Tutorial.tips:
+			failures += await _check_dialog(TipDialog.open_tip(host, tip), "dica %s %s" % [tip["id"], language], true)
+		var roster := load(Params.roster_path) as FormationData
+		for notice in [{"text": tr("UNLOCK_COMPANION"), "body": null}, {"text": tr("UNLOCK_SHIP") % tr(roster.bodies[0].name_key), "body": roster.bodies[0]}]:
+			failures += await _check_dialog(UnlockNotice.open_notice(host, notice), "desbloqueio %s" % language, true)
+		host.queue_free()
+		await get_tree().process_frame
 	return failures
 
 

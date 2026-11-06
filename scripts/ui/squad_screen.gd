@@ -72,6 +72,7 @@ func _ready() -> void:
 
 	UiFactory.animate_in(center)
 	_refresh()
+	Tutorial.open_screen(self, &"squad_open")
 
 
 ## Fileira de vagas: 4 do esquadrão, divisória e a vaga da auxiliar (rótulos embaixo).

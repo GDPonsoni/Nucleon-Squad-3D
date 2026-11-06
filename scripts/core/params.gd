@@ -32,8 +32,29 @@ var sfx_pitch_jitter: float = 0.06  # variação aleatória de tom
 var companion_sound_db: float = -8.0  # a nave auxiliar soa mais baixo
 var default_settings: Dictionary = {
 	"master": 1.0, "music": 0.7, "sfx": 0.8, "vibration": true, "haptic_level": 1, "reduced_effects": false, "language": "auto",
-	"show_stats": true,
+	"show_stats": true, "tips_enabled": true,
 }
+# Tutorial e avisos (tempo real)
+var tips_path: String = "res://data/tutorial/tips.json"
+var tip_gap_match_seconds: float = 25.0  # intervalo mínimo entre dicas na partida
+var tip_gap_screen_seconds: float = 1.2  # idem nas telas
+var tip_first_delay_seconds: float = 2.5  # espera antes da 1ª dica da partida/tela
+var tip_balloon_seconds: float = 9.0  # tempo do balão na partida
+var tip_balloon_y: float = 0.15  # posição vertical do balão (fração da altura)
+var tip_balloon_alpha: float = 0.88
+var tip_balloon_layer: int = 11  # acima do HUD (10), abaixo da pausa (50)
+var tip_balloon_width_ratio: float = 0.92
+var tip_balloon_font_size: int = 40
+var tip_balloon_button_font_size: int = 32
+var tip_balloon_button_height: float = 96.0
+var tip_safe_bullet_radius: float = 420.0  # só mostra com nenhum tiro inimigo tão perto da nave
+var tip_safe_enemy_radius: float = 300.0  # nem inimigo tão perto
+var tip_safe_seconds: float = 0.6  # tempo seguido de calma exigido antes de mostrar
+var tip_highlight_color: Color = Color(1.0, 0.85, 0.3)
+var tip_unlock_gap_seconds: float = 0.4  # entre dois avisos de desbloqueio
+var tip_end_max: int = 2  # dicas por fim de fase
+var tip_expire_seconds: float = 40.0  # dica de partida que não achou momento seguro sai da fila
+var unlock_icon_size: float = 220.0  # nave no aviso de desbloqueio
 var languages: PackedStringArray = ["auto", "pt_BR", "en", "es"]
 var ad_quarks_base: int = 120  # quarks por anúncio assistido
 var ad_quarks_per_chapter: int = 60  # a mais por capítulo concluído
