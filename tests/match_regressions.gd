@@ -90,8 +90,8 @@ func _check_special_cycle(game: Node) -> int:
 	var switcher: BodySwitcher = game.get("switcher")
 	var hud: Hud = game.get("hud")
 	var at: Vector2 = (hud.get("_special") as Control).get_global_rect().get_center()
-	var saved: float = Params.special_charge_multiplier
-	Params.special_charge_multiplier = 0.05  # ~1 s de jogo para encher
+	var saved: float = Params.balance.special_charge_multiplier
+	Params.balance.special_charge_multiplier = 0.05  # ~1 s de jogo para encher
 	for round in 3:
 		state.special_charge[state.current] = 0.0
 		var waited: float = 0.0
@@ -114,5 +114,5 @@ func _check_special_cycle(game: Node) -> int:
 		if state.current != next:
 			printerr("FALHOU: não trocou para a nave %d" % next)
 			failures += 1
-	Params.special_charge_multiplier = saved
+	Params.balance.special_charge_multiplier = saved
 	return failures

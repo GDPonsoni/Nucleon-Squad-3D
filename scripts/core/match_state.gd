@@ -167,7 +167,7 @@ func add_kill(points: int) -> void:
 
 ## Segundos para encher o especial do corpo ativo (com a evolução do núcleo).
 func special_seconds() -> float:
-	return current_body().weapon.special_charge_seconds * Params.special_charge_multiplier * boosts.special_charge
+	return current_body().weapon.special_charge_seconds * Params.balance.special_charge_multiplier * boosts.special_charge
 
 
 ## O especial do corpo ativo carrega com o tempo (de jogo) enquanto ele está ativo.

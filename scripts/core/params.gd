@@ -1,6 +1,9 @@
 extends Node
 ## Parâmetros ajustáveis do jogo. Único lugar para valores de tuning.
 
+## Ritmo e economia (vida dos inimigos, drops, duração, carga do especial): data/balance.tres.
+var balance: BalanceData = load("res://data/balance.tres") as BalanceData
+
 # --- Áudio e configurações (ganho de cada som em dB: nivela o volume entre eles) ---
 var sfx_voices: int = 20  # sons ao mesmo tempo
 var music_menu_path: String = "res://assets/audio/music/menu.wav"
@@ -383,9 +386,6 @@ var inspect_locked_icon_scale: float = 1.4
 var inspect_text_font_size: int = 36
 
 # --- Especial (valores de cada arma ficam em data/weapons/) ---
-## Multiplica o tempo de carga de todos os especiais de arma (special_charge_seconds de cada
-## WeaponData). 1,5 = +50%. Conta em tempo de jogo, só com o corpo ativo.
-var special_charge_multiplier: float = 1.5
 var special_ready_epsilon: float = 0.001  # segundos de folga ao comparar a carga (precisão de 32 bits)
 var special_button_size: float = 150.0
 var special_button_gap: float = 28.0  # acima da barra de troca
@@ -433,11 +433,8 @@ var shield_ring_width: float = 6.0
 var shield_gap_degrees: float = 18.0
 
 # --- Power-ups ---
-var powerup_every_kills: int = 8  # 1 power-up a cada N inimigos destruídos
-var medkit_every_kills: int = 13  # 1 medkit a cada N inimigos destruídos (mais raro)
 var medkit_heal: int = 1  # hits recuperados
 var medkit_color: Color = Color(0.3, 0.9, 0.45)
-var companion_powerup_chance: float = 0.02  # chance por inimigo abatido de cair o power-up raro da auxiliar
 var companion_powerup_color: Color = Color(0.72, 0.55, 1.0)  # lilás, a cor da auxiliar na tela de esquadrão
 var companion_level_pip_size: Vector2 = Vector2(14.0, 6.0)  # nível da auxiliar, embaixo dela
 var hud_toast_font_size: int = 50

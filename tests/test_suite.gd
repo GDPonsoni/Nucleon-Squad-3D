@@ -175,7 +175,7 @@ func test_switch_cooldown_and_special_charge() -> void:
 	state.tick_switch_cooldown(Params.switch_cooldown_seconds)
 	check(state.can_switch(), "recarga terminou")
 	var base: float = state.current_body().weapon.special_charge_seconds
-	check(is_equal_approx(state.special_seconds(), base * Params.special_charge_multiplier), "carga do especial com o multiplicador")
+	check(is_equal_approx(state.special_seconds(), base * Params.balance.special_charge_multiplier), "carga do especial com o multiplicador")
 
 
 func test_companion_versions() -> void:

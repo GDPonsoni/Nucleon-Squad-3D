@@ -117,7 +117,7 @@ func set_motion(wave: WaveData, member: int) -> void:
 
 ## Escalas da fase: vida e cadência de tiro dos inimigos (capítulos finais).
 func apply_stage(stage: StageData) -> void:
-	hp *= stage.enemy_hp_scale
+	hp *= stage.enemy_hp_scale * Params.balance.enemy_hp_factor(Session.stage_index)
 	_max_hp = hp
 	_fire_scale = stage.enemy_fire_scale
 

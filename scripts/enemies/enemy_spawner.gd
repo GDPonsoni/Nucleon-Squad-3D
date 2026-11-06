@@ -12,6 +12,7 @@ var _cooldown: float = 0.0
 var _rock_cooldown: float = 0.0
 var _elapsed: float = 0.0
 var _finished: bool = false
+var _duration: float = 1.0  # duração da fase já com stage_duration_scale
 ## Surgimentos agendados, em ordem de tempo: {time, data, pos, velocity, delay, wave, member}
 var _pending: Array[Dictionary] = []
 
@@ -19,10 +20,11 @@ var _pending: Array[Dictionary] = []
 func setup(stage: StageData, enemies: NodePool) -> void:
 	_stage = stage
 	_enemies = enemies
+	_duration = stage.duration_seconds * Params.balance.stage_duration_scale
 	_cooldown = stage.start_delay
 	_rock_cooldown = stage.start_delay + stage.rock_interval_min
 	for wave in stage.waves:
-		spawn_wave(wave, wave.time_seconds)
+		spawn_wave(wave, wave.time_seconds * Params.balance.stage_duration_scale)
 
 
 ## Segundos de jogo desde o início da fase.
@@ -32,7 +34,7 @@ func elapsed() -> float:
 
 ## 0 a 1 ao longo da duração da fase.
 func progress() -> float:
-	return clampf(_elapsed / _stage.duration_seconds, 0.0, 1.0)
+	return clampf(_elapsed / _duration, 0.0, 1.0)
 
 
 ## Agenda uma onda em formação. Sem start_time, começa agora (ex.: chamada por chefe).
@@ -121,7 +123,7 @@ func _process(delta: float) -> void:
 
 	if _finished:
 		return
-	if _elapsed >= _stage.duration_seconds:
+	if _elapsed >= _duration:
 		_finished = true
 		finished.emit()
 		return

@@ -139,6 +139,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Quero mudar… | Arquivo |
 |---|---|
 | Qualquer número de tuning, sons e configurações padrão | `scripts/core/params.gd` (autoload `Params`) |
+| Ritmo e economia (vida dos inimigos, drops, duração da fase, carga do especial) | `data/balance.tres` (`BalanceData`, em `Params.balance`; `tunables()` lista os ajustes para um painel futuro) |
 | Montagem da partida, chefe, revive, especial, kits | `scripts/core/game.gd` |
 | Estado da partida (hits, níveis, carga, pontuação) | `scripts/core/match_state.gd` |
 | Colisão (círculos) | `scripts/core/combat_system.gd`, `combat_context.gd` |

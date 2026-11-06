@@ -1,8 +1,8 @@
 class_name PowerUpDropper
 extends Node
 ## Solta itens na posição do último inimigo destruído: um power-up a cada
-## powerup_every_kills, um medkit (mais raro) a cada medkit_every_kills e, por sorteio,
-## o power-up raro da nave auxiliar (companion_powerup_chance por inimigo).
+## BalanceData.powerup_every_kills, um medkit a cada medkit_every_kills e, por sorteio,
+## o power-up raro da nave auxiliar (companion_powerup_chance). Valores em Params.balance.
 
 var _pool: NodePool
 var _kills: int = 0
@@ -16,8 +16,8 @@ var companion_can_level: Callable = func() -> bool: return false
 ## Os bônus da evolução do núcleo adiantam os drops.
 func setup(pool: NodePool, boosts: PlayerBoosts) -> void:
 	_pool = pool
-	_powerup_every = maxi(Params.powerup_every_kills - boosts.powerup_kills_bonus, 1)
-	_medkit_every = maxi(Params.medkit_every_kills - boosts.medkit_kills_bonus, 1)
+	_powerup_every = Params.balance.powerup_kills(boosts.powerup_kills_bonus)
+	_medkit_every = Params.balance.medkit_kills(boosts.medkit_kills_bonus)
 
 
 func on_enemy_killed(enemy: Enemy) -> void:
@@ -30,7 +30,7 @@ func on_enemy_killed(enemy: Enemy) -> void:
 		_heal_kills = 0
 		# Se cair junto com um power-up, sai um pouco ao lado
 		_drop(enemy.position + Vector2(Params.powerup_radius * 2.5, 0.0), PowerUp.Kind.HEAL)
-	if companion_can_level.call() and randf() < Params.companion_powerup_chance:
+	if companion_can_level.call() and randf() < Params.balance.companion_chance():
 		_drop(enemy.position - Vector2(Params.powerup_radius * 2.5, 0.0), PowerUp.Kind.COMPANION)
 
 
