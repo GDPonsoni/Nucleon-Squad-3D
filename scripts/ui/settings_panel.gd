@@ -10,6 +10,7 @@ signal back_pressed
 ## configurações do menu; a pausa não mostra.
 var debug_tools: bool = false
 var _in_language_list: bool = false  # na subtela de progresso de teste (debug)
+var _dropdown: CanvasLayer  # lista aberta do idioma (null = fechada)
 var _confirm_key: String = ""  # ação destrutiva esperando o segundo toque
 
 
@@ -22,6 +23,7 @@ func _ready() -> void:
 ## deslizadores com ícone que silencia; vibração, efeitos visuais e estatísticas em
 ## interruptores de ícone; idioma num seletor curto.
 func _build() -> void:
+	_dropdown = null
 	for child in get_children():
 		child.queue_free()
 	add_theme_constant_override("separation", Params.settings_row_spacing * 2)
@@ -40,6 +42,9 @@ func _build() -> void:
 
 ## Voltar: da lista de idiomas para as configurações; das configurações, sai do painel.
 func go_back() -> void:
+	if _dropdown != null:
+		_close_dropdown()
+		return
 	if _in_language_list:
 		_build()
 	else:
@@ -124,47 +129,86 @@ func _haptic_level_button() -> Button:
 	return button
 
 
-## Seletor de idioma: globo + nome atual. Tocar abre uma lista logo abaixo (sem trocar de tela);
-## escolher aplica o idioma e fecha a lista.
+## Seletor de idioma em formato de combobox: globo + caixa com o idioma atual e uma seta.
+## Tocar abre a lista flutuando logo abaixo da caixa (sem empurrar o resto do painel); tocar fora
+## ou numa opção fecha. Fica numa camada própria para não ser cortada pela rolagem do diálogo.
 func _add_language() -> void:
-	var holder := VBoxContainer.new()
-	holder.add_theme_constant_override("separation", Params.settings_row_spacing)
-	add_child(holder)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 20)
-	holder.add_child(row)
-	var list := VBoxContainer.new()
-	list.add_theme_constant_override("separation", Params.settings_row_spacing)
-	list.visible = false
-	holder.add_child(list)
-	var toggle := func() -> void:
-		list.visible = not list.visible
-		Audio.play(&"ui_click")
+	add_child(row)
 	var globe := IconButton.new().setup(IconButton.Icon.GLOBE, Params.settings_icon_size)
-	globe.pressed.connect(toggle)
 	row.add_child(globe)
 	var current: String = String(SaveGame.setting("language"))
-	var button := UiFactory.make_button("")
-	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	button.text = tr("LANGUAGE_" + current.to_upper())
-	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	button.custom_minimum_size = Vector2(200.0, Params.settings_icon_size)
-	button.add_theme_font_size_override("font_size", Params.settings_label_font_size)
-	button.pressed.connect(toggle)
-	row.add_child(button)
+	var box := UiFactory.make_button("")
+	box.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	box.text = tr("LANGUAGE_" + current.to_upper())
+	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.custom_minimum_size = Vector2(200.0, Params.settings_icon_size)
+	box.add_theme_font_size_override("font_size", Params.settings_label_font_size)
+	box.draw.connect(func() -> void:
+		# Seta da combobox (aponta para cima com a lista aberta)
+		var c := Vector2(box.size.x - 50.0, box.size.y * 0.5)
+		var d: float = 12.0 * (-1.0 if _dropdown != null else 1.0)
+		box.draw_colored_polygon(PackedVector2Array([c + Vector2(-16.0, -d * 0.6), c + Vector2(16.0, -d * 0.6), c + Vector2(0.0, d)]), Params.ui_text_color))
+	var open := func() -> void:
+		if _dropdown != null:
+			_close_dropdown()
+		else:
+			_open_dropdown(box, current)
+		box.queue_redraw()
+	box.pressed.connect(open)
+	globe.pressed.connect(open)
+	row.add_child(box)
+
+
+func _open_dropdown(anchor: Control, current: String) -> void:
+	_dropdown = CanvasLayer.new()
+	_dropdown.layer = 200
+	_dropdown.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_dropdown)
+	# Fundo invisível que pega o toque fora da lista
+	var catcher := Control.new()
+	catcher.set_anchors_preset(Control.PRESET_FULL_RECT)
+	catcher.mouse_filter = Control.MOUSE_FILTER_STOP
+	catcher.gui_input.connect(func(event: InputEvent) -> void:
+		var touch := event as InputEventMouseButton
+		if touch != null and touch.pressed:
+			_close_dropdown(anchor))
+	_dropdown.add_child(catcher)
+	var list := VBoxContainer.new()
+	list.add_theme_constant_override("separation", 4)
+	UiFactory.apply_theme(list)
+	var option_height: float = Params.settings_compact_button_height
 	for language in Params.languages:
 		var option := UiFactory.make_button("")
 		option.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 		option.text = tr("LANGUAGE_" + language.to_upper())
-		option.custom_minimum_size = Vector2(200.0, Params.settings_compact_button_height)
+		option.custom_minimum_size = Vector2(anchor.size.x, option_height)
 		option.add_theme_font_size_override("font_size", Params.settings_label_font_size)
 		if language == current:
 			option.theme_type_variation = &"PrimaryButton"
 		option.pressed.connect(func() -> void:
 			SaveGame.set_setting("language", language)
-			# O idioma novo refaz todos os textos
+			# O idioma novo refaz todos os textos (e fecha a lista)
 			_build())
 		list.add_child(option)
+	_dropdown.add_child(list)
+	# Logo abaixo da caixa; se não couber embaixo, abre para cima
+	var rect: Rect2 = anchor.get_global_rect()
+	var total: float = Params.languages.size() * (option_height + 4.0)
+	var view_h: float = get_viewport().get_visible_rect().size.y
+	var top: float = rect.end.y + 6.0
+	if top + total > view_h - 20.0:
+		top = maxf(rect.position.y - total - 6.0, 20.0)
+	list.position = Vector2(rect.position.x, top)
+
+
+func _close_dropdown(anchor: Control = null) -> void:
+	if _dropdown != null:
+		_dropdown.queue_free()
+		_dropdown = null
+	if anchor != null:
+		anchor.queue_redraw()
 
 
 ## Teste (build de debug): desfazer, recuar e avançar o progresso para validar o que muda
