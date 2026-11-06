@@ -196,3 +196,6 @@ SETTINGS_SHORT_EFFECTS,Effects,Efeitos,Efectos
 SETTINGS_SHORT_STATS,FPS,FPS,FPS
 STAGE_NEXT_STAR,Next star at %d points,Próxima estrela com %d pontos,Próxima estrella con %d puntos
 PAUSE_CAPTION_RESUME,Resume,Continuar,Continuar
+RESULT_CAPTION_NEXT,Next,Próxima,Siguiente
+RESULT_CAPTION_STAGES,Stages,Fases,Fases
+RESULT_CAPTION_UPGRADE,Upgrade,Evoluir,Mejorar

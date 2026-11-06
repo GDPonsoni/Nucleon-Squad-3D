@@ -15,28 +15,20 @@ func _ready() -> void:
 
 
 func show_stage_clear(state: MatchState, seconds: float, record: bool, summary: Dictionary) -> void:
-	var buttons: Array[Button] = []
+	var main: IconButton
 	if Session.has_next():
-		var next := _button("STAGE_NEXT", _on_next_pressed)
-		next.theme_type_variation = &"PrimaryButton"
-		buttons.append(next)
-	buttons.append(_upgrades_button())
-	buttons.append(_button("RESULT_STAGE_SELECT", _go.bind(ScenePaths.STAGE_SELECT)))
-	buttons.append(_button("PAUSE_EXIT_TO_MENU", _go.bind(ScenePaths.MENU)))
-	_open("STAGE_CLEAR_TITLE", state, seconds, record, summary, buttons)
+		main = _icon(IconButton.Icon.PLAY, Params.results_main_size, "RESULT_CAPTION_NEXT", _on_next_pressed, true)
+	else:
+		main = _icon(IconButton.Icon.RESTART, Params.results_main_size, "PAUSE_CAPTION_RESTART", _go.bind(ScenePaths.GAME), true)
+	_open("STAGE_CLEAR_TITLE", state, seconds, record, summary, main)
 
 
 func show_game_over(state: MatchState, seconds: float, summary: Dictionary) -> void:
-	var buttons: Array[Button] = [
-		_button("GAMEOVER_RETRY", _go.bind(ScenePaths.GAME)),
-		_upgrades_button(),
-		_button("RESULT_STAGE_SELECT", _go.bind(ScenePaths.STAGE_SELECT)),
-		_button("PAUSE_EXIT_TO_MENU", _go.bind(ScenePaths.MENU)),
-	]
-	_open("GAMEOVER_TITLE", state, seconds, false, summary, buttons)
+	var main := _icon(IconButton.Icon.RESTART, Params.results_main_size, "PAUSE_CAPTION_RESTART", _go.bind(ScenePaths.GAME), true)
+	_open("GAMEOVER_TITLE", state, seconds, false, summary, main)
 
 
-func _open(title_key: String, state: MatchState, seconds: float, record: bool, summary: Dictionary, buttons: Array[Button]) -> void:
+func _open(title_key: String, state: MatchState, seconds: float, record: bool, summary: Dictionary, main: IconButton) -> void:
 	get_tree().paused = true
 	# Sem X: o resultado já foi salvo, e o Voltar do Android leva ao seletor de fases
 	_dialog = Dialog.open(self, title_key, false, layer)
@@ -88,42 +80,48 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, s
 			reward.add_theme_font_size_override("font_size", Params.subtitle_font_size)
 			column.add_child(reward)
 
-	for button in buttons:
-		button.custom_minimum_size.y = Params.results_button_height
-		column.add_child(button)
+	var main_row := HBoxContainer.new()
+	main_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	main_row.add_child(main)
+	column.add_child(main_row)
+	var row := HBoxContainer.new()
+	row.add_child(_icon(IconButton.Icon.MAP, Params.results_action_size, "RESULT_CAPTION_STAGES", _go.bind(ScenePaths.STAGE_SELECT)))
+	row.add_child(_expander())
+	row.add_child(_icon(IconButton.Icon.UPGRADE, Params.results_action_size, "RESULT_CAPTION_UPGRADE", func() -> void:
+		Session.upgrades_return_path = ScenePaths.STAGE_SELECT
+		_go(ScenePaths.UPGRADES)))
+	row.add_child(_expander())
+	row.add_child(_icon(IconButton.Icon.HOME, Params.results_action_size, "PAUSE_CAPTION_EXIT", _go.bind(ScenePaths.MENU)))
+	column.add_child(row)
 
 
 func _add_stat(grid: GridContainer, key: String, value: String, color: Color = Params.ui_text_color) -> void:
 	var name_label := UiFactory.make_subtitle(key)
 	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
 	name_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	name_label.add_theme_font_size_override("font_size", Params.results_stats_font_size)
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_child(name_label)
 	var value_label := Label.new()
 	value_label.text = value
 	value_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	value_label.add_theme_font_size_override("font_size", Params.subtitle_font_size)
+	value_label.add_theme_font_size_override("font_size", Params.results_stats_font_size)
 	value_label.add_theme_color_override("font_color", color)
 	grid.add_child(value_label)
 
 
-func _button(key: String, action: Callable) -> Button:
-	var button := UiFactory.make_button(key)
+func _icon(kind: IconButton.Icon, diameter: float, caption_key: String, action: Callable, primary: bool = false) -> IconButton:
+	var button := IconButton.new().setup(kind, diameter, tr(caption_key))
+	button.primary = primary
 	button.pressed.connect(action)
 	return button
 
 
-## Evoluir o núcleo com o saldo de quarks; volta para o seletor de fases.
-func _upgrades_button() -> Button:
-	var button := UiFactory.make_button("")
-	button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	button.text = tr("RESULT_UPGRADES") % SaveGame.quarks
-	UiFactory.fit_button_text(button)
-	button.pressed.connect(func() -> void:
-		Session.upgrades_return_path = ScenePaths.STAGE_SELECT
-		_go(ScenePaths.UPGRADES))
-	return button
+func _expander() -> Control:
+	var space := Control.new()
+	space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return space
 
 
 func _on_next_pressed() -> void:
