@@ -247,6 +247,7 @@ formation = 2
 count = 8
 interval = 0.42
 x_ratio = 0.3
+special_moment = true
 sway_amplitude = 150.0
 sway_period = 2.6
 

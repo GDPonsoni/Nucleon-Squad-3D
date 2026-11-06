@@ -155,6 +155,7 @@ telegraph_seconds = 0.7
 
 [sub_resource type="Resource" id="Phase_1"]
 script = ExtResource("2_phase")
+special_moment = true
 hp_ratio = 0.55
 sway_speed_scale = 1.3
 attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_p1_a2"), SubResource("Attack_new_6"), SubResource("Attack_new_7")])

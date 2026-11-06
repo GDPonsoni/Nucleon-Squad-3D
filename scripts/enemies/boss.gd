@@ -152,6 +152,7 @@ func _update_phase() -> void:
 	if index == _phase:
 		return
 	_phase = index
+	armored = boss_data.phases[index].special_moment
 	var attacks: Array[BossAttack] = boss_data.phases[index].attacks
 	_timers.resize(attacks.size())
 	_bursts.resize(attacks.size())
@@ -317,6 +318,7 @@ func _draw() -> void:
 	var pulse: float = 0.5 + 0.5 * sin(_clock * (4.0 + _phase * 3.0))
 	draw_circle(Vector2.ZERO, radius * 0.22, color.lightened(0.3 + pulse * 0.4))
 	_draw_lasers()
+	_draw_armor()
 	_draw_boss_telegraphs()
 
 

@@ -116,6 +116,7 @@ func _process(delta: float) -> void:
 		if enemy != null:
 			enemy.activate(entry["data"], entry["pos"], entry["velocity"], entry["delay"])
 			enemy.set_motion(entry["wave"], entry["member"])
+			enemy.armored = (entry["wave"] as WaveData).special_moment
 			enemy.apply_stage(_stage)
 
 	if _finished:

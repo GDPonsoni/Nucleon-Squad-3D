@@ -314,3 +314,63 @@ func test_ad_quarks_daily_limit() -> void:
 	check(copy.ad_day == "2000-01-01" and copy.ad_count == save.ad_count, "contagem salva")
 	save.free()
 	copy.free()
+
+
+## Inimigo de teste fora da árvore (sem desenho nem processo): só a lógica de dano.
+func _enemy(id: String) -> Enemy:
+	var enemy := Enemy.new()
+	enemy.context = CombatContext.new()
+	enemy.activate(load("res://data/enemies/%s.tres" % id), Vector2(500.0, 500.0), Vector2.ZERO)
+	return enemy
+
+
+func test_weapon_multipliers() -> void:
+	var colossus := _enemy("colossus")
+	colossus.take_damage(10.0, WeaponData.Kind.BEAM)
+	check(is_equal_approx(colossus.hp, 150.0 - 14.0), "Raio +40%% no Colosso (vida %.1f)" % colossus.hp)
+	colossus.take_damage(10.0, WeaponData.Kind.SPREAD)
+	check(is_equal_approx(colossus.hp, 136.0 - 2.0), "Leque -80%% no Colosso (vida %.1f)" % colossus.hp)
+	colossus.take_damage(10.0, Enemy.SOURCE_SPECIAL)
+	check(is_equal_approx(colossus.hp, 124.0), "especial ignora multiplicadores (vida %.1f)" % colossus.hp)
+	colossus.free()
+
+
+func test_shield_blocks_front_only() -> void:
+	var shielder := _enemy("shielder")
+	shielder.take_damage(5.0, WeaponData.Kind.SPREAD, Vector2(500.0, 700.0))
+	check(is_equal_approx(shielder.hp, 20.0) and shielder.last_blocked, "tiro de baixo bloqueado")
+	shielder.take_damage(5.0, WeaponData.Kind.SPREAD, Vector2(500.0, 300.0))
+	check(is_equal_approx(shielder.hp, 15.0), "tiro de cima passa (vida %.1f)" % shielder.hp)
+	shielder.take_damage(5.0, WeaponData.Kind.SPREAD)
+	check(is_equal_approx(shielder.hp, 10.0), "área (sem origem) passa o escudo")
+	# Escudo (14) já absorveu 5: mais dois tiros de 5 o quebram
+	for i in 2:
+		shielder.take_damage(5.0, WeaponData.Kind.SPREAD, Vector2(500.0, 700.0))
+	check(not shielder.shield_up(), "escudo quebrado após absorver %d" % int(shielder.data.shield_hp))
+	shielder.take_damage(5.0, WeaponData.Kind.SPREAD, Vector2(500.0, 700.0))
+	check(is_equal_approx(shielder.hp, 5.0), "sem escudo, o tiro de baixo acerta (vida %.1f)" % shielder.hp)
+	shielder.free()
+
+
+func test_special_moment_armor() -> void:
+	var drone := _enemy("drone")
+	drone.armored = true
+	drone.take_damage(2.0, WeaponData.Kind.BEAM)
+	check(is_equal_approx(drone.hp, 6.0 - 0.2), "blindado leva 10%% do dano normal (vida %.2f)" % drone.hp)
+	drone.take_damage(1.0, Enemy.SOURCE_SPECIAL)
+	check(not drone.armored and is_equal_approx(drone.hp, 4.8), "especial quebra a blindagem")
+	drone.take_damage(2.0, WeaponData.Kind.BEAM)
+	check(is_equal_approx(drone.hp, 2.8), "depois do especial, dano normal")
+	drone.free()
+
+
+func test_every_attack_has_telegraph() -> void:
+	for file in DirAccess.get_files_at("res://data/enemies"):
+		var data := load("res://data/enemies/" + file) as EnemyData
+		if data.fire_pattern != EnemyData.FirePattern.NONE or data.movement == EnemyData.Movement.DIVE:
+			check(data.telegraph_seconds > 0.0, "%s ataca sem aviso" % file)
+	for file in DirAccess.get_files_at("res://data/bosses"):
+		var boss := load("res://data/bosses/" + file) as BossData
+		for phase in boss.phases:
+			for attack in phase.attacks:
+				check(attack.telegraph_seconds > 0.0, "%s tem ataque sem aviso" % file)

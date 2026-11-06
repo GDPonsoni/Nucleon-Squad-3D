@@ -9,6 +9,8 @@ enum Movement {
 }
 
 @export var hp_ratio: float = 1.0  # 1 = desde o início; 0.5 = a partir de metade da vida
+## Momento de especial: o chefe fica blindado (dano normal reduzido) até levar um especial.
+@export var special_moment: bool = false
 @export var attacks: Array[BossAttack] = []
 @export var sway_speed_scale: float = 1.0  # balança mais rápido nas fases finais
 @export var movement: Movement = Movement.SWAY

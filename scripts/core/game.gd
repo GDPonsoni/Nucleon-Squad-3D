@@ -24,6 +24,7 @@ var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
 var companion: Companion  # null = sem nave auxiliar
 var _special_was_ready: bool = false
+var _special_moment: bool = false
 var _quarks_banked: bool = false
 
 var _spawning_done: bool = false  # fase pode terminar (tempo acabou e não há chefe vivo)
@@ -201,11 +202,32 @@ func _process(delta: float) -> void:
 	if special_ready and not _special_was_ready:
 		Audio.play(&"special_ready")
 	_special_was_ready = special_ready
+	_update_special_moment()
 	if not _spawning_done or _match_over:
 		return
 	_clear_wait += delta
 	if enemies.active.is_empty() or _clear_wait >= Params.stage_clear_timeout:
 		_finish_stage_clear()
+
+
+## Momento de especial: há alvo blindado na tela. Ao começar, a carga enche e a tela avisa.
+func _update_special_moment() -> void:
+	var active: bool = boss != null and is_instance_valid(boss) and boss.armored and not boss.is_entering()
+	if not active:
+		for item in enemies.active:
+			var enemy := item as Enemy
+			if enemy.armored and enemy.is_on_screen():
+				active = true
+				break
+	if active == _special_moment:
+		return
+	_special_moment = active
+	hud.set_special_moment(active)
+	if active:
+		state.fill_special()
+		hud.show_warning("SPECIAL_MOMENT")
+		Audio.play(&"special_ready", 2.0)
+		Haptics.play(&"momento_especial")
 
 
 ## Saiu da partida (menu, reiniciar, próxima fase): os quarks ganhos não se perdem.

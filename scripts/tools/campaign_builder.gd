@@ -32,6 +32,7 @@ const FIRE_SCALE: PackedFloat32Array = [1.35, 1.32, 1.32, 1.3, 1.32]  # cadênci
 # Reforço de dificuldade por capítulo (os primeiros estavam fáceis demais)
 const DIFFICULTY_BOOST: PackedFloat32Array = [0.8, 0.5, 0.35, 0.2, 0.0]
 const METEOR_STAGE: int = 6  # índice da fase 7: campo de meteoros em todo capítulo
+const SPECIAL_STAGE: int = 7  # índice da fase 8: o clímax vem blindado (momento de especial)
 const METEOR_WAVE_GAP: float = 1.45  # no campo de meteoros, ondas mais espaçadas
 const ROCKS_FROM_STAGE: int = 6  # capítulo 1: rochas esparsas a partir da fase 7 (depois, em todas)
 const OLD_MOTIF_DECAY: float = 0.65  # peso dos motivos de capítulos anteriores, por capítulo de distância
@@ -47,6 +48,7 @@ var _e: Dictionary = {}  # id -> EnemyData
 var _motifs: Array[Dictionary] = []
 var _rng := RandomNumberGenerator.new()
 var _current_stage: StageData
+var _last_built: int = 0
 
 
 func _ready() -> void:
@@ -176,13 +178,19 @@ func _compose(c: int, s: int, d: float, duration: float) -> Array[WaveData]:
 		var cycle: int = i / chosen.size()
 		var level: int = cycle + bonus
 		var mirrored: bool = cycle % 2 == 1
-		waves.append_array((motif["build"] as Callable).call(t, level, mirrored))
+		var built: Array[WaveData] = (motif["build"] as Callable).call(t, level, mirrored)
+		_last_built = built.size()
+		waves.append_array(built)
 		# Duplas nos capítulos finais e o clímax: um motivo leve junto com o atual
 		var pair_every: int = 2 if d >= PAIR_OFTEN_FROM else 3
 		var pair: bool = d >= PAIR_FROM and i % pair_every == pair_every - 1 and s != MIDBOSS_STAGE
 		if not climax_done and t >= climax_at:
 			climax_done = true
 			pair = true
+			# Momento de especial: a onda do clímax vem blindada
+			if s == SPECIAL_STAGE:
+				for wave in waves.slice(waves.size() - _last_built):
+					wave.special_moment = true
 		if pair:
 			var partner: Dictionary = _light_partner(chosen, motif)
 			waves.append_array((partner["build"] as Callable).call(t + 1.5, level, not mirrored))

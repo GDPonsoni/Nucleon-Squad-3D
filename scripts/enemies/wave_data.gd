@@ -27,6 +27,8 @@ enum EntrySide { LEFT, RIGHT, BOTH }
 @export var y_ratio: float = 0.25  # SIDE: altura de entrada (0 = topo, 1 = base)
 @export var dive_stagger: float = 0.15  # atraso extra de mergulho por membro (kamikazes em sequência)
 @export var columns: int = 3  # GRID: membros por fileira
+## Momento de especial: os membros vêm blindados (dano normal reduzido) até levarem um especial.
+@export var special_moment: bool = false
 
 @export_group("Movimento da onda")  # vale para todos os membros, por cima do movimento do inimigo
 @export var speed_scale: float = 1.0  # velocidade em relação à do inimigo

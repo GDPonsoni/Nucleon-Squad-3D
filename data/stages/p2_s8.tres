@@ -327,6 +327,7 @@ formation = 8
 count = 18
 spacing = 120.0
 x_ratio = 0.45
+special_moment = true
 sway_amplitude = 60.0
 sway_period = 2.0
 sway_phase_step = 0.9

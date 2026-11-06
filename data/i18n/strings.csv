@@ -20,6 +20,8 @@ RESULT_POWERUPS,Power-ups,Power-ups,Power-ups
 RESULT_TIME,Time,Tempo,Tiempo
 RESULT_NEW_RECORD,New record!,Novo recorde!,¡Nuevo récord!
 RESULT_STAGE_SELECT,Select stage,Escolher fase,Elegir fase
+SPECIAL_MOMENT,USE YOUR SPECIAL!,USE O ESPECIAL!,¡USA EL ESPECIAL!
+SPECIAL_MOMENT_HINT,Armored! Special,Blindado! Especial,¡Blindado! Especial
 BOSS_WARNING,WARNING: BOSS AHEAD,ALERTA: CHEFE À FRENTE,ALERTA: JEFE EN CAMINO
 BOSS_1_NAME,Sentinel,Sentinela,Centinela
 BOSS_2_NAME,Forge,Forja,Forja

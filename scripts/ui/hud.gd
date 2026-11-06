@@ -18,6 +18,7 @@ var _boss: Boss
 var _boss_label: Label
 var _warning: Label
 var _toast: Label
+var _moment_label: Label  # "use o especial" acima do botão, enquanto houver alvo blindado
 var _toast_tween: Tween
 var _special: SpecialButton
 var _shown_quarks: int = -1
@@ -88,6 +89,16 @@ func _ready() -> void:
 	_special.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
 	_special.pressed.connect(special_pressed.emit)
 	_canvas.add_child(_special)
+	_moment_label = UiFactory.make_title("SPECIAL_MOMENT_HINT")
+	_moment_label.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	_moment_label.add_theme_color_override("font_color", Params.special_moment_color)
+	_moment_label.add_theme_font_size_override("font_size", Params.hud_toast_font_size)
+	_moment_label.add_theme_constant_override("outline_size", 10)
+	_moment_label.add_theme_color_override("font_outline_color", Params.nucleus_outline_color)
+	_moment_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	_moment_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_moment_label.visible = false
+	_canvas.add_child(_moment_label)
 	place_special(Params.switch_strip_bottom * 2.0)
 
 	_flash = ColorRect.new()
@@ -112,6 +123,17 @@ func place_special(reserved_bottom: float) -> void:
 	_special.offset_right = _special.offset_left + Params.special_button_size
 	_special.offset_bottom = -bottom
 	_special.offset_top = -bottom - Params.special_button_size
+	if _moment_label != null:
+		_moment_label.offset_left = Params.hud_margin.x
+		_moment_label.offset_right = Params.hud_margin.x + Params.special_button_size * 3.0
+		_moment_label.offset_bottom = _special.offset_top - 8.0
+		_moment_label.offset_top = _moment_label.offset_bottom - Params.hud_toast_font_size * 1.6
+
+
+## Momento de especial: o botão pulsa em dourado e o aviso fica piscando acima dele.
+func set_special_moment(active: bool) -> void:
+	_special.moment = active
+	_moment_label.visible = active
 
 
 ## Mostra a barra de vida do chefe (null esconde).
@@ -162,6 +184,8 @@ func flash_hit(color: Color = Params.hud_hit_flash_color) -> void:
 
 
 func _process(_delta: float) -> void:
+	if _moment_label.visible:
+		_moment_label.modulate.a = 0.55 + 0.45 * sin(Time.get_ticks_msec() * 0.001 * TAU * Params.special_moment_blink_hz)
 	# Progresso muda a cada frame; o resto é barato de redesenhar junto
 	_canvas.queue_redraw()
 	if _state != null:

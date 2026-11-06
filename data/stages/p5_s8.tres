@@ -334,6 +334,7 @@ enemy = ExtResource("9_o3r7j")
 formation = 0
 count = 3
 spacing = 320.0
+special_moment = true
 
 [sub_resource type="Resource" id="Resource_m3gdx"]
 script = ExtResource("7_kysxk")

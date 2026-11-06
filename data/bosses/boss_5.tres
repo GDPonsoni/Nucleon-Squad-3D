@@ -222,6 +222,7 @@ telegraph_seconds = 0.7
 
 [sub_resource type="Resource" id="Phase_3"]
 script = ExtResource("2_phase")
+special_moment = true
 hp_ratio = 0.25
 sway_speed_scale = 1.5
 movement = 1

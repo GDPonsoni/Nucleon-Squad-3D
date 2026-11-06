@@ -5,6 +5,7 @@ extends Button
 
 var charge: float = 0.0  # 0 a 1
 var body: BodyData  # null = sem corpo (aguardando escolha)
+var moment: bool = false  # momento de especial: pulsa forte em dourado
 
 
 func _ready() -> void:
@@ -35,6 +36,11 @@ func _draw() -> void:
 			points.append(center + point * radius * 1.1)
 		draw_colored_polygon(points, body.color if ready else Color(body.color, 0.45))
 
+	if moment:
+		var beat: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.001 * TAU * Params.special_moment_blink_hz)
+		for k in 2:
+			draw_arc(center, radius + Params.special_ring_width * (1.5 + k * 1.5 + beat * 2.0), 0.0, TAU, 48,
+				Color(Params.special_moment_color, (0.9 - k * 0.35) * (1.0 - beat * 0.5)), 6.0)
 	if ready:
 		# Brilho pulsando em volta quando está pronto
 		var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.008)

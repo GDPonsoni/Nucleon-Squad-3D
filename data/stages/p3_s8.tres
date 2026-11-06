@@ -338,6 +338,7 @@ time_seconds = 151.5
 enemy = ExtResource("7_stba6")
 formation = 0
 count = 1
+special_moment = true
 
 [sub_resource type="Resource" id="Resource_diamd"]
 script = ExtResource("6_xgmid")
@@ -347,6 +348,7 @@ formation = 2
 count = 4
 interval = 0.45
 x_ratio = 0.14
+special_moment = true
 
 [sub_resource type="Resource" id="Resource_3gjxj"]
 script = ExtResource("6_xgmid")
@@ -356,6 +358,7 @@ formation = 2
 count = 4
 interval = 0.45
 x_ratio = 0.86
+special_moment = true
 
 [sub_resource type="Resource" id="Resource_8uhra"]
 script = ExtResource("6_xgmid")

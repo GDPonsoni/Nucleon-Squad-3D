@@ -239,6 +239,10 @@ var shield_block_flash_seconds: float = 0.15
 var enemy_shield_color: Color = Color(0.45, 0.8, 1.0, 0.9)
 var enemy_shield_width: float = 10.0
 var regen_color: Color = Color(0.35, 1.0, 0.5, 0.9)
+# --- Momentos de especial ---
+var special_moment_armor: float = 0.1  # dano normal contra alvos blindados (o especial quebra a blindagem)
+var special_moment_color: Color = Color(1.0, 0.82, 0.25)
+var special_moment_blink_hz: float = 2.5
 # --- Telegrafia (aviso antes de cada ataque inimigo) ---
 var telegraph_line_length: float = 520.0  # linha tracejada na direção do tiro
 var telegraph_line_width: float = 4.0
@@ -476,5 +480,6 @@ var haptic_patterns: Dictionary = {
 	&"especial": {"priority": 3, "cooldown": 0.3, "steps": [[32, 0.2], [32, 0.4], [48, 0.6], [48, 0.8], [112, 1.0], [80, 0.5]]},
 	&"perda_nave": {"priority": 4, "cooldown": 0.3, "steps": [[48, 1.0], [48, 0.0], [32, 0.8], [32, 0.0], [128, 0.65], [96, 0.4], [80, 0.2]]},
 	&"explosao_chefe": {"priority": 4, "cooldown": 0.3, "steps": [[32, 0.4], [32, 0.0], [48, 0.7], [32, 0.0], [80, 1.0], [128, 0.9], [144, 0.6], [160, 0.3]]},
+	&"momento_especial": {"priority": 3, "cooldown": 1.0, "steps": [[32, 0.6], [48, 0.0], [32, 0.6], [48, 0.0], [64, 1.0]]},
 	&"fase_completa": {"priority": 3, "cooldown": 0.3, "steps": [[32, 0.6], [48, 0.0], [32, 0.8], [48, 0.0], [96, 1.0], [80, 0.4]]},
 }

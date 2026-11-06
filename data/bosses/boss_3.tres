@@ -173,6 +173,7 @@ telegraph_seconds = 0.8
 
 [sub_resource type="Resource" id="Phase_2"]
 script = ExtResource("2_phase")
+special_moment = true
 movement = 2
 chase_speed = 200.0
 hp_ratio = 0.3

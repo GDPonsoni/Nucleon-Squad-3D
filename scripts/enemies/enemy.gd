@@ -13,6 +13,8 @@ var hp: float = 0.0
 var radius: float = 0.0
 var bullets: NodePool  # projéteis inimigos
 var context: CombatContext  # para mirar na nave
+## Blindado (momento de especial): o dano normal é reduzido até levar um especial.
+var armored: bool = false
 var crushed: bool = false  # destruído ao encostar na nave: não se divide (rochas, fissão)
 
 var _velocity: Vector2
@@ -68,6 +70,7 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 	_tele_left = -1.0
 	_tele_dirs.resize(0)
 	crushed = false
+	armored = false
 	_speed_scale = 1.0
 	_fire_scale = 1.0
 	_sway_amplitude = 0.0
@@ -146,6 +149,13 @@ func take_damage(amount: float, source: int = SOURCE_NONE, from: Vector2 = Vecto
 	if not visible:
 		return
 	var mult: float = _damage_multiplier(source)
+	if armored:
+		if source == SOURCE_SPECIAL:
+			armored = false
+			if context != null:
+				context.spark(position, Params.special_moment_color, radius / 30.0)
+		else:
+			mult *= Params.special_moment_armor
 	last_blocked = _blocked_by_shield(from)
 	if last_blocked:
 		# O escudo absorve o acerto (com o multiplicador da arma) e pode quebrar
@@ -370,8 +380,20 @@ func _draw() -> void:
 		inner.append(dir * radius * 0.45)
 	draw_colored_polygon(outer, color)
 	draw_colored_polygon(inner, color.darkened(0.5))
+	_draw_armor()
 	_draw_defense()
 	_draw_telegraph()
+
+
+## Blindagem do momento de especial: hexágono dourado pulsando em volta.
+func _draw_armor() -> void:
+	if not armored:
+		return
+	var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.001 * TAU * Params.special_moment_blink_hz)
+	var points := PackedVector2Array()
+	for i in 7:
+		points.append(Vector2.from_angle(TAU * i / 6.0 - rotation) * radius * (1.25 + 0.08 * pulse))
+	draw_polyline(points, Color(Params.special_moment_color, 0.55 + 0.45 * pulse), 6.0)
 
 
 ## Escudo frontal (arco embaixo) e anel verde enquanto regenera, com a vida que falta.

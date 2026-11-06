@@ -191,6 +191,12 @@ func special_ready() -> bool:
 	return is_alive(current) and special_ratio() >= 1.0
 
 
+## Momento de especial: a carga do corpo ativo enche na hora.
+func fill_special() -> void:
+	if is_alive(current):
+		special_charge[current] = special_seconds()
+
+
 func use_special() -> void:
 	special_charge[current] = 0.0
 
