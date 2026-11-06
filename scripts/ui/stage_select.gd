@@ -1,15 +1,19 @@
 extends Control
-## Seletor de fases: um capítulo por página, com setas para trocar de capítulo.
-## Cada página mostra o nome do capítulo, o progresso, a recompensa por concluí-lo e as
-## fases numa grade (chefe intermediário e chefe marcados). Fases travadas aparecem
-## desativadas com cadeado; concluídas, com o recorde.
-## Deslizar o dedo para o lado troca de capítulo: a página acompanha o dedo (PagedView).
-## Em build de debug, tocar várias vezes no título libera todas as fases.
+## Seletor de fases: um planeta por página, com o caminho das fases como mapa (StageMap).
+## Cabeçalho fixo (capítulo, nome, progresso, bolinhas); só o mapa acompanha o dedo (PagedView).
+## Tocar numa fase liberada a inicia; a sugerida (a próxima) pulsa.
+## Em build de debug, tocar várias vezes no nome do capítulo libera todas as fases.
 
 var _chapter: int = 0
 var _pager: PagedView
 var _back_corner: Button
 var _title_taps: int = 0
+var _header_chapter: int = -1
+var _number_label: Label
+var _name_label: Label
+var _progress_label: Label
+var _reward_label: Label
+var _dots: Control
 
 
 func _ready() -> void:
@@ -19,13 +23,21 @@ func _ready() -> void:
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())
 	_chapter = Session.browsed_chapter if Session.browsed_chapter >= 0 else _first_open_chapter()
+	var root := VBoxContainer.new()
+	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_theme_constant_override("separation", 0)
+	add_child(root)
+	root.add_child(_build_header())
 	_pager = PagedView.new()
-	add_child(_pager)
+	_pager.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(_pager)
 	_pager.setup(Session.campaign.planets.size(), _build_page, _chapter)
+	_pager.scrolled.connect(func(position: float) -> void: _refresh_header(roundi(position)))
 	_pager.page_changed.connect(func(index: int) -> void:
 		_chapter = index
 		Session.browsed_chapter = index)
-	UiFactory.animate_in(_pager)
+	_refresh_header(_chapter)
+	UiFactory.animate_in(root)
 	_back_corner = UiFactory.add_corner_back(self, _go_back)
 
 
@@ -37,90 +49,75 @@ func _first_open_chapter() -> int:
 	return Session.campaign.planets.size() - 1
 
 
-## Monta a página de um capítulo (o PagedView chama para a atual e as vizinhas).
-func _build_page(chapter: int) -> Control:
-	var scroll := ScrollContainer.new()
-	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
-	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	var center := CenterContainer.new()
-	center.custom_minimum_size = get_viewport_rect().size
-	scroll.add_child(center)
-	var column := UiFactory.make_column()
-	column.add_theme_constant_override("separation", Params.stage_select_spacing)
-	center.add_child(column)
-
+## Cabeçalho fixo: "CAPÍTULO 2", nome, "4/9", bolinhas e a recompensa (preenchidos em _refresh_header).
+func _build_header() -> Control:
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 6)
 	UiFactory.add_top_space(column)
-	var title := UiFactory.make_title("STAGE_SELECT_TITLE")
-	title.mouse_filter = Control.MOUSE_FILTER_STOP
-	title.gui_input.connect(_on_title_input)
-	column.add_child(title)
-	column.add_child(_chapter_header(chapter))
-	column.add_child(_chapter_dots(chapter))
-	var art := ChapterArt.new()
-	art.chapter = chapter
-	art.planet = Session.campaign.planets[chapter]
-	column.add_child(art)
-	column.add_child(_chapter_panel(chapter, Session.campaign.planets[chapter]))
-	return scroll
+	_number_label = UiFactory.make_subtitle("")
+	_number_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	column.add_child(_number_label)
+	_name_label = Label.new()
+	_name_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_name_label.mouse_filter = Control.MOUSE_FILTER_STOP
+	_name_label.gui_input.connect(_on_title_input)
+	column.add_child(_name_label)
+	_progress_label = UiFactory.make_subtitle("")
+	_progress_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	column.add_child(_progress_label)
+	_dots = _chapter_dots()
+	column.add_child(_dots)
+	_reward_label = UiFactory.make_subtitle("")
+	_reward_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	column.add_child(_reward_label)
+	return column
 
 
-## Setas e nome do capítulo atual.
-func _chapter_header(chapter: int) -> HBoxContainer:
-	var row := HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", Params.stage_select_spacing)
-	var previous := _arrow_button(chapter, -1)
-	row.add_child(previous)
+func _refresh_header(chapter: int) -> void:
+	chapter = clampi(chapter, 0, Session.campaign.planets.size() - 1)
+	if chapter == _header_chapter:
+		return
+	_header_chapter = chapter
 	var planet: PlanetData = Session.campaign.planets[chapter]
-	var names := VBoxContainer.new()
-	names.alignment = BoxContainer.ALIGNMENT_CENTER
-	names.custom_minimum_size.x = Params.stage_chapter_name_width
-	row.add_child(names)
-	var number := UiFactory.make_subtitle("")
-	number.text = (tr("STAGE_CHAPTER") % (chapter + 1)).to_upper()
-	number.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	names.add_child(number)
-	var name_label := Label.new()
-	name_label.text = tr(planet.name_key)
-	name_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_color_override("font_color", planet.star_color)
-	name_label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(name_label.text,
-		Params.stage_chapter_name_width, Params.stage_chapter_font_size))
-	names.add_child(name_label)
-	row.add_child(_arrow_button(chapter, 1))
-	return row
+	_number_label.text = (tr("STAGE_CHAPTER") % (chapter + 1)).to_upper()
+	_name_label.text = tr(planet.name_key)
+	_name_label.add_theme_color_override("font_color", planet.star_color)
+	_name_label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(_name_label.text,
+		Params.stage_header_name_width, Params.stage_chapter_font_size))
+	var done: int = 0
+	for stage in planet.stages:
+		if SaveGame.is_completed(stage.id):
+			done += 1
+	_progress_label.text = "%d/%d" % [done, planet.stages.size()]
+	var reward: String = _reward_text(chapter)
+	var cleared: bool = SaveGame.is_chapter_cleared(chapter)
+	_reward_label.text = "" if reward.is_empty() or cleared else tr("STAGE_REWARD_SHORT") % reward
+	_reward_label.add_theme_color_override("font_color", Params.powerup_color)
+	_dots.queue_redraw()
+	Haptics.play(&"tick")
 
 
-func _arrow_button(chapter: int, step: int) -> Button:
-	var button := UiFactory.make_button("")
-	button.custom_minimum_size = Vector2.ONE * Params.stage_arrow_size
-	var target: int = chapter + step
-	button.disabled = target < 0 or target >= Session.campaign.planets.size()
-	button.pressed.connect(_show_chapter.bind(target))
-	button.draw.connect(_draw_arrow.bind(button, step))
-	return button
-
-
-func _draw_arrow(button: Button, step: int) -> void:
-	var c: Vector2 = button.size * 0.5
-	var s: float = button.size.x * 0.18
-	var color: Color = Params.ui_muted_text_color if button.disabled else Params.ui_text_color
-	button.draw_colored_polygon(PackedVector2Array([
-		c + Vector2(s * step, 0.0), c + Vector2(-s * step * 0.7, -s), c + Vector2(-s * step * 0.7, s),
-	]), color)
+## Monta o mapa de um planeta (o PagedView chama para o atual e os vizinhos).
+func _build_page(chapter: int) -> Control:
+	var map := StageMap.new()
+	map.setup(chapter)
+	map.stage_chosen.connect(_on_stage_chosen)
+	return map
 
 
 ## Bolinhas: uma por capítulo, cheias nos concluídos e destacada na página atual.
-func _chapter_dots(chapter: int) -> Control:
+func _chapter_dots() -> Control:
 	var dots := Control.new()
 	var count: int = Session.campaign.planets.size()
 	dots.custom_minimum_size = Vector2(count * Params.stage_dot_spacing, Params.stage_dot_spacing * 0.6)
+	dots.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	dots.draw.connect(func() -> void:
 		for p in count:
 			var center := Vector2((p + 0.5) * Params.stage_dot_spacing, dots.size.y * 0.5)
 			var color: Color = Session.campaign.planets[p].star_color
-			if p == chapter:
+			if p == _header_chapter:
 				dots.draw_circle(center, Params.stage_dot_radius * 1.5, color)
 			elif SaveGame.is_chapter_cleared(p):
 				dots.draw_circle(center, Params.stage_dot_radius, Color(color, 0.8))
@@ -131,44 +128,6 @@ func _chapter_dots(chapter: int) -> Control:
 
 func _show_chapter(chapter: int) -> void:
 	_pager.go_to(chapter)
-
-
-func _chapter_panel(planet_index: int, planet: PlanetData) -> PanelContainer:
-	var column := UiFactory.make_column()
-	column.add_theme_constant_override("separation", Params.stage_select_spacing)
-
-	var done: int = 0
-	for stage in planet.stages:
-		if SaveGame.is_completed(stage.id):
-			done += 1
-	var progress := UiFactory.make_subtitle("")
-	progress.text = tr("STAGE_PROGRESS") % [done, planet.stages.size()]
-	column.add_child(progress)
-
-	var reward: String = _reward_text(planet_index)
-	if not reward.is_empty():
-		var reward_label := UiFactory.make_subtitle("")
-		var cleared: bool = SaveGame.is_chapter_cleared(planet_index)
-		reward_label.text = (tr("STAGE_REWARD_DONE") if cleared else tr("STAGE_REWARD")) % reward
-		reward_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		reward_label.custom_minimum_size.x = Params.stage_row_max_width
-		reward_label.add_theme_color_override("font_color", Params.powerup_color if not cleared else Params.ui_muted_text_color)
-		column.add_child(reward_label)
-
-	var grid := GridContainer.new()
-	grid.columns = Params.stage_grid_columns
-	grid.add_theme_constant_override("h_separation", Params.stage_select_spacing)
-	grid.add_theme_constant_override("v_separation", Params.stage_select_spacing)
-	column.add_child(grid)
-	for s in planet.stages.size():
-		grid.add_child(_stage_button(planet_index, s, planet))
-
-	var panel := UiFactory.make_panel(column)
-	# Borda na cor do planeta
-	var style := (UiTheme.get_theme().get_stylebox("panel", "PanelContainer") as StyleBoxFlat).duplicate() as StyleBoxFlat
-	style.border_color = Color(planet.star_color, 0.6)
-	panel.add_theme_stylebox_override("panel", style)
-	return panel
 
 
 ## O que concluir o capítulo libera (naves e o espaço da nave auxiliar).
@@ -183,76 +142,10 @@ func _reward_text(planet_index: int) -> String:
 	return ", ".join(names)
 
 
-func _stage_button(planet_index: int, stage_index: int, planet: PlanetData) -> Button:
-	var stage: StageData = planet.stages[stage_index]
-	var unlocked: bool = SaveGame.is_unlocked(planet_index, stage_index)
-	var button := UiFactory.make_button("")
-	button.custom_minimum_size = Params.stage_button_size
-	button.disabled = not unlocked
-
-	# Número da fase grande e recorde menor embaixo
-	var column := VBoxContainer.new()
-	column.alignment = BoxContainer.ALIGNMENT_CENTER
-	column.set_anchors_preset(Control.PRESET_FULL_RECT)
-	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	button.add_child(column)
-	var number := Label.new()
-	number.text = Session.stage_label(planet_index, stage_index)
-	number.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(number)
-	var best: int = SaveGame.best_score(stage.id)
-	if unlocked and best > 0:
-		var record := UiFactory.make_subtitle("")
-		record.text = tr("STAGE_BEST") % best
-		record.add_theme_font_size_override("font_size", Params.stage_record_font_size)
-		column.add_child(record)
-	if not unlocked:
-		number.add_theme_color_override("font_color", Params.ui_muted_text_color.darkened(0.3))
-	if unlocked:
-		button.pressed.connect(_on_stage_pressed.bind(planet_index, stage_index))
-	var boss_mark: int = 0
-	if stage.boss != null:
-		boss_mark = 2 if stage_index == planet.stages.size() - 1 else 1
-	button.draw.connect(_draw_marks.bind(button, unlocked, SaveGame.is_completed(stage.id), boss_mark))
-	return button
-
-
-## Cadeado (travada), visto (concluída) e marca de chefe (1 = intermediário, 2 = do capítulo).
-func _draw_marks(button: Button, unlocked: bool, completed: bool, boss_mark: int) -> void:
-	var size: float = Params.stage_lock_size
-	if not unlocked:
-		var origin := Vector2(button.size.x - size * 1.4, size * 0.6)
-		var color: Color = Params.ui_muted_text_color
-		button.draw_arc(origin + Vector2(size * 0.5, size * 0.45), size * 0.3, PI, TAU, 16, color, 4.0)
-		button.draw_rect(Rect2(origin + Vector2(0.0, size * 0.45), Vector2(size, size * 0.65)), color)
-	elif completed:
-		var o := Vector2(button.size.x - size * 1.3, size * 0.9)
-		button.draw_polyline(PackedVector2Array([o, o + Vector2(size * 0.35, size * 0.35), o + Vector2(size, -size * 0.4)]),
-			Params.medkit_color, 5.0)
-	if boss_mark > 0:
-		var center := Vector2(size * 1.1, size * 1.0)
-		var color: Color = Params.hud_warning_color if boss_mark == 2 else Params.powerup_color
-		if not unlocked:
-			color = Color(color, 0.4)
-		if boss_mark == 2:
-			# Coroa: chefe do capítulo
-			button.draw_colored_polygon(PackedVector2Array([
-				center + Vector2(-size * 0.6, size * 0.35), center + Vector2(-size * 0.6, -size * 0.3),
-				center + Vector2(-size * 0.25, 0.0), center + Vector2(0.0, -size * 0.45), center + Vector2(size * 0.25, 0.0),
-				center + Vector2(size * 0.6, -size * 0.3), center + Vector2(size * 0.6, size * 0.35),
-			]), color)
-		else:
-			# Losango: chefe intermediário
-			button.draw_colored_polygon(PackedVector2Array([
-				center + Vector2(0.0, -size * 0.45), center + Vector2(size * 0.4, 0.0),
-				center + Vector2(0.0, size * 0.45), center + Vector2(-size * 0.4, 0.0),
-			]), color)
-
-
-func _on_stage_pressed(planet_index: int, stage_index: int) -> void:
+func _on_stage_chosen(planet_index: int, stage_index: int) -> void:
 	Session.select(planet_index, stage_index)
 	Session.browsed_chapter = planet_index
+	Audio.play(&"ui_confirm")
 	SceneTransition.go_to(ScenePaths.GAME)
 
 

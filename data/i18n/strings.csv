@@ -187,3 +187,10 @@ DEBUG_GIVE_QUARKS,Give quarks,Dar quarks,Dar quarks
 DEBUG_RESET_UPGRADES,Reset upgrades and quarks,Zerar evolução e quarks,Reiniciar mejoras y quarks
 DEBUG_RESET_ALL,Reset all progress,Zerar todo o progresso,Reiniciar todo el progreso
 DEBUG_CONFIRM,Tap again to confirm,Toque de novo para confirmar,Toca de nuevo para confirmar
+STAGE_REWARD_SHORT,Unlocks: %s,Libera: %s,Desbloquea: %s
+PAUSE_CAPTION_RESTART,Restart,Reiniciar,Reiniciar
+PAUSE_CAPTION_SETTINGS,Settings,Ajustes,Ajustes
+PAUSE_CAPTION_EXIT,Exit,Sair,Salir
+SETTINGS_SHORT_VIBRATION,Vibration,Vibração,Vibración
+SETTINGS_SHORT_EFFECTS,Effects,Efeitos,Efectos
+SETTINGS_SHORT_STATS,FPS,FPS,FPS

@@ -72,7 +72,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 **Interface:** botões com relevo e variação de ação principal (`PrimaryButton`); a nave auxiliar é escolhida numa fileira própria no Esquadrão (não pode repetir uma nave do esquadrão) e não tem núcleo.
 
-**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações; sair pelo Voltar do Android) → `stage_select.tscn` (um capítulo por página, com setas) → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
+**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações; sair pelo Voltar do Android) → `stage_select.tscn` (mapa de um planeta por página; cabeçalho fixo; deslizar troca de planeta) → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
 
 **Partida:**
 - Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3) com moldura azul.
@@ -149,6 +149,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Sons | `scripts/core/audio.gd`, `assets/audio/sfx/` |
 | Nave auxiliar | `scripts/player/companion.gd` |
 | Barra de troca e toque curto | `body_switcher.gd`, `touch_input.gd` |
+| Seletor de fases (mapa do planeta, cabeçalho fixo) | `stage_select.gd`, `stage_map.gd`, `stage_node.gd` |
+| Pausa e configurações (ícones, quase sem texto) | `pause_menu.gd`, `settings_panel.gd`, `icon_button.gd` (`IconButton`) |
 | Paginação lateral (página acompanha o dedo, snap por distância/velocidade) | `scripts/ui/paged_view.gd` (`PagedView`), params `pager_*`; usada no seletor de fases |
 | Fim de fase (pausa, limpeza, nave sai, música `clear.wav`) | `Game._play_clear_sequence`, params `clear_*`, `Player.begin_scripted` |
 | Campanha (gerador) | `scripts/tools/campaign_builder.gd` |

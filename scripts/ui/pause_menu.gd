@@ -1,6 +1,6 @@
 class_name PauseMenu
 extends CanvasLayer
-## Botão de pausa sempre visível e menu de pausa (continuar / recomeçar a fase / voltar ao menu).
+## Botão de pausa sempre visível e menu de pausa: continuar (grande), reiniciar, ajustes e sair, em ícones.
 ## O menu é um Dialog: o X e o Voltar do Android continuam a partida.
 
 var _pause_button: Button
@@ -59,18 +59,35 @@ func open() -> void:
 		return
 	get_tree().paused = true
 	_pause_button.visible = false
-	_dialog = Dialog.open(self, "PAUSE_TITLE", true, layer)
+	_dialog = Dialog.open(self, "", true, layer)
 	_dialog.closed.connect(_on_dialog_closed)
-	_add_action(_dialog, "PAUSE_RESUME", _dialog.close)
-	_add_action(_dialog, "PAUSE_RESTART", _restart_stage)
-	_add_action(_dialog, "MENU_SETTINGS", _open_settings)
-	_add_action(_dialog, "PAUSE_EXIT_TO_MENU", _exit_to_menu)
+	# Sem título nem frases: fase atual pequena, continuar grande e três ações com ícone
+	var stage_label := UiFactory.make_subtitle("")
+	stage_label.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	stage_label.text = Session.stage_label(Session.planet_index, Session.stage_index)
+	_dialog.body.add_child(stage_label)
+	_dialog.body.add_child(_centered(_icon(IconButton.Icon.PLAY, Params.pause_resume_size, "", _dialog.close, true)))
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 56)
+	row.add_child(_icon(IconButton.Icon.RESTART, Params.pause_action_size, tr("PAUSE_CAPTION_RESTART"), _restart_stage))
+	row.add_child(_icon(IconButton.Icon.GEAR, Params.pause_action_size, tr("PAUSE_CAPTION_SETTINGS"), _open_settings))
+	row.add_child(_icon(IconButton.Icon.HOME, Params.pause_action_size, tr("PAUSE_CAPTION_EXIT"), _exit_to_menu))
+	_dialog.body.add_child(row)
 
 
-func _add_action(dialog: Dialog, key: String, action: Callable) -> void:
-	var button := UiFactory.make_button(key)
+func _icon(kind: IconButton.Icon, diameter: float, caption: String, action: Callable, primary: bool = false) -> IconButton:
+	var button := IconButton.new().setup(kind, diameter, caption)
+	button.primary = primary
 	button.pressed.connect(action)
-	dialog.body.add_child(button)
+	return button
+
+
+func _centered(child: Control) -> Control:
+	var box := HBoxContainer.new()
+	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_child(child)
+	return box
 
 
 func close() -> void:

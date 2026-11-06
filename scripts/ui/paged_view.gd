@@ -9,6 +9,8 @@ extends Control
 ## deslizes verticais passam intactos para a página (botões, rolagem).
 ## Gesto cancelável: voltar o dedo ao ponto inicial (ou ao meio) e soltar mantém a página.
 
+## Posição fracionária durante o arrasto (1.0 = página 1 em repouso); para cabeçalhos fixos.
+signal scrolled(position: float)
 ## A página mudou (depois do encaixe).
 signal page_changed(index: int)
 
@@ -216,8 +218,8 @@ func _ensure_page(index: int) -> void:
 		return
 	var page: Control = _builder.call(index)
 	page.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	page.size = size
 	add_child(page)
+	page.size = size  # depois de entrar na árvore: assim a página recebe o aviso de tamanho
 	_pages[index] = page
 
 
@@ -240,3 +242,4 @@ func _layout() -> void:
 		var page := _pages[index] as Control
 		page.size = size
 		page.position = Vector2((index - current) * size.x + _offset, 0.0)
+	scrolled.emit(current - _offset / maxf(size.x, 1.0))
