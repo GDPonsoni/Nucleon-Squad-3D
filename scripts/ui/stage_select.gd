@@ -3,16 +3,13 @@ extends Control
 ## Cada página mostra o nome do capítulo, o progresso, a recompensa por concluí-lo e as
 ## fases numa grade (chefe intermediário e chefe marcados). Fases travadas aparecem
 ## desativadas com cadeado; concluídas, com o recorde.
-## Deslizar o dedo para o lado também troca de capítulo (com animação e vibração curta).
+## Deslizar o dedo para o lado troca de capítulo: a página acompanha o dedo (PagedView).
 ## Em build de debug, tocar várias vezes no título libera todas as fases.
 
 var _chapter: int = 0
-var _page: Control
+var _pager: PagedView
 var _back_corner: Button
 var _title_taps: int = 0
-var _swipe_start := Vector2.ZERO
-var _swipe_usec: int = -1
-var _slide_from: int = 0  # direção da animação ao trocar de capítulo
 
 
 func _ready() -> void:
@@ -22,8 +19,13 @@ func _ready() -> void:
 	UiFactory.apply_theme(self)
 	add_child(Starfield.new())
 	_chapter = Session.browsed_chapter if Session.browsed_chapter >= 0 else _first_open_chapter()
-	_build()
-	UiFactory.animate_in(_page)
+	_pager = PagedView.new()
+	add_child(_pager)
+	_pager.setup(Session.campaign.planets.size(), _build_page, _chapter)
+	_pager.page_changed.connect(func(index: int) -> void:
+		_chapter = index
+		Session.browsed_chapter = index)
+	UiFactory.animate_in(_pager)
 	_back_corner = UiFactory.add_corner_back(self, _go_back)
 
 
@@ -35,14 +37,11 @@ func _first_open_chapter() -> int:
 	return Session.campaign.planets.size() - 1
 
 
-func _build() -> void:
-	if _page != null:
-		_page.queue_free()
+## Monta a página de um capítulo (o PagedView chama para a atual e as vizinhas).
+func _build_page(chapter: int) -> Control:
 	var scroll := ScrollContainer.new()
 	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	add_child(scroll)
-	_page = scroll
 	var center := CenterContainer.new()
 	center.custom_minimum_size = get_viewport_rect().size
 	scroll.add_child(center)
@@ -55,31 +54,30 @@ func _build() -> void:
 	title.mouse_filter = Control.MOUSE_FILTER_STOP
 	title.gui_input.connect(_on_title_input)
 	column.add_child(title)
-	column.add_child(_chapter_header())
-	column.add_child(_chapter_dots())
+	column.add_child(_chapter_header(chapter))
+	column.add_child(_chapter_dots(chapter))
 	var art := ChapterArt.new()
-	art.chapter = _chapter
-	art.planet = Session.campaign.planets[_chapter]
+	art.chapter = chapter
+	art.planet = Session.campaign.planets[chapter]
 	column.add_child(art)
-	column.add_child(_chapter_panel(_chapter, Session.campaign.planets[_chapter]))
-	if _back_corner != null:
-		_back_corner.move_to_front()
+	column.add_child(_chapter_panel(chapter, Session.campaign.planets[chapter]))
+	return scroll
 
 
 ## Setas e nome do capítulo atual.
-func _chapter_header() -> HBoxContainer:
+func _chapter_header(chapter: int) -> HBoxContainer:
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", Params.stage_select_spacing)
-	var previous := _arrow_button(-1)
+	var previous := _arrow_button(chapter, -1)
 	row.add_child(previous)
-	var planet: PlanetData = Session.campaign.planets[_chapter]
+	var planet: PlanetData = Session.campaign.planets[chapter]
 	var names := VBoxContainer.new()
 	names.alignment = BoxContainer.ALIGNMENT_CENTER
 	names.custom_minimum_size.x = Params.stage_chapter_name_width
 	row.add_child(names)
 	var number := UiFactory.make_subtitle("")
-	number.text = (tr("STAGE_CHAPTER") % (_chapter + 1)).to_upper()
+	number.text = (tr("STAGE_CHAPTER") % (chapter + 1)).to_upper()
 	number.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	names.add_child(number)
 	var name_label := Label.new()
@@ -90,14 +88,14 @@ func _chapter_header() -> HBoxContainer:
 	name_label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(name_label.text,
 		Params.stage_chapter_name_width, Params.stage_chapter_font_size))
 	names.add_child(name_label)
-	row.add_child(_arrow_button(1))
+	row.add_child(_arrow_button(chapter, 1))
 	return row
 
 
-func _arrow_button(step: int) -> Button:
+func _arrow_button(chapter: int, step: int) -> Button:
 	var button := UiFactory.make_button("")
 	button.custom_minimum_size = Vector2.ONE * Params.stage_arrow_size
-	var target: int = _chapter + step
+	var target: int = chapter + step
 	button.disabled = target < 0 or target >= Session.campaign.planets.size()
 	button.pressed.connect(_show_chapter.bind(target))
 	button.draw.connect(_draw_arrow.bind(button, step))
@@ -114,7 +112,7 @@ func _draw_arrow(button: Button, step: int) -> void:
 
 
 ## Bolinhas: uma por capítulo, cheias nos concluídos e destacada na página atual.
-func _chapter_dots() -> Control:
+func _chapter_dots(chapter: int) -> Control:
 	var dots := Control.new()
 	var count: int = Session.campaign.planets.size()
 	dots.custom_minimum_size = Vector2(count * Params.stage_dot_spacing, Params.stage_dot_spacing * 0.6)
@@ -122,7 +120,7 @@ func _chapter_dots() -> Control:
 		for p in count:
 			var center := Vector2((p + 0.5) * Params.stage_dot_spacing, dots.size.y * 0.5)
 			var color: Color = Session.campaign.planets[p].star_color
-			if p == _chapter:
+			if p == chapter:
 				dots.draw_circle(center, Params.stage_dot_radius * 1.5, color)
 			elif SaveGame.is_chapter_cleared(p):
 				dots.draw_circle(center, Params.stage_dot_radius, Color(color, 0.8))
@@ -132,21 +130,7 @@ func _chapter_dots() -> Control:
 
 
 func _show_chapter(chapter: int) -> void:
-	if chapter < 0 or chapter >= Session.campaign.planets.size():
-		return
-	if chapter == _chapter:
-		return
-	_slide_from = 1 if chapter > _chapter else -1
-	_chapter = chapter
-	Session.browsed_chapter = chapter
-	_build()
-	Haptics.play(&"tick")
-	# Entra deslizando do lado para onde o dedo foi
-	_page.modulate.a = 0.0
-	_page.position.x = _slide_from * Params.stage_slide_offset
-	var tween := _page.create_tween().set_parallel().set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tween.tween_property(_page, "position:x", 0.0, Params.stage_slide_seconds)
-	tween.tween_property(_page, "modulate:a", 1.0, Params.stage_slide_seconds)
+	_pager.go_to(chapter)
 
 
 func _chapter_panel(planet_index: int, planet: PlanetData) -> PanelContainer:
@@ -278,7 +262,7 @@ func _on_title_input(event: InputEvent) -> void:
 	_title_taps += 1
 	if _title_taps == Params.debug_unlock_taps:
 		SaveGame.unlock_all()
-		_build()
+		_pager.refresh()
 
 
 func _go_back() -> void:
@@ -289,25 +273,6 @@ func _notification(what: int) -> void:
 	# Botão Voltar do Android volta ao menu inicial
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not Dialog.is_open():
 		_go_back()
-
-
-## Gesto: deslizar rápido na horizontal troca de capítulo (esquerda = próximo).
-func _input(event: InputEvent) -> void:
-	var touch := event as InputEventScreenTouch
-	if touch == null:
-		return
-	if touch.pressed:
-		_swipe_start = touch.position
-		_swipe_usec = Time.get_ticks_usec()
-		return
-	if _swipe_usec < 0:
-		return
-	var moved: Vector2 = touch.position - _swipe_start
-	var seconds: float = (Time.get_ticks_usec() - _swipe_usec) / 1_000_000.0
-	_swipe_usec = -1
-	if absf(moved.x) >= Params.swipe_min_distance and absf(moved.x) > absf(moved.y) * 1.5 and seconds <= Params.swipe_max_seconds:
-		_show_chapter(_chapter + (1 if moved.x < 0.0 else -1))
-		get_viewport().set_input_as_handled()
 
 
 func _unhandled_input(event: InputEvent) -> void:

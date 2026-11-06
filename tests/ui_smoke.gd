@@ -305,6 +305,9 @@ func _check_dialogs() -> int:
 			failures += await _check_dialog(pause.get("_settings_dialog"), label + " config", true)
 			pause.close()
 			game.call("_finish_stage_clear")
+			# O resultado só aparece depois da sequência de fim de fase
+			await get_tree().create_timer(Params.clear_pause_seconds + Params.clear_ship_center_seconds
+					+ Params.clear_ship_exit_seconds + Params.clear_results_delay + 1.0, true, false, true).timeout
 			var results: ResultsMenu = game.get("results_menu")
 			failures += await _check_dialog(results.find_children("*", "Dialog", true, false)[0], label + " resultado", false)
 			get_tree().paused = false

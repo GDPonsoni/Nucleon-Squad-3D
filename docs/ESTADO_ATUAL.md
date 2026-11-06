@@ -149,6 +149,8 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Sons | `scripts/core/audio.gd`, `assets/audio/sfx/` |
 | Nave auxiliar | `scripts/player/companion.gd` |
 | Barra de troca e toque curto | `body_switcher.gd`, `touch_input.gd` |
+| Paginação lateral (página acompanha o dedo, snap por distância/velocidade) | `scripts/ui/paged_view.gd` (`PagedView`), params `pager_*`; usada no seletor de fases |
+| Fim de fase (pausa, limpeza, nave sai, música `clear.wav`) | `Game._play_clear_sequence`, params `clear_*`, `Player.begin_scripted` |
 | Campanha (gerador) | `scripts/tools/campaign_builder.gd` |
 | Armas | `scripts/weapons/*` + `data/weapons/*.tres` (`WeaponData` com 5 `WeaponLevel` e 3 da auxiliar). Cada portador (nave e auxiliar) tem um `WeaponMount` que guarda as armas (hoje 1; pronto para várias) |
 | Especiais | `special_attack.gd`, `giant_beam.gd`, `shockwave.gd`, `bombardment.gd` |

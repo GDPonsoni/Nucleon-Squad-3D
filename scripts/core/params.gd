@@ -56,10 +56,16 @@ var quark_badge_font_size: int = 48
 var quark_badge_count_seconds: float = 0.8
 var button_press_scale: float = 0.94  # botão afunda ao tocar
 var button_press_seconds: float = 0.06
-var swipe_min_distance: float = 140.0  # gesto para trocar de capítulo
-var swipe_max_seconds: float = 0.6
-var stage_slide_offset: float = 260.0  # animação ao trocar de capítulo
-var stage_slide_seconds: float = 0.28
+# Paginação lateral (PagedView)
+var pager_slop: float = 24.0  # px antes de decidir se o gesto é arrasto lateral
+var pager_horizontal_bias: float = 1.2  # |dx| precisa passar |dy| x isto
+var pager_snap_ratio: float = 0.5  # passou dessa fração da largura = muda de página
+var pager_flick_velocity: float = 900.0  # px/s: gesto rápido muda de página
+var pager_flick_min_distance: float = 60.0  # px mínimos andados para o gesto rápido valer
+var pager_velocity_smoothing: float = 0.35
+var pager_edge_resistance: float = 0.3  # arrasto além da primeira/última página
+var pager_snap_seconds: float = 0.3
+var pager_flick_snap_scale: float = 0.7  # encaixe mais curto depois de um gesto rápido
 var chapter_art_size: Vector2 = Vector2(900.0, 300.0)
 var reduced_explosion_shards: int = 5
 var reduced_slowmo_intensity: float = 0.45
