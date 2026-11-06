@@ -46,6 +46,7 @@ func _ready() -> void:
 	_level = int(args.get("level", "1"))
 	_survival = args.get("mode", "count") == "survival"
 	SaveGame.persistent = false
+	SaveGame.settings["tips_enabled"] = false  # a dica de fim de fase esperaria um toque que não vem
 	SaveGame.unlock_everything = true  # libera naves e o espaço auxiliar para testar
 	Params.debug_start_weapon_level = _level
 	if args.has("squad"):
