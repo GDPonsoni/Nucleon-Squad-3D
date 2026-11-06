@@ -572,13 +572,845 @@ count = 8
 interval = 0.32
 x_ratio = 0.65
 
+[sub_resource type="Resource" id="Resource_212h2"]
+script = ExtResource("6_bj1x7")
+time_seconds = 9.200000000000001
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_350oy"]
+script = ExtResource("6_bj1x7")
+time_seconds = 13.600000000000001
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_s25rp"]
+script = ExtResource("6_bj1x7")
+time_seconds = 18.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_aywno"]
+script = ExtResource("6_bj1x7")
+time_seconds = 22.400000000000002
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_mr0a0"]
+script = ExtResource("6_bj1x7")
+time_seconds = 26.8
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_22kad"]
+script = ExtResource("6_bj1x7")
+time_seconds = 31.200000000000003
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_v2ity"]
+script = ExtResource("6_bj1x7")
+time_seconds = 35.6
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_lf5wg"]
+script = ExtResource("6_bj1x7")
+time_seconds = 40.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_pqaj2"]
+script = ExtResource("6_bj1x7")
+time_seconds = 44.400000000000006
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_pqg7r"]
+script = ExtResource("6_bj1x7")
+time_seconds = 48.800000000000004
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_viur4"]
+script = ExtResource("6_bj1x7")
+time_seconds = 53.2
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_qb23l"]
+script = ExtResource("6_bj1x7")
+time_seconds = 57.6
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_tba0g"]
+script = ExtResource("6_bj1x7")
+time_seconds = 60.0
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_gvw7h"]
+script = ExtResource("6_bj1x7")
+time_seconds = 61.400000000000006
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_cuchm"]
+script = ExtResource("6_bj1x7")
+time_seconds = 62.800000000000004
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_hmn7d"]
+script = ExtResource("6_bj1x7")
+time_seconds = 66.2
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ycjk4"]
+script = ExtResource("6_bj1x7")
+time_seconds = 70.60000000000001
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_20spw"]
+script = ExtResource("6_bj1x7")
+time_seconds = 75.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_3ynil"]
+script = ExtResource("6_bj1x7")
+time_seconds = 79.4
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_hcgqu"]
+script = ExtResource("6_bj1x7")
+time_seconds = 83.80000000000001
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_sfuvm"]
+script = ExtResource("6_bj1x7")
+time_seconds = 88.2
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_3tdd2"]
+script = ExtResource("6_bj1x7")
+time_seconds = 92.60000000000001
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_5rllc"]
+script = ExtResource("6_bj1x7")
+time_seconds = 97.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_gckme"]
+script = ExtResource("6_bj1x7")
+time_seconds = 101.4
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_0swle"]
+script = ExtResource("6_bj1x7")
+time_seconds = 105.80000000000001
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_xyy4r"]
+script = ExtResource("6_bj1x7")
+time_seconds = 110.2
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_yyv6x"]
+script = ExtResource("6_bj1x7")
+time_seconds = 114.60000000000001
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ayhi3"]
+script = ExtResource("6_bj1x7")
+time_seconds = 119.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ydhvf"]
+script = ExtResource("6_bj1x7")
+time_seconds = 120.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_2goxj"]
+script = ExtResource("6_bj1x7")
+time_seconds = 121.4
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_dbju4"]
+script = ExtResource("6_bj1x7")
+time_seconds = 122.80000000000001
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_dvyv4"]
+script = ExtResource("6_bj1x7")
+time_seconds = 126.2
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_p7oyy"]
+script = ExtResource("6_bj1x7")
+time_seconds = 130.6
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_0ia5c"]
+script = ExtResource("6_bj1x7")
+time_seconds = 135.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_veii2"]
+script = ExtResource("6_bj1x7")
+time_seconds = 139.4
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_kufi4"]
+script = ExtResource("6_bj1x7")
+time_seconds = 143.8
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_6uqw5"]
+script = ExtResource("6_bj1x7")
+time_seconds = 148.20000000000002
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_f6h3b"]
+script = ExtResource("6_bj1x7")
+time_seconds = 152.6
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_o6yj7"]
+script = ExtResource("6_bj1x7")
+time_seconds = 157.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_t8hww"]
+script = ExtResource("6_bj1x7")
+time_seconds = 161.4
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_d6tgm"]
+script = ExtResource("6_bj1x7")
+time_seconds = 165.8
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_yjibd"]
+script = ExtResource("6_bj1x7")
+time_seconds = 170.20000000000002
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ka84q"]
+script = ExtResource("6_bj1x7")
+time_seconds = 174.60000000000002
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_0v1ao"]
+script = ExtResource("6_bj1x7")
+time_seconds = 179.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ig8s1"]
+script = ExtResource("6_bj1x7")
+time_seconds = 180.0
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ifg82"]
+script = ExtResource("6_bj1x7")
+time_seconds = 181.4
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_rr4jv"]
+script = ExtResource("6_bj1x7")
+time_seconds = 182.8
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_a7ebu"]
+script = ExtResource("6_bj1x7")
+time_seconds = 186.20000000000002
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_srl50"]
+script = ExtResource("6_bj1x7")
+time_seconds = 190.60000000000002
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_y22i7"]
+script = ExtResource("6_bj1x7")
+time_seconds = 195.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_4u4oa"]
+script = ExtResource("6_bj1x7")
+time_seconds = 199.4
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_yvqp7"]
+script = ExtResource("6_bj1x7")
+time_seconds = 203.8
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_521um"]
+script = ExtResource("6_bj1x7")
+time_seconds = 208.20000000000002
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_tixl5"]
+script = ExtResource("6_bj1x7")
+time_seconds = 212.60000000000002
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_5t58l"]
+script = ExtResource("6_bj1x7")
+time_seconds = 217.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_vgt5s"]
+script = ExtResource("6_bj1x7")
+time_seconds = 221.4
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_jdqmt"]
+script = ExtResource("6_bj1x7")
+time_seconds = 225.8
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_qk07l"]
+script = ExtResource("6_bj1x7")
+time_seconds = 230.20000000000002
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_iu26n"]
+script = ExtResource("6_bj1x7")
+time_seconds = 234.60000000000002
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_gnbvo"]
+script = ExtResource("6_bj1x7")
+time_seconds = 239.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_dype8"]
+script = ExtResource("6_bj1x7")
+time_seconds = 240.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_bvfok"]
+script = ExtResource("6_bj1x7")
+time_seconds = 241.4
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_hy5k5"]
+script = ExtResource("6_bj1x7")
+time_seconds = 242.8
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_xuq5p"]
+script = ExtResource("6_bj1x7")
+time_seconds = 246.20000000000002
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_pvbym"]
+script = ExtResource("6_bj1x7")
+time_seconds = 250.60000000000002
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_iidcc"]
+script = ExtResource("6_bj1x7")
+time_seconds = 255.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ijyk1"]
+script = ExtResource("6_bj1x7")
+time_seconds = 259.40000000000003
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_0cpfq"]
+script = ExtResource("6_bj1x7")
+time_seconds = 263.8
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ems5u"]
+script = ExtResource("6_bj1x7")
+time_seconds = 268.2
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_w85xx"]
+script = ExtResource("6_bj1x7")
+time_seconds = 272.6
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_g8xsp"]
+script = ExtResource("6_bj1x7")
+time_seconds = 277.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_bkeh1"]
+script = ExtResource("6_bj1x7")
+time_seconds = 281.40000000000003
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_kgq2i"]
+script = ExtResource("6_bj1x7")
+time_seconds = 285.8
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_qp2da"]
+script = ExtResource("6_bj1x7")
+time_seconds = 290.2
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_gj58r"]
+script = ExtResource("6_bj1x7")
+time_seconds = 294.6
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ivyag"]
+script = ExtResource("6_bj1x7")
+time_seconds = 299.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_u52y0"]
+script = ExtResource("6_bj1x7")
+time_seconds = 300.0
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_jh7bd"]
+script = ExtResource("6_bj1x7")
+time_seconds = 301.40000000000003
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_1f5at"]
+script = ExtResource("6_bj1x7")
+time_seconds = 302.8
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_4i3w1"]
+script = ExtResource("6_bj1x7")
+time_seconds = 306.2
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ftjq6"]
+script = ExtResource("6_bj1x7")
+time_seconds = 310.6
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_xpvlp"]
+script = ExtResource("6_bj1x7")
+time_seconds = 315.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_esqko"]
+script = ExtResource("6_bj1x7")
+time_seconds = 319.40000000000003
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_cd3y1"]
+script = ExtResource("6_bj1x7")
+time_seconds = 323.8
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_2j7m0"]
+script = ExtResource("6_bj1x7")
+time_seconds = 328.20000000000005
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_g10kg"]
+script = ExtResource("6_bj1x7")
+time_seconds = 332.6
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_pk1u3"]
+script = ExtResource("6_bj1x7")
+time_seconds = 337.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_asslx"]
+script = ExtResource("6_bj1x7")
+time_seconds = 341.40000000000003
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_lt5te"]
+script = ExtResource("6_bj1x7")
+time_seconds = 345.8
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_p51a7"]
+script = ExtResource("6_bj1x7")
+time_seconds = 350.20000000000005
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_asmn1"]
+script = ExtResource("6_bj1x7")
+time_seconds = 354.6
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_01aku"]
+script = ExtResource("6_bj1x7")
+time_seconds = 359.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_1na26"]
+script = ExtResource("6_bj1x7")
+time_seconds = 360.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_yn7jf"]
+script = ExtResource("6_bj1x7")
+time_seconds = 361.40000000000003
+enemy = ExtResource("4_x873w")
+count = 6
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_nulln"]
+script = ExtResource("6_bj1x7")
+time_seconds = 362.8
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 6
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_gawdd"]
+script = ExtResource("6_bj1x7")
+time_seconds = 366.20000000000005
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_blogj"]
+script = ExtResource("6_bj1x7")
+time_seconds = 370.6
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_h4703"]
+script = ExtResource("6_bj1x7")
+time_seconds = 375.0
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_widl2"]
+script = ExtResource("6_bj1x7")
+time_seconds = 379.40000000000003
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ob8ex"]
+script = ExtResource("6_bj1x7")
+time_seconds = 383.8
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_srnxt"]
+script = ExtResource("6_bj1x7")
+time_seconds = 388.20000000000005
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_dsufn"]
+script = ExtResource("6_bj1x7")
+time_seconds = 392.6
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_k6fn0"]
+script = ExtResource("6_bj1x7")
+time_seconds = 397.0
+enemy = ExtResource("4_x873w")
+count = 4
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_fuxfh"]
+script = ExtResource("6_bj1x7")
+time_seconds = 401.40000000000003
+enemy = ExtResource("4_x873w")
+formation = 2
+count = 4
+interval = 0.34
+x_ratio = 0.30000000000000004
+
 [resource]
 script = ExtResource("5_qvgfb")
 id = &"p1_s6"
 duration_seconds = 410.0
 enemies = Array[ExtResource("1_45olu")]([ExtResource("2_5g68i"), ExtResource("3_1gpaw"), ExtResource("4_x873w")])
 spawn_weights = PackedFloat32Array(3, 1, 1)
-waves = Array[ExtResource("6_bj1x7")]([SubResource("Resource_45olu"), SubResource("Resource_5g68i"), SubResource("Resource_1gpaw"), SubResource("Resource_x873w"), SubResource("Resource_qvgfb"), SubResource("Resource_bj1x7"), SubResource("Resource_ooxcn"), SubResource("Resource_8lrhp"), SubResource("Resource_txdm8"), SubResource("Resource_toyjo"), SubResource("Resource_q2how"), SubResource("Resource_b2bpy"), SubResource("Resource_wg8b5"), SubResource("Resource_10yh8"), SubResource("Resource_e0au1"), SubResource("Resource_lw67x"), SubResource("Resource_jmp56"), SubResource("Resource_bawr0"), SubResource("Resource_dcd8g"), SubResource("Resource_b1hvd"), SubResource("Resource_anabk"), SubResource("Resource_xkor6"), SubResource("Resource_b6bpn"), SubResource("Resource_vredo"), SubResource("Resource_5n5qc"), SubResource("Resource_ag7wl"), SubResource("Resource_06p0t"), SubResource("Resource_tlh3y"), SubResource("Resource_f2j7o"), SubResource("Resource_rba5h"), SubResource("Resource_iyhmd"), SubResource("Resource_0sjj3"), SubResource("Resource_5bg2y"), SubResource("Resource_ali5v"), SubResource("Resource_tc5re"), SubResource("Resource_5q0mf"), SubResource("Resource_0qcpv"), SubResource("Resource_vivin"), SubResource("Resource_bdg6t"), SubResource("Resource_jko5k"), SubResource("Resource_pmxlu"), SubResource("Resource_2vtax"), SubResource("Resource_5ol5n"), SubResource("Resource_saxr1"), SubResource("Resource_xr3h6"), SubResource("Resource_uar0u"), SubResource("Resource_0hm1g"), SubResource("Resource_fjahh"), SubResource("Resource_51kpj"), SubResource("Resource_kkyrw"), SubResource("Resource_sfsvn"), SubResource("Resource_7tagw"), SubResource("Resource_pf315"), SubResource("Resource_77seh"), SubResource("Resource_4pd02"), SubResource("Resource_5ucll"), SubResource("Resource_dlak3"), SubResource("Resource_t4pia"), SubResource("Resource_c5fhc"), SubResource("Resource_n5wtm"), SubResource("Resource_ctrms")])
+waves = Array[ExtResource("6_bj1x7")]([SubResource("Resource_45olu"), SubResource("Resource_5g68i"), SubResource("Resource_1gpaw"), SubResource("Resource_x873w"), SubResource("Resource_qvgfb"), SubResource("Resource_bj1x7"), SubResource("Resource_ooxcn"), SubResource("Resource_8lrhp"), SubResource("Resource_txdm8"), SubResource("Resource_toyjo"), SubResource("Resource_q2how"), SubResource("Resource_b2bpy"), SubResource("Resource_wg8b5"), SubResource("Resource_10yh8"), SubResource("Resource_e0au1"), SubResource("Resource_lw67x"), SubResource("Resource_jmp56"), SubResource("Resource_bawr0"), SubResource("Resource_dcd8g"), SubResource("Resource_b1hvd"), SubResource("Resource_anabk"), SubResource("Resource_xkor6"), SubResource("Resource_b6bpn"), SubResource("Resource_vredo"), SubResource("Resource_5n5qc"), SubResource("Resource_ag7wl"), SubResource("Resource_06p0t"), SubResource("Resource_tlh3y"), SubResource("Resource_f2j7o"), SubResource("Resource_rba5h"), SubResource("Resource_iyhmd"), SubResource("Resource_0sjj3"), SubResource("Resource_5bg2y"), SubResource("Resource_ali5v"), SubResource("Resource_tc5re"), SubResource("Resource_5q0mf"), SubResource("Resource_0qcpv"), SubResource("Resource_vivin"), SubResource("Resource_bdg6t"), SubResource("Resource_jko5k"), SubResource("Resource_pmxlu"), SubResource("Resource_2vtax"), SubResource("Resource_5ol5n"), SubResource("Resource_saxr1"), SubResource("Resource_xr3h6"), SubResource("Resource_uar0u"), SubResource("Resource_0hm1g"), SubResource("Resource_fjahh"), SubResource("Resource_51kpj"), SubResource("Resource_kkyrw"), SubResource("Resource_sfsvn"), SubResource("Resource_7tagw"), SubResource("Resource_pf315"), SubResource("Resource_77seh"), SubResource("Resource_4pd02"), SubResource("Resource_5ucll"), SubResource("Resource_dlak3"), SubResource("Resource_t4pia"), SubResource("Resource_c5fhc"), SubResource("Resource_n5wtm"), SubResource("Resource_ctrms"), SubResource("Resource_212h2"), SubResource("Resource_350oy"), SubResource("Resource_s25rp"), SubResource("Resource_aywno"), SubResource("Resource_mr0a0"), SubResource("Resource_22kad"), SubResource("Resource_v2ity"), SubResource("Resource_lf5wg"), SubResource("Resource_pqaj2"), SubResource("Resource_pqg7r"), SubResource("Resource_viur4"), SubResource("Resource_qb23l"), SubResource("Resource_tba0g"), SubResource("Resource_gvw7h"), SubResource("Resource_cuchm"), SubResource("Resource_hmn7d"), SubResource("Resource_ycjk4"), SubResource("Resource_20spw"), SubResource("Resource_3ynil"), SubResource("Resource_hcgqu"), SubResource("Resource_sfuvm"), SubResource("Resource_3tdd2"), SubResource("Resource_5rllc"), SubResource("Resource_gckme"), SubResource("Resource_0swle"), SubResource("Resource_xyy4r"), SubResource("Resource_yyv6x"), SubResource("Resource_ayhi3"), SubResource("Resource_ydhvf"), SubResource("Resource_2goxj"), SubResource("Resource_dbju4"), SubResource("Resource_dvyv4"), SubResource("Resource_p7oyy"), SubResource("Resource_0ia5c"), SubResource("Resource_veii2"), SubResource("Resource_kufi4"), SubResource("Resource_6uqw5"), SubResource("Resource_f6h3b"), SubResource("Resource_o6yj7"), SubResource("Resource_t8hww"), SubResource("Resource_d6tgm"), SubResource("Resource_yjibd"), SubResource("Resource_ka84q"), SubResource("Resource_0v1ao"), SubResource("Resource_ig8s1"), SubResource("Resource_ifg82"), SubResource("Resource_rr4jv"), SubResource("Resource_a7ebu"), SubResource("Resource_srl50"), SubResource("Resource_y22i7"), SubResource("Resource_4u4oa"), SubResource("Resource_yvqp7"), SubResource("Resource_521um"), SubResource("Resource_tixl5"), SubResource("Resource_5t58l"), SubResource("Resource_vgt5s"), SubResource("Resource_jdqmt"), SubResource("Resource_qk07l"), SubResource("Resource_iu26n"), SubResource("Resource_gnbvo"), SubResource("Resource_dype8"), SubResource("Resource_bvfok"), SubResource("Resource_hy5k5"), SubResource("Resource_xuq5p"), SubResource("Resource_pvbym"), SubResource("Resource_iidcc"), SubResource("Resource_ijyk1"), SubResource("Resource_0cpfq"), SubResource("Resource_ems5u"), SubResource("Resource_w85xx"), SubResource("Resource_g8xsp"), SubResource("Resource_bkeh1"), SubResource("Resource_kgq2i"), SubResource("Resource_qp2da"), SubResource("Resource_gj58r"), SubResource("Resource_ivyag"), SubResource("Resource_u52y0"), SubResource("Resource_jh7bd"), SubResource("Resource_1f5at"), SubResource("Resource_4i3w1"), SubResource("Resource_ftjq6"), SubResource("Resource_xpvlp"), SubResource("Resource_esqko"), SubResource("Resource_cd3y1"), SubResource("Resource_2j7m0"), SubResource("Resource_g10kg"), SubResource("Resource_pk1u3"), SubResource("Resource_asslx"), SubResource("Resource_lt5te"), SubResource("Resource_p51a7"), SubResource("Resource_asmn1"), SubResource("Resource_01aku"), SubResource("Resource_1na26"), SubResource("Resource_yn7jf"), SubResource("Resource_nulln"), SubResource("Resource_gawdd"), SubResource("Resource_blogj"), SubResource("Resource_h4703"), SubResource("Resource_widl2"), SubResource("Resource_ob8ex"), SubResource("Resource_srnxt"), SubResource("Resource_dsufn"), SubResource("Resource_k6fn0"), SubResource("Resource_fuxfh")])
 start_delay = 2.0
 spawn_interval_min = 2.0419999957084656
 spawn_interval_max = 3.102499994635582
@@ -586,4 +1418,4 @@ spawn_margin_x = 90.0
 enemy_hp_scale = 1.4
 enemy_fire_scale = 1.35
 rock_weights = PackedFloat32Array()
-star_scores = PackedInt32Array(5600, 7930)
+star_scores = PackedInt32Array(10010, 14170)

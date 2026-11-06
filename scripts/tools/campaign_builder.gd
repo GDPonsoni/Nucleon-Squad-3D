@@ -32,6 +32,15 @@ const FIRE_SCALE: PackedFloat32Array = [1.35, 1.32, 1.32, 1.3, 1.32]  # cadênci
 # Reforço de dificuldade por capítulo (os primeiros estavam fáceis demais)
 const DIFFICULTY_BOOST: PackedFloat32Array = [0.8, 0.5, 0.35, 0.2, 0.0]
 const CYCLE_LEVEL_CAP: int = 4  # voltas do ciclo de motivos que ainda aumentam as ondas (fases longas repetem o tamanho)
+# Camada de ação: ondas que não atiram (kamikazes, faíscas, enxames, serpentes) entre os motivos.
+# Mais movimento e abates na tela sem mais tiros. Surtos a cada minuto juntam várias de uma vez.
+const ACTION_GAP_BASE: float = 4.4  # segundos entre ondas de ação no capítulo 1
+const ACTION_GAP_PER_CHAPTER: float = 0.2  # encurta por capítulo
+const ACTION_GAP_MIN: float = 3.4
+const ACTION_METEOR_DENSITY: float = 0.6  # fase dos meteoros: menos ação (as rochas já ocupam)
+const SURGE_EVERY: float = 60.0  # surto de ação (3 ondas seguidas)
+const SURGE_WAVES: int = 3
+const SURGE_GAP: float = 1.4
 const STAR2_RATIO: float = 0.65  # 2 estrelas: fração da pontuação possível da fase
 const STAR3_RATIO: float = 0.92  # 3 estrelas
 const METEOR_STAGE: int = 6  # índice da fase 7: campo de meteoros em todo capítulo
@@ -219,7 +228,53 @@ func _compose(c: int, s: int, d: float, duration: float) -> Array[WaveData]:
 			waves.append_array((partner["build"] as Callable).call(t + 1.5, level, not mirrored))
 		t += gap + (3.0 if motif["heavy"] else 0.0)
 		i += 1
+	_add_action_waves(waves, c, s, duration)
 	return waves
+
+
+## Ondas que não atiram, em ritmo próprio, mais um surto a cada SURGE_EVERY. Fica de fora do
+## clímax e do fim da fase. Só entram os inimigos já conhecidos no capítulo.
+func _add_action_waves(waves: Array[WaveData], c: int, s: int, duration: float) -> void:
+	var gap: float = maxf(ACTION_GAP_BASE - ACTION_GAP_PER_CHAPTER * c, ACTION_GAP_MIN)
+	if s == METEOR_STAGE:
+		gap /= ACTION_METEOR_DENSITY
+	var t: float = 7.0 + gap * 0.5  # intercala com os motivos
+	var n: int = 0
+	var surge_at: float = SURGE_EVERY
+	while t < duration - 8.0:
+		var mirrored: bool = n % 2 == 1
+		waves.append_array(_action_wave(t, c, s, n, mirrored, 0))
+		n += 1
+		t += gap
+		if t >= surge_at:
+			for k in SURGE_WAVES:
+				waves.append_array(_action_wave(surge_at + k * SURGE_GAP, c, s, n + k, k % 2 == 1, 2))
+			surge_at += SURGE_EVERY
+			t = maxf(t, surge_at - SURGE_EVERY + SURGE_GAP * SURGE_WAVES + 2.0)
+
+
+## Uma onda da camada de ação. `extra` aumenta o tamanho (surtos).
+func _action_wave(t: float, c: int, s: int, n: int, mirrored: bool, extra: int) -> Array[WaveData]:
+	var size: int = 3 + mini(c, 3) + (1 if s >= 4 else 0) + extra
+	var kinds: Array[String] = ["kamikaze_v", "kamikaze_column"]
+	if c >= 1:
+		kinds.append("spark")
+	if c >= 2:
+		kinds.append("swarm")
+	if c >= 3:
+		kinds.append("serpent")
+	var kind: String = kinds[n % kinds.size()]
+	match kind:
+		"kamikaze_column":
+			return [_wave(t, "kamikaze", WaveData.Formation.COLUMN, mini(size, 8), {"x_ratio": _x(0.7, mirrored), "interval": 0.34})]
+		"spark":
+			return [_wave(t, "spark", WaveData.Formation.SIDE, mini(size, 8), {"side": _side(mirrored), "interval": 0.32, "y_ratio": 0.18 + 0.12 * (n % 3)})]
+		"swarm":
+			return [_wave(t, "swarm", WaveData.Formation.SWARM, mini(size * 3, 18), {"x_ratio": _x(0.5, mirrored), "spacing": 120.0})]
+		"serpent":
+			return [_wave(t, "serpent", WaveData.Formation.COLUMN, mini(size + 3, 10), {"x_ratio": _x(0.4, mirrored), "interval": 0.36,
+				"sway_amplitude": 200.0, "sway_period": 2.8})]
+	return [_wave(t, "kamikaze", WaveData.Formation.V, mini(size, 9), {"spacing": 110.0, "x_ratio": _x(0.5, mirrored), "dive_stagger": 0.18})]
 
 
 ## Escolhe os motivos da fase: o do inimigo novo do capítulo nas primeiras fases,

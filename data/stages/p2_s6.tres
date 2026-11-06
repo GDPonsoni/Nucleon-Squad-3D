@@ -848,13 +848,850 @@ count = 7
 interval = 0.5
 y_ratio = 0.18
 
+[sub_resource type="Resource" id="Resource_f8jhd"]
+script = ExtResource("6_kwfar")
+time_seconds = 9.1
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_w27kh"]
+script = ExtResource("6_kwfar")
+time_seconds = 13.3
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_e8yei"]
+script = ExtResource("6_kwfar")
+time_seconds = 17.5
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_eqvye"]
+script = ExtResource("6_kwfar")
+time_seconds = 21.700000000000003
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_qsusg"]
+script = ExtResource("6_kwfar")
+time_seconds = 25.900000000000002
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_vqil6"]
+script = ExtResource("6_kwfar")
+time_seconds = 30.1
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_cj675"]
+script = ExtResource("6_kwfar")
+time_seconds = 34.300000000000004
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_sg0wh"]
+script = ExtResource("6_kwfar")
+time_seconds = 38.5
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_nwan8"]
+script = ExtResource("6_kwfar")
+time_seconds = 42.7
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_a4blu"]
+script = ExtResource("6_kwfar")
+time_seconds = 46.900000000000006
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_2545w"]
+script = ExtResource("6_kwfar")
+time_seconds = 51.1
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_p1n5i"]
+script = ExtResource("6_kwfar")
+time_seconds = 55.300000000000004
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_2bx61"]
+script = ExtResource("6_kwfar")
+time_seconds = 59.5
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_okxqh"]
+script = ExtResource("6_kwfar")
+time_seconds = 60.0
+enemy = ExtResource("4_vxls5")
+formation = 2
+count = 7
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_2b1gf"]
+script = ExtResource("6_kwfar")
+time_seconds = 61.400000000000006
+enemy = ExtResource("10_vxls5")
+formation = 3
+count = 7
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_ih0er"]
+script = ExtResource("6_kwfar")
+time_seconds = 62.800000000000004
+enemy = ExtResource("4_vxls5")
+count = 7
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_4krkp"]
+script = ExtResource("6_kwfar")
+time_seconds = 66.2
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_2aba8"]
+script = ExtResource("6_kwfar")
+time_seconds = 70.4
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_wq8pt"]
+script = ExtResource("6_kwfar")
+time_seconds = 74.60000000000001
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_iolao"]
+script = ExtResource("6_kwfar")
+time_seconds = 78.80000000000001
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_ke4q6"]
+script = ExtResource("6_kwfar")
+time_seconds = 83.0
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_xorgu"]
+script = ExtResource("6_kwfar")
+time_seconds = 87.2
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_086ue"]
+script = ExtResource("6_kwfar")
+time_seconds = 91.4
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_xisjh"]
+script = ExtResource("6_kwfar")
+time_seconds = 95.60000000000001
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_l6q8u"]
+script = ExtResource("6_kwfar")
+time_seconds = 99.80000000000001
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_r5j2d"]
+script = ExtResource("6_kwfar")
+time_seconds = 104.0
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_vyvmg"]
+script = ExtResource("6_kwfar")
+time_seconds = 108.2
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_fg4t4"]
+script = ExtResource("6_kwfar")
+time_seconds = 112.4
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ao7os"]
+script = ExtResource("6_kwfar")
+time_seconds = 116.60000000000001
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_5ml52"]
+script = ExtResource("6_kwfar")
+time_seconds = 120.0
+enemy = ExtResource("10_vxls5")
+formation = 3
+count = 7
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_t3wnf"]
+script = ExtResource("6_kwfar")
+time_seconds = 121.4
+enemy = ExtResource("4_vxls5")
+count = 7
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_nyf4h"]
+script = ExtResource("6_kwfar")
+time_seconds = 122.80000000000001
+enemy = ExtResource("4_vxls5")
+formation = 2
+count = 7
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_xcfnk"]
+script = ExtResource("6_kwfar")
+time_seconds = 126.2
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_vrjtk"]
+script = ExtResource("6_kwfar")
+time_seconds = 130.4
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_5hsye"]
+script = ExtResource("6_kwfar")
+time_seconds = 134.6
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_0tlra"]
+script = ExtResource("6_kwfar")
+time_seconds = 138.8
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_byqf3"]
+script = ExtResource("6_kwfar")
+time_seconds = 143.0
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_jsvt7"]
+script = ExtResource("6_kwfar")
+time_seconds = 147.20000000000002
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_670q3"]
+script = ExtResource("6_kwfar")
+time_seconds = 151.4
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_aoiv7"]
+script = ExtResource("6_kwfar")
+time_seconds = 155.60000000000002
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_fva3j"]
+script = ExtResource("6_kwfar")
+time_seconds = 159.8
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_bwitn"]
+script = ExtResource("6_kwfar")
+time_seconds = 164.0
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_axk0u"]
+script = ExtResource("6_kwfar")
+time_seconds = 168.20000000000002
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ft0i4"]
+script = ExtResource("6_kwfar")
+time_seconds = 172.4
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_cn1bv"]
+script = ExtResource("6_kwfar")
+time_seconds = 176.60000000000002
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_7c45o"]
+script = ExtResource("6_kwfar")
+time_seconds = 180.0
+enemy = ExtResource("4_vxls5")
+count = 7
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_aehy6"]
+script = ExtResource("6_kwfar")
+time_seconds = 181.4
+enemy = ExtResource("4_vxls5")
+formation = 2
+count = 7
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_28x2l"]
+script = ExtResource("6_kwfar")
+time_seconds = 182.8
+enemy = ExtResource("10_vxls5")
+formation = 3
+count = 7
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_2cuen"]
+script = ExtResource("6_kwfar")
+time_seconds = 186.20000000000002
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_qk14f"]
+script = ExtResource("6_kwfar")
+time_seconds = 190.4
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_xsigg"]
+script = ExtResource("6_kwfar")
+time_seconds = 194.60000000000002
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_7cyy4"]
+script = ExtResource("6_kwfar")
+time_seconds = 198.8
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_6e18q"]
+script = ExtResource("6_kwfar")
+time_seconds = 203.0
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ujole"]
+script = ExtResource("6_kwfar")
+time_seconds = 207.20000000000002
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_gu0rk"]
+script = ExtResource("6_kwfar")
+time_seconds = 211.4
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_g4kv2"]
+script = ExtResource("6_kwfar")
+time_seconds = 215.60000000000002
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_t51qh"]
+script = ExtResource("6_kwfar")
+time_seconds = 219.8
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_ltv2v"]
+script = ExtResource("6_kwfar")
+time_seconds = 224.0
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_q8low"]
+script = ExtResource("6_kwfar")
+time_seconds = 228.20000000000002
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_4cwy0"]
+script = ExtResource("6_kwfar")
+time_seconds = 232.4
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_b10my"]
+script = ExtResource("6_kwfar")
+time_seconds = 236.60000000000002
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_rxr1i"]
+script = ExtResource("6_kwfar")
+time_seconds = 240.0
+enemy = ExtResource("4_vxls5")
+formation = 2
+count = 7
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_opb0x"]
+script = ExtResource("6_kwfar")
+time_seconds = 241.4
+enemy = ExtResource("10_vxls5")
+formation = 3
+count = 7
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_7qmvf"]
+script = ExtResource("6_kwfar")
+time_seconds = 242.8
+enemy = ExtResource("4_vxls5")
+count = 7
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_cdb7d"]
+script = ExtResource("6_kwfar")
+time_seconds = 246.20000000000002
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_44xj3"]
+script = ExtResource("6_kwfar")
+time_seconds = 250.4
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_e6bqe"]
+script = ExtResource("6_kwfar")
+time_seconds = 254.60000000000002
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_scip0"]
+script = ExtResource("6_kwfar")
+time_seconds = 258.8
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_f02m2"]
+script = ExtResource("6_kwfar")
+time_seconds = 263.0
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_lwwkg"]
+script = ExtResource("6_kwfar")
+time_seconds = 267.2
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_0k8da"]
+script = ExtResource("6_kwfar")
+time_seconds = 271.40000000000003
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_0i5qv"]
+script = ExtResource("6_kwfar")
+time_seconds = 275.6
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_2e63o"]
+script = ExtResource("6_kwfar")
+time_seconds = 279.8
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_l6cib"]
+script = ExtResource("6_kwfar")
+time_seconds = 284.0
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_soj4u"]
+script = ExtResource("6_kwfar")
+time_seconds = 288.2
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_tq2v7"]
+script = ExtResource("6_kwfar")
+time_seconds = 292.40000000000003
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_3molp"]
+script = ExtResource("6_kwfar")
+time_seconds = 296.6
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_lbsem"]
+script = ExtResource("6_kwfar")
+time_seconds = 300.0
+enemy = ExtResource("10_vxls5")
+formation = 3
+count = 7
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_qe4un"]
+script = ExtResource("6_kwfar")
+time_seconds = 301.40000000000003
+enemy = ExtResource("4_vxls5")
+count = 7
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_f0qaf"]
+script = ExtResource("6_kwfar")
+time_seconds = 302.8
+enemy = ExtResource("4_vxls5")
+formation = 2
+count = 7
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_251rl"]
+script = ExtResource("6_kwfar")
+time_seconds = 306.2
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_sb20i"]
+script = ExtResource("6_kwfar")
+time_seconds = 310.40000000000003
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_ck6gu"]
+script = ExtResource("6_kwfar")
+time_seconds = 314.6
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ju1o5"]
+script = ExtResource("6_kwfar")
+time_seconds = 318.8
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_myx2j"]
+script = ExtResource("6_kwfar")
+time_seconds = 323.0
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_pugwq"]
+script = ExtResource("6_kwfar")
+time_seconds = 327.20000000000005
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_yc0dq"]
+script = ExtResource("6_kwfar")
+time_seconds = 331.40000000000003
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_p0bic"]
+script = ExtResource("6_kwfar")
+time_seconds = 335.6
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_023ih"]
+script = ExtResource("6_kwfar")
+time_seconds = 339.8
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_qyixu"]
+script = ExtResource("6_kwfar")
+time_seconds = 344.0
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_ddp6w"]
+script = ExtResource("6_kwfar")
+time_seconds = 348.20000000000005
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_wpky6"]
+script = ExtResource("6_kwfar")
+time_seconds = 352.40000000000003
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_xbewh"]
+script = ExtResource("6_kwfar")
+time_seconds = 356.6
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_hlnwe"]
+script = ExtResource("6_kwfar")
+time_seconds = 360.0
+enemy = ExtResource("4_vxls5")
+count = 7
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_22s5b"]
+script = ExtResource("6_kwfar")
+time_seconds = 361.40000000000003
+enemy = ExtResource("4_vxls5")
+formation = 2
+count = 7
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_ls2od"]
+script = ExtResource("6_kwfar")
+time_seconds = 362.8
+enemy = ExtResource("10_vxls5")
+formation = 3
+count = 7
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_a4cic"]
+script = ExtResource("6_kwfar")
+time_seconds = 366.20000000000005
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_prh54"]
+script = ExtResource("6_kwfar")
+time_seconds = 370.40000000000003
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_3enjr"]
+script = ExtResource("6_kwfar")
+time_seconds = 374.6
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_wpaft"]
+script = ExtResource("6_kwfar")
+time_seconds = 378.8
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_5vwrp"]
+script = ExtResource("6_kwfar")
+time_seconds = 383.0
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
+[sub_resource type="Resource" id="Resource_1fouo"]
+script = ExtResource("6_kwfar")
+time_seconds = 387.20000000000005
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 1
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_ye0hg"]
+script = ExtResource("6_kwfar")
+time_seconds = 391.40000000000003
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_j454d"]
+script = ExtResource("6_kwfar")
+time_seconds = 395.6
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.30000000000000004
+
+[sub_resource type="Resource" id="Resource_mrrfl"]
+script = ExtResource("6_kwfar")
+time_seconds = 399.8
+enemy = ExtResource("10_vxls5")
+formation = 3
+interval = 0.32
+side = 0
+y_ratio = 0.42
+
+[sub_resource type="Resource" id="Resource_ohpmc"]
+script = ExtResource("6_kwfar")
+time_seconds = 404.0
+enemy = ExtResource("4_vxls5")
+dive_stagger = 0.18
+
+[sub_resource type="Resource" id="Resource_5tx04"]
+script = ExtResource("6_kwfar")
+time_seconds = 408.20000000000005
+enemy = ExtResource("4_vxls5")
+formation = 2
+interval = 0.34
+x_ratio = 0.7
+
 [resource]
 script = ExtResource("5_pd350")
 id = &"p2_s6"
 duration_seconds = 420.0
 enemies = Array[ExtResource("1_y872g")]([ExtResource("2_tttdy"), ExtResource("3_231lc"), ExtResource("4_vxls5")])
 spawn_weights = PackedFloat32Array(3, 1.5, 1.5)
-waves = Array[ExtResource("6_kwfar")]([SubResource("Resource_vxls5"), SubResource("Resource_pd350"), SubResource("Resource_kwfar"), SubResource("Resource_cotro"), SubResource("Resource_loman"), SubResource("Resource_033d4"), SubResource("Resource_upji4"), SubResource("Resource_dpfeh"), SubResource("Resource_4b1ec"), SubResource("Resource_j5pfq"), SubResource("Resource_i0api"), SubResource("Resource_bkmly"), SubResource("Resource_7wxx8"), SubResource("Resource_fglx7"), SubResource("Resource_ckt4l"), SubResource("Resource_svss3"), SubResource("Resource_0twla"), SubResource("Resource_qw6rs"), SubResource("Resource_daim0"), SubResource("Resource_wrh63"), SubResource("Resource_w6ahy"), SubResource("Resource_v3ga2"), SubResource("Resource_8ne8r"), SubResource("Resource_tvlik"), SubResource("Resource_bi1w1"), SubResource("Resource_5otm3"), SubResource("Resource_n8bec"), SubResource("Resource_l48uf"), SubResource("Resource_dopp8"), SubResource("Resource_ddwnm"), SubResource("Resource_i3wj5"), SubResource("Resource_mmf5o"), SubResource("Resource_x0cvk"), SubResource("Resource_btky7"), SubResource("Resource_nllfj"), SubResource("Resource_6bg5b"), SubResource("Resource_u7u7k"), SubResource("Resource_w05s8"), SubResource("Resource_uvto3"), SubResource("Resource_5v78a"), SubResource("Resource_lmm08"), SubResource("Resource_tdw2o"), SubResource("Resource_63pwj"), SubResource("Resource_5y0ql"), SubResource("Resource_4s7f3"), SubResource("Resource_4chj8"), SubResource("Resource_k4d15"), SubResource("Resource_2hilw"), SubResource("Resource_yybw5"), SubResource("Resource_px5a2"), SubResource("Resource_3qg2l"), SubResource("Resource_yj5yw"), SubResource("Resource_kkaee"), SubResource("Resource_xsen7"), SubResource("Resource_8s0qk"), SubResource("Resource_w1iqr"), SubResource("Resource_iu57y"), SubResource("Resource_v6017"), SubResource("Resource_yga2g"), SubResource("Resource_wuech"), SubResource("Resource_x802q"), SubResource("Resource_l6nc2"), SubResource("Resource_0n7rt"), SubResource("Resource_5wpaf"), SubResource("Resource_ehscd"), SubResource("Resource_uvy1d"), SubResource("Resource_p4ejw"), SubResource("Resource_epjac"), SubResource("Resource_yvxx6"), SubResource("Resource_gogxd"), SubResource("Resource_0ek84"), SubResource("Resource_2a4cb"), SubResource("Resource_n4n1v"), SubResource("Resource_tx5va"), SubResource("Resource_c2fx4"), SubResource("Resource_s1vs3"), SubResource("Resource_vbs2f"), SubResource("Resource_8pvlq"), SubResource("Resource_xq4wa"), SubResource("Resource_734hh"), SubResource("Resource_m4dvk"), SubResource("Resource_hiugp"), SubResource("Resource_6nokw"), SubResource("Resource_xqshi"), SubResource("Resource_8f2da"), SubResource("Resource_8ayqv"), SubResource("Resource_m1hgg"), SubResource("Resource_wec3y"), SubResource("Resource_7opsw")])
+waves = Array[ExtResource("6_kwfar")]([SubResource("Resource_vxls5"), SubResource("Resource_pd350"), SubResource("Resource_kwfar"), SubResource("Resource_cotro"), SubResource("Resource_loman"), SubResource("Resource_033d4"), SubResource("Resource_upji4"), SubResource("Resource_dpfeh"), SubResource("Resource_4b1ec"), SubResource("Resource_j5pfq"), SubResource("Resource_i0api"), SubResource("Resource_bkmly"), SubResource("Resource_7wxx8"), SubResource("Resource_fglx7"), SubResource("Resource_ckt4l"), SubResource("Resource_svss3"), SubResource("Resource_0twla"), SubResource("Resource_qw6rs"), SubResource("Resource_daim0"), SubResource("Resource_wrh63"), SubResource("Resource_w6ahy"), SubResource("Resource_v3ga2"), SubResource("Resource_8ne8r"), SubResource("Resource_tvlik"), SubResource("Resource_bi1w1"), SubResource("Resource_5otm3"), SubResource("Resource_n8bec"), SubResource("Resource_l48uf"), SubResource("Resource_dopp8"), SubResource("Resource_ddwnm"), SubResource("Resource_i3wj5"), SubResource("Resource_mmf5o"), SubResource("Resource_x0cvk"), SubResource("Resource_btky7"), SubResource("Resource_nllfj"), SubResource("Resource_6bg5b"), SubResource("Resource_u7u7k"), SubResource("Resource_w05s8"), SubResource("Resource_uvto3"), SubResource("Resource_5v78a"), SubResource("Resource_lmm08"), SubResource("Resource_tdw2o"), SubResource("Resource_63pwj"), SubResource("Resource_5y0ql"), SubResource("Resource_4s7f3"), SubResource("Resource_4chj8"), SubResource("Resource_k4d15"), SubResource("Resource_2hilw"), SubResource("Resource_yybw5"), SubResource("Resource_px5a2"), SubResource("Resource_3qg2l"), SubResource("Resource_yj5yw"), SubResource("Resource_kkaee"), SubResource("Resource_xsen7"), SubResource("Resource_8s0qk"), SubResource("Resource_w1iqr"), SubResource("Resource_iu57y"), SubResource("Resource_v6017"), SubResource("Resource_yga2g"), SubResource("Resource_wuech"), SubResource("Resource_x802q"), SubResource("Resource_l6nc2"), SubResource("Resource_0n7rt"), SubResource("Resource_5wpaf"), SubResource("Resource_ehscd"), SubResource("Resource_uvy1d"), SubResource("Resource_p4ejw"), SubResource("Resource_epjac"), SubResource("Resource_yvxx6"), SubResource("Resource_gogxd"), SubResource("Resource_0ek84"), SubResource("Resource_2a4cb"), SubResource("Resource_n4n1v"), SubResource("Resource_tx5va"), SubResource("Resource_c2fx4"), SubResource("Resource_s1vs3"), SubResource("Resource_vbs2f"), SubResource("Resource_8pvlq"), SubResource("Resource_xq4wa"), SubResource("Resource_734hh"), SubResource("Resource_m4dvk"), SubResource("Resource_hiugp"), SubResource("Resource_6nokw"), SubResource("Resource_xqshi"), SubResource("Resource_8f2da"), SubResource("Resource_8ayqv"), SubResource("Resource_m1hgg"), SubResource("Resource_wec3y"), SubResource("Resource_7opsw"), SubResource("Resource_f8jhd"), SubResource("Resource_w27kh"), SubResource("Resource_e8yei"), SubResource("Resource_eqvye"), SubResource("Resource_qsusg"), SubResource("Resource_vqil6"), SubResource("Resource_cj675"), SubResource("Resource_sg0wh"), SubResource("Resource_nwan8"), SubResource("Resource_a4blu"), SubResource("Resource_2545w"), SubResource("Resource_p1n5i"), SubResource("Resource_2bx61"), SubResource("Resource_okxqh"), SubResource("Resource_2b1gf"), SubResource("Resource_ih0er"), SubResource("Resource_4krkp"), SubResource("Resource_2aba8"), SubResource("Resource_wq8pt"), SubResource("Resource_iolao"), SubResource("Resource_ke4q6"), SubResource("Resource_xorgu"), SubResource("Resource_086ue"), SubResource("Resource_xisjh"), SubResource("Resource_l6q8u"), SubResource("Resource_r5j2d"), SubResource("Resource_vyvmg"), SubResource("Resource_fg4t4"), SubResource("Resource_ao7os"), SubResource("Resource_5ml52"), SubResource("Resource_t3wnf"), SubResource("Resource_nyf4h"), SubResource("Resource_xcfnk"), SubResource("Resource_vrjtk"), SubResource("Resource_5hsye"), SubResource("Resource_0tlra"), SubResource("Resource_byqf3"), SubResource("Resource_jsvt7"), SubResource("Resource_670q3"), SubResource("Resource_aoiv7"), SubResource("Resource_fva3j"), SubResource("Resource_bwitn"), SubResource("Resource_axk0u"), SubResource("Resource_ft0i4"), SubResource("Resource_cn1bv"), SubResource("Resource_7c45o"), SubResource("Resource_aehy6"), SubResource("Resource_28x2l"), SubResource("Resource_2cuen"), SubResource("Resource_qk14f"), SubResource("Resource_xsigg"), SubResource("Resource_7cyy4"), SubResource("Resource_6e18q"), SubResource("Resource_ujole"), SubResource("Resource_gu0rk"), SubResource("Resource_g4kv2"), SubResource("Resource_t51qh"), SubResource("Resource_ltv2v"), SubResource("Resource_q8low"), SubResource("Resource_4cwy0"), SubResource("Resource_b10my"), SubResource("Resource_rxr1i"), SubResource("Resource_opb0x"), SubResource("Resource_7qmvf"), SubResource("Resource_cdb7d"), SubResource("Resource_44xj3"), SubResource("Resource_e6bqe"), SubResource("Resource_scip0"), SubResource("Resource_f02m2"), SubResource("Resource_lwwkg"), SubResource("Resource_0k8da"), SubResource("Resource_0i5qv"), SubResource("Resource_2e63o"), SubResource("Resource_l6cib"), SubResource("Resource_soj4u"), SubResource("Resource_tq2v7"), SubResource("Resource_3molp"), SubResource("Resource_lbsem"), SubResource("Resource_qe4un"), SubResource("Resource_f0qaf"), SubResource("Resource_251rl"), SubResource("Resource_sb20i"), SubResource("Resource_ck6gu"), SubResource("Resource_ju1o5"), SubResource("Resource_myx2j"), SubResource("Resource_pugwq"), SubResource("Resource_yc0dq"), SubResource("Resource_p0bic"), SubResource("Resource_023ih"), SubResource("Resource_qyixu"), SubResource("Resource_ddp6w"), SubResource("Resource_wpky6"), SubResource("Resource_xbewh"), SubResource("Resource_hlnwe"), SubResource("Resource_22s5b"), SubResource("Resource_ls2od"), SubResource("Resource_a4cic"), SubResource("Resource_prh54"), SubResource("Resource_3enjr"), SubResource("Resource_wpaft"), SubResource("Resource_5vwrp"), SubResource("Resource_1fouo"), SubResource("Resource_ye0hg"), SubResource("Resource_j454d"), SubResource("Resource_mrrfl"), SubResource("Resource_ohpmc"), SubResource("Resource_5tx04")])
 start_delay = 2.0
 spawn_interval_min = 1.862
 spawn_interval_max = 2.8775
@@ -865,4 +1702,4 @@ rocks = Array[ExtResource("1_y872g")]([ExtResource("5_vxls5"), ExtResource("6_pd
 rock_weights = PackedFloat32Array(0.4, 1, 1)
 rock_interval_min = 9.0
 rock_interval_max = 14.0
-star_scores = PackedInt32Array(9570, 13550)
+star_scores = PackedInt32Array(15140, 21430)
