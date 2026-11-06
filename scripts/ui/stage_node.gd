@@ -54,12 +54,16 @@ func _draw() -> void:
 		draw_arc(c, r, 0.0, TAU, 48, Color(Params.ui_muted_text_color, 0.35), 4.0)
 		_draw_lock(c, r * 0.5)
 	elif completed:
-		draw_circle(c, r, Color(color, 0.9))
-		_draw_label(c, r, Color(0.04, 0.05, 0.09))
+		# Só borda: miolo escuro com um véu da cor, anel duplo e número na cor da fase
+		draw_circle(c, r, dark)
+		draw_circle(c, r, Color(color, 0.14))
+		draw_arc(c, r, 0.0, TAU, 48, color.lightened(0.3), 6.0)
+		draw_arc(c, r - 14.0, 0.0, TAU, 48, Color(color, 0.45), 2.0)
+		_draw_label(c, r, color.lightened(0.5))
 		_draw_stars(c, r)
 	else:
 		draw_circle(c, r, dark)
-		draw_arc(c, r, 0.0, TAU, 48, color, 6.0)
+		draw_arc(c, r, 0.0, TAU, 48, Color(color, 0.8), 4.0)
 		_draw_label(c, r)
 	if is_next:
 		var pulse: float = fmod(_clock * 0.9, 1.0)
@@ -67,11 +71,14 @@ func _draw() -> void:
 	_draw_kind(c, r)
 
 
-func _draw_label(c: Vector2, r: float, ink: Color = Params.ui_text_color) -> void:
+func _draw_label(c: Vector2, r: float, ink: Color = Params.ui_text_color, outlined: bool = false) -> void:
 	var font: Font = get_theme_default_font()
-	var font_size: int = int(r * (0.62 if kind == Kind.NORMAL else 0.55))
+	var font_size: int = int(r * (0.5 if kind == Kind.NORMAL else 0.45))
 	var width: float = font.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
-	draw_string(font, Vector2(c.x - width * 0.5, c.y + font_size * 0.35), label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, ink)
+	var origin := Vector2(c.x - width * 0.5, c.y + font_size * 0.35)
+	if outlined:
+		draw_string_outline(font, origin, label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, 8, color.darkened(0.65))
+	draw_string(font, origin, label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, ink)
 
 
 ## Três estrelas pequenas embaixo do nó concluído (as ganhas, cheias).

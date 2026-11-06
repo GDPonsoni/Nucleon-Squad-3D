@@ -31,7 +31,7 @@ func setup(index: int) -> void:
 	for s in _planet.stages.size():
 		var stage: StageData = _planet.stages[s]
 		var node := StageNode.new()
-		node.color = _planet.star_color
+		node.color = _stage_tone(s, last)
 		node.label = str(s + 1)
 		node.unlocked = SaveGame.is_unlocked(index, s)
 		node.completed = SaveGame.is_completed(stage.id)
@@ -41,8 +41,43 @@ func setup(index: int) -> void:
 		node.pressed.connect(_on_node_pressed.bind(s, node))
 		add_child(node)
 		_nodes.append(node)
+	# Altura fixa pelo número de fases: a página rola em vez de apertar os nós
+	custom_minimum_size.y = _top_y() + (_nodes.size() - 1) * Params.stage_map_step + Params.stage_map_margin_bottom
 	resized.connect(_layout)
 	_layout()
+
+
+## Monta a página rolável de um planeta: mapa dentro de um ScrollContainer só vertical,
+## já posicionado na fase sugerida.
+static func build_page(index: int, on_chosen: Callable, on_info: Callable) -> ScrollContainer:
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	scroll.mouse_filter = Control.MOUSE_FILTER_PASS
+	var map := StageMap.new()
+	map.setup(index)
+	map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	map.stage_chosen.connect(on_chosen)
+	map.stage_info_requested.connect(on_info)
+	scroll.add_child(map)
+	scroll.resized.connect(func() -> void: map.focus_scroll(scroll), CONNECT_ONE_SHOT)
+	return scroll
+
+
+## Rola até a fase sugerida (ou o chefe, se o capítulo está completo) ficar no meio.
+func focus_scroll(scroll: ScrollContainer) -> void:
+	await get_tree().process_frame
+	var target: int = _next_stage()
+	if target < 0:
+		target = _nodes.size() - 1
+	if target < _nodes.size():
+		var y: float = _nodes[target].position.y + _nodes[target].size.y * 0.5
+		scroll.scroll_vertical = int(maxf(y - scroll.size.y * 0.5, 0.0))
+
+
+func _top_y() -> float:
+	var boss_half: float = Params.stage_node_size * Params.stage_node_boss_scale * 0.5
+	return maxf(Params.stage_map_margin_top, Params.stage_map_art_top + Params.chapter_art_size.y + boss_half + Params.stage_map_art_gap)
 
 
 ## Primeira fase liberada e ainda não concluída (a sugerida); -1 se o capítulo está completo.
@@ -82,40 +117,29 @@ func _layout() -> void:
 	queue_redraw()
 
 
-## Posições dos nós como numa constelação: sobem da primeira ao chefe, mas espalhadas
-## de forma irregular (sorteio fixo por capítulo) e afastadas o bastante para não se tocarem.
+## Cor de cada nó: a do planeta com o matiz deslocado aos poucos ao longo do caminho.
+func _stage_tone(stage_index: int, last: int) -> Color:
+	var base: Color = _planet.star_color
+	var t: float = float(stage_index) / maxf(last, 1)
+	var hue: float = fposmod(base.h + (t - 0.5) * Params.stage_map_hue_span, 1.0)
+	return Color.from_hsv(hue, clampf(base.s, 0.35, 0.65), clampf(base.v, 0.8, 1.0))
+
+
+## Posições dos nós numa onda suave que sobe da primeira fase ao chefe (alterna os lados
+## com ritmo fixo, sem sorteio). O topo fica abaixo da arte do planeta, para o chefe não cobri-la.
 func _constellation() -> PackedVector2Array:
 	var count: int = _nodes.size()
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 4242 + planet_index * 31
-	var top: float = Params.stage_map_margin_top
 	var bottom: float = size.y - Params.stage_map_margin_bottom
-	var step: float = (bottom - top) / maxf(count - 1, 1)
+	var step: float = Params.stage_map_step
 	var margin: float = Params.stage_node_size * 0.75
 	var points := PackedVector2Array()
-	var side: float = rng.randf_range(-1.0, 1.0)
 	for i in count:
-		# Sobe em ziguezague irregular: o lado muda quase sempre, com amplitude sorteada
-		side = -signf(side) if rng.randf() < 0.8 else signf(side)
-		var x: float = size.x * (0.5 + side * rng.randf_range(0.12, Params.stage_map_sway))
-		var y: float = bottom - i * step + rng.randf_range(-0.22, 0.22) * step
+		var wave: float = sin(i * Params.stage_map_wave_speed + planet_index * 1.3)
+		var x: float = size.x * (0.5 + wave * Params.stage_map_sway)
+		var y: float = bottom - i * step
 		if i == count - 1:
-			x = size.x * rng.randf_range(0.42, 0.58)
-			y = top
+			x = size.x * 0.5
 		points.append(Vector2(clampf(x, margin, size.x - margin), y))
-	# Relaxamento: afasta nós que ficaram perto demais
-	var min_dist: float = Params.stage_node_size * 1.25
-	for _pass in 12:
-		for i in count:
-			for j in range(i + 1, count):
-				var delta: Vector2 = points[j] - points[i]
-				var dist: float = delta.length()
-				if dist < min_dist and dist > 0.01:
-					var push: Vector2 = delta / dist * (min_dist - dist) * 0.5
-					points[i] -= push
-					points[j] += push
-		for i in count:
-			points[i].x = clampf(points[i].x, margin, size.x - margin)
 	return points
 
 

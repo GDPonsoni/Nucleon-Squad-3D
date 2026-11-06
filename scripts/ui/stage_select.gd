@@ -112,11 +112,7 @@ func _refresh_header(chapter: int) -> void:
 
 ## Monta o mapa de um planeta (o PagedView chama para o atual e os vizinhos).
 func _build_page(chapter: int) -> Control:
-	var map := StageMap.new()
-	map.setup(chapter)
-	map.stage_chosen.connect(_on_stage_chosen)
-	map.stage_info_requested.connect(_open_stage_sheet)
-	return map
+	return StageMap.build_page(chapter, _on_stage_chosen, _open_stage_sheet)
 
 
 ## Bolinhas: uma por capítulo, cheias nos concluídos e destacada na página atual.
