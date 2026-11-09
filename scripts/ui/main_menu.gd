@@ -19,9 +19,11 @@ func _ready() -> void:
 
 	var column := UiFactory.make_column()
 	var center := UiFactory.make_centered(column)
-	# O conteúdo não cobre o banner do rodapé
+	# O conteúdo fica entre a nave decorativa e o banner do rodapé, centrado nesse espaço
 	var banner_height: float = AdService.banner_height(get_viewport_rect().size.x)
 	center.offset_bottom = -banner_height
+	var ship_half: float = Params.ship_size.y * Params.menu_ship_scale * 0.5 + Params.menu_ship_bob_height
+	center.offset_top = ship.position.y + ship_half + Params.menu_title_gap
 	add_child(center)
 
 	var badge := QuarkBadge.new()

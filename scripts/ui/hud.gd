@@ -23,6 +23,7 @@ var _toast_tween: Tween
 var _special: SpecialButton
 var _shown_quarks: int = -1
 var progress_ratio: Callable = Callable()  # barra do topo (padrão: progresso da fase)
+var progress_color: Color = Params.ui_accent_color
 
 
 func _ready() -> void:
@@ -115,6 +116,12 @@ func setup(state: MatchState, spawner: EnemySpawner, stage_text: String) -> void
 	_stage_label.text = stage_text
 	state.score_changed.connect(_on_score_changed)
 	_on_score_changed(state.score)
+
+
+## Texto embaixo da pontuação (fase da campanha, nível no modo roguelike).
+func set_stage_text(text: String, color: Color = Params.ui_muted_text_color) -> void:
+	_stage_label.text = text
+	_stage_label.add_theme_color_override("font_color", color)
 
 
 ## Coloca o botão do especial acima de uma faixa reservada na base (a barra de troca).
@@ -233,7 +240,7 @@ func _draw_progress() -> void:
 	var ratio: float = float(progress_ratio.call()) if progress_ratio.is_valid() else _spawner.progress()
 	var filled := Rect2(rect.position, Vector2(rect.size.x * ratio, rect.size.y))
 	if filled.size.x > 0.0:
-		_draw_round_rect(filled, Params.ui_accent_color, radius)
+		_draw_round_rect(filled, progress_color, radius)
 
 
 ## Barra de vida do chefe no lugar do progresso da fase.

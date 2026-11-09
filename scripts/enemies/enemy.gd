@@ -15,6 +15,7 @@ var bullets: NodePool  # projéteis inimigos
 var context: CombatContext  # para mirar na nave
 ## Blindado (momento de especial): o dano normal é reduzido até levar um especial.
 var armored: bool = false
+var elite: bool = false  # modo roguelike: maior, com muito mais vida e aura (solta baú)
 var crushed: bool = false  # destruído ao encostar na nave: não se divide (rochas, fissão)
 
 var _velocity: Vector2
@@ -71,6 +72,7 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 	_tele_dirs.resize(0)
 	crushed = false
 	armored = false
+	elite = false
 	_speed_scale = 1.0
 	_fire_scale = 1.0
 	_sway_amplitude = 0.0
@@ -120,6 +122,15 @@ func apply_stage(stage: StageData) -> void:
 	hp *= stage.enemy_hp_scale * Params.balance.enemy_hp_factor(Session.planet_index, Session.stage_index)
 	_max_hp = hp
 	_fire_scale = stage.enemy_fire_scale
+
+
+## Vira elite: mais vida, maior e com aura. Chamar depois de activate e apply_stage.
+func make_elite(hp_multiplier: float, size_multiplier: float) -> void:
+	elite = true
+	hp *= hp_multiplier
+	_max_hp = hp
+	radius *= size_multiplier
+	queue_redraw()
 
 
 func is_on_screen() -> bool:
@@ -380,11 +391,29 @@ func _draw() -> void:
 		var dir := Vector2.from_angle(PI * 0.5 + TAU * i / data.sides)
 		outer.append(dir * radius)
 		inner.append(dir * radius * 0.45)
+	if elite:
+		_draw_elite_aura()
 	draw_colored_polygon(outer, color)
 	draw_colored_polygon(inner, color.darkened(0.5))
 	_draw_armor()
 	_draw_defense()
 	_draw_telegraph()
+
+
+## Elite: aura girando e barra de vida embaixo.
+func _draw_elite_aura() -> void:
+	var pulse: float = 0.5 + 0.5 * sin(_age * 5.0)
+	draw_circle(Vector2.ZERO, radius * (1.35 + 0.08 * pulse), Color(Params.elite_color, 0.18))
+	var start: float = _age * 2.0 - rotation
+	for i in 3:
+		var a: float = start + TAU * i / 3.0
+		draw_arc(Vector2.ZERO, radius * 1.3, a, a + TAU / 6.0, 12, Params.elite_color, 6.0)
+	var ratio: float = clampf(hp / maxf(_max_hp, 1.0), 0.0, 1.0)
+	var bar := Rect2(-radius, radius * 1.5, radius * 2.0, 8.0)
+	draw_set_transform(Vector2.ZERO, -rotation)
+	draw_rect(bar, Color(0.0, 0.0, 0.0, 0.5))
+	draw_rect(Rect2(bar.position, Vector2(bar.size.x * ratio, bar.size.y)), Params.elite_color)
+	draw_set_transform(Vector2.ZERO, 0.0)
 
 
 ## Blindagem do momento de especial: hexágono dourado pulsando em volta.

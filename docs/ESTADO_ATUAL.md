@@ -111,15 +111,19 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - **Camada de ação** (`_add_action_waves` no `campaign_builder`): ondas que não atiram (kamikazes, faíscas, enxames, serpentes, conforme o capítulo) a cada ~3,4 a 4,4 s entre os motivos, e um surto de 3 ondas a cada 60 s. Mais movimento e abates sem mais tiros. Medido (piloto automático): abates por fase 2 a 4× maiores (ex.: 3-4 de ~190 para ~790); hits/min subiram pouco (3-4: 8,8 → 12,2; 1-3: 2,9 → 4,3). A 5-8 já era a mais pesada (≈ 24 → 29 hits/min, tiros inimigos 354 em média, pool de inimigos cheio): revisar se o teste no aparelho pedir.
 - Os números de dificuldade desse bloco ficaram defasados: veja "Revisão de progressão" abaixo.
 
-**Modo roguelike "Incursão" (nome provisório, branch `feat/modo-roguelike`), etapa (a) de 5:**
-- Cena `scenes/run.tscn` → `scripts/run/run_game.gd`, que **estende** `game.gd` pelos ganchos "Modo" do fim do arquivo (`_formation`, `_stage`, `_uses_switcher`, `_special_weapon`, `_on_enemy_killed`...). A campanha usa os padrões.
-- Regras em `data/run/run_mode.tres` (`RunModeData`): nave branca `white_body` (ataque frontal `pulse_weapon`, fixo, fora dos espaços), 5 hits + Casco, 3 espaços de arma, 4 opções por nível, curva de XP, orbes, quarks quando faltam opções.
-- `RunProgress` (XP, nível, armas e níveis, sorteio das opções), `RunChoice`, `XpOrb` (pool; cai devagar, ímã pela Coleta), `LevelUpMenu` (pausa, cartas), `RunLoadoutView` (espaços "Armas 2/3" com tracinhos de nível, também na pausa), `RunHud` (barra de XP, nível, tempo).
-- Começa só com o ataque frontal; a 1ª arma (1 entre 4) vem no 1º nível. XP: 120 no 1º nível, ×1,3 por nível (calibrar na etapa c). Na câmera lenta, os espaços aparecem compactos acima da barra de energia. Escolher a mesma arma sobe o nível dela. Com 3 armas, só aparecem as próprias; faltando opções, entra "+15 quarks". Especial = arma de maior nível. Sem power-ups de arma; kits como na campanha. Sem auxiliar e sem barra de troca.
-- Armas disponíveis = naves liberadas na campanha. Menu inicial: botão "Incursão", travado até concluir o cap. 1 (`Params.run_unlock_chapter`).
-- **Provisório:** as ondas são a 1-1 em laço (`placeholder_stage`), sem chefes nem escala (etapas b e c).
-- Teste: `$G --headless --path . -s res://tests/run_regressions_run.gd`.
-- **Próximas etapas:** (b) ondas e chefes a cada 5 min; (c) dificuldade escalante (muito difícil chegar aos 30 min); (d) árvore (ímã de drops, XP) e recompensa nova do modo; (e) guardar o conquistado ao sair, morrer ou o app fechar (sem retomar a partida).
+**Modo roguelike "Incursão" (nome provisório, branch `feat/modo-roguelike`), etapas (a) e (b):**
+- Cena `scenes/run.tscn` → `scripts/run/run_game.gd`, que **estende** `game.gd` pelos ganchos "Modo" do fim do arquivo (`_formation`, `_stage`, `_uses_switcher`, `_special_weapon`, `_on_enemy_killed`, `_spawn_boss`, `_after_boss_killed`, `_on_boss_sequence_done`...). A campanha usa os padrões.
+- Regras em `data/run/run_mode.tres` (`RunModeData`, gerado à mão por script; editar os campos direto): nave branca `white_body` (ataque frontal `pulse_weapon`, fixo, fora dos espaços), 5 hits + Casco, 3 espaços, 4 opções por nível, XP (40 no 1º nível, ×1,4 por nível), orbes, diretor, elites, chefes e itens.
+- **Fluxo:** começa só com o ataque frontal; a 1ª arma vem no 1º nível. Arma repetida sobe de nível; com 3 armas, só as próprias; faltando opções, "+15 quarks". Especial = arma de maior nível. Armas disponíveis = naves liberadas na campanha.
+- **Diretor** (`RunDirector`): ondas sorteadas por peso entre as ativas no minuto (`RunWaveEntry`: inimigo, formação, tamanho, janela de minutos, horda), intervalo de 2,4 s a 0,6 s, tamanho +8%/min, surto de hordas a cada 60 s. Vida dos inimigos = 0,45 × 1,15^minuto (sobre o cap. 1) e cadência 0,85 → 1,6.
+- **Elites** a cada 40 s (Semeador, Escudeiro, Fissor, Pulsar, que flutuam): vida ×14, maiores, com aura e barra de vida; dão XP ×6 e 50% de kit.
+- **Chefes** a cada 2,5 min (intermediários e de capítulo alternados, vida pelo minuto), com ondas 3× mais espaçadas na luta; dão orbe grande de XP, 2 kits e, nos de capítulo (a cada 2), um **baú** (`PowerUp.Kind.CHEST`: escolha extra).
+- **Kits** a cada 75 s (`dropper.set_interval`). Sobreviver até 30:00 = vitória ("Incursão concluída!").
+- **HUD:** a barra fina do topo é o XP, "Nv N" embaixo da pontuação, tempo embaixo do pausar; na câmera lenta, os espaços aparecem compactos acima da barra de energia. Pausa mostra "Armas 2/3".
+- **Menu inicial:** botão "Incursão", travado até concluir o cap. 1. O conteúdo do menu agora começa abaixo da nave decorativa (`menu_title_gap`).
+- **Simulador:** `$G --headless --path . --fixed-fps 60 -s res://scripts/tools/simulate_run.gd -- --minutes 30 --pick focus|spread --seed N` (uma linha por minuto: nível, XP/min, abates, hits que levaria, inimigos, tiros, chefe, armas). Leva ~25 min reais para 30 min; rode sementes em paralelo.
+- Testes: `tests/run_regressions_run.gd` e `test_run_progress`/`test_run_director` em `run_tests`.
+- **Próximas etapas:** (c) eventos e combo, calibrar no aparelho; (d) árvore (ímã de drops, XP) e recompensa nova do modo; (e) guardar o conquistado ao sair, morrer ou o app fechar (sem retomar a partida).
 
 **Revisão de progressão (09/11/2026, branch `feat/revisao-progressao`):**
 - **Drops por tempo para tudo:** 2 kits e 2 power-ups da auxiliar por fase (antes: 1 kit a cada 30 abates e 1,2% por abate, o que dava ~20 kits e ~7 power-ups por fase com a camada de ação). Excedente (arma no máximo, corpo sem dano) vira 50 pontos, com o número na tela.

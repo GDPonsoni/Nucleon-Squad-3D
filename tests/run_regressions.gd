@@ -77,6 +77,38 @@ func _ready() -> void:
 	pause.close()
 	await _frames(2)
 	get_tree().paused = false
+	# Baú: uma escolha extra sem gastar XP
+	var pending: int = progress.pending
+	game.call("_on_powerup_collected", PowerUp.Kind.CHEST)
+	await _frames(3)
+	menu = _menu(game)
+	_check(menu != null, "baú abre uma escolha extra")
+	if menu != null:
+		menu.chosen.emit(menu.choices[0])
+		menu.close()
+	await _frames(3)
+	_check(progress.pending == pending, "escolha do baú consumida")
+	# Elite: muito mais vida e marcada
+	var mode: RunModeData = game.get("mode")
+	game.call("_spawn_elite", mode.elite_enemies[0])
+	var elite: Enemy = null
+	for item in (game.get("enemies") as NodePool).active:
+		if (item as Enemy).elite:
+			elite = item
+	_check(elite != null and elite.hp > mode.elite_enemies[0].max_hp * 2.0, "elite com muito mais vida")
+	# Chefe: entra depois do aviso e as ondas diminuem
+	var director: RunDirector = game.get("director")
+	var gap: float = director.wave_gap()
+	director.boss_active = true
+	game.call("_on_boss_due", mode.bosses[0], 2.5)
+	await get_tree().create_timer(Params.boss_warning_seconds + 0.5).timeout
+	_check(game.get("boss") != null, "chefe entra")
+	_check(director.wave_gap() > gap * 2.0, "ondas mais espaçadas durante o chefe")
+	# Vitória ao chegar na duração da partida
+	game.set("_clock", mode.duration_seconds - 0.01)
+	await _frames(5)
+	_check(game.get("_won") and get_tree().paused, "sobreviver até o fim vence")
+	get_tree().paused = false
 	game.queue_free()
 	await _frames(2)
 	print("run_regressions: %d falhas" % _failures)

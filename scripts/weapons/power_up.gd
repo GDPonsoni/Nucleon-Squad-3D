@@ -2,9 +2,9 @@ class_name PowerUp
 extends PoolItem
 ## Item que desce devagar e é coletado ao encostar na nave.
 ## WEAPON sobe o nível da arma do corpo ativo; HEAL (medkit) recupera 1 hit;
-## COMPANION (raro) sobe o nível da nave auxiliar.
+## COMPANION (raro) sobe o nível da nave auxiliar; CHEST (modo roguelike) dá uma escolha extra.
 
-enum Kind { WEAPON, HEAL, COMPANION }
+enum Kind { WEAPON, HEAL, COMPANION, CHEST }
 
 var kind: Kind = Kind.WEAPON
 
@@ -26,13 +26,16 @@ func _process(delta: float) -> void:
 		return
 	# Power-up gira; ambos pulsam para chamar atenção
 	_clock += delta
-	rotation = _clock * Params.powerup_spin_speed if kind != Kind.HEAL else 0.0
+	rotation = _clock * Params.powerup_spin_speed if kind != Kind.HEAL and kind != Kind.CHEST else 0.0
 	scale = Vector2.ONE * (1.0 + Params.powerup_pulse * sin(_clock * Params.powerup_pulse_speed))
 
 
 func _draw() -> void:
 	if kind == Kind.HEAL:
 		_draw_medkit()
+		return
+	if kind == Kind.CHEST:
+		_draw_chest()
 		return
 	var radius: float = Params.powerup_radius
 	# Auxiliar: lilás, maior e com anel extra (é raro e precisa se destacar)
@@ -64,3 +67,16 @@ func _draw_medkit() -> void:
 	var thick: float = radius * 0.3
 	draw_rect(Rect2(-arm, -thick * 0.5, arm * 2.0, thick), Params.medkit_color)
 	draw_rect(Rect2(-thick * 0.5, -arm, thick, arm * 2.0), Params.medkit_color)
+
+
+## Baú: caixa dourada com tampa e fecho, maior que os outros itens.
+func _draw_chest() -> void:
+	var radius: float = Params.powerup_radius * Params.chest_scale
+	draw_circle(Vector2.ZERO, radius, Color(Params.chest_color, 0.25))
+	var w: float = radius * 1.3
+	var h: float = radius * 0.95
+	var box := Rect2(-w * 0.5, -h * 0.3, w, h * 0.75)
+	draw_rect(box, Params.chest_color.darkened(0.25))
+	draw_rect(Rect2(-w * 0.55, -h * 0.55, w * 1.1, h * 0.3), Params.chest_color)
+	draw_rect(Rect2(-w * 0.09, -h * 0.42, w * 0.18, h * 0.4), Color.WHITE)
+

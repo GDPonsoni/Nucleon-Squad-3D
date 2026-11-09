@@ -217,3 +217,5 @@ RUN_NEW_WEAPON,New weapon,Arma nova,Arma nueva
 RUN_WEAPON_LEVEL,Level %d → %d,Nível %d → %d,Nivel %d → %d
 RUN_QUARKS_REWARD,Quarks,Quarks,Quarks
 RESULT_LEVEL,Level,Nível,Nivel
+RUN_ELITE,Elite incoming!,Elite chegando!,¡Llega una élite!
+RUN_VICTORY,Incursion complete!,Incursão concluída!,¡Incursión completada!

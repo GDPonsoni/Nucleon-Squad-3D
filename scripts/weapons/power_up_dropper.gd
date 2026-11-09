@@ -62,6 +62,17 @@ func on_enemy_killed(enemy: Enemy) -> void:
 		_drop(enemy.position + offsets[kind], kind)
 
 
+## Troca o intervalo de um tipo (modos com ritmo próprio). 0 ou menos desliga.
+func set_interval(kind: PowerUp.Kind, seconds: float) -> void:
+	_add(kind, seconds if seconds > 0.0 else INF, 1.0)
+	_next_due[kind] = _clock + _interval[kind]
+
+
+## Solta um item agora, fora do relógio (recompensas de elite e chefe).
+func drop_now(pos: Vector2, kind: PowerUp.Kind) -> void:
+	_drop(pos, kind)
+
+
 ## Quantos itens de um tipo estão devidos (para testes).
 func owed(kind: PowerUp.Kind) -> int:
 	return int(_owed.get(kind, 0))

@@ -28,9 +28,9 @@ func show_stage_clear(state: MatchState, seconds: float, record: bool, summary: 
 	_open("STAGE_CLEAR_TITLE", state, seconds, record, summary, main)
 
 
-func show_game_over(state: MatchState, seconds: float, summary: Dictionary) -> void:
+func show_game_over(state: MatchState, seconds: float, summary: Dictionary, title_key: String = "GAMEOVER_TITLE") -> void:
 	var main := _icon(IconButton.Icon.RESTART, Params.results_main_size, "PAUSE_CAPTION_RESTART", _go.bind(restart_path), true)
-	_open("GAMEOVER_TITLE", state, seconds, false, summary, main)
+	_open(title_key, state, seconds, false, summary, main)
 
 
 func _open(title_key: String, state: MatchState, seconds: float, record: bool, summary: Dictionary, main: IconButton) -> void:

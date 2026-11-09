@@ -2,8 +2,9 @@ extends "res://scripts/core/game.gd"
 ## Modo roguelike (nome provisório): nave branca única com ataque frontal e até 3 armas
 ## escolhidas ao subir de nível com o XP dos orbes. Estende a partida da campanha pelos
 ## ganchos de modo. Regras em data/run/run_mode.tres (RunModeData).
-## Começa só com o ataque frontal; a 1ª arma vem no 1º nível.
-## Etapa (a): ondas provisórias (uma fase da campanha em laço), sem chefes nem escala.
+## Começa só com o ataque frontal; a 1ª arma vem no 1º nível. O RunDirector solta ondas,
+## surtos, elites (soltam baú) e chefes; a vida dos inimigos cresce com o minuto.
+## Sobreviver até RunModeData.duration_seconds vence a partida.
 
 var mode: RunModeData
 var progress: RunProgress
@@ -13,11 +14,20 @@ var _rng := RandomNumberGenerator.new()
 var _clock: float = 0.0
 var _choosing: bool = false
 var _equipped: Dictionary = {}  # id do corpo -> Weapon montada na nave
+var director: RunDirector
+var _run_stage: StageData  # fase "infinita" da partida (o diretor ajusta as escalas)
+var _won: bool = false
+var _boss_minute: float = 0.0
+var _bosses_killed: int = 0
 
 
 func _ready() -> void:
 	mode = load(Params.run_mode_path) as RunModeData
 	_rng.randomize()
+	_run_stage = StageData.new()
+	_run_stage.id = &"run"
+	_run_stage.duration_seconds = mode.duration_seconds * 2.0  # o spawner não termina sozinho
+	_run_stage.start_delay = mode.first_wave_delay
 	# Inimigos usam a escala do capítulo 1 enquanto o modo não tem a própria (etapa c)
 	Session.planet_index = 0
 	Session.stage_index = 0
@@ -42,7 +52,7 @@ func _configure_state() -> void:
 
 
 func _stage() -> StageData:
-	return mode.placeholder_stage
+	return _run_stage
 
 
 func _uses_switcher() -> bool:
@@ -81,7 +91,11 @@ func _on_mode_ready() -> void:
 	run_hud.progress = progress
 	run_hud.clock = func() -> float: return _clock
 	add_child(run_hud)
-	hud.progress_ratio = func() -> float: return clampf(_clock / mode.duration_seconds, 0.0, 1.0)
+	# Barra fina do topo = XP; nível embaixo da pontuação
+	hud.progress_ratio = func() -> float: return clampf(progress.xp / maxf(progress.xp_needed(), 0.001), 0.0, 1.0)
+	hud.progress_color = Params.run_xp_color
+	_show_level()
+	progress.leveled_up.connect(func(_level: int) -> void: _show_level())
 	pause_menu.title_text = tr("RUN_MODE_NAME")
 	pause_menu.restart_path = ScenePaths.RUN
 	pause_menu.extra_content = func() -> Control: return RunLoadoutView.build(progress)
@@ -89,10 +103,24 @@ func _on_mode_ready() -> void:
 	results_menu.restart_path = ScenePaths.RUN
 	results_menu.back_path = ScenePaths.MENU
 	run_hud.time_controller = time_controller
+	director = RunDirector.new()
+	director.name = "RunDirector"
+	add_child(director)
+	director.setup(mode, _run_stage, spawner, _rng.randi())
+	director.elite_due.connect(_spawn_elite)
+	director.boss_due.connect(_on_boss_due)
+	dropper.set_interval(PowerUp.Kind.HEAL, mode.medkit_every)
 
 
 func _on_enemy_killed(killed: Enemy) -> void:
-	_drop_orb(killed.position, killed.points() * mode.xp_per_point)
+	var xp: float = killed.points() * mode.xp_per_point
+	if killed.elite:
+		xp *= mode.elite_xp_multiplier
+		if mode.elite_drops_chest:
+			dropper.drop_now(killed.position, PowerUp.Kind.CHEST)
+		if _rng.randf() < mode.elite_medkit_chance:
+			dropper.drop_now(killed.position + Vector2(Params.powerup_radius * 3.0, 0.0), PowerUp.Kind.HEAL)
+	_drop_orb(killed.position, xp)
 
 
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
@@ -112,9 +140,66 @@ func _result_summary(summary: Dictionary) -> Dictionary:
 	return summary
 
 
-## Fim das ondas provisórias: recomeça a mesma fase (a partida só acaba ao perder ou sair).
+## O spawner da partida não termina sozinho (dura o dobro da meta); nada a fazer.
 func _on_spawning_finished() -> void:
-	spawner.restart(_stage())
+	pass
+
+
+func _on_powerup_collected(kind: PowerUp.Kind) -> void:
+	if kind == PowerUp.Kind.CHEST:
+		# Baú: uma escolha extra, sem gastar XP
+		Audio.play(&"powerup_pickup", 0.0, 0.8)
+		progress.pending += 1
+		return
+	super(kind)
+
+
+## Elite: inimigo que flutua e atira, com muito mais vida e aura; solta muito XP.
+func _spawn_elite(data: EnemyData) -> void:
+	var enemy := enemies.acquire() as Enemy
+	if enemy == null:
+		return
+	var rect: Rect2 = get_viewport_rect()
+	var x: float = randf_range(rect.size.x * 0.25, rect.size.x * 0.75)
+	enemy.activate(data, Vector2(x, rect.position.y - data.radius * 2.0), Vector2(0.0, data.speed))
+	enemy.apply_stage(_run_stage)
+	enemy.make_elite(mode.elite_hp_multiplier, mode.elite_size)
+	hud.show_warning("RUN_ELITE")
+
+
+## Chefe na hora marcada, com a vida do minuto. As ondas diminuem até ele cair.
+func _on_boss_due(data: BossData, minute: float) -> void:
+	var tuned: BossData = data.duplicate()
+	tuned.max_hp = maxi(roundi(data.max_hp * director.boss_hp_factor()), 1)
+	_spawn_boss(tuned)
+	_boss_minute = minute
+
+
+func _after_boss_killed(center: Vector2) -> void:
+	_drop_orb(center, mode.boss_xp * (_boss_minute / 5.0 + 1.0))
+	_bosses_killed += 1
+	if mode.boss_chest_every > 0 and _bosses_killed % mode.boss_chest_every == 0:
+		dropper.drop_now(center, PowerUp.Kind.CHEST)
+	for i in mode.boss_medkits:
+		dropper.drop_now(center + Vector2((i + 1) * Params.powerup_radius * 3.0 * (1.0 if i % 2 == 0 else -1.0), 0.0), PowerUp.Kind.HEAL)
+
+
+func _on_boss_sequence_done() -> void:
+	director.boss_active = false
+
+
+## Sobreviveu até o fim: vitória.
+func _win() -> void:
+	_won = true
+	_match_over = true
+	pause_menu.disable()
+	Audio.play(&"stage_clear")
+	Haptics.play(&"fase_completa")
+	var kills_quarks: int = int(state.quarks)
+	_bank_quarks(0)
+	results_menu.show_game_over(state, _clock, _result_summary({
+		"quarks_kills": kills_quarks, "quarks_bonus": 0, "rewards": PackedStringArray(),
+	}), "RUN_VICTORY")
 
 
 # --- Partida ---
@@ -124,6 +209,9 @@ func _process(delta: float) -> void:
 	if _match_over:
 		return
 	_clock += delta
+	if _clock >= mode.duration_seconds and not _won:
+		_win()
+		return
 	if progress.pending > 0 and not _choosing:
 		_open_choices()
 
@@ -174,6 +262,10 @@ func _refresh_weapons() -> void:
 		else:
 			_equipped[id] = player.mount.equip(ship.weapon, level)
 	state.special_weapon = _special_weapon()
+
+
+func _show_level() -> void:
+	hud.set_stage_text(tr("RUN_LEVEL") % progress.level, Params.run_xp_color)
 
 
 func _create_orb() -> PoolItem:

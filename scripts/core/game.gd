@@ -404,6 +404,11 @@ func _on_spawning_finished() -> void:
 	if boss_data == null:
 		_spawning_done = true
 		return
+	_spawn_boss(boss_data)
+
+
+## Aviso na tela e, depois dele, o chefe entra.
+func _spawn_boss(boss_data: BossData) -> void:
 	Audio.play(&"boss_warning")
 	hud.show_warning("BOSS_WARNING")
 	await get_tree().create_timer(Params.boss_warning_seconds, false).timeout
@@ -434,10 +439,11 @@ func _on_boss_killed(killed: Enemy) -> void:
 	var color: Color = killed.tint()
 	killed.queue_free()
 	boss = null
+	_after_boss_killed(center)
 	for i in Params.boss_explosions:
 		_explode(center + Vector2.from_angle(randf() * TAU) * randf() * radius, radius * randf_range(0.5, 1.2), color)
 		await get_tree().create_timer(Params.boss_explosion_gap, false).timeout
-	_spawning_done = true
+	_on_boss_sequence_done()
 
 
 func _switch_to(index: int, invulnerable_seconds: float) -> void:
@@ -679,6 +685,16 @@ func _result_summary(summary: Dictionary) -> Dictionary:
 ## Fim da montagem da cena.
 func _on_mode_ready() -> void:
 	pass
+
+
+## Chefe destruído (antes das explosões): recompensas na posição dele.
+func _after_boss_killed(_center: Vector2) -> void:
+	pass
+
+
+## Explosões do chefe acabaram (campanha: a fase pode terminar).
+func _on_boss_sequence_done() -> void:
+	_spawning_done = true
 
 
 ## Inimigo comum destruído (depois de pontos e drops).

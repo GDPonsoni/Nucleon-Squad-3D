@@ -694,3 +694,33 @@ func test_run_progress() -> void:
 	check(progress.quarks_from_levels == mode.quarks_per_extra_level, "recompensa em quarks guardada")
 	check(mode.ship.weapon.max_level() >= 1 and mode.max_hits == 5, "nave branca com 5 hits")
 
+
+## Diretor do modo roguelike: vida cresce e as ondas apertam com o tempo; ondas só depois do
+## minuto delas; chefes em ordem e um por vez.
+func test_run_director() -> void:
+	var mode := load(Params.run_mode_path) as RunModeData
+	var director := RunDirector.new()
+	var stage := StageData.new()
+	director.mode = mode
+	director.stage = stage
+	director.clock = 0.0
+	var hp_start: float = director.hp_scale()
+	var gap_start: float = director.wave_gap()
+	director.clock = mode.duration_seconds
+	check(director.hp_scale() > hp_start * 10.0, "vida aos 30 min muito maior (%.1fx)" % (director.hp_scale() / hp_start))
+	check(director.wave_gap() < gap_start * 0.5, "ondas bem mais frequentes no fim")
+	director.clock = 0.0
+	for i in 50:
+		var entry: RunWaveEntry = director._pick(false)
+		check(entry != null and entry.from_minute <= 0.0, "no começo só ondas do minuto 0")
+	for i in 20:
+		var horde: RunWaveEntry = director._pick(true)
+		check(horde == null or horde.horde, "surto só com hordas")
+	check(mode.bosses.size() == mode.boss_minutes.size() and mode.boss_minutes[0] <= 3.0, "1º chefe cedo (%.1f min)" % mode.boss_minutes[0])
+	for i in range(1, mode.boss_minutes.size()):
+		check(mode.boss_minutes[i] > mode.boss_minutes[i - 1], "chefes em ordem")
+	check(mode.boss_minutes[mode.boss_minutes.size() - 1] * 60.0 < mode.duration_seconds, "último chefe antes do fim")
+	for i in mode.elite_enemies.size():
+		check(mode.elite_enemies[i].movement == EnemyData.Movement.HOVER, "elite flutua (fica na tela)")
+	director.free()
+

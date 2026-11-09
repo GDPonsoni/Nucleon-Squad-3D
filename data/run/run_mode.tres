@@ -1,10 +1,295 @@
 [gd_resource type="Resource" script_class="RunModeData" format=3]
 
 [ext_resource type="Script" path="res://scripts/run/run_mode_data.gd" id="1_script"]
-[ext_resource type="Resource" path="res://data/run/white_body.tres" id="2_ship"]
-[ext_resource type="Resource" path="res://data/stages/p1_s1.tres" id="3_stage"]
+[ext_resource type="Script" path="res://scripts/run/run_wave_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/run/white_body.tres" id="3_ship"]
+[ext_resource type="Script" path="res://scripts/enemies/enemy_data.gd" id="4_enemy_script"]
+[ext_resource type="Script" path="res://scripts/enemies/boss_data.gd" id="5_boss_script"]
+[ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="e_aimer"]
+[ext_resource type="Resource" path="res://data/enemies/colossus.tres" id="e_colossus"]
+[ext_resource type="Resource" path="res://data/enemies/drone.tres" id="e_drone"]
+[ext_resource type="Resource" path="res://data/enemies/fissor.tres" id="e_fissor"]
+[ext_resource type="Resource" path="res://data/enemies/hunter.tres" id="e_hunter"]
+[ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="e_kamikaze"]
+[ext_resource type="Resource" path="res://data/enemies/pulsar.tres" id="e_pulsar"]
+[ext_resource type="Resource" path="res://data/enemies/serpent.tres" id="e_serpent"]
+[ext_resource type="Resource" path="res://data/enemies/shielder.tres" id="e_shielder"]
+[ext_resource type="Resource" path="res://data/enemies/spark.tres" id="e_spark"]
+[ext_resource type="Resource" path="res://data/enemies/splitter.tres" id="e_splitter"]
+[ext_resource type="Resource" path="res://data/enemies/spreader.tres" id="e_spreader"]
+[ext_resource type="Resource" path="res://data/enemies/swarm.tres" id="e_swarm"]
+[ext_resource type="Resource" path="res://data/enemies/tank.tres" id="e_tank"]
+[ext_resource type="Resource" path="res://data/bosses/boss_1.tres" id="b_boss_1"]
+[ext_resource type="Resource" path="res://data/bosses/boss_2.tres" id="b_boss_2"]
+[ext_resource type="Resource" path="res://data/bosses/boss_3.tres" id="b_boss_3"]
+[ext_resource type="Resource" path="res://data/bosses/boss_4.tres" id="b_boss_4"]
+[ext_resource type="Resource" path="res://data/bosses/boss_5.tres" id="b_boss_5"]
+[ext_resource type="Resource" path="res://data/bosses/mini_1.tres" id="b_mini_1"]
+[ext_resource type="Resource" path="res://data/bosses/mini_2.tres" id="b_mini_2"]
+[ext_resource type="Resource" path="res://data/bosses/mini_3.tres" id="b_mini_3"]
+[ext_resource type="Resource" path="res://data/bosses/mini_4.tres" id="b_mini_4"]
+[ext_resource type="Resource" path="res://data/bosses/mini_5.tres" id="b_mini_5"]
+
+[sub_resource type="Resource" id="wave_0"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_drone")
+formation = 0
+count = 3
+max_count = 8
+spacing = 130.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 0.0
+to_minute = 0.0
+weight = 3.0
+horde = false
+
+[sub_resource type="Resource" id="wave_1"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_drone")
+formation = 1
+count = 3
+max_count = 9
+spacing = 120.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 0.0
+to_minute = 0.0
+weight = 2.0
+horde = false
+
+[sub_resource type="Resource" id="wave_2"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_kamikaze")
+formation = 1
+count = 3
+max_count = 9
+spacing = 110.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 0.5
+to_minute = 0.0
+weight = 2.0
+horde = true
+
+[sub_resource type="Resource" id="wave_3"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_swarm")
+formation = 8
+count = 8
+max_count = 26
+spacing = 110.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 1.0
+to_minute = 0.0
+weight = 2.0
+horde = true
+
+[sub_resource type="Resource" id="wave_4"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_aimer")
+formation = 3
+count = 3
+max_count = 7
+spacing = 0.0
+interval = 0.5
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 1.5
+to_minute = 0.0
+weight = 1.5
+horde = false
+
+[sub_resource type="Resource" id="wave_5"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_drone")
+formation = 5
+count = 6
+max_count = 15
+spacing = 120.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 3.0
+to_minute = 0.0
+weight = 1.5
+horde = false
+
+[sub_resource type="Resource" id="wave_6"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_serpent")
+formation = 2
+count = 5
+max_count = 12
+spacing = 0.0
+interval = 0.25
+speed_scale = 1.0
+sway_amplitude = 120.0
+from_minute = 2.0
+to_minute = 0.0
+weight = 1.5
+horde = true
+
+[sub_resource type="Resource" id="wave_7"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_spark")
+formation = 3
+count = 3
+max_count = 8
+spacing = 0.0
+interval = 0.3
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 3.0
+to_minute = 0.0
+weight = 1.2
+horde = true
+
+[sub_resource type="Resource" id="wave_8"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_spreader")
+formation = 0
+count = 2
+max_count = 4
+spacing = 240.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 4.0
+to_minute = 0.0
+weight = 1.0
+horde = false
+
+[sub_resource type="Resource" id="wave_9"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_hunter")
+formation = 3
+count = 2
+max_count = 5
+spacing = 0.0
+interval = 0.6
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 5.0
+to_minute = 0.0
+weight = 1.0
+horde = false
+
+[sub_resource type="Resource" id="wave_10"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_tank")
+formation = 0
+count = 1
+max_count = 3
+spacing = 260.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 6.0
+to_minute = 0.0
+weight = 0.8
+horde = false
+
+[sub_resource type="Resource" id="wave_11"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_fissor")
+formation = 1
+count = 2
+max_count = 5
+spacing = 160.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 7.0
+to_minute = 0.0
+weight = 1.0
+horde = false
+
+[sub_resource type="Resource" id="wave_12"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_splitter")
+formation = 0
+count = 2
+max_count = 4
+spacing = 220.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 8.0
+to_minute = 0.0
+weight = 0.8
+horde = false
+
+[sub_resource type="Resource" id="wave_13"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_shielder")
+formation = 0
+count = 2
+max_count = 4
+spacing = 220.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 9.0
+to_minute = 0.0
+weight = 0.8
+horde = false
+
+[sub_resource type="Resource" id="wave_14"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_pulsar")
+formation = 0
+count = 1
+max_count = 3
+spacing = 300.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 10.0
+to_minute = 0.0
+weight = 0.7
+horde = false
+
+[sub_resource type="Resource" id="wave_15"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_colossus")
+formation = 0
+count = 1
+max_count = 2
+spacing = 300.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 12.0
+to_minute = 0.0
+weight = 0.5
+horde = false
+
+[sub_resource type="Resource" id="wave_16"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_kamikaze")
+formation = 7
+count = 6
+max_count = 14
+spacing = 220.0
+interval = 0.0
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 8.0
+to_minute = 0.0
+weight = 1.0
+horde = true
 
 [resource]
 script = ExtResource("1_script")
-ship = ExtResource("2_ship")
-placeholder_stage = ExtResource("3_stage")
+ship = ExtResource("3_ship")
+waves = Array[ExtResource("2_entry")]([SubResource("wave_0"), SubResource("wave_1"), SubResource("wave_2"), SubResource("wave_3"), SubResource("wave_4"), SubResource("wave_5"), SubResource("wave_6"), SubResource("wave_7"), SubResource("wave_8"), SubResource("wave_9"), SubResource("wave_10"), SubResource("wave_11"), SubResource("wave_12"), SubResource("wave_13"), SubResource("wave_14"), SubResource("wave_15"), SubResource("wave_16")])
+elite_enemies = Array[ExtResource("4_enemy_script")]([ExtResource("e_spreader"), ExtResource("e_shielder"), ExtResource("e_splitter"), ExtResource("e_pulsar")])
+elite_from_minute = PackedFloat32Array(0.5, 6.0, 9.0, 12.0)
+bosses = Array[ExtResource("5_boss_script")]([ExtResource("b_mini_1"), ExtResource("b_boss_1"), ExtResource("b_mini_2"), ExtResource("b_boss_2"), ExtResource("b_mini_3"), ExtResource("b_boss_3"), ExtResource("b_mini_4"), ExtResource("b_boss_4"), ExtResource("b_mini_5"), ExtResource("b_boss_5"), ExtResource("b_boss_5")])
+boss_minutes = PackedFloat32Array(2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25, 27.5)
