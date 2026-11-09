@@ -56,7 +56,7 @@ Online (contas, ranking, nuvem), 3D, mudança visual da nave por nível de arma,
    - **Pausa/configurações** → abre o menu; ao sair, o jogo retoma.
 4. **Invulnerabilidade:** 1,0 s ao trocar de corpo e 1,0 s após levar hit [PARÂMETRO].
 5. **Recarga entre trocas voluntárias:** 4 s [PARÂMETRO], mostrada como setor escuro nos ícones. Trocas forçadas (corpo destruído) não esperam.
-6. **Limite de uso da câmera lenta:** sem limite. Risco conhecido: o jogador pode soltar o dedo a qualquer sinal de perigo. Alternativas em estudo: as armas param de atirar na câmera lenta, uma energia que esvazia na câmera lenta e enche com o dedo na tela, ou um tempo máximo por uso. [EM ABERTO]
+6. **Custo da câmera lenta (09/11/2026):** na câmera lenta voluntária **as armas não atiram** (ficam prontas e disparam ao voltar) e uma **energia** esvazia em tempo real: cheia dura 3 s; com o dedo na tela recarrega do zero em 6 s; abaixo de 15% soltar o dedo não ativa a câmera lenta, e vazia o jogo volta ao normal [PARÂMETRO]. Barra azul acima da barra de troca. A câmera lenta forçada (corpo destruído) e a do começo da fase não gastam. A Órbita só gira na câmera lenta (não dá dano, mas segue bloqueando tiros).
 
 ---
 
@@ -194,7 +194,7 @@ Todos os drops seguem o **relógio da fase** (não o número de abates): ficam "
 
 ## 16. Riscos
 
-- **Câmera lenta sem custo** pode quebrar a dificuldade (seção 4).
+- **Câmera lenta:** custo novo (seção 4) a calibrar no aparelho; curto demais deixa a troca de nave estressante.
 - **Fases de 5 min** podem ser longas para sessões no celular. Medir retenção e revisar.
 - **Escopo grande para primeiro jogo:** seguir os marcos.
 - **Arte por IA:** inconsistência entre sprites. Definir o pipeline antes da arte final.
@@ -207,7 +207,7 @@ Todos os drops seguem o **relógio da fase** (não o número de abates): ficam "
 
 1. Nome final do jogo (hoje provisório).
 2. Estilo final de arte.
-3. Limite ou custo da câmera lenta.
+3. Calibrar a energia da câmera lenta no aparelho.
 4. Bomba global: implementar ou retirar.
 5. Revive: qual corpo volta e com quantos hits (hoje volta o último, com a vida cheia).
 6. Núcleo rachando como mecânica.

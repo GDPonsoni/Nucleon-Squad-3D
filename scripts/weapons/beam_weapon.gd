@@ -23,6 +23,12 @@ func apply_stats(values: WeaponLevel) -> void:
 
 func _process(delta: float) -> void:
 	_tick_spawn(delta)
+	if holding():
+		# Raios desligados na câmera lenta
+		_lengths.fill(0.0)
+		_hits.fill(0)
+		queue_redraw()
+		return
 	var tip: Vector2 = muzzle()
 	for k in stats.beam_angles.size():
 		var origin := Vector2(tip.x + stats.beam_offsets[k], tip.y)

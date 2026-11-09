@@ -28,6 +28,8 @@ func _process(delta: float) -> void:
 		var center: Vector2 = pivot + _offset(i)
 		if stats.clears_projectiles:
 			_clear_projectiles(center)
+		if holding():
+			continue  # na câmera lenta os orbitais só giram (e seguem bloqueando tiros)
 		# De trás para frente: o inimigo pode morrer e sair da lista
 		for j in range(enemies.size() - 1, -1, -1):
 			var enemy := enemies[j] as Enemy

@@ -75,7 +75,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 **Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações; sair pelo Voltar do Android) → `stage_select.tscn` (mapa de um planeta por página; cabeçalho fixo; deslizar troca de planeta; depois do último planeta, uma página "novos capítulos em breve") → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
 
 **Partida:**
-- Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3) com moldura azul.
+- Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3) com moldura azul. **Custo:** na lenta voluntária as armas seguram o tiro (`CombatContext.weapons_hold`, `Weapon.holding()`) e a energia (`TimeController.energy`, tempo real) esvazia em `slowmo_energy_seconds` (3 s) e recarrega com o dedo na tela em `slowmo_recharge_seconds` (6 s); abaixo de `slowmo_min_energy` (15%) não ativa; vazia volta ao normal. Barra em `SlowMotionOverlay`. Lenta forçada e a do começo da fase não gastam.
 - **Barra de troca de nave** fixa na base, translúcida enquanto o dedo move a nave e nítida na câmera lenta. A troca é um **toque curto** num corpo; se o dedo andar ou demorar mais que 0,35 s, vira arraste normal (evita trocas sem querer). A nave não desce além da barra. Hits e nível de cada corpo aparecem na própria barra. **Recarga entre trocas** voluntárias (`switch_cooldown_seconds`, 4 s) com setor escuro nos ícones; invulnerabilidade da troca de 1,0 s. As duas contam em tempo de jogo (escalam com a câmera lenta).
 - Esquadrão de 1 a 4 corpos (`Params.squad_size` = máximo; `SaveGame.set_squad` guarda só as escolhidas), 3 hits cada (mais com o Casco da evolução). O núcleo é a hitbox.
 - **Nave auxiliar** (opcional, espaço liberado ao concluir o capítulo 2, quando já há 2 naves fora do esquadrão): versão pequena de uma nave que acompanha a principal ao lado, não leva dano e atira uma versão fraca da arma (`WeaponData.companion_levels`, 3 níveis). Cada arma tem um papel como auxiliar: Raio foco, Leque flancos, Mísseis caça-grandões, Órbita escudo em volta da nave principal, Lança perfuração, Artilharia área, Tesla defesa próxima (360°), Ricochete enxame. Power-up raro lilás (2 por fase, por tempo, só enquanto ela pode subir) sobe o nível dela na partida, com aviso na tela.
@@ -240,7 +240,6 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 **Ofertas feitas e ainda não confirmadas pelo Gabriel:**
 - trocar a tela de boot (splash) do Godot
 - medir o FPS no aparelho com carga máxima
-- limite da câmera lenta (opções no GDD, seção 4)
 
 **Diálogos (05/11/2026):** todos usam `Dialog`. Telas que tratam o Voltar (menu, seletor, esquadrão, evolução, configurações) ignoram o Voltar enquanto `Dialog.is_open()`. A janela de ganhar quarks não fecha durante o anúncio (senão a recompensa se perde). Revive: X e Voltar recusam. Resultado: sem X; o Voltar vai ao seletor de fases. O `ui_smoke` confere os diálogos em 20:9, 19,5:9 e 16:9.
 
@@ -255,7 +254,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - publicação
 
 **Itens [EM ABERTO] do GDD:**
-- limite da câmera lenta
+- calibrar a energia da câmera lenta no aparelho
 - núcleo rachando como mecânica
 - itens de escudo/moedas (parte coberta pelos quarks e pelo Escudo da evolução)
 

@@ -37,7 +37,9 @@ func _process(delta: float) -> void:
 		var target: Enemy = _finder().call(global_position)
 		var goal: float = -PI * 0.5 if target == null else (target.position - global_position).angle()
 		_aim_angle = rotate_toward(_aim_angle, goal, TAU * delta)
-		if _timer <= 0.0:
+		if _timer <= 0.0 and holding():
+			_timer = 0.0  # a onda segue mirando e sai quando a câmera lenta acabar
+		elif _timer <= 0.0:
 			_launch_wave()
 			_phase = Phase.COOLDOWN
 			_timer = stats.wave_cooldown_seconds / rate()

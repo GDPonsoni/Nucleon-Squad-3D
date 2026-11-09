@@ -19,6 +19,9 @@ func _process(delta: float) -> void:
 		queue_redraw()
 	if _cooldown > 0.0:
 		return
+	if holding():
+		_cooldown = 0.0  # pronta: atira assim que a câmera lenta acabar
+		return
 	_cooldown += 1.0 / (stats.fire_rate * rate())
 	_fire()
 

@@ -155,6 +155,8 @@ func _ready() -> void:
 	time_controller.name = "TimeController"
 	add_child(time_controller)
 	time_controller.bind_input(touch_input)
+	time_controller.voluntary_slow_changed.connect(func(slow: bool) -> void:
+		context.weapons_hold = slow and Params.slowmo_holds_fire)
 
 	# Por último entre os nós de lógica: roda depois dos movimentos
 	combat = CombatSystem.new()
@@ -169,6 +171,7 @@ func _ready() -> void:
 
 	var slow_overlay := SlowMotionOverlay.new()
 	slow_overlay.name = "SlowMotionOverlay"
+	slow_overlay.time_controller = time_controller
 	add_child(slow_overlay)
 
 	hud = Hud.new()

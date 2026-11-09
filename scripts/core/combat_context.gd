@@ -11,6 +11,7 @@ var damage_numbers: DamageNumbers  # contador de dano (pode ser null em testes)
 var player: Player
 var boss: Boss  # fora do pool; null quando não há chefe
 var boosts: PlayerBoosts = PlayerBoosts.new()  # evolução do núcleo (neutro em testes)
+var weapons_hold: bool = false  # câmera lenta voluntária: as armas não atiram
 
 
 ## Faísca de acerto no ponto (ignora se o contexto não tem o pool).

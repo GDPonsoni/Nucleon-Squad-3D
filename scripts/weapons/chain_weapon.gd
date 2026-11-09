@@ -16,8 +16,11 @@ func _process(delta: float) -> void:
 	else:
 		_cooldown -= delta
 	if not charging and _cooldown <= 0.0:
-		_cooldown += 1.0 / (stats.fire_rate * rate())
-		_discharge()
+		if holding():
+			_cooldown = 0.0  # pronta: descarrega assim que a câmera lenta acabar
+		else:
+			_cooldown += 1.0 / (stats.fire_rate * rate())
+			_discharge()
 	for i in range(_bolts.size() - 1, -1, -1):
 		_bolts[i]["age"] += delta
 		if _bolts[i]["age"] >= Params.chain_bolt_seconds:

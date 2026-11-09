@@ -618,3 +618,36 @@ func test_stage_select_soon_page() -> void:
 	check(screen._name_label.text == tr(Session.campaign.planets[0].name_key), "voltar ao planeta 1 restaura o cabeçalho")
 	page.free()
 	screen.queue_free()
+
+
+## Energia da câmera lenta: gasta na lenta voluntária, recarrega com o dedo na tela, sem energia
+## não ativa; a lenta forçada e a do começo da fase não gastam.
+func test_slowmo_energy() -> void:
+	var touch := TouchInput.new()
+	add_child(touch)
+	var time := TimeController.new()
+	add_child(time)
+	time.bind_input(touch)
+	check(not time.is_voluntary_slow(), "começo da fase: lenta sem custo")
+	time._update_energy(1.0)
+	check(is_equal_approx(time.energy, 1.0), "antes do primeiro toque não gasta")
+	time._on_touch_started(Vector2.ZERO)
+	time._on_touch_ended()
+	check(time.is_voluntary_slow(), "soltar o dedo ativa a lenta voluntária")
+	time._update_energy(Params.slowmo_energy_seconds * 0.5)
+	check(is_equal_approx(time.energy, 0.5), "gasta em tempo real (%.2f)" % time.energy)
+	for i in 100:
+		time._update_energy(Params.slowmo_max_frame_seconds)
+	check(time.energy == 0.0 and not time.is_voluntary_slow(), "sem energia volta ao normal")
+	time._on_touch_ended()
+	check(not time.is_voluntary_slow(), "sem energia, soltar o dedo não ativa")
+	time._on_touch_started(Vector2.ZERO)
+	touch.set("_index", 0)
+	time._update_energy(Params.slowmo_recharge_seconds * 0.5)
+	check(is_equal_approx(time.energy, 0.5), "dedo na tela recarrega (%.2f)" % time.energy)
+	time.forced_slow = true
+	time._update_energy(1.0)
+	check(is_equal_approx(time.energy, 0.5) and not time.is_voluntary_slow(), "lenta forçada não gasta")
+	time.forced_slow = false
+	time.free()
+	touch.free()

@@ -115,6 +115,11 @@ func damage() -> float:
 	return stats.damage * context.boosts.damage * power * data.damage_scale
 
 
+## Câmera lenta voluntária: a arma segura o tiro (fica pronta para quando o jogo voltar).
+func holding() -> bool:
+	return context != null and context.weapons_hold
+
+
 ## Multiplicador de cadência da evolução do núcleo.
 func rate() -> float:
 	return context.boosts.fire_rate

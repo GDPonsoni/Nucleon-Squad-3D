@@ -245,6 +245,19 @@ var star_color: Color = Color(0.8, 0.85, 1.0)
 var slow_time_scale: float = 0.3
 var time_scale_smooth_seconds: float = 0.1  # duração da transição, em tempo real
 var slow_motion_tint: Color = Color(0.3, 0.6, 1.0, 0.6)  # vinheta nas bordas (alfa = força máxima)
+# Custo da câmera lenta: as armas não atiram nela e uma energia esvazia (tempo real) enquanto
+# ela dura; com o dedo na tela, a energia recarrega. Vazia = volta à velocidade normal.
+var slowmo_holds_fire: bool = true
+var slowmo_energy_seconds: float = 3.0  # duração da câmera lenta com a energia cheia (tempo real)
+var slowmo_recharge_seconds: float = 6.0  # dedo na tela por tanto tempo enche a energia do zero
+var slowmo_min_energy: float = 0.15  # abaixo disso, soltar o dedo não ativa a câmera lenta
+var slowmo_max_frame_seconds: float = 0.1  # ignora saltos de tempo real (pausa, app em segundo plano)
+var slowmo_bar_size: Vector2 = Vector2(420.0, 14.0)
+var slowmo_bar_gap: float = 125.0  # acima do centro da barra de troca
+var slowmo_bar_color: Color = Color(0.45, 0.75, 1.0)
+var slowmo_bar_low_color: Color = Color(1.0, 0.45, 0.4)  # abaixo do mínimo
+var slowmo_bar_bg_color: Color = Color(0.04, 0.05, 0.1, 0.6)
+var slowmo_bar_fade_seconds: float = 0.25  # some depois de cheia (tempo real)
 
 # --- Nave ---
 var ship_speed: float = 3000.0  # px/s máximos (escalado pelo time scale)

@@ -47,6 +47,7 @@ func _ready() -> void:
 		printerr("FALHOU: órbita não descartou o alvo liberado")
 		failures += 1
 	orbit.queue_free()
+	failures += await _check_slowmo_holds_fire(game)
 	failures += await _check_clear_sequence(game)
 	print("match_regressions: %d falhas" % failures)
 	get_tree().quit(1 if failures > 0 else 0)
@@ -146,4 +147,43 @@ func _check_clear_sequence(game: Node) -> int:
 	if not Dialog.is_open():
 		printerr("FALHOU: resultado não apareceu")
 		failures += 1
+	return failures
+
+
+## Câmera lenta voluntária: as armas seguram o tiro; ao tocar de novo, voltam a atirar.
+func _check_slowmo_holds_fire(game: Node) -> int:
+	var failures: int = 0
+	var context: CombatContext = game.get("context")
+	var time: TimeController = game.get("time_controller")
+	var spread: Weapon = Weapon.create(load("res://data/weapons/spread.tres") as WeaponData, context, 1)
+	game.add_child(spread)
+	spread.position = get_viewport().get_visible_rect().get_center()
+	time.energy = 1.0  # os casos anteriores soltaram o dedo várias vezes e gastaram energia
+	time._on_touch_started(spread.position)
+	time._on_touch_ended()
+	if not context.weapons_hold:
+		printerr("FALHOU: câmera lenta voluntária não segurou as armas")
+		failures += 1
+	var before: int = context.player_bullets.active.size()
+	var most: int = before
+	for i in 40:
+		await get_tree().process_frame
+		most = maxi(most, context.player_bullets.active.size())
+	if most > before:
+		printerr("FALHOU: arma atirou na câmera lenta (%d -> %d)" % [before, most])
+		failures += 1
+	time._on_touch_started(spread.position)
+	if context.weapons_hold:
+		printerr("FALHOU: tocar de novo não liberou as armas")
+		failures += 1
+	var fired: bool = false
+	for i in 40:
+		await get_tree().process_frame
+		if context.player_bullets.active.size() > before:
+			fired = true
+			break
+	if not fired:
+		printerr("FALHOU: arma não voltou a atirar depois da câmera lenta")
+		failures += 1
+	spread.queue_free()
 	return failures
