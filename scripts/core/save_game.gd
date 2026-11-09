@@ -82,6 +82,19 @@ func chapter_stars(planet: PlanetData) -> Vector2i:
 	return Vector2i(earned, planet.stages.size() * 3)
 
 
+## Bônus em quarks por concluir uma fase do capítulo `chapter` (índice 0): dobra na primeira
+## vez, +Params.quarks_empty_slot_bonus por vaga vazia e Params.quarks_per_new_star por estrela nova.
+static func clear_bonus(chapter: int, first_time: bool, new_stars: int, empty_slots: int, quark_boost: float = 1.0) -> int:
+	var clear_table: PackedInt32Array = Params.quarks_stage_clear
+	var star_table: PackedInt32Array = Params.quarks_per_new_star
+	var base: float = clear_table[clampi(chapter, 0, clear_table.size() - 1)]
+	if first_time:
+		base *= Params.quarks_first_clear_multiplier
+	base *= 1.0 + Params.quarks_empty_slot_bonus * maxi(empty_slots, 0)
+	base += star_table[clampi(chapter, 0, star_table.size() - 1)] * maxi(new_stars, 0)
+	return int(base * quark_boost)
+
+
 ## Marca a fase como concluída (libera a próxima do capítulo) e guarda o recorde.
 ## Retorna true se for recorde novo.
 func complete_stage(stage_id: StringName, score: int) -> bool:

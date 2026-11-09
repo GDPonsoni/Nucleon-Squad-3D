@@ -165,6 +165,18 @@ func add_kill(points: int) -> void:
 	score_changed.emit(score)
 
 
+## Pontos sem abate (item excedente): somam na pontuação e nos quarks.
+func add_bonus_points(points: int) -> void:
+	score += points
+	quarks += points * Params.quarks_per_point * boosts.quarks
+	score_changed.emit(score)
+
+
+## Vagas do esquadrão que o jogador deixou vazias (dão bônus de quarks ao concluir).
+func empty_slots() -> int:
+	return maxi(Params.squad_size - bodies.size(), 0)
+
+
 ## Segundos para encher o especial do corpo ativo (com a evolução do núcleo).
 func special_seconds() -> float:
 	return current_body().weapon.special_charge_seconds * Params.balance.special_charge_multiplier * boosts.special_charge

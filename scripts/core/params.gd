@@ -63,8 +63,8 @@ var tip_end_max: int = 2  # dicas por fim de fase
 var tip_expire_seconds: float = 40.0  # dica de partida que não achou momento seguro sai da fila
 var unlock_icon_size: float = 220.0  # nave no aviso de desbloqueio
 var languages: PackedStringArray = ["auto", "pt_BR", "en", "es"]
-var ad_quarks_base: int = 120  # quarks por anúncio assistido
-var ad_quarks_per_chapter: int = 60  # a mais por capítulo concluído
+var ad_quarks_base: int = 80  # quarks por anúncio assistido (cerca de uma fase concluída)
+var ad_quarks_per_chapter: int = 40  # a mais por capítulo concluído
 var ad_quarks_daily_limit: int = 5
 var banner_height_dp: float = 90.0  # banner do menu inicial: cabe o padrão (50 dp) e o adaptativo do AdMob
 var banner_fallback_dpi: float = 420.0  # densidade usada fora do Android (S24 ~ 2,6 px por dp)
@@ -484,9 +484,16 @@ var quark_dot_colors: PackedColorArray = [Color(1.0, 0.4, 0.4), Color(0.45, 1.0,
 
 # --- Progressão: quarks e evolução do núcleo (valores de cada nó ficam em data/upgrades/) ---
 var upgrade_tree_path: String = "res://data/upgrade_tree.tres"
-var quarks_per_point: float = 0.1  # quarks ganhos por ponto de pontuação (inimigos e chefes)
-var quarks_stage_clear: PackedInt32Array = [30, 45, 60, 80, 100]  # bônus por concluir uma fase, por capítulo
+# A renda vem sobretudo de concluir fases e ganhar estrelas (cresce por capítulo e não depende
+# de quantos inimigos a fase tem). Meta: 1º nível de vários nós no cap. 1 e a árvore com limite
+# completa por volta do fim do cap. 4 (test_quark_economy confere).
+var quarks_per_point: float = 0.01  # quarks por ponto de pontuação (inimigos e chefes): só um extra
+var quarks_stage_clear: PackedInt32Array = [60, 90, 120, 160, 200]  # bônus por concluir uma fase, por capítulo
 var quarks_first_clear_multiplier: float = 2.0  # o bônus dobra na primeira vez que a fase é concluída
+var quarks_per_new_star: PackedInt32Array = [30, 45, 60, 80, 100]  # por estrela nova na fase, por capítulo
+var quarks_empty_slot_bonus: float = 0.25  # bônus de conclusão +25% por vaga vazia no esquadrão
+var powerup_overflow_points: int = 150  # power-up com a arma no nível máximo vira pontos
+var medkit_overflow_points: int = 100  # kit médico com o corpo sem dano vira pontos
 var companion_unlock_chapter: int = 1  # concluir esse capítulo libera o espaço da nave auxiliar
 var shield_color: Color = Color(0.4, 0.85, 1.0)
 var shield_ring_scale: float = 0.62  # raio do anel do escudo em relação à altura da nave

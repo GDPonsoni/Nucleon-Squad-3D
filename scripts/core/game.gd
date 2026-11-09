@@ -296,10 +296,11 @@ func _finish_stage_clear() -> void:
 	Haptics.play(&"fase_completa")
 	var stage: StageData = Session.stage()
 	var first_time: bool = not SaveGame.is_completed(stage.id)
+	var stars_before: int = SaveGame.stage_stars(stage)
 	var chapter_cleared_before: bool = SaveGame.is_chapter_cleared(Session.planet_index)
 	var record: bool = SaveGame.complete_stage(stage.id, state.score)
 	var kills_quarks: int = int(state.quarks)
-	var bonus: int = _clear_bonus(first_time)
+	var bonus: int = _clear_bonus(first_time, SaveGame.stage_stars(stage) - stars_before)
 	_bank_quarks(bonus)
 	var rewards := PackedStringArray()
 	var chapter_just_cleared: bool = not chapter_cleared_before and SaveGame.is_chapter_cleared(Session.planet_index)
@@ -358,13 +359,10 @@ func _explode_later(pos: Vector2, radius: float, color: Color, delay: float) -> 
 	_explode(pos, radius, color)
 
 
-## Bônus em quarks por concluir a fase (dobra na primeira vez).
-func _clear_bonus(first_time: bool) -> int:
-	var table: PackedInt32Array = Params.quarks_stage_clear
-	var base: float = table[mini(Session.planet_index, table.size() - 1)]
-	if first_time:
-		base *= Params.quarks_first_clear_multiplier
-	return int(base * state.boosts.quarks)
+## Bônus em quarks por concluir a fase: dobra na primeira vez, cresce com vagas vazias no
+## esquadrão e soma as estrelas novas.
+func _clear_bonus(first_time: bool, new_stars: int) -> int:
+	return SaveGame.clear_bonus(Session.planet_index, first_time, new_stars, state.empty_slots(), state.boosts.quarks)
 
 
 ## Guarda os quarks da partida (uma vez só). Retorna quanto foi guardado.
@@ -485,6 +483,8 @@ func _on_powerup_collected(kind: PowerUp.Kind) -> void:
 		state.medkits_collected += 1
 		if state.heal_current(Params.medkit_heal):
 			player.pulse(Params.medkit_color)
+		else:
+			_overflow_points(Params.medkit_overflow_points)
 		return
 	if kind == PowerUp.Kind.COMPANION:
 		_on_companion_powerup()
@@ -495,6 +495,15 @@ func _on_powerup_collected(kind: PowerUp.Kind) -> void:
 		player.pulse_level_up()
 		Audio.play(&"weapon_levelup")
 		Haptics.play(&"nivel_arma")
+	elif player.body != null:
+		_overflow_points(Params.powerup_overflow_points)
+
+
+## Item que não teria efeito (arma no máximo, corpo sem dano) vira pontos, com o número na tela.
+func _overflow_points(points: int) -> void:
+	state.add_bonus_points(points)
+	if context.damage_numbers != null:
+		context.damage_numbers.report(player, points, Params.quark_color)
 
 
 ## Power-up raro da auxiliar: sobe o nível dela e avisa na tela qual é o efeito.
