@@ -1,30 +1,172 @@
 {
-	"_doc": "kind: tip | unlock. context (tip): match (balao na partida), screen (janela na tela), end (janela ao fim da fase). trigger: event + stage opcional (id da fase) + requires opcional (companion_unlocked). highlight (match): special | switcher | run_slots. Textos em data/i18n/strings.csv (chaves TIP_*, UNLOCK_*). A ordem do arquivo é a prioridade.",
+	"_doc": "kind: tip | unlock. context (tip): match (destaque com pausa na partida, na 1a vez que o evento acontece), screen (janela na tela), end (janela ao fim da fase). trigger: event + stage opcional (id da fase) + requires opcional (companion_unlocked). Na partida, o evento pode trazer o elemento envolvido (power-up, inimigo...), que fica destacado; highlight (opcional) troca por um elemento fixo: player | energy | special | switcher | run_slots. Textos em data/i18n/strings.csv (chaves TIP_*, UNLOCK_*). A ordem do arquivo é a prioridade.",
 	"tips": [
-		{"id": "tip_run_start", "context": "match", "event": "match_start", "stage": "run", "text_key": "TIP_RUN_START"},
-		{"id": "tip_run_special", "context": "match", "event": "run_second_weapon", "text_key": "TIP_RUN_SPECIAL", "highlight": "run_slots"},
-		{"id": "tip_move", "context": "match", "event": "match_start", "stage": "p1_s1", "text_key": "TIP_MOVE"},
-		{"id": "tip_slowmo", "context": "match", "event": "touch_released", "text_key": "TIP_SLOWMO"},
-		{"id": "tip_powerup", "context": "match", "event": "powerup_collected", "text_key": "TIP_POWERUP"},
-		{"id": "tip_hits", "context": "match", "event": "player_hit", "text_key": "TIP_HITS", "highlight": "switcher"},
-		{"id": "tip_medkit", "context": "match", "event": "medkit_collected", "text_key": "TIP_MEDKIT"},
-		{"id": "tip_switch", "context": "match", "event": "match_start", "stage": "p1_s2", "text_key": "TIP_SWITCH", "highlight": "switcher"},
-		{"id": "tip_special", "context": "match", "event": "special_ready", "text_key": "TIP_SPECIAL", "highlight": "special"},
-		{"id": "tip_telegraph", "context": "match", "event": "match_start", "stage": "p1_s3", "text_key": "TIP_TELEGRAPH"},
-		{"id": "tip_rocks", "context": "match", "event": "match_start", "stage": "p1_s7", "text_key": "TIP_ROCKS"},
-		{"id": "tip_weakness", "context": "match", "event": "match_start", "stage": "p2_s1", "text_key": "TIP_WEAKNESS"},
-		{"id": "tip_special_moment", "context": "match", "event": "special_moment", "text_key": "TIP_SPECIAL_MOMENT", "highlight": "special"},
-		{"id": "tip_companion_active", "context": "match", "event": "companion_active", "text_key": "TIP_COMPANION_ACTIVE"},
-		{"id": "tip_companion_powerup", "context": "match", "event": "companion_powerup", "text_key": "TIP_COMPANION_POWERUP"},
-		{"id": "tip_quarks", "context": "end", "event": "stage_clear", "text_key": "TIP_QUARKS"},
-		{"id": "tip_stage_map", "context": "screen", "event": "stage_select_open", "text_key": "TIP_STAGE_MAP"},
-		{"id": "tip_squad", "context": "screen", "event": "squad_open", "text_key": "TIP_SQUAD"},
-		{"id": "tip_squad_companion", "context": "screen", "event": "squad_open", "requires": "companion_unlocked", "text_key": "TIP_SQUAD_COMPANION"},
-		{"id": "tip_upgrades", "context": "screen", "event": "upgrades_open", "text_key": "TIP_UPGRADES"}
+		{
+			"id": "tip_move",
+			"context": "match",
+			"event": "match_start",
+			"stage": "p1_s1",
+			"text_key": "TIP_MOVE",
+			"highlight": "player"
+		},
+		{
+			"id": "tip_run_start",
+			"context": "match",
+			"event": "match_start",
+			"stage": "run",
+			"text_key": "TIP_RUN_START",
+			"highlight": "player"
+		},
+		{
+			"id": "tip_slowmo",
+			"context": "match",
+			"event": "touch_released",
+			"text_key": "TIP_SLOWMO",
+			"highlight": "energy"
+		},
+		{
+			"id": "tip_switch",
+			"context": "match",
+			"event": "match_start",
+			"stage": "p1_s2",
+			"text_key": "TIP_SWITCH",
+			"highlight": "switcher"
+		},
+		{
+			"id": "tip_powerup",
+			"context": "match",
+			"event": "powerup_spawned",
+			"text_key": "TIP_POWERUP"
+		},
+		{
+			"id": "tip_medkit",
+			"context": "match",
+			"event": "medkit_spawned",
+			"text_key": "TIP_MEDKIT"
+		},
+		{
+			"id": "tip_xp_orb",
+			"context": "match",
+			"event": "xp_orb_spawned",
+			"text_key": "TIP_XP_ORB"
+		},
+		{
+			"id": "tip_telegraph",
+			"context": "match",
+			"event": "enemy_telegraph",
+			"text_key": "TIP_TELEGRAPH"
+		},
+		{
+			"id": "tip_hits",
+			"context": "match",
+			"event": "player_hit",
+			"text_key": "TIP_HITS",
+			"highlight": "player"
+		},
+		{
+			"id": "tip_special",
+			"context": "match",
+			"event": "special_ready",
+			"text_key": "TIP_SPECIAL",
+			"highlight": "special"
+		},
+		{
+			"id": "tip_rocks",
+			"context": "match",
+			"event": "rock_spawned",
+			"text_key": "TIP_ROCKS"
+		},
+		{
+			"id": "tip_weakness",
+			"context": "match",
+			"event": "weakness_hit",
+			"text_key": "TIP_WEAKNESS"
+		},
+		{
+			"id": "tip_special_moment",
+			"context": "match",
+			"event": "special_moment",
+			"text_key": "TIP_SPECIAL_MOMENT",
+			"highlight": "special"
+		},
+		{
+			"id": "tip_companion_active",
+			"context": "match",
+			"event": "companion_active",
+			"text_key": "TIP_COMPANION_ACTIVE"
+		},
+		{
+			"id": "tip_companion_powerup",
+			"context": "match",
+			"event": "companion_powerup_spawned",
+			"text_key": "TIP_COMPANION_POWERUP"
+		},
+		{
+			"id": "tip_run_special",
+			"context": "match",
+			"event": "run_second_weapon",
+			"text_key": "TIP_RUN_SPECIAL",
+			"highlight": "run_slots"
+		},
+		{
+			"id": "tip_elite",
+			"context": "match",
+			"event": "elite_spawned",
+			"text_key": "TIP_ELITE"
+		},
+		{
+			"id": "tip_chest",
+			"context": "match",
+			"event": "chest_spawned",
+			"text_key": "TIP_CHEST"
+		},
+		{
+			"id": "tip_quarks",
+			"context": "end",
+			"event": "stage_clear",
+			"text_key": "TIP_QUARKS"
+		},
+		{
+			"id": "tip_stage_map",
+			"context": "screen",
+			"event": "stage_select_open",
+			"text_key": "TIP_STAGE_MAP"
+		},
+		{
+			"id": "tip_squad",
+			"context": "screen",
+			"event": "squad_open",
+			"text_key": "TIP_SQUAD"
+		},
+		{
+			"id": "tip_squad_companion",
+			"context": "screen",
+			"event": "squad_open",
+			"requires": "companion_unlocked",
+			"text_key": "TIP_SQUAD_COMPANION"
+		},
+		{
+			"id": "tip_upgrades",
+			"context": "screen",
+			"event": "upgrades_open",
+			"text_key": "TIP_UPGRADES"
+		}
 	],
 	"unlocks": [
-		{"id": "unlock_ship", "reward": "ship", "text_key": "UNLOCK_SHIP"},
-		{"id": "unlock_companion", "reward": "companion", "text_key": "UNLOCK_COMPANION"},
-		{"id": "unlock_planet", "reward": "planet", "text_key": "UNLOCK_PLANET"}
+		{
+			"id": "unlock_ship",
+			"reward": "ship",
+			"text_key": "UNLOCK_SHIP"
+		},
+		{
+			"id": "unlock_companion",
+			"reward": "companion",
+			"text_key": "UNLOCK_COMPANION"
+		},
+		{
+			"id": "unlock_planet",
+			"reward": "planet",
+			"text_key": "UNLOCK_PLANET"
+		}
 	]
 }

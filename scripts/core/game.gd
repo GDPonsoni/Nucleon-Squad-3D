@@ -21,7 +21,7 @@ var body_fx: NodePool
 var pause_menu: PauseMenu
 var results_menu: ResultsMenu
 var revive_offer: ReviveOffer
-var tip_balloon: TipBalloon
+var tip_spotlight: TipSpotlight
 var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
 var slow_overlay: SlowMotionOverlay
@@ -210,41 +210,30 @@ func _ready() -> void:
 	_on_mode_ready()
 
 
-## Dicas do tutorial: balão sem pausa, só em momento calmo. Os eventos vêm dos gatilhos do jogo.
+## Dicas do tutorial: na primeira vez que algo acontece, o jogo pausa e destaca o elemento.
 func _setup_tutorial() -> void:
-	tip_balloon = TipBalloon.new()
-	tip_balloon.name = "TipBalloon"
-	tip_balloon.safe_check = _tip_is_safe
-	tip_balloon.highlight_rect = _tip_highlight_rect
-	add_child(tip_balloon)
-	Tutorial.attach(Tutorial.MATCH, tip_balloon)
-	touch_input.touch_ended.connect(Tutorial.notify.bind(&"touch_released"))
-	Tutorial.notify(&"match_start", String(_stage().id))
+	tip_spotlight = TipSpotlight.new()
+	tip_spotlight.name = "TipSpotlight"
+	tip_spotlight.can_pause = func() -> bool:
+		return not _match_over and not get_tree().paused and not Dialog.is_open() and player.body != null
+	tip_spotlight.highlight_rect = _tip_highlight_rect
+	add_child(tip_spotlight)
+	Tutorial.attach(Tutorial.MATCH, tip_spotlight)
+	touch_input.touch_ended.connect(func() -> void: Tutorial.notify(&"touch_released", "", player))
+	Tutorial.notify(&"match_start", String(_stage().id), player)
 	if companion != null:
-		Tutorial.notify(&"companion_active")
-
-
-## Seguro para uma dica: partida rolando, corpo em campo e nenhum tiro ou inimigo perto da nave.
-func _tip_is_safe() -> bool:
-	if _match_over or get_tree().paused or player.body == null or (switcher != null and switcher.forced) or time_controller.forced_slow:
-		return false
-	if boss != null and is_instance_valid(boss) and boss.is_entering():
-		return false
-	for item in enemy_bullets.active:
-		if (item as Node2D).position.distance_to(player.position) < Params.tip_safe_bullet_radius:
-			return false
-	for item in enemies.active:
-		if (item as Node2D).position.distance_to(player.position) < Params.tip_safe_enemy_radius:
-			return false
-	if boss != null and is_instance_valid(boss) and boss.position.distance_to(player.position) < Params.tip_safe_enemy_radius * 1.5:
-		return false
-	return true
+		Tutorial.notify(&"companion_active", "", companion)
 
 
 func _tip_highlight_rect(name: String) -> Rect2:
 	match name:
 		"special":
 			return hud.special_rect()
+		"energy":
+			return slow_overlay.bar_rect()
+		"player":
+			var r: float = Params.ship_size.y * 0.9
+			return Rect2(player.position - Vector2.ONE * r, Vector2.ONE * r * 2.0)
 		"switcher" when switcher != null:
 			var view: Vector2 = get_viewport_rect().size
 			return Rect2(0.0, switcher.top(), view.x, view.y - switcher.top())
@@ -293,7 +282,7 @@ func _update_special_moment() -> void:
 
 ## Saiu da partida (menu, reiniciar, próxima fase): os quarks ganhos não se perdem.
 func _exit_tree() -> void:
-	Tutorial.detach(Tutorial.MATCH, tip_balloon)
+	Tutorial.detach(Tutorial.MATCH, tip_spotlight)
 	_bank_quarks(0)
 
 
@@ -301,7 +290,7 @@ func _exit_tree() -> void:
 func _finish_stage_clear() -> void:
 	_match_over = true
 	pause_menu.disable()
-	tip_balloon.cancel()
+	tip_spotlight.cancel()
 	Audio.play(&"stage_clear")
 	Haptics.play(&"fase_completa")
 	var stage: StageData = Session.stage()
@@ -489,7 +478,7 @@ func _on_body_chosen(index: int) -> void:
 
 
 func _on_player_hit(damage: int) -> void:
-	Tutorial.notify(&"player_hit")
+	Tutorial.notify(&"player_hit", "", player)
 	var invulnerability: float = Params.hit_invulnerability_seconds + state.boosts.extra_invulnerability
 	# Escudo da evolução do núcleo absorve o hit inteiro
 	if state.absorb_with_shield():
@@ -576,7 +565,7 @@ func _on_body_destroyed(index: int) -> void:
 ## Sem corpos vivos: oferece continuar com anúncio (uma vez por partida); senão, fim de jogo.
 func _on_game_over() -> void:
 	Audio.play(&"game_over")
-	tip_balloon.cancel()
+	tip_spotlight.cancel()
 	_match_over = true
 	pause_menu.disable()
 	# Tempo real: na câmera lenta o atraso não se estende

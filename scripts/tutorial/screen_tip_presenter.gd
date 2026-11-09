@@ -14,6 +14,6 @@ func can_show(_tip: Dictionary) -> bool:
 	return is_instance_valid(_screen) and _screen.is_inside_tree() and not Dialog.is_open()
 
 
-func present(tip: Dictionary, done: Callable) -> void:
+func present(tip: Dictionary, done: Callable, _target: Variant = null) -> void:
 	var dialog := TipDialog.open_tip(_screen, tip)
 	dialog.closed.connect(done)

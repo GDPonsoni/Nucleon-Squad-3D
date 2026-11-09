@@ -1,9 +1,10 @@
 extends Node
 ## Autoload: tutorial contextual e avisos de desbloqueio, dirigidos por data/tutorial/tips.json.
 ##
-## Dicas (kind tip): o jogo avisa eventos com notify(); as dicas ainda não vistas cujo gatilho
-## casa entram numa fila por contexto (match = balão na partida, screen = janela nas telas,
-## end = janela ao fim da fase). Cada contexto tem um apresentador (attach) que diz se é seguro
+## Dicas (kind tip): o jogo avisa eventos com notify() (e, na partida, o elemento envolvido:
+## o power-up que apareceu, o inimigo que vai atacar...); as dicas ainda não vistas cujo gatilho
+## casa entram numa fila por contexto (match = destaque com pausa na partida, na primeira vez
+## que o evento acontece; screen = janela nas telas; end = janela ao fim da fase). Cada contexto tem um apresentador (attach) que diz se é seguro
 ## mostrar agora (can_show) e como mostrar (present). Uma dica por vez, com intervalo mínimo
 ## entre elas. Toda dica mostrada é gravada como vista (nunca repete) e é sempre pulável.
 ## Avisos de desbloqueio: show_unlocks() mostra um diálogo por recompensa do capítulo, em fila.
@@ -19,6 +20,7 @@ var _queue: Dictionary = {}  # contexto -> Array de {"id": String, "at": int (ms
 var _presenters: Dictionary = {}  # contexto -> apresentador (objeto com can_show/present)
 var _showing: Dictionary = {}  # contexto -> bool
 var _next_at: Dictionary = {}  # contexto -> ms (tempo real) a partir do qual pode mostrar
+var _by_event: Dictionary = {}  # evento -> dicas com esse gatilho (notify chamado muitas vezes)
 
 
 func _ready() -> void:
@@ -33,8 +35,13 @@ func load_tips(path: String = Params.tips_path) -> void:
 	if typeof(parsed) != TYPE_DICTIONARY:
 		push_warning("Tutorial: arquivo de dicas inválido (%s)" % path)
 		return
+	_by_event.clear()
 	for entry in parsed.get("tips", []):
 		tips.append(entry)
+		var event := StringName(entry["event"])
+		if not _by_event.has(event):
+			_by_event[event] = []
+		_by_event[event].append(entry)
 	for entry in parsed.get("unlocks", []):
 		unlock_defs.append(entry)
 
@@ -54,7 +61,8 @@ func tip_by_id(id: String) -> Dictionary:
 func attach(context: StringName, presenter: Object) -> void:
 	_presenters[context] = presenter
 	_showing[context] = false
-	_next_at[context] = _now() + int(Params.tip_first_delay_seconds * 1000.0)
+	var delay: float = Params.tip_first_delay_match_seconds if context == MATCH else Params.tip_first_delay_seconds
+	_next_at[context] = _now() + int(delay * 1000.0)
 	_queue[context] = []
 
 
@@ -73,19 +81,21 @@ func open_screen(screen: Node, event: StringName) -> void:
 	notify(event)
 
 
-## Algo aconteceu no jogo. Enfileira as dicas não vistas desse gatilho.
-func notify(event: StringName, stage_id: String = "") -> void:
-	if not tips_enabled():
+## Algo aconteceu no jogo. Enfileira as dicas não vistas desse gatilho. target (opcional) é o
+## elemento envolvido, destacado na dica da partida.
+func notify(event: StringName, stage_id: String = "", target: Variant = null) -> void:
+	if not _by_event.has(event) or not tips_enabled():
 		return
-	for tip in tips:
-		if StringName(tip["event"]) != event or not _stage_matches(tip, stage_id) or not _requirement_met(tip):
+	for tip in _by_event[event]:
+		if not _stage_matches(tip, stage_id) or not _requirement_met(tip):
 			continue
 		var context := StringName(tip["context"])
 		if SaveGame.is_tip_seen(tip["id"]) or _is_queued(context, tip["id"]):
 			continue
 		if not _queue.has(context):
 			_queue[context] = []
-		_queue[context].append({"id": tip["id"], "at": _now()})
+		var ref: WeakRef = weakref(target) if target is Object else null
+		_queue[context].append({"id": tip["id"], "at": _now(), "target": ref})
 
 
 func _stage_matches(tip: Dictionary, stage_id: String) -> bool:
@@ -132,8 +142,9 @@ func _try_present(context: StringName) -> void:
 		return
 	if not presenter.can_show(tip):
 		return
-	items.pop_front()
-	_begin(context, tip, presenter)
+	var item: Dictionary = items.pop_front()
+	var ref: WeakRef = item.get("target")
+	_begin(context, tip, presenter, ref.get_ref() if ref != null else null)
 
 
 ## Dicas de partida que esperaram demais (o momento passou) saem da fila e voltam a poder disparar.
@@ -146,10 +157,10 @@ func _drop_stale(context: StringName, items: Array) -> void:
 			items.remove_at(i)
 
 
-func _begin(context: StringName, tip: Dictionary, presenter: Object) -> void:
+func _begin(context: StringName, tip: Dictionary, presenter: Object, target: Variant = null) -> void:
 	SaveGame.mark_tip_seen(tip["id"])
 	_showing[context] = true
-	presenter.present(tip, _finished.bind(context))
+	presenter.present(tip, _finished.bind(context), target)
 
 
 func _finished(context: StringName) -> void:

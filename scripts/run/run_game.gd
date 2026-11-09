@@ -201,6 +201,7 @@ func _spawn_elite(data: EnemyData) -> void:
 	enemy.activate(data, Vector2(x, rect.position.y - data.radius * 2.0), Vector2(0.0, data.speed))
 	enemy.apply_stage(_run_stage)
 	enemy.make_elite(mode.elite_hp_multiplier, mode.elite_size)
+	Tutorial.notify(&"elite_spawned", "", enemy)
 
 
 ## Chefe na hora marcada, com a vida do minuto. As ondas diminuem até ele cair.
@@ -334,6 +335,7 @@ func _drop_orb(pos: Vector2, value: float) -> void:
 	var orb := orbs.acquire() as XpOrb
 	if orb != null:
 		orb.activate(pos, value)
+		Tutorial.notify(&"xp_orb_spawned", "", orb)
 		return
 	# Pool cheio: o XP não se perde
 	progress.add_xp(value)

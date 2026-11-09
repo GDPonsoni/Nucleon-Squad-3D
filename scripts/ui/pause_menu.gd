@@ -138,12 +138,12 @@ func toggle() -> void:
 
 func _notification(what: int) -> void:
 	# Botão Voltar do Android abre a pausa; com um diálogo aberto, ele é quem trata o Voltar
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not Dialog.is_open():
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not Dialog.is_open() and not TipSpotlight.active:
 		toggle()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") and not Dialog.is_open():
+	if event.is_action_pressed("ui_cancel") and not Dialog.is_open() and not TipSpotlight.active:
 		toggle()
 		get_viewport().set_input_as_handled()
 

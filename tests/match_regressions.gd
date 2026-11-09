@@ -3,6 +3,7 @@ extends Node
 
 func _ready() -> void:
 	SaveGame.persistent = false
+	SaveGame.settings["tips_enabled"] = false  # o destaque das dicas pausaria os casos (testado à parte)
 	var game: Node = (load("res://scenes/game.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(game)
 	await get_tree().create_timer(0.8, true, false, true).timeout
@@ -47,6 +48,7 @@ func _ready() -> void:
 		printerr("FALHOU: órbita não descartou o alvo liberado")
 		failures += 1
 	orbit.queue_free()
+	failures += await _check_tip_spotlight(game)
 	failures += await _check_slowmo_holds_fire(game)
 	failures += await _check_clear_sequence(game)
 	print("match_regressions: %d falhas" % failures)
@@ -187,3 +189,40 @@ func _check_slowmo_holds_fire(game: Node) -> int:
 		failures += 1
 	spread.queue_free()
 	return failures
+
+
+## Dica na primeira vez do evento: o kit aparece, o jogo pausa com o recorte em volta dele e
+## "Entendi" volta o jogo; a dica fica vista e não repete.
+func _check_tip_spotlight(game: Node) -> int:
+	var failures: int = 0
+	SaveGame.settings["tips_enabled"] = true
+	SaveGame.tips_seen = PackedStringArray()
+	var spotlight: TipSpotlight = game.get("tip_spotlight")
+	var dropper: PowerUpDropper = game.get("dropper")
+	var spot := Vector2(540, 900)
+	dropper.drop_now(spot, PowerUp.Kind.HEAL)
+	for i in 6:
+		await get_tree().process_frame
+	if not (spotlight.is_showing() and get_tree().paused):
+		printerr("FALHOU: dica do kit não pausou com destaque")
+		failures += 1
+	var hole: Rect2 = spotlight.get("_hole")
+	if not hole.has_point(spot):
+		printerr("FALHOU: recorte não está em volta do kit (%s)" % hole)
+		failures += 1
+	spotlight.close()
+	await get_tree().process_frame
+	if get_tree().paused or not SaveGame.is_tip_seen("tip_medkit"):
+		printerr("FALHOU: fechar a dica não voltou o jogo")
+		failures += 1
+	dropper.drop_now(spot, PowerUp.Kind.HEAL)
+	for i in 6:
+		await get_tree().process_frame
+	if spotlight.is_showing():
+		printerr("FALHOU: dica repetiu")
+		failures += 1
+	SaveGame.settings["tips_enabled"] = false
+	for item in (game.get("power_ups") as NodePool).active.duplicate():
+		(game.get("power_ups") as NodePool).release(item)
+	return failures
+

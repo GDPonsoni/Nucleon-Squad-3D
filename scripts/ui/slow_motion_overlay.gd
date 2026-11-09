@@ -65,6 +65,14 @@ func _process(_delta: float) -> void:
 	_bar.queue_redraw()
 
 
+## Retângulo da barra de energia na tela (destaque do tutorial).
+func bar_rect() -> Rect2:
+	var view: Vector2 = get_viewport().get_visible_rect().size
+	var from_bottom: float = bar_bottom if bar_bottom >= 0.0 else Params.switch_strip_bottom + Params.slowmo_bar_gap
+	var size: Vector2 = Params.slowmo_bar_size
+	return Rect2(Vector2(view.x * 0.5, view.y - from_bottom) - size * 0.5, size)
+
+
 func _draw_bar() -> void:
 	if time_controller == null or _bar_alpha <= 0.0:
 		return

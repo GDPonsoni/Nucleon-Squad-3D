@@ -162,6 +162,7 @@ func _update_rocks(delta: float) -> void:
 	var x: float = randf_range(rect.position.x + data.radius, rect.end.x - data.radius)
 	rock.activate(data, Vector2(x, rect.position.y - data.radius), Vector2(randf_range(-data.drift_x, data.drift_x), data.speed))
 	rock.apply_stage(_stage)
+	Tutorial.notify(&"rock_spawned", "", rock)
 
 
 func _spawn_random() -> void:

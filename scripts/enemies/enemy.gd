@@ -254,6 +254,7 @@ func take_damage(amount: float, source: int = SOURCE_NONE, from: Vector2 = Vecto
 	_flash_color = Color.WHITE
 	if mult >= Params.weakness_flash_threshold:
 		_flash_color = Params.weakness_flash_color
+		Tutorial.notify(&"weakness_hit", "", self)
 	elif mult <= Params.resist_flash_threshold:
 		_flash_color = Params.resist_flash_color
 	queue_redraw()
@@ -398,6 +399,7 @@ func _start_telegraph(seconds: float) -> void:
 	_tele_total = maxf(seconds, 0.01)
 	_tele_left = seconds
 	_tele_dirs = _attack_dirs()
+	Tutorial.notify(&"enemy_telegraph", "", self)
 	if data.telegraph_sound:
 		Audio.play(&"boss_warning", Params.telegraph_sound_db, 1.5)
 

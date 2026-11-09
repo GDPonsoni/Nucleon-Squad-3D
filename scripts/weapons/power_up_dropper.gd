@@ -5,6 +5,11 @@ extends Node
 ## cada item fica "devido" no seu horário e cai no próximo abate (acumula até MAX_OWED).
 
 const MAX_OWED: int = 2
+## Evento do tutorial quando cada tipo aparece pela primeira vez.
+const SPAWN_EVENTS: Dictionary = {
+	PowerUp.Kind.WEAPON: &"powerup_spawned", PowerUp.Kind.HEAL: &"medkit_spawned",
+	PowerUp.Kind.COMPANION: &"companion_powerup_spawned", PowerUp.Kind.CHEST: &"chest_spawned",
+}
 
 var _pool: NodePool
 var _clock: float = 0.0
@@ -82,3 +87,4 @@ func _drop(pos: Vector2, kind: PowerUp.Kind) -> void:
 	var item := _pool.acquire() as PowerUp
 	if item != null:
 		item.activate(pos, kind)
+		Tutorial.notify(SPAWN_EVENTS[kind], "", item)
