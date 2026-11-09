@@ -24,6 +24,7 @@ var max_hits: int = 0  # hits de cada corpo (com a evolução do núcleo)
 var start_level: int = 1  # nível das armas ao começar (e ao perder o corpo)
 var shields: int = 0  # hits absorvidos antes de tirar vida (evolução do núcleo)
 var companion: BodyData  # nave auxiliar (null = sem auxiliar)
+var special_weapon: WeaponData  # especial de outra arma que não a do corpo (null = a do corpo)
 var companion_level: int = 1  # sobe com o power-up raro; não se perde durante a partida
 var companion_powerups: int = 0
 var switch_cooldown_left: float = 0.0  # segundos (de jogo) até poder trocar de corpo de novo
@@ -179,7 +180,8 @@ func empty_slots() -> int:
 
 ## Segundos para encher o especial do corpo ativo (com a evolução do núcleo).
 func special_seconds() -> float:
-	return current_body().weapon.special_charge_seconds * Params.balance.special_charge_multiplier * boosts.special_charge
+	var weapon: WeaponData = special_weapon if special_weapon != null else current_body().weapon
+	return weapon.special_charge_seconds * Params.balance.special_charge_multiplier * boosts.special_charge
 
 
 ## O especial do corpo ativo carrega com o tempo (de jogo) enquanto ele está ativo.

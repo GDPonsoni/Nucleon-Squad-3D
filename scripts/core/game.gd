@@ -1,6 +1,7 @@
 extends Node2D
 ## Cena da partida: monta os nós por código. Joga a fase escolhida em Session,
 ## com os bônus da evolução do núcleo e a nave auxiliar escolhida no esquadrão.
+## Outros modos (RunGame) estendem esta cena e trocam só os ganchos "Modo" no fim do arquivo.
 
 var touch_input: TouchInput
 var player: Player
@@ -39,7 +40,8 @@ func _ready() -> void:
 	RenderingServer.set_default_clear_color(planet.background_color)
 	Audio.play_chapter_music(Session.planet_index)
 	var boosts: PlayerBoosts = Session.boosts()
-	state = MatchState.new(SaveGame.squad_formation(), boosts)
+	state = MatchState.new(_formation(), boosts)
+	_configure_state()
 	state.body_destroyed.connect(_on_body_destroyed)
 	state.game_over.connect(_on_game_over)
 
@@ -99,7 +101,7 @@ func _ready() -> void:
 	power_ups = NodePool.new(PowerUp.new, Params.powerup_pool_size)
 	power_ups.name = "PowerUps"
 	context.power_ups = power_ups
-	dropper.setup(power_ups, boosts, Session.stage().duration_seconds)
+	dropper.setup(power_ups, boosts, _stage().duration_seconds, _weapon_powerups())
 	add_child(dropper)
 
 	player = Player.new()
@@ -116,7 +118,7 @@ func _ready() -> void:
 	state.shields_changed.connect(func(count: int) -> void: player.shield_charges = count)
 
 	# Nave auxiliar (opcional): desenhada atrás da nave principal
-	var companion_body: BodyData = SaveGame.companion_body()
+	var companion_body: BodyData = _companion_body()
 	if companion_body != null:
 		companion = Companion.new()
 		companion.name = "Companion"
@@ -130,25 +132,28 @@ func _ready() -> void:
 	add_child(power_ups)
 	add_child(enemy_bullets)
 
-	# Faixa de troca numa camada própria: acima da moldura da câmera lenta, abaixo do HUD
-	var switcher_layer := CanvasLayer.new()
-	switcher_layer.name = "SwitcherLayer"
-	switcher_layer.layer = 8
-	add_child(switcher_layer)
-	switcher = BodySwitcher.new()
-	switcher.name = "BodySwitcher"
-	switcher_layer.add_child(switcher)
-	# O switcher trata o toque antes da nave e da câmera lenta (ordem das conexões)
-	switcher.setup(state, touch_input)
-	switcher.body_chosen.connect(_on_body_chosen)
+	var reserved_bottom: float = Params.no_switcher_bottom_margin
+	if _uses_switcher():
+		# Faixa de troca numa camada própria: acima da moldura da câmera lenta, abaixo do HUD
+		var switcher_layer := CanvasLayer.new()
+		switcher_layer.name = "SwitcherLayer"
+		switcher_layer.layer = 8
+		add_child(switcher_layer)
+		switcher = BodySwitcher.new()
+		switcher.name = "BodySwitcher"
+		switcher_layer.add_child(switcher)
+		# O switcher trata o toque antes da nave e da câmera lenta (ordem das conexões)
+		switcher.setup(state, touch_input)
+		switcher.body_chosen.connect(_on_body_chosen)
+		reserved_bottom = get_viewport_rect().end.y - switcher.top()
 	player.bind_input(touch_input)
-	# A nave fica sempre acima da barra de troca
-	player.bottom_limit = switcher.top()
+	# A nave fica sempre acima da barra de troca (ou da margem de baixo, sem barra)
+	player.bottom_limit = get_viewport_rect().end.y - reserved_bottom
 
 	spawner = EnemySpawner.new()
 	spawner.name = "EnemySpawner"
 	add_child(spawner)
-	spawner.setup(Session.stage(), enemies)
+	spawner.setup(_stage(), enemies)
 	spawner.finished.connect(_on_spawning_finished)
 
 	time_controller = TimeController.new()
@@ -177,9 +182,9 @@ func _ready() -> void:
 	hud = Hud.new()
 	hud.name = "Hud"
 	add_child(hud)
-	hud.place_special(get_viewport_rect().end.y - switcher.top())
+	hud.place_special(reserved_bottom)
 	hud.special_pressed.connect(_on_special_pressed)
-	hud.setup(state, spawner, "%s  %s" % [tr(planet.name_key), Session.stage_label(Session.planet_index, Session.stage_index)])
+	hud.setup(state, spawner, _hud_label())
 
 	pause_menu = PauseMenu.new()
 	pause_menu.name = "PauseMenu"
@@ -201,6 +206,7 @@ func _ready() -> void:
 
 	_switch_to(0, 0.0)
 	_setup_tutorial()
+	_on_mode_ready()
 
 
 ## Dicas do tutorial: balão sem pausa, só em momento calmo. Os eventos vêm dos gatilhos do jogo.
@@ -219,7 +225,7 @@ func _setup_tutorial() -> void:
 
 ## Seguro para uma dica: partida rolando, corpo em campo e nenhum tiro ou inimigo perto da nave.
 func _tip_is_safe() -> bool:
-	if _match_over or get_tree().paused or player.body == null or switcher.forced or time_controller.forced_slow:
+	if _match_over or get_tree().paused or player.body == null or (switcher != null and switcher.forced) or time_controller.forced_slow:
 		return false
 	if boss != null and is_instance_valid(boss) and boss.is_entering():
 		return false
@@ -238,7 +244,7 @@ func _tip_highlight_rect(name: String) -> Rect2:
 	match name:
 		"special":
 			return hud.special_rect()
-		"switcher":
+		"switcher" when switcher != null:
 			var view: Vector2 = get_viewport_rect().size
 			return Rect2(0.0, switcher.top(), view.x, view.y - switcher.top())
 	return Rect2()
@@ -324,7 +330,8 @@ func _finish_stage_clear() -> void:
 func _play_clear_sequence() -> void:
 	spawner.set_process(false)  # ondas agendadas do chefe não entram mais
 	time_controller.lock_normal()
-	switcher.disabled = true
+	if switcher != null:
+		switcher.disabled = true
 	player.begin_scripted()
 	Audio.play_clear_music()
 	_wipe_field()
@@ -393,7 +400,7 @@ func _chapter_rewards(planet_index: int) -> PackedStringArray:
 
 ## Tempo da fase acabou: sem chefe, a fase termina; com chefe, ele entra após o aviso.
 func _on_spawning_finished() -> void:
-	var boss_data: BossData = Session.stage().boss
+	var boss_data: BossData = _stage().boss
 	if boss_data == null:
 		_spawning_done = true
 		return
@@ -476,7 +483,7 @@ func _on_special_pressed() -> void:
 	state.use_special()
 	Audio.play(&"special_fire")
 	Haptics.play(&"especial")
-	SpecialAttack.trigger(player.body.weapon, player, context, self)
+	SpecialAttack.trigger(_special_weapon(), player, context, self)
 
 
 func _on_powerup_collected(kind: PowerUp.Kind) -> void:
@@ -532,7 +539,7 @@ func _on_body_destroyed(index: int) -> void:
 	var alive: Array[int] = state.alive_indices()
 	if alive.size() == 1:
 		_switch_to(alive[0], Params.switch_invulnerability_seconds)
-	elif alive.size() > 1:
+	elif alive.size() > 1 and switcher != null:
 		switcher.forced = true
 		time_controller.forced_slow = true
 
@@ -602,6 +609,7 @@ func _create_enemy() -> PoolItem:
 		Haptics.play(&"explosao_grande" if killed.radius >= Params.explosion_reference_radius * 1.4 else &"explosao_pequena")
 		_explode(killed.position, killed.radius, killed.tint()))
 	enemy.killed.connect(_on_enemy_split)
+	enemy.killed.connect(_on_enemy_killed)
 	return enemy
 
 
@@ -616,3 +624,53 @@ func _debug_stats() -> String:
 	return "tiros %d | inimigos %d | tiros inimigos %d | nível %d" % [
 		player_bullets.active.size(), enemies.active.size(), enemy_bullets.active.size(),
 		state.weapon_levels[state.current]]
+
+
+# --- Modo: ganchos que outros modos sobrescrevem (padrão = campanha) ---
+
+## Corpos da partida.
+func _formation() -> FormationData:
+	return SaveGame.squad_formation()
+
+
+## Ajustes no estado logo depois de criado (vida, arma do especial...).
+func _configure_state() -> void:
+	pass
+
+
+## Fase jogada (ondas, duração e chefe).
+func _stage() -> StageData:
+	return Session.stage()
+
+
+## Barra de troca de nave na base da tela.
+func _uses_switcher() -> bool:
+	return true
+
+
+func _companion_body() -> BodyData:
+	return SaveGame.companion_body()
+
+
+## Power-ups de arma caem durante a fase.
+func _weapon_powerups() -> bool:
+	return true
+
+
+## Arma cujo especial o botão dispara.
+func _special_weapon() -> WeaponData:
+	return player.body.weapon
+
+
+func _hud_label() -> String:
+	return "%s  %s" % [tr(Session.planet().name_key), Session.stage_label(Session.planet_index, Session.stage_index)]
+
+
+## Fim da montagem da cena.
+func _on_mode_ready() -> void:
+	pass
+
+
+## Inimigo comum destruído (depois de pontos e drops).
+func _on_enemy_killed(_killed: Enemy) -> void:
+	pass

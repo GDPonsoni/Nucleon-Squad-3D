@@ -17,11 +17,13 @@ var companion_can_level: Callable = func() -> bool: return false
 
 
 ## Os bônus da evolução do núcleo encurtam os intervalos.
-func setup(pool: NodePool, boosts: PlayerBoosts, stage_seconds: float = 120.0) -> void:
+## weapon_powerups = false: só kits e auxiliar (modos em que a arma sobe de outro jeito).
+func setup(pool: NodePool, boosts: PlayerBoosts, stage_seconds: float = 120.0, weapon_powerups: bool = true) -> void:
 	_pool = pool
 	var balance: BalanceData = Params.balance
 	# O primeiro power-up vem cedo; o primeiro kit e o da auxiliar, só depois de um intervalo
-	_add(PowerUp.Kind.WEAPON, balance.powerup_interval(stage_seconds, boosts.powerup_interval_cut), 0.5)
+	if weapon_powerups:
+		_add(PowerUp.Kind.WEAPON, balance.powerup_interval(stage_seconds, boosts.powerup_interval_cut), 0.5)
 	_add(PowerUp.Kind.HEAL, balance.medkit_interval(stage_seconds, boosts.medkit_interval_cut), 1.0)
 	_add(PowerUp.Kind.COMPANION, balance.companion_powerup_interval(stage_seconds), 1.0)
 

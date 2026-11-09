@@ -370,6 +370,7 @@ var switch_cooldown_seconds: float = 4.0  # entre trocas voluntárias (faixa sug
 var switch_cooldown_color: Color = Color(0.0, 0.0, 0.0, 0.62)  # setor escuro sobre os ícones em recarga
 var switch_icon_radius: float = 82.0
 var switch_icon_max_spacing_ratio: float = 0.36  # com muitos corpos, o raio diminui para caber
+var no_switcher_bottom_margin: float = 170.0  # sem barra de troca: espaço livre na base (botão especial)
 var switch_strip_bottom: float = 150.0  # centro da barra, a partir da base da tela
 var switch_strip_spacing: float = 235.0  # entre ícones da barra
 var switch_strip_side_margin: float = 30.0
