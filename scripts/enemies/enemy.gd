@@ -184,11 +184,14 @@ func _follow_path(delta: float) -> void:
 		_next_step()
 
 
-## Escalas da fase: vida e cadência de tiro dos inimigos (capítulos finais).
-func apply_stage(stage: StageData) -> void:
-	hp *= stage.enemy_hp_scale * Params.balance.enemy_hp_factor(Session.planet_index, Session.stage_index)
+## Escalas da fase: vida e cadência de tiro dos inimigos (capítulos finais) e o quanto a fase
+## já andou (progress de 0 a 1: no fim, inimigos mais fortes).
+func apply_stage(stage: StageData, progress: float = 0.0) -> void:
+	var ramp: float = clampf(progress, 0.0, 1.0) if stage.difficulty_ramp else 0.0
+	var balance: BalanceData = Params.balance
+	hp *= stage.enemy_hp_scale * balance.enemy_hp_factor(Session.planet_index, Session.stage_index) * (1.0 + balance.stage_ramp_hp * ramp)
 	_max_hp = hp
-	_fire_scale = stage.enemy_fire_scale
+	_fire_scale = stage.enemy_fire_scale * (1.0 + balance.stage_ramp_fire * ramp)
 
 
 ## Vira elite: mais vida, maior e com aura. Chamar depois de activate e apply_stage.

@@ -127,6 +127,10 @@ func _spawn(entry: RunWaveEntry, delay: float = 0.0) -> void:
 	wave.path = entry.path
 	wave.mirror = entry.random_mirror and _rng.randf() < 0.5
 	wave.x_ratio = entry.fixed_x if entry.fixed_x >= 0.0 else _rng.randf_range(0.25, 0.75)
-	wave.side = WaveData.EntrySide.LEFT if _rng.randf() < 0.5 else WaveData.EntrySide.RIGHT
-	wave.y_ratio = _rng.randf_range(0.12, 0.35)
+	if entry.both_sides:
+		wave.side = WaveData.EntrySide.BOTH
+	else:
+		wave.side = WaveData.EntrySide.LEFT if _rng.randf() < 0.5 else WaveData.EntrySide.RIGHT
+	# Laterais entram em qualquer altura até um pouco abaixo do meio da tela
+	wave.y_ratio = _rng.randf_range(0.1, 0.55)
 	spawner.spawn_wave(wave, spawner.elapsed() + delay)

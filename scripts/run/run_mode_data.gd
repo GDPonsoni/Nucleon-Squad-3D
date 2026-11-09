@@ -33,7 +33,7 @@ extends Resource
 @export var waves: Array[RunWaveEntry] = []
 @export var wave_gap_start: float = 2.0  # segundos entre ondas no começo
 @export var wave_gap_end: float = 0.6  # ... e aos duration_seconds (interpolação linear)
-@export var count_growth_per_minute: float = 0.08  # membros por onda: count x (1 + isso x minuto)
+@export var count_growth_per_minute: float = 0.1  # membros por onda: count x (1 + isso x minuto)
 @export var surge_every: float = 60.0  # surto de ondas de horda
 @export var surge_waves: int = 3
 @export var surge_gap: float = 1.2
@@ -41,8 +41,8 @@ extends Resource
 
 @export_group("Escala por tempo")
 ## Vida dos inimigos (sobre a do capítulo 1): início x crescimento ^ minuto.
-@export var hp_start: float = 0.45
-@export var hp_growth_per_minute: float = 1.15
+@export var hp_start: float = 0.65
+@export var hp_growth_per_minute: float = 1.14
 ## Cadência de tiro dos inimigos: interpolação linear do início ao fim.
 @export var fire_scale_start: float = 0.85
 @export var fire_scale_end: float = 1.6
@@ -69,6 +69,6 @@ extends Resource
 @export var boss_chest_every: int = 2  # baú a cada N chefes (2 = só os de capítulo, os pares)
 
 @export_group("Itens")
-@export var medkit_every: float = 75.0  # kit médico por tempo (segundos de jogo)
-@export var elite_medkit_chance: float = 0.5
-@export var boss_medkits: int = 2
+@export var medkit_every: float = 120.0  # kit médico por tempo (segundos de jogo)
+@export var elite_medkit_chance: float = 0.25
+@export var boss_medkits: int = 1

@@ -6,6 +6,7 @@ extends RefCounted
 signal xp_changed(xp: float, needed: float)
 signal leveled_up(level: int)
 signal loadout_changed
+signal special_changed
 
 var mode: RunModeData
 var level: int = 1  # nível do jogador (sobe com XP)
@@ -14,6 +15,7 @@ var pending: int = 0  # níveis ganhos ainda sem escolha feita
 var xp_scale: float = 1.0  # multiplicador de XP (evolução do núcleo)
 var quarks_from_levels: int = 0  # quarks ganhos nas opções de recompensa
 var owned: Array[BodyData] = []  # armas escolhidas, na ordem dos espaços
+var special_choice: BodyData  # arma escolhida para o especial (null = a de maior nível)
 var _levels: Dictionary = {}  # id do corpo -> nível da arma
 
 
@@ -56,7 +58,22 @@ func is_maxed(ship: BodyData) -> bool:
 	return weapon_level(ship) >= ship.weapon.max_level()
 
 
-## Arma de maior nível (o especial é o dela); empate fica com a escolhida primeiro.
+## Arma do especial: a escolhida pelo jogador (tocando no espaço na câmera lenta) ou, sem
+## escolha, a de maior nível.
+func special_weapon() -> BodyData:
+	if special_choice != null and owned.has(special_choice):
+		return special_choice
+	return best_weapon()
+
+
+func choose_special(ship: BodyData) -> void:
+	if ship == null or not owned.has(ship) or ship == special_choice:
+		return
+	special_choice = ship
+	special_changed.emit()
+
+
+## Arma de maior nível; empate fica com a escolhida primeiro.
 func best_weapon() -> BodyData:
 	var best: BodyData = null
 	for ship in owned:

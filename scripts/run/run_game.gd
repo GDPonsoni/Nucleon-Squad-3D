@@ -28,6 +28,7 @@ func _ready() -> void:
 	_run_stage.id = &"run"
 	_run_stage.duration_seconds = mode.duration_seconds * 2.0  # o spawner não termina sozinho
 	_run_stage.start_delay = mode.first_wave_delay
+	_run_stage.difficulty_ramp = false  # o diretor já escala pelo minuto
 	# Inimigos usam a escala do capítulo 1 enquanto o modo não tem a própria (etapa c)
 	Session.planet_index = 0
 	Session.stage_index = 0
@@ -68,8 +69,8 @@ func _weapon_powerups() -> bool:
 
 
 func _special_weapon() -> WeaponData:
-	var best: BodyData = progress.best_weapon()
-	return best.weapon if best != null else mode.ship.weapon
+	var ship: BodyData = progress.special_weapon()
+	return ship.weapon if ship != null else mode.ship.weapon
 
 
 func _hud_label() -> String:
@@ -106,8 +107,14 @@ func _on_mode_ready() -> void:
 	slow_overlay.bar_bottom = Params.run_energy_bar_bottom
 	# O botão do especial mostra a arma dona dele
 	hud.special_body = func() -> BodyData:
-		var best: BodyData = progress.best_weapon()
-		return best if best != null else mode.ship
+		var ship: BodyData = progress.special_weapon()
+		return ship if ship != null else mode.ship
+	# Na câmera lenta, tocar num espaço de arma escolhe o especial (toque curto, como a troca
+	# de nave da campanha): o toque não tira da câmera lenta
+	touch_input.tap_filter = func(pos: Vector2) -> bool:
+		return time_controller.is_voluntary_slow() and run_hud.ship_at(pos) != null
+	touch_input.tapped.connect(_on_slot_tapped)
+	progress.special_changed.connect(func() -> void: state.special_weapon = _special_weapon())
 	director = RunDirector.new()
 	director.name = "RunDirector"
 	add_child(director)
@@ -169,7 +176,6 @@ func _spawn_elite(data: EnemyData) -> void:
 	enemy.activate(data, Vector2(x, rect.position.y - data.radius * 2.0), Vector2(0.0, data.speed))
 	enemy.apply_stage(_run_stage)
 	enemy.make_elite(mode.elite_hp_multiplier, mode.elite_size)
-	hud.show_warning("RUN_ELITE")
 
 
 ## Chefe na hora marcada, com a vida do minuto. As ondas diminuem até ele cair.
@@ -267,6 +273,16 @@ func _refresh_weapons() -> void:
 		else:
 			_equipped[id] = player.mount.equip(ship.weapon, level)
 	state.special_weapon = _special_weapon()
+
+
+func _on_slot_tapped(pos: Vector2) -> void:
+	var ship: BodyData = run_hud.ship_at(pos)
+	if ship == null or ship == progress.special_weapon():
+		return
+	progress.choose_special(ship)
+	Audio.play(&"ship_switch")
+	Haptics.play(&"troca_nave")
+	hud.show_toast(tr("RUN_SPECIAL_CHOSEN") % tr(ship.name_key), ship.color)
 
 
 func _show_level() -> void:

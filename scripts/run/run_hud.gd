@@ -30,8 +30,20 @@ func _ready() -> void:
 	_last_usec = Time.get_ticks_usec()
 	if progress != null:
 		progress.loadout_changed.connect(_rebuild_loadout)
+		progress.special_changed.connect(_rebuild_loadout)
 		progress.leveled_up.connect(func(_level: int) -> void: _rebuild_loadout())
 		_rebuild_loadout()
+
+
+## Espaço de arma tocado na câmera lenta (null = nenhum). Só com os espaços à mostra.
+func ship_at(pos: Vector2) -> BodyData:
+	if _loadout_alpha < 0.5:
+		return null
+	for icon in _loadout_box.find_children("*", "ShipIcon", true, false):
+		var rect: Rect2 = (icon as Control).get_global_rect().grow(Params.run_slot_touch_margin)
+		if rect.has_point(pos) and icon.get_meta("ship", null) != null:
+			return icon.get_meta("ship")
+	return null
 
 
 func _rebuild_loadout() -> void:

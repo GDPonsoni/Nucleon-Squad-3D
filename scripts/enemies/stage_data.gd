@@ -15,6 +15,9 @@ extends Resource
 @export var spawn_margin_x: float = 80.0  # distância mínima das bordas laterais
 @export var enemy_hp_scale: float = 1.0  # extra só desta fase (a escala por capítulo fica em BalanceData)
 @export var enemy_fire_scale: float = 1.0  # multiplica a cadência de tiro dos inimigos da fase
+## Os inimigos ficam mais fortes ao longo da fase (BalanceData.stage_ramp_*). Modos com escala
+## própria (Incursão) desligam.
+@export var difficulty_ramp: bool = true
 
 @export_group("Rochas")  # obstáculos que caem durante a fase (vazio = nenhuma)
 @export var rocks: Array[EnemyData] = []

@@ -205,7 +205,6 @@ SETTINGS_SHORT_DAMAGE,Damage,Dano,Daño
 STAGE_SOON_CAPTION,Coming soon,Em breve,Próximamente
 STAGE_SOON_TITLE,New chapters,Novos capítulos,Nuevos capítulos
 STAGE_SOON_TEXT,New planets are on the way. Keep evolving your Core and chasing stars!,Novos planetas estão a caminho. Continue evoluindo o núcleo e buscando estrelas!,Nuevos planetas están en camino. ¡Sigue mejorando el núcleo y buscando estrellas!
-MENU_RUN,Incursion,Incursão,Incursión
 RUN_MODE_NAME,Incursion,Incursão,Incursión
 RUN_LOCKED,Clear chapter %d to unlock this mode.,Conclua o capítulo %d para liberar este modo.,Completa el capítulo %d para desbloquear este modo.
 RUN_SHIP_NAME,Core,Núcleo,Núcleo
@@ -217,5 +216,9 @@ RUN_NEW_WEAPON,New weapon,Arma nova,Arma nueva
 RUN_WEAPON_LEVEL,Level %d → %d,Nível %d → %d,Nivel %d → %d
 RUN_QUARKS_REWARD,Quarks,Quarks,Quarks
 RESULT_LEVEL,Level,Nível,Nivel
-RUN_ELITE,Elite incoming!,Elite chegando!,¡Llega una élite!
 RUN_VICTORY,Incursion complete!,Incursão concluída!,¡Incursión completada!
+RUN_SPECIAL_CHOSEN,Special: %s,Especial: %s,Especial: %s
+MODE_SELECT_TITLE,Choose a mode,Escolha o modo,Elige el modo
+MODE_CAMPAIGN,Campaign,Campanha,Campaña
+MODE_CAMPAIGN_DESC,"Five planets, bosses and stars. Unlock ships for your squad.","Cinco planetas, chefes e estrelas. Libere naves para o esquadrão.","Cinco planetas, jefes y estrellas. Desbloquea naves para tu escuadrón."
+MODE_RUN_DESC,"One ship, three weapons, 30 minutes. Level up and survive.","Uma nave, três armas, 30 minutos. Evolua e sobreviva.","Una nave, tres armas, 30 minutos. Evoluciona y sobrevive."

@@ -17,6 +17,11 @@ extends Resource
 ## Curva por fase: cada fase do capítulo (0 a 8) soma esta fração à vida (1 + n x passo).
 @export_range(0.0, 0.5, 0.01) var enemy_hp_per_stage: float = 0.05
 
+@export_group("Dificuldade ao longo da fase")
+## No fim da fase, os inimigos que entram têm +isso de vida e de cadência (cresce linear do 0).
+@export_range(0.0, 2.0, 0.05) var stage_ramp_hp: float = 0.35
+@export_range(0.0, 2.0, 0.05) var stage_ramp_fire: float = 0.3
+
 @export_group("Drops por tempo de fase")
 ## Todos os drops seguem o relógio da fase (independem de quantos inimigos ela tem): ficam
 ## "devidos" e caem no próximo abate. Cada tipo solta `N` itens ao longo de `span` da duração.

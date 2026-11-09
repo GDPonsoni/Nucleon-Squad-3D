@@ -20,3 +20,4 @@ extends Resource
 @export var path: Array[MoveStep] = []
 @export var random_mirror: bool = true  # sorteia o lado da trajetória a cada onda
 @export var fixed_x: float = -1.0  # centro da formação (0 a 1); < 0 = sorteado
+@export var both_sides: bool = false  # lateral: membros alternam esquerda e direita (cerco)

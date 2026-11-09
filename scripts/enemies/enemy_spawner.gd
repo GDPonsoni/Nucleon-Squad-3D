@@ -117,7 +117,7 @@ func spawn_burst(data: EnemyData, pos: Vector2, count: int, spread_degrees: floa
 		var t: float = 0.0 if count == 1 else float(i) / (count - 1) - 0.5
 		var dir := Vector2.from_angle(PI * 0.5 + spread * t)
 		enemy.activate(data, pos + dir * data.radius, dir * data.speed)
-		enemy.apply_stage(_stage)
+		enemy.apply_stage(_stage, progress())
 
 
 func _process(delta: float) -> void:
@@ -130,7 +130,7 @@ func _process(delta: float) -> void:
 			enemy.activate(entry["data"], entry["pos"], entry["velocity"], entry["delay"])
 			enemy.set_motion(entry["wave"], entry["member"])
 			enemy.armored = (entry["wave"] as WaveData).special_moment
-			enemy.apply_stage(_stage)
+			enemy.apply_stage(_stage, progress())
 
 	if _finished:
 		return
@@ -180,7 +180,7 @@ func _spawn_random() -> void:
 	else:
 		var x: float = randf_range(rect.position.x + _stage.spawn_margin_x, rect.end.x - _stage.spawn_margin_x)
 		enemy.activate(data, Vector2(x, rect.position.y - data.radius), Vector2(0.0, data.speed))
-	enemy.apply_stage(_stage)
+	enemy.apply_stage(_stage, progress())
 
 
 ## Sorteio ponderado por spawn_weights (sem pesos: todos iguais).

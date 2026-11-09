@@ -48,15 +48,6 @@ func _ready() -> void:
 	play_button.pressed.connect(_on_play_pressed)
 	column.add_child(play_button)
 
-	# Modo roguelike: travado até concluir o capítulo Params.run_unlock_chapter
-	var run_button := UiFactory.make_button("MENU_RUN")
-	if not _run_unlocked():
-		run_button.text = "%s · %s" % [tr("MENU_RUN"), tr("STAGE_CHAPTER") % Params.run_unlock_chapter]
-		run_button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		run_button.modulate = Color(1.0, 1.0, 1.0, Params.locked_button_alpha)
-	run_button.pressed.connect(_on_run_pressed)
-	column.add_child(run_button)
-
 	var squad_button := UiFactory.make_button("MENU_SQUAD")
 	squad_button.pressed.connect(SceneTransition.go_to.bind(ScenePaths.SQUAD))
 	column.add_child(squad_button)
@@ -82,22 +73,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_play_pressed() -> void:
-	SceneTransition.go_to(ScenePaths.STAGE_SELECT)
-
-
-func _run_unlocked() -> bool:
-	return Params.run_unlock_chapter <= 0 or SaveGame.is_chapter_cleared(Params.run_unlock_chapter - 1)
-
-
-func _on_run_pressed() -> void:
-	if _run_unlocked():
-		SceneTransition.go_to(ScenePaths.RUN)
-		return
-	var dialog := Dialog.open(self, "MENU_RUN")
-	var text := UiFactory.make_subtitle("")
-	text.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-	text.text = tr("RUN_LOCKED") % Params.run_unlock_chapter
-	dialog.body.add_child(text)
+	SceneTransition.go_to(ScenePaths.MODE_SELECT)
 
 
 func _on_upgrades_pressed() -> void:

@@ -39,16 +39,17 @@ count = 3
 max_count = 8
 spacing = 130.0
 interval = 0.0
-speed_scale = 1.0
+speed_scale = 1.2
 sway_amplitude = 0.0
 from_minute = 0.0
 to_minute = 0.0
-weight = 1.5
+weight = 0.8
 horde = false
 name = "fila"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_1"]
 script = ExtResource("2_entry")
@@ -58,16 +59,17 @@ count = 3
 max_count = 9
 spacing = 120.0
 interval = 0.0
-speed_scale = 1.0
+speed_scale = 1.2
 sway_amplitude = 0.0
 from_minute = 0.0
 to_minute = 0.0
-weight = 1.0
+weight = 0.6
 horde = false
 name = "v"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_2"]
 script = ExtResource("2_entry")
@@ -87,6 +89,7 @@ name = "kamikazes"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_3"]
 script = ExtResource("2_entry")
@@ -106,6 +109,7 @@ name = "nuvem"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_4"]
 script = ExtResource("2_entry")
@@ -125,6 +129,7 @@ name = "miradores"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_5"]
 script = ExtResource("2_entry")
@@ -134,16 +139,17 @@ count = 6
 max_count = 15
 spacing = 120.0
 interval = 0.0
-speed_scale = 1.0
+speed_scale = 1.2
 sway_amplitude = 0.0
 from_minute = 3.0
 to_minute = 0.0
-weight = 0.8
+weight = 0.5
 horde = false
 name = "grade"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_6"]
 script = ExtResource("2_entry")
@@ -163,6 +169,7 @@ name = "serpente"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_7"]
 script = ExtResource("2_entry")
@@ -182,6 +189,7 @@ name = "faiscas"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_8"]
 script = ExtResource("2_entry")
@@ -201,6 +209,7 @@ name = "semeadores"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_9"]
 script = ExtResource("2_entry")
@@ -220,6 +229,7 @@ name = "cacadores"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_10"]
 script = ExtResource("2_entry")
@@ -239,6 +249,7 @@ name = "tanques"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_11"]
 script = ExtResource("2_entry")
@@ -258,6 +269,7 @@ name = "fissores"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_12"]
 script = ExtResource("2_entry")
@@ -277,6 +289,7 @@ name = "divisores"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_13"]
 script = ExtResource("2_entry")
@@ -296,6 +309,7 @@ name = "escudeiros"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_14"]
 script = ExtResource("2_entry")
@@ -315,6 +329,7 @@ name = "pulsares"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_15"]
 script = ExtResource("2_entry")
@@ -334,6 +349,7 @@ name = "colosso"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="wave_16"]
 script = ExtResource("2_entry")
@@ -353,12 +369,13 @@ name = "anel kamikaze"
 path = Array[ExtResource("6_step")]([])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_17_0"]
 script = ExtResource("6_step")
-seconds = 1.0
+seconds = 0.7
 turn_degrees = 0.0
-speed_scale = 1.0
+speed_scale = 1.7
 home_degrees = 0.0
 aim = false
 fire = false
@@ -399,6 +416,7 @@ name = "gancho"
 path = Array[ExtResource("6_step")]([SubResource("step_17_0"), SubResource("step_17_1"), SubResource("step_17_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_18_0"]
 script = ExtResource("6_step")
@@ -445,12 +463,13 @@ name = "laço"
 path = Array[ExtResource("6_step")]([SubResource("step_18_0"), SubResource("step_18_1"), SubResource("step_18_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_19_0"]
 script = ExtResource("6_step")
-seconds = 0.9
+seconds = 0.6
 turn_degrees = 0.0
-speed_scale = 1.0
+speed_scale = 1.8
 home_degrees = 0.0
 aim = false
 fire = false
@@ -491,6 +510,7 @@ name = "v que para e atira"
 path = Array[ExtResource("6_step")]([SubResource("step_19_0"), SubResource("step_19_1"), SubResource("step_19_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_20_0"]
 script = ExtResource("6_step")
@@ -529,14 +549,15 @@ spacing = 140.0
 interval = 0.0
 speed_scale = 0.9
 sway_amplitude = 0.0
-from_minute = 3.5
+from_minute = 1.5
 to_minute = 0.0
-weight = 1.2
+weight = 1.6
 horde = false
 name = "ascensão"
 path = Array[ExtResource("6_step")]([SubResource("step_20_0"), SubResource("step_20_1"), SubResource("step_20_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_21_0"]
 script = ExtResource("6_step")
@@ -583,6 +604,7 @@ name = "diagonal"
 path = Array[ExtResource("6_step")]([SubResource("step_21_0"), SubResource("step_21_1"), SubResource("step_21_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_22_0"]
 script = ExtResource("6_step")
@@ -656,6 +678,7 @@ name = "serpente fechada"
 path = Array[ExtResource("6_step")]([SubResource("step_22_0"), SubResource("step_22_1"), SubResource("step_22_2"), SubResource("step_22_3"), SubResource("step_22_4"), SubResource("step_22_5")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_23_0"]
 script = ExtResource("6_step")
@@ -720,6 +743,7 @@ name = "curva aberta"
 path = Array[ExtResource("6_step")]([SubResource("step_23_0"), SubResource("step_23_1"), SubResource("step_23_2"), SubResource("step_23_3"), SubResource("step_23_4")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_24_0"]
 script = ExtResource("6_step")
@@ -766,6 +790,7 @@ name = "grampo"
 path = Array[ExtResource("6_step")]([SubResource("step_24_0"), SubResource("step_24_1"), SubResource("step_24_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_25_0"]
 script = ExtResource("6_step")
@@ -803,6 +828,7 @@ name = "kamikaze persistente"
 path = Array[ExtResource("6_step")]([SubResource("step_25_0"), SubResource("step_25_1")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_26_0"]
 script = ExtResource("6_step")
@@ -840,6 +866,7 @@ name = "kamikaze em curva aberta"
 path = Array[ExtResource("6_step")]([SubResource("step_26_0"), SubResource("step_26_1")])
 random_mirror = false
 fixed_x = 0.2
+both_sides = false
 
 [sub_resource type="Resource" id="step_27_0"]
 script = ExtResource("6_step")
@@ -886,6 +913,7 @@ name = "enxame giratório"
 path = Array[ExtResource("6_step")]([SubResource("step_27_0"), SubResource("step_27_1"), SubResource("step_27_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_28_0"]
 script = ExtResource("6_step")
@@ -932,12 +960,13 @@ name = "pinça com tiro"
 path = Array[ExtResource("6_step")]([SubResource("step_28_0"), SubResource("step_28_1"), SubResource("step_28_2")])
 random_mirror = false
 fixed_x = 0.2
+both_sides = false
 
 [sub_resource type="Resource" id="step_29_0"]
 script = ExtResource("6_step")
-seconds = 0.9
+seconds = 0.6
 turn_degrees = 0.0
-speed_scale = 1.0
+speed_scale = 1.8
 home_degrees = 0.0
 aim = false
 fire = false
@@ -996,6 +1025,7 @@ name = "cortina"
 path = Array[ExtResource("6_step")]([SubResource("step_29_0"), SubResource("step_29_1"), SubResource("step_29_2"), SubResource("step_29_3"), SubResource("step_29_4")])
 random_mirror = false
 fixed_x = 0.5
+both_sides = false
 
 [sub_resource type="Resource" id="step_30_0"]
 script = ExtResource("6_step")
@@ -1042,6 +1072,7 @@ name = "círculo que fecha"
 path = Array[ExtResource("6_step")]([SubResource("step_30_0"), SubResource("step_30_1"), SubResource("step_30_2")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_31_0"]
 script = ExtResource("6_step")
@@ -1115,6 +1146,7 @@ name = "zigue-zague"
 path = Array[ExtResource("6_step")]([SubResource("step_31_0"), SubResource("step_31_1"), SubResource("step_31_2"), SubResource("step_31_3"), SubResource("step_31_4"), SubResource("step_31_5")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_32_0"]
 script = ExtResource("6_step")
@@ -1170,12 +1202,13 @@ name = "ascensão em leque"
 path = Array[ExtResource("6_step")]([SubResource("step_32_0"), SubResource("step_32_1"), SubResource("step_32_2"), SubResource("step_32_3")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_33_0"]
 script = ExtResource("6_step")
-seconds = 1.1
+seconds = 0.8
 turn_degrees = 0.0
-speed_scale = 1.0
+speed_scale = 1.7
 home_degrees = 0.0
 aim = false
 fire = false
@@ -1225,6 +1258,7 @@ name = "grade que volta"
 path = Array[ExtResource("6_step")]([SubResource("step_33_0"), SubResource("step_33_1"), SubResource("step_33_2"), SubResource("step_33_3")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
 
 [sub_resource type="Resource" id="step_34_0"]
 script = ExtResource("6_step")
@@ -1289,11 +1323,303 @@ name = "laço duplo"
 path = Array[ExtResource("6_step")]([SubResource("step_34_0"), SubResource("step_34_1"), SubResource("step_34_2"), SubResource("step_34_3"), SubResource("step_34_4")])
 random_mirror = true
 fixed_x = -1.0
+both_sides = false
+
+[sub_resource type="Resource" id="step_35_0"]
+script = ExtResource("6_step")
+seconds = 1.0
+turn_degrees = 0.0
+speed_scale = 1.2
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_35_1"]
+script = ExtResource("6_step")
+seconds = 0.9
+turn_degrees = 90.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = true
+
+[sub_resource type="Resource" id="step_35_2"]
+script = ExtResource("6_step")
+seconds = 4.0
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="wave_35"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_drone")
+formation = 3
+count = 4
+max_count = 8
+spacing = 0.0
+interval = 0.25
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 0.5
+to_minute = 0.0
+weight = 1.5
+horde = false
+name = "rasante lateral"
+path = Array[ExtResource("6_step")]([SubResource("step_35_0"), SubResource("step_35_1"), SubResource("step_35_2")])
+random_mirror = true
+fixed_x = -1.0
+both_sides = false
+
+[sub_resource type="Resource" id="step_36_0"]
+script = ExtResource("6_step")
+seconds = 0.8
+turn_degrees = 0.0
+speed_scale = 1.1
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_36_1"]
+script = ExtResource("6_step")
+seconds = 4.5
+turn_degrees = 0.0
+speed_scale = 1.5
+home_degrees = 120.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="wave_36"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_kamikaze")
+formation = 9
+count = 2
+max_count = 6
+spacing = 220.0
+interval = 0.0
+speed_scale = 1.1
+sway_amplitude = 0.0
+from_minute = 2.0
+to_minute = 0.0
+weight = 1.2
+horde = true
+name = "subida kamikaze"
+path = Array[ExtResource("6_step")]([SubResource("step_36_0"), SubResource("step_36_1")])
+random_mirror = true
+fixed_x = -1.0
+both_sides = false
+
+[sub_resource type="Resource" id="step_37_0"]
+script = ExtResource("6_step")
+seconds = 0.6
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_37_1"]
+script = ExtResource("6_step")
+seconds = 1.5
+turn_degrees = 90.0
+speed_scale = 1.2
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_37_2"]
+script = ExtResource("6_step")
+seconds = 4.0
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="wave_37"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_swarm")
+formation = 3
+count = 8
+max_count = 20
+spacing = 0.0
+interval = 0.12
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 2.5
+to_minute = 0.0
+weight = 1.2
+horde = true
+name = "cerco"
+path = Array[ExtResource("6_step")]([SubResource("step_37_0"), SubResource("step_37_1"), SubResource("step_37_2")])
+random_mirror = false
+fixed_x = -1.0
+both_sides = true
+
+[sub_resource type="Resource" id="step_38_0"]
+script = ExtResource("6_step")
+seconds = 0.8
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_38_1"]
+script = ExtResource("6_step")
+seconds = 0.1
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = true
+
+[sub_resource type="Resource" id="step_38_2"]
+script = ExtResource("6_step")
+seconds = 1.2
+turn_degrees = 40.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_38_3"]
+script = ExtResource("6_step")
+seconds = 4.0
+turn_degrees = 0.0
+speed_scale = 1.2
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="wave_38"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_aimer")
+formation = 3
+count = 4
+max_count = 8
+spacing = 0.0
+interval = 0.4
+speed_scale = 1.0
+sway_amplitude = 0.0
+from_minute = 3.0
+to_minute = 0.0
+weight = 1.0
+horde = false
+name = "cruzado"
+path = Array[ExtResource("6_step")]([SubResource("step_38_0"), SubResource("step_38_1"), SubResource("step_38_2"), SubResource("step_38_3")])
+random_mirror = false
+fixed_x = -1.0
+both_sides = true
+
+[sub_resource type="Resource" id="step_39_0"]
+script = ExtResource("6_step")
+seconds = 0.5
+turn_degrees = 0.0
+speed_scale = 1.6
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_39_1"]
+script = ExtResource("6_step")
+seconds = 0.8
+turn_degrees = -60.0
+speed_scale = 1.1
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_39_2"]
+script = ExtResource("6_step")
+seconds = 4.0
+turn_degrees = 0.0
+speed_scale = 1.2
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="wave_39"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_drone")
+formation = 4
+count = 6
+max_count = 10
+spacing = 100.0
+interval = 0.0
+speed_scale = 1.3
+sway_amplitude = 0.0
+from_minute = 1.5
+to_minute = 0.0
+weight = 1.0
+horde = false
+name = "canto"
+path = Array[ExtResource("6_step")]([SubResource("step_39_0"), SubResource("step_39_1"), SubResource("step_39_2")])
+random_mirror = true
+fixed_x = 0.1
+both_sides = false
+
+[sub_resource type="Resource" id="step_40_0"]
+script = ExtResource("6_step")
+seconds = 1.0
+turn_degrees = 0.0
+speed_scale = 0.9
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_40_1"]
+script = ExtResource("6_step")
+seconds = 0.9
+turn_degrees = 0.0
+speed_scale = 0.0
+home_degrees = 0.0
+aim = false
+fire = true
+
+[sub_resource type="Resource" id="step_40_2"]
+script = ExtResource("6_step")
+seconds = 0.6
+turn_degrees = 180.0
+speed_scale = 1.0
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="step_40_3"]
+script = ExtResource("6_step")
+seconds = 4.0
+turn_degrees = 0.0
+speed_scale = 1.4
+home_degrees = 0.0
+aim = false
+fire = false
+
+[sub_resource type="Resource" id="wave_40"]
+script = ExtResource("2_entry")
+enemy = ExtResource("e_hunter")
+formation = 9
+count = 3
+max_count = 6
+spacing = 200.0
+interval = 0.0
+speed_scale = 0.9
+sway_amplitude = 0.0
+from_minute = 6.0
+to_minute = 0.0
+weight = 0.9
+horde = false
+name = "subida em leque"
+path = Array[ExtResource("6_step")]([SubResource("step_40_0"), SubResource("step_40_1"), SubResource("step_40_2"), SubResource("step_40_3")])
+random_mirror = true
+fixed_x = -1.0
+both_sides = false
 
 [resource]
 script = ExtResource("1_script")
 ship = ExtResource("3_ship")
-waves = Array[ExtResource("2_entry")]([SubResource("wave_0"), SubResource("wave_1"), SubResource("wave_2"), SubResource("wave_3"), SubResource("wave_4"), SubResource("wave_5"), SubResource("wave_6"), SubResource("wave_7"), SubResource("wave_8"), SubResource("wave_9"), SubResource("wave_10"), SubResource("wave_11"), SubResource("wave_12"), SubResource("wave_13"), SubResource("wave_14"), SubResource("wave_15"), SubResource("wave_16"), SubResource("wave_17"), SubResource("wave_18"), SubResource("wave_19"), SubResource("wave_20"), SubResource("wave_21"), SubResource("wave_22"), SubResource("wave_23"), SubResource("wave_24"), SubResource("wave_25"), SubResource("wave_26"), SubResource("wave_27"), SubResource("wave_28"), SubResource("wave_29"), SubResource("wave_30"), SubResource("wave_31"), SubResource("wave_32"), SubResource("wave_33"), SubResource("wave_34")])
+waves = Array[ExtResource("2_entry")]([SubResource("wave_0"), SubResource("wave_1"), SubResource("wave_2"), SubResource("wave_3"), SubResource("wave_4"), SubResource("wave_5"), SubResource("wave_6"), SubResource("wave_7"), SubResource("wave_8"), SubResource("wave_9"), SubResource("wave_10"), SubResource("wave_11"), SubResource("wave_12"), SubResource("wave_13"), SubResource("wave_14"), SubResource("wave_15"), SubResource("wave_16"), SubResource("wave_17"), SubResource("wave_18"), SubResource("wave_19"), SubResource("wave_20"), SubResource("wave_21"), SubResource("wave_22"), SubResource("wave_23"), SubResource("wave_24"), SubResource("wave_25"), SubResource("wave_26"), SubResource("wave_27"), SubResource("wave_28"), SubResource("wave_29"), SubResource("wave_30"), SubResource("wave_31"), SubResource("wave_32"), SubResource("wave_33"), SubResource("wave_34"), SubResource("wave_35"), SubResource("wave_36"), SubResource("wave_37"), SubResource("wave_38"), SubResource("wave_39"), SubResource("wave_40")])
 elite_enemies = Array[ExtResource("4_enemy_script")]([ExtResource("e_spreader"), ExtResource("e_shielder"), ExtResource("e_splitter"), ExtResource("e_pulsar")])
 elite_from_minute = PackedFloat32Array(0.5, 6.0, 9.0, 12.0)
 bosses = Array[ExtResource("5_boss_script")]([ExtResource("b_mini_1"), ExtResource("b_boss_1"), ExtResource("b_mini_2"), ExtResource("b_boss_2"), ExtResource("b_mini_3"), ExtResource("b_boss_3"), ExtResource("b_mini_4"), ExtResource("b_boss_4"), ExtResource("b_mini_5"), ExtResource("b_boss_5"), ExtResource("b_boss_5")])

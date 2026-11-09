@@ -39,6 +39,8 @@ func _slot(ship: BodyData) -> Control:
 	var icon := ShipIcon.new()
 	icon.custom_minimum_size = Vector2.ONE * slot_size
 	icon.body = ship
+	icon.highlighted = ship != null and ship == _progress.special_weapon() and _progress.owned.size() > 1
+	icon.set_meta("ship", ship)
 	column.add_child(icon)
 	var pips := Control.new()
 	pips.custom_minimum_size = Vector2(slot_size, Params.run_slot_pip_size.y + 4.0)

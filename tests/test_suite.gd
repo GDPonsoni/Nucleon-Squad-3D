@@ -760,3 +760,20 @@ func test_wave_paths() -> void:
 		check(enemy.get("_path_index") == 1 and enemy.get("_fire_cooldown") == data.telegraph_seconds, "passo de disparo arma a rajada")
 		enemy.free()
 	check(results[0] * results[1] < 0.0, "espelhado gira para o outro lado (%.0f, %.0f)" % [results[0], results[1]])
+
+
+## Especial da Incursão: sem escolha, o da arma de maior nível; tocar num espaço escolhe; só
+## vale arma que a nave carrega.
+func test_run_special_choice() -> void:
+	var mode := load(Params.run_mode_path) as RunModeData
+	var progress := RunProgress.new(mode)
+	var roster: Array[BodyData] = []
+	for body in (load(Params.roster_path) as FormationData).bodies:
+		roster.append(body)
+	progress.apply(RunChoice.weapon(roster[0], 1))
+	progress.apply(RunChoice.weapon(roster[1], 3))
+	check(progress.special_weapon() == roster[1], "sem escolha: a de maior nível")
+	progress.choose_special(roster[0])
+	check(progress.special_weapon() == roster[0], "escolha vale mesmo com nível menor")
+	progress.choose_special(roster[5])
+	check(progress.special_weapon() == roster[0], "arma que a nave não carrega é ignorada")

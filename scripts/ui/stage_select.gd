@@ -257,7 +257,7 @@ func _on_title_input(event: InputEvent) -> void:
 
 
 func _go_back() -> void:
-	SceneTransition.go_to(ScenePaths.MENU)
+	SceneTransition.go_to(ScenePaths.MODE_SELECT)
 
 
 func _notification(what: int) -> void:
