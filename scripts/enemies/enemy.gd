@@ -47,6 +47,14 @@ var _sway_phase: float = 0.0
 var _curve_rate: float = 0.0  # rad/s
 var _curve_delay: float = 0.0
 var _curve_left: float = 0.0
+# Trajetória da onda (WaveData.path)
+var _path: Array[MoveStep] = []
+var _path_index: int = 0
+var _path_left: float = 0.0
+var _path_turn: float = 0.0  # rad/s do passo atual
+var _path_mirror: float = 1.0  # -1 = espelhado
+var _path_speed: float = 0.0  # velocidade base da onda
+var _path_fires: bool = false  # só atira nos passos com fire
 
 
 ## extra_delay atrasa o comportamento por tempo (ex.: mergulhos em sequência numa onda).
@@ -81,6 +89,8 @@ func activate(enemy_data: EnemyData, pos: Vector2, velocity: Vector2, extra_dela
 		_sway_omega = TAU / data.sway_period
 		_sway_phase = randf() * TAU
 	_curve_left = 0.0
+	_path = []
+	_path_fires = false
 	rotation = 0.0
 	_spin = deg_to_rad(data.spin_degrees) * (1.0 if randf() < 0.5 else -1.0)
 	if data.look == EnemyData.Look.ROCK:
@@ -115,6 +125,63 @@ func set_motion(wave: WaveData, member: int) -> void:
 		_curve_rate = deg_to_rad(wave.curve_degrees) / wave.curve_seconds
 		_curve_delay = wave.curve_delay
 		_curve_left = wave.curve_seconds
+	if not wave.path.is_empty():
+		_start_path(wave, member)
+
+
+## Trajetória da onda: espelhada para quem entra pela direita (lateral), metade da pinça e
+## ondas marcadas como espelhadas.
+func _start_path(wave: WaveData, member: int) -> void:
+	_path = wave.path
+	_path_index = -1
+	_path_speed = maxf(_velocity.length(), 1.0)
+	var mirrored: bool = wave.mirror
+	match wave.formation:
+		WaveData.Formation.SIDE:
+			var from_left: bool = wave.side == WaveData.EntrySide.LEFT or (wave.side == WaveData.EntrySide.BOTH and member % 2 == 0)
+			mirrored = mirrored != (not from_left)
+		WaveData.Formation.PINCER:
+			mirrored = mirrored != (member % 2 == 1)
+	_path_mirror = -1.0 if mirrored else 1.0
+	_path_fires = false
+	for step in _path:
+		_path_fires = _path_fires or step.fire
+	if _path_fires:
+		_fire_cooldown = INF
+	_next_step()
+
+
+func _next_step() -> void:
+	_path_index += 1
+	if _path_index >= _path.size():
+		return
+	var step: MoveStep = _path[_path_index]
+	_path_left = step.seconds
+	_path_turn = deg_to_rad(step.turn_degrees) / maxf(step.seconds, 0.01) * _path_mirror
+	var player: Player = context.player if context != null else null
+	if step.aim and player != null and player.body != null:
+		_velocity = (player.position - position).normalized() * _velocity.length()
+	if step.fire and data.fire_pattern != EnemyData.FirePattern.NONE:
+		_fire_cooldown = data.telegraph_seconds  # aviso e rajada; depois volta a não atirar
+
+
+## Segue o passo atual: gira, ajusta a velocidade e persegue a nave se o passo pedir.
+func _follow_path(delta: float) -> void:
+	if _path_index >= _path.size():
+		return
+	var step: MoveStep = _path[_path_index]
+	var angle: float = _velocity.angle()
+	var speed: float = move_toward(_velocity.length(), _path_speed * step.speed_scale, _path_speed * 4.0 * delta)
+	angle += _path_turn * delta
+	var player: Player = context.player if context != null else null
+	if step.home_degrees > 0.0 and player != null and player.body != null:
+		angle = rotate_toward(angle, (player.position - position).angle(), deg_to_rad(step.home_degrees) * delta)
+	_velocity = Vector2.from_angle(angle) * speed
+	if data.look != EnemyData.Look.ROCK and speed > 1.0:
+		rotation = angle - PI * 0.5
+	_path_left -= delta
+	if _path_left <= 0.0:
+		_next_step()
 
 
 ## Escalas da fase: vida e cadência de tiro dos inimigos (capítulos finais).
@@ -224,7 +291,10 @@ func _hit_sound() -> StringName:
 
 func _process(delta: float) -> void:
 	_age += delta
-	if data.movement == EnemyData.Movement.DIVE and _age >= data.dive_delay:
+	if not _path.is_empty():
+		if _age >= 0.0:
+			_follow_path(delta)
+	elif data.movement == EnemyData.Movement.DIVE and _age >= data.dive_delay:
 		_dive(delta)
 	elif data.movement == EnemyData.Movement.HOVER:
 		_hover(delta)
@@ -253,7 +323,7 @@ func _process(delta: float) -> void:
 			_tele_left = _fire_cooldown
 			queue_redraw()
 		if _fire_cooldown <= 0.0:
-			_fire_cooldown += data.fire_interval / _fire_scale
+			_fire_cooldown = INF if _path_fires else _fire_cooldown + data.fire_interval / _fire_scale
 			_shoot()
 			_tele_left = -1.0
 			queue_redraw()

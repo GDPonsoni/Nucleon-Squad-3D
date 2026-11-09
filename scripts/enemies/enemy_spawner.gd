@@ -92,6 +92,9 @@ func spawn_wave(wave: WaveData, start_time: float = -1.0) -> void:
 			WaveData.Formation.CIRCLE:
 				var dir := Vector2.from_angle(-PI * 0.5 + TAU * i / maxf(wave.count, 1.0))
 				pos = Vector2(center_x, top - wave.spacing) + dir * wave.spacing
+			WaveData.Formation.RISE:
+				pos = Vector2(center_x + (i - (wave.count - 1) * 0.5) * wave.spacing, rect.end.y + data.radius)
+				velocity = Vector2(0.0, -data.speed)
 			WaveData.Formation.SWARM:
 				var half: float = wave.spacing * wave.count * 0.25
 				pos = Vector2(center_x + randf_range(-half, half), top - randf_range(0.0, half * 0.8))

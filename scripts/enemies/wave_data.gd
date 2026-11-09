@@ -13,6 +13,7 @@ enum Formation {
 	PINCER,  ## duas colunas espelhadas (x_ratio e 1 - x_ratio), em pares (use interval)
 	CIRCLE,  ## anel acima da tela, com spacing de raio
 	SWARM,  ## bando solto: posições sorteadas numa nuvem de largura ~spacing x count / 4
+	RISE,  ## fileira que entra por baixo da tela subindo
 }
 enum EntrySide { LEFT, RIGHT, BOTH }
 
@@ -29,6 +30,11 @@ enum EntrySide { LEFT, RIGHT, BOTH }
 @export var columns: int = 3  # GRID: membros por fileira
 ## Momento de especial: os membros vêm blindados (dano normal reduzido) até levarem um especial.
 @export var special_moment: bool = false
+
+## Trajetória em passos (MoveStep) por cima do movimento do inimigo; vazia = o normal dele.
+## Com passos que disparam, o inimigo só atira nesses passos (ataque sincronizado da onda).
+@export var path: Array[MoveStep] = []
+@export var mirror: bool = false  # espelha a trajetória (gira para o outro lado)
 
 @export_group("Movimento da onda")  # vale para todos os membros, por cima do movimento do inimigo
 @export var speed_scale: float = 1.0  # velocidade em relação à do inimigo

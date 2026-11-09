@@ -15,3 +15,8 @@ extends Resource
 @export var to_minute: float = 0.0  # para de aparecer (0 = até o fim)
 @export var weight: float = 1.0  # chance relativa entre as ondas ativas
 @export var horde: bool = false  # inimigo que não atira, em bando: entra nos surtos
+@export var name: String = ""  # nome do padrão (só para leitura e para o simulador)
+## Trajetória (ver MoveStep): meia-volta, laço, perseguição, rajada sincronizada...
+@export var path: Array[MoveStep] = []
+@export var random_mirror: bool = true  # sorteia o lado da trajetória a cada onda
+@export var fixed_x: float = -1.0  # centro da formação (0 a 1); < 0 = sorteado

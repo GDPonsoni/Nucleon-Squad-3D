@@ -727,3 +727,36 @@ func test_run_director() -> void:
 		check(mode.elite_enemies[i].movement == EnemyData.Movement.HOVER, "elite flutua (fica na tela)")
 	director.free()
 
+
+
+## Trajetórias de onda: meia-volta inverte o sentido, espelho gira para o outro lado e o passo
+## com disparo arma a rajada (com aviso) uma vez só.
+func test_wave_paths() -> void:
+	var data := load("res://data/enemies/drone.tres") as EnemyData
+	var wave := WaveData.new()
+	wave.enemy = data
+	var turn := MoveStep.new()
+	turn.seconds = 1.0
+	turn.turn_degrees = 180.0
+	var shoot := MoveStep.new()
+	shoot.seconds = 0.5
+	shoot.speed_scale = 0.0
+	shoot.fire = true
+	var path: Array[MoveStep] = [turn, shoot]
+	wave.path = path
+	var results: Array[float] = []
+	for mirrored in [false, true]:
+		wave.mirror = mirrored
+		var enemy := Enemy.new()
+		enemy.activate(data, Vector2(500, 0), Vector2(0, 200))
+		enemy.set_motion(wave, 0)
+		check(enemy.get("_fire_cooldown") == INF, "onda com disparo em passo não atira sozinha")
+		for i in 30:
+			enemy._follow_path(1.0 / 60.0)
+		results.append(enemy.position.x if false else enemy.get("_velocity").x)
+		for i in 31:
+			enemy._follow_path(1.0 / 60.0)
+		check(enemy.get("_velocity").y < -150.0, "meia-volta: agora sobe (%.0f)" % enemy.get("_velocity").y)
+		check(enemy.get("_path_index") == 1 and enemy.get("_fire_cooldown") == data.telegraph_seconds, "passo de disparo arma a rajada")
+		enemy.free()
+	check(results[0] * results[1] < 0.0, "espelhado gira para o outro lado (%.0f, %.0f)" % [results[0], results[1]])

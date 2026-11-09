@@ -13,7 +13,7 @@ extends Resource
 @export var xp_per_point: float = 0.1  # XP por ponto de pontuação do inimigo destruído
 ## XP para passar de cada nível (índice 0 = do 1 para o 2). Os primeiros são baratos para
 ## sair logo do ataque frontal; depois da tabela, o último valor cresce xp_growth por nível.
-@export var xp_table: PackedFloat32Array = [15, 25, 35, 50, 70, 100, 140, 190, 250, 330, 430, 550, 700, 880, 1100]
+@export var xp_table: PackedFloat32Array = [15, 25, 35, 50, 80, 120, 170, 240, 330, 440, 580, 750, 950, 1200, 1500]
 @export var xp_growth: float = 1.25
 
 @export_group("Recompensa sem arma para subir")

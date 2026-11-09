@@ -124,7 +124,9 @@ func _spawn(entry: RunWaveEntry, delay: float = 0.0) -> void:
 	wave.interval = entry.interval
 	wave.speed_scale = entry.speed_scale
 	wave.sway_amplitude = entry.sway_amplitude
-	wave.x_ratio = _rng.randf_range(0.25, 0.75)
+	wave.path = entry.path
+	wave.mirror = entry.random_mirror and _rng.randf() < 0.5
+	wave.x_ratio = entry.fixed_x if entry.fixed_x >= 0.0 else _rng.randf_range(0.25, 0.75)
 	wave.side = WaveData.EntrySide.LEFT if _rng.randf() < 0.5 else WaveData.EntrySide.RIGHT
 	wave.y_ratio = _rng.randf_range(0.12, 0.35)
 	spawner.spawn_wave(wave, spawner.elapsed() + delay)
