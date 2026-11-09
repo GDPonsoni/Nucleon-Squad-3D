@@ -1,7 +1,8 @@
 extends Control
 ## Seletor de fases: um planeta por página, com o caminho das fases como mapa (StageMap).
 ## Cabeçalho fixo (capítulo, nome, progresso, bolinhas); só o mapa acompanha o dedo (PagedView).
-## Tocar numa fase liberada a inicia; a sugerida (a próxima) pulsa.
+## Tocar numa fase liberada a inicia; a sugerida (a próxima) pulsa. Depois do último planeta,
+## uma página avisa que novos capítulos chegam em breve.
 ## Em build de debug, tocar várias vezes no nome do capítulo libera todas as fases.
 
 var _chapter: int = 0
@@ -32,7 +33,7 @@ func _ready() -> void:
 	_pager = PagedView.new()
 	_pager.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	root.add_child(_pager)
-	_pager.setup(Session.campaign.planets.size(), _build_page, _chapter)
+	_pager.setup(Session.campaign.planets.size() + 1, _build_page, _chapter)
 	_pager.scrolled.connect(func(position: float) -> void: _refresh_header(roundi(position)))
 	_pager.page_changed.connect(func(index: int) -> void:
 		_chapter = index
@@ -86,10 +87,22 @@ func _build_header() -> Control:
 
 
 func _refresh_header(chapter: int) -> void:
-	chapter = clampi(chapter, 0, Session.campaign.planets.size() - 1)
+	chapter = clampi(chapter, 0, Session.campaign.planets.size())
 	if chapter == _header_chapter:
 		return
 	_header_chapter = chapter
+	var soon: bool = _is_soon_page(chapter)
+	_progress_label.get_parent().visible = not soon
+	if soon:
+		_number_label.text = tr("STAGE_SOON_CAPTION").to_upper()
+		_name_label.text = tr("STAGE_SOON_TITLE")
+		_name_label.add_theme_color_override("font_color", Params.stage_soon_color)
+		_name_label.add_theme_font_size_override("font_size", UiFactory.fit_font_size(_name_label.text,
+			Params.stage_header_name_width, Params.stage_chapter_font_size))
+		_reward_label.text = ""
+		_dots.queue_redraw()
+		Haptics.play(&"tick")
+		return
 	var planet: PlanetData = Session.campaign.planets[chapter]
 	_number_label.text = (tr("STAGE_CHAPTER") % (chapter + 1)).to_upper()
 	_name_label.text = tr(planet.name_key)
@@ -113,14 +126,52 @@ func _refresh_header(chapter: int) -> void:
 
 ## Monta o mapa de um planeta (o PagedView chama para o atual e os vizinhos).
 func _build_page(chapter: int) -> Control:
+	if _is_soon_page(chapter):
+		return _build_soon_page()
 	return StageMap.build_page(chapter, _on_stage_chosen, _open_stage_sheet)
+
+
+## A página depois do último planeta (não é um capítulo).
+func _is_soon_page(index: int) -> bool:
+	return index >= Session.campaign.planets.size()
+
+
+## "Em breve": um planeta tracejado e o aviso de que novos capítulos estão a caminho.
+func _build_soon_page() -> Control:
+	var column := VBoxContainer.new()
+	column.alignment = BoxContainer.ALIGNMENT_CENTER
+	column.add_theme_constant_override("separation", 40)
+	column.mouse_filter = Control.MOUSE_FILTER_PASS
+	var planet := Control.new()
+	planet.custom_minimum_size = Vector2.ONE * Params.stage_soon_planet_radius * 2.4
+	planet.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	planet.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	planet.draw.connect(func() -> void:
+		var center: Vector2 = planet.size * 0.5
+		var radius: float = Params.stage_soon_planet_radius
+		var dashes: int = 24
+		for i in dashes:
+			var start: float = TAU * i / dashes
+			planet.draw_arc(center, radius, start, start + TAU / dashes * 0.55, 6, Params.stage_soon_color, 6.0)
+		var font: Font = planet.get_theme_default_font()
+		var text_size: Vector2 = font.get_string_size("?", HORIZONTAL_ALIGNMENT_LEFT, -1, int(radius))
+		planet.draw_string(font, center + Vector2(-text_size.x * 0.5, text_size.y * 0.3), "?",
+			HORIZONTAL_ALIGNMENT_LEFT, -1, int(radius), Params.stage_soon_color))
+	column.add_child(planet)
+	var text := UiFactory.make_subtitle("STAGE_SOON_TEXT")
+	text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	text.custom_minimum_size.x = Params.stage_soon_text_width
+	text.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	column.add_child(text)
+	return column
 
 
 ## Bolinhas: uma por capítulo, cheias nos concluídos e destacada na página atual.
 func _chapter_dots() -> Control:
 	var dots := Control.new()
 	var count: int = Session.campaign.planets.size()
-	dots.custom_minimum_size = Vector2(count * Params.stage_dot_spacing, Params.stage_dot_spacing * 0.6)
+	dots.custom_minimum_size = Vector2((count + 1) * Params.stage_dot_spacing, Params.stage_dot_spacing * 0.6)
 	dots.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	dots.draw.connect(func() -> void:
 		for p in count:
@@ -131,7 +182,13 @@ func _chapter_dots() -> Control:
 			elif SaveGame.is_chapter_cleared(p):
 				dots.draw_circle(center, Params.stage_dot_radius, Color(color, 0.8))
 			else:
-				dots.draw_arc(center, Params.stage_dot_radius, 0.0, TAU, 16, Color(color, 0.6), 3.0))
+				dots.draw_arc(center, Params.stage_dot_radius, 0.0, TAU, 16, Color(color, 0.6), 3.0)
+		# Última bolinha: a página "em breve", menor e tracejada
+		var soon_center := Vector2((count + 0.5) * Params.stage_dot_spacing, dots.size.y * 0.5)
+		var soon_radius: float = Params.stage_dot_radius * (1.2 if _is_soon_page(_header_chapter) else 0.8)
+		for i in 6:
+			var start: float = TAU * i / 6.0
+			dots.draw_arc(soon_center, soon_radius, start, start + TAU / 12.0, 4, Params.stage_soon_color, 3.0))
 	return dots
 
 

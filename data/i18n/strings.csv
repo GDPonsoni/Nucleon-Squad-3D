@@ -228,3 +228,6 @@ UNLOCK_SHIP,New ship unlocked: %s. Add it to your squad.,Nova nave liberada: %s.
 UNLOCK_COMPANION,Wingman slot unlocked! Choose a small ship to fight beside you in the Squad screen.,Espaço da nave auxiliar liberado! Escolha uma nave pequena para lutar ao seu lado na tela Esquadrão.,¡Espacio de nave auxiliar desbloqueado! Elige una nave pequeña para luchar a tu lado en la pantalla Escuadrón.
 UNLOCK_PLANET,Chapter complete! The next planet awaits: %s.,Capítulo concluído! O próximo planeta te espera: %s.,¡Capítulo completado! El siguiente planeta te espera: %s.
 SETTINGS_SHORT_DAMAGE,Damage,Dano,Daño
+STAGE_SOON_CAPTION,Coming soon,Em breve,Próximamente
+STAGE_SOON_TITLE,New chapters,Novos capítulos,Nuevos capítulos
+STAGE_SOON_TEXT,New planets are on the way. Keep evolving your Core and chasing stars!,Novos planetas estão a caminho. Continue evoluindo o núcleo e buscando estrelas!,Nuevos planetas están en camino. ¡Sigue mejorando el núcleo y buscando estrellas!
