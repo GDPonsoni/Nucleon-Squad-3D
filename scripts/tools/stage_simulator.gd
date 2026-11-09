@@ -17,6 +17,8 @@ extends Node
 ##   --squad a,b,c,d  ids dos corpos do esquadrão (padrão: o salvo / inicial)
 ##   --companion id   nave auxiliar (padrão: nenhuma)
 ##   --upgrades a=3,b=1  níveis da evolução do núcleo (padrão: nenhum)
+##   --expected       evolução esperada no capítulo de cada fase: Dano e Cadência até o
+##                    BalanceData.expected_power_by_chapter (mede a dificuldade "alinhada")
 ##   --boss-only      pula direto para o chefe (fases com chefe)
 ## Não grava o save do aparelho.
 
@@ -38,6 +40,7 @@ var _candidates := PackedVector2Array()
 var _results: Array[Dictionary] = []
 var _waiting_free: int = 0
 var _boss_only: bool = false
+var _expected: bool = false
 
 
 func _ready() -> void:
@@ -58,6 +61,7 @@ func _ready() -> void:
 			var parts: PackedStringArray = pair.split("=")
 			SaveGame.upgrades[parts[0]] = int(parts[1])
 	_boss_only = args.has("boss-only")
+	_expected = args.has("expected")
 
 	var campaign: CampaignData = Session.campaign
 	var wanted: PackedStringArray = PackedStringArray()
@@ -103,6 +107,8 @@ func _start_next() -> void:
 	var next: Vector2i = _queue.pop_front()
 	Session.select(next.x, next.y)
 	_stage_id = String(Session.stage().id)
+	if _expected:
+		SaveGame.upgrades = _expected_upgrades(next.x)
 	if _boss_only and Session.stage().boss != null:
 		var copy: StageData = Session.stage().duplicate()
 		copy.duration_seconds = 2.0
@@ -121,6 +127,31 @@ func _start_next() -> void:
 	_game = (load("res://scenes/game.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(_game)
 	_hold_finger()
+
+
+## Níveis de Dano e Cadência (o mais barato primeiro) que chegam ao poder esperado do capítulo.
+func _expected_upgrades(chapter: int) -> Dictionary:
+	var target: float = BalanceData._at(Params.balance.expected_power_by_chapter, chapter)
+	var nodes: Array[UpgradeData] = []
+	for node in Session.upgrade_tree.nodes:
+		if node.stat == UpgradeData.Stat.DAMAGE or node.stat == UpgradeData.Stat.FIRE_RATE:
+			nodes.append(node)
+	var levels := {}
+	var power: float = 1.0
+	while power < target - 0.001:
+		var pick: UpgradeData = null
+		for node in nodes:
+			var level: int = int(levels.get(String(node.id), 0))
+			if node.is_maxed(level):
+				continue
+			if pick == null or node.cost(level + 1) < pick.cost(int(levels.get(String(pick.id), 0)) + 1):
+				pick = node
+		if pick == null:
+			break
+		levels[String(pick.id)] = int(levels.get(String(pick.id), 0)) + 1
+		var boosts: PlayerBoosts = Session.upgrade_tree.boosts_for(levels)
+		power = boosts.damage * boosts.fire_rate
+	return levels
 
 
 ## Dedo na tela o tempo todo: sem câmera lenta.

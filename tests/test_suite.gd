@@ -567,3 +567,54 @@ func test_damage_numbers() -> void:
 	SaveGame.settings.erase("damage_numbers")
 	numbers.free()
 	target.free()
+
+
+## Vida dos inimigos = poder esperado x resistência. O poder esperado de cada capítulo cabe no
+## que a renda da 1ª passada compra só em Dano e Cadência (máximo) e não fica muito abaixo disso
+## (o jogador também gasta em defesa e suporte).
+func test_hp_follows_player_power() -> void:
+	var balance: BalanceData = Params.balance
+	check(is_equal_approx(balance.enemy_hp_factor(0, 0), 1.4), "1-1 mantém a vida de antes (1,4)")
+	var damage: UpgradeData = _node("damage")
+	var fire_rate: UpgradeData = _node("fire_rate")
+	var earned: int = 0
+	for chapter in Session.campaign.planets.size():
+		var power: float = BalanceData._at(balance.expected_power_by_chapter, chapter)
+		if chapter > 0:
+			check(power >= BalanceData._at(balance.expected_power_by_chapter, chapter - 1), "poder esperado não cai")
+			check(BalanceData._at(balance.toughness_by_chapter, chapter) >= BalanceData._at(balance.toughness_by_chapter, chapter - 1), "resistência não cai")
+			# Compra o nível mais barato entre Dano e Cadência até o dinheiro acabar
+			var budget: int = earned
+			var levels := {"damage": 0, "fire_rate": 0}
+			while true:
+				var options: Array = []
+				for node in [damage, fire_rate]:
+					var level: int = levels[String(node.id)]
+					if not node.is_maxed(level) and node.cost(level + 1) <= budget:
+						options.append(node)
+				if options.is_empty():
+					break
+				options.sort_custom(func(a: UpgradeData, b: UpgradeData) -> bool:
+					return a.cost(levels[String(a.id)] + 1) < b.cost(levels[String(b.id)] + 1))
+				var pick: UpgradeData = options[0]
+				budget -= pick.cost(levels[String(pick.id)] + 1)
+				levels[String(pick.id)] += 1
+			var max_power: float = (1.0 + damage.per_level * levels["damage"]) * (1.0 + fire_rate.per_level * levels["fire_rate"])
+			check(power <= max_power + 0.01 and power >= max_power * 0.6, "cap. %d: poder esperado %.2f, máximo comprável %.2f" % [chapter + 1, power, max_power])
+		earned += (SaveGame.clear_bonus(chapter, true, 2, 0) + 70) * Session.campaign.planets[chapter].stages.size()
+
+
+## Seletor de fases: uma página a mais depois do último planeta, com o aviso "em breve".
+func test_stage_select_soon_page() -> void:
+	var screen: Control = (load(ScenePaths.STAGE_SELECT) as PackedScene).instantiate()
+	add_child(screen)
+	var last: int = Session.campaign.planets.size()
+	check(screen._is_soon_page(last) and not screen._is_soon_page(last - 1), "página extra só depois do último planeta")
+	var page: Control = screen._build_page(last)
+	check(page != null and not page is ScrollContainer, "página em breve não é um mapa")
+	screen._refresh_header(last)
+	check(screen._name_label.text == tr("STAGE_SOON_TITLE"), "cabeçalho mostra novos capítulos")
+	screen._refresh_header(0)
+	check(screen._name_label.text == tr(Session.campaign.planets[0].name_key), "voltar ao planeta 1 restaura o cabeçalho")
+	page.free()
+	screen.queue_free()

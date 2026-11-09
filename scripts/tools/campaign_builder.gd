@@ -25,14 +25,17 @@ const PAIR_OFTEN_FROM: float = 3.6  # a partir dessa, uma a cada 2
 const DANGER_BASE: float = 6.5
 const DANGER_PER_CHAPTER: float = 2.05
 const DANGER_PER_STAGE: float = 0.75
+const DANGER_MAX: float = 17.0  # teto do orçamento: a 5-8 passava do dobro das vizinhas
 const DANGER_MIDBOSS: float = 0.55  # fase do chefe intermediário: ondas mais leves
 const DANGER_BOSS: float = 0.7  # fase do chefe: o chefe é o desafio principal
-const HP_SCALE: PackedFloat32Array = [1.4, 1.45, 1.55, 1.55, 1.65]  # vida dos inimigos por capítulo
 const FIRE_SCALE: PackedFloat32Array = [1.35, 1.32, 1.32, 1.3, 1.32]  # cadência de tiro por capítulo
 # Reforço de dificuldade por capítulo (os primeiros estavam fáceis demais)
-const DIFFICULTY_BOOST: PackedFloat32Array = [0.8, 0.5, 0.35, 0.2, 0.0]
+const DIFFICULTY_BOOST: PackedFloat32Array = [0.5, 0.8, 0.35, 0.2, 0.0]
 # Duração alvo da partida: 5 min (300 s). Fases com chefe: ondas mais curtas, a luta completa o tempo.
-const CYCLE_LEVEL_CAP: int = 4  # voltas do ciclo de motivos que ainda aumentam as ondas (fases longas repetem o tamanho)
+const DIFFICULTY_PER_STAGE: float = 0.2  # quanto cada fase do capítulo soma à dificuldade
+## Voltas do ciclo de motivos que ainda aumentam as ondas, por fase do capítulo (fases longas
+## repetem o tamanho depois disso). Começa baixo para o capítulo subir de fase em fase.
+const CYCLE_LEVEL_CAP_BY_STAGE: PackedInt32Array = [2, 2, 3, 3, 3, 4, 4, 4, 4]
 # Camada de ação: ondas que não atiram (kamikazes, faíscas, enxames, serpentes) entre os motivos.
 # Mais movimento e abates na tela sem mais tiros. Surtos a cada minuto juntam várias de uma vez.
 const ACTION_GAP_BASE: float = 4.4  # segundos entre ondas de ação no capítulo 1
@@ -42,8 +45,8 @@ const ACTION_METEOR_DENSITY: float = 0.6  # fase dos meteoros: menos ação (as 
 const SURGE_EVERY: float = 60.0  # surto de ação (3 ondas seguidas)
 const SURGE_WAVES: int = 3
 const SURGE_GAP: float = 1.4
-const STAR2_RATIO: float = 0.65  # 2 estrelas: fração da pontuação possível da fase
-const STAR3_RATIO: float = 0.92  # 3 estrelas
+const STAR2_RATIO: float = 0.75  # 2 estrelas: fração da pontuação possível da fase
+const STAR3_RATIO: float = 1.0  # 3 estrelas: abater praticamente tudo (sem contar excedentes)
 const METEOR_STAGE: int = 6  # índice da fase 7: campo de meteoros em todo capítulo
 const SPECIAL_STAGE: int = 7  # índice da fase 8: o clímax vem blindado (momento de especial)
 const METEOR_WAVE_GAP: float = 1.45  # no campo de meteoros, ondas mais espaçadas
@@ -99,10 +102,10 @@ func _save(resource: Resource, path: String) -> void:
 		push_error("Falha ao salvar %s: %s" % [path, error_string(error)])
 
 
-## Dificuldade de 0,8 (1-1) a ~4,4 (5-9): sobe ao longo do capítulo e recua um pouco no
+## Dificuldade de 0,5 (1-1) a ~4,8 (5-9): sobe ao longo do capítulo e recua um pouco no
 ## começo do seguinte (respiro depois do chefe).
 func _difficulty(c: int, s: int) -> float:
-	return c * 0.8 + s * 0.15 + DIFFICULTY_BOOST[c]
+	return c * 0.8 + s * DIFFICULTY_PER_STAGE + DIFFICULTY_BOOST[c]
 
 
 func _build_stage(c: int, s: int) -> StageData:
@@ -111,7 +114,7 @@ func _build_stage(c: int, s: int) -> StageData:
 	var stage := StageData.new()
 	_current_stage = stage
 	stage.id = StringName("p%d_s%d" % [c + 1, s + 1])
-	stage.enemy_hp_scale = HP_SCALE[c]
+	stage.enemy_hp_scale = 1.0  # a vida por capítulo fica em BalanceData (poder esperado x resistência)
 	stage.enemy_fire_scale = FIRE_SCALE[c]
 	stage.start_delay = 2.0
 	if s == MIDBOSS_STAGE:
@@ -209,7 +212,7 @@ func _compose(c: int, s: int, d: float, duration: float) -> Array[WaveData]:
 	while t < duration - 6.0:
 		var motif: Dictionary = chosen[i % chosen.size()]
 		var cycle: int = i / chosen.size()
-		var level: int = mini(cycle, CYCLE_LEVEL_CAP) + bonus
+		var level: int = mini(cycle, CYCLE_LEVEL_CAP_BY_STAGE[s]) + bonus
 		var mirrored: bool = cycle % 2 == 1
 		var built: Array[WaveData] = (motif["build"] as Callable).call(t, level, mirrored)
 		_last_built = built.size()
@@ -287,8 +290,6 @@ func _choose_motifs(c: int, s: int) -> Array[Dictionary]:
 		heavy_budget = 1
 		if c >= 3 or (s != BOSS_STAGE and (s >= 5 or (c >= 2 and s >= 3))):
 			heavy_budget = 2
-		if c >= 4 and s >= 5 and s != BOSS_STAGE:
-			heavy_budget = 3
 	var available: Array[Dictionary] = []
 	for motif in _motifs:
 		if motif["chapter"] < c or (motif["chapter"] == c and motif["stage"] <= s):
@@ -304,7 +305,7 @@ func _choose_motifs(c: int, s: int) -> Array[Dictionary]:
 			chosen.append(newest)
 			if newest["heavy"]:
 				heavy_budget -= 1
-	var budget: float = DANGER_BASE + DANGER_PER_CHAPTER * c + DANGER_PER_STAGE * s
+	var budget: float = minf(DANGER_BASE + DANGER_PER_CHAPTER * c + DANGER_PER_STAGE * s, DANGER_MAX)
 	if s == MIDBOSS_STAGE:
 		budget *= DANGER_MIDBOSS
 	elif s == BOSS_STAGE:

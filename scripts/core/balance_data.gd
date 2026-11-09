@@ -1,15 +1,19 @@
 class_name BalanceData
 extends Resource
 ## Ritmo e economia da partida num só lugar (data/balance.tres, carregado em Params.balance).
-## Só ordens de grandeza: ajuste aqui, a lógica não muda. Um painel de debug pode ler
-## tunables() e escrever direto nas propriedades.
+## Só ordens de grandeza: ajuste aqui, a lógica não muda.
 
 @export_group("Vida dos inimigos")
-## Multiplicador global sobre a vida de todo inimigo (soma-se a StageData.enemy_hp_scale).
+## Única escala de vida dos inimigos comuns: poder esperado do jogador x resistência, por capítulo
+## (índice 0 = capítulo 1; passou do fim = repete o último). StageData.enemy_hp_scale fica em 1
+## e só serve para uma fase especial.
+## Multiplicador global sobre a vida de todo inimigo.
 @export_range(0.1, 10.0, 0.05) var enemy_hp_multiplier: float = 1.0
-## Multiplicador por capítulo (índice 0 = capítulo 1). O jogador evolui com o avanço, então a
-## vida sobe junto; o capítulo 1 fica em 1 para quem começa do zero. Passa do fim = repete o último.
-@export var enemy_hp_by_chapter: PackedFloat32Array = [1.0, 1.4, 1.9, 2.4, 3.0]
+## Poder do jogador esperado no começo de cada capítulo (dano x cadência da evolução do núcleo,
+## pela renda de quarks da 1ª passada; test_hp_follows_player_power confere).
+@export var expected_power_by_chapter: PackedFloat32Array = [1.0, 1.4, 1.7, 2.0, 2.4]
+## Quanto os inimigos aguentam além desse poder: sobe devagar, é o desafio "real" do capítulo.
+@export var toughness_by_chapter: PackedFloat32Array = [1.4, 1.5, 1.6, 1.7, 1.8]
 ## Curva por fase: cada fase do capítulo (0 a 8) soma esta fração à vida (1 + n x passo).
 @export_range(0.0, 0.5, 0.01) var enemy_hp_per_stage: float = 0.05
 
@@ -54,10 +58,15 @@ extends Resource
 
 ## Fator final de vida para a fase `stage_index` (0 a 8) do capítulo `chapter_index` (0 a 4).
 func enemy_hp_factor(chapter_index: int, stage_index: int) -> float:
-	var chapter: float = 1.0
-	if not enemy_hp_by_chapter.is_empty():
-		chapter = enemy_hp_by_chapter[clampi(chapter_index, 0, enemy_hp_by_chapter.size() - 1)]
+	var chapter: float = _at(expected_power_by_chapter, chapter_index) * _at(toughness_by_chapter, chapter_index)
 	return enemy_hp_multiplier * chapter * (1.0 + enemy_hp_per_stage * stage_index)
+
+
+## Valor da lista no índice (passou do fim = o último; lista vazia = 1).
+static func _at(values: PackedFloat32Array, index: int) -> float:
+	if values.is_empty():
+		return 1.0
+	return values[clampi(index, 0, values.size() - 1)]
 
 
 ## Segundos de jogo entre drops de um tipo: `count` itens em `span` da fase de `stage_seconds`.
@@ -79,15 +88,3 @@ func medkit_interval(stage_seconds: float, cut: float = 0.0) -> float:
 
 func companion_powerup_interval(stage_seconds: float) -> float:
 	return drop_interval(stage_seconds, companion_powerups_per_stage, companion_powerup_span)
-
-
-## Lista de ajustes para um painel: {name, value, group, hint}. Só propriedades @export.
-func tunables() -> Array[Dictionary]:
-	var out: Array[Dictionary] = []
-	var group: String = ""
-	for p in get_property_list():
-		if p["usage"] & PROPERTY_USAGE_GROUP:
-			group = p["name"]
-		elif p["usage"] & PROPERTY_USAGE_SCRIPT_VARIABLE and p["usage"] & PROPERTY_USAGE_EDITOR:
-			out.append({"name": p["name"], "value": get(p["name"]), "group": group, "hint": p["hint_string"]})
-	return out
