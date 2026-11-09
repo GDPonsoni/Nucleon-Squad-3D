@@ -144,7 +144,10 @@ func _try_present(context: StringName) -> void:
 		return
 	var item: Dictionary = items.pop_front()
 	var ref: WeakRef = item.get("target")
-	_begin(context, tip, presenter, ref.get_ref() if ref != null else null)
+	var target: Variant = ref.get_ref() if ref != null else null
+	if ref != null and not tip.has("highlight") and not _target_alive(target):
+		return  # o elemento já sumiu: a dica volta a disparar na próxima vez
+	_begin(context, tip, presenter, target)
 
 
 ## Dicas de partida que esperaram demais (o momento passou) saem da fila e voltam a poder disparar.
@@ -155,6 +158,10 @@ func _drop_stale(context: StringName, items: Array) -> void:
 	for i in range(items.size() - 1, -1, -1):
 		if _now() - int(items[i]["at"]) > limit:
 			items.remove_at(i)
+
+
+func _target_alive(target: Variant) -> bool:
+	return target is CanvasItem and is_instance_valid(target) and (target as CanvasItem).is_visible_in_tree()
 
 
 func _begin(context: StringName, tip: Dictionary, presenter: Object, target: Variant = null) -> void:

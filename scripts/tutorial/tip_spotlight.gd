@@ -116,31 +116,47 @@ func _build(text: String) -> void:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", Params.tip_card_font_size)
 	label.custom_minimum_size.x = width - Params.ui_panel_padding * 2.0
+	label.size_flags_horizontal = Control.SIZE_FILL
 	column.add_child(label)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 24)
+	var inner: float = width - Params.ui_panel_padding * 2.0
+	var button_width: float = (inner - 24.0) * 0.5
 	var disable := UiFactory.make_button("TIP_DISABLE")
-	disable.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	disable.pressed.connect(func() -> void:
 		Tutorial.disable_tips()
 		close())
-	row.add_child(disable)
 	var ok := UiFactory.make_primary_button("TIP_OK")
-	ok.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	ok.pressed.connect(close)
-	row.add_child(ok)
+	for button: Button in [disable, ok]:
+		button.custom_minimum_size = Vector2(button_width, Params.tip_card_button_height)
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.text = tr(button.text)
+		button.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		UiFactory.fit_button_text(button, button_width)
+		# Travados um instante: um toque que já vinha do jogo não fecha a dica sem ler
+		button.disabled = true
+		row.add_child(button)
 	column.add_child(row)
+	get_tree().create_timer(Params.tip_card_lock_seconds, true, false, true).timeout.connect(func() -> void:
+		if is_instance_valid(disable):
+			disable.disabled = false
+		if is_instance_valid(ok):
+			ok.disabled = false)
 	_root.add_child(_card)
 	await get_tree().process_frame
 	if _card == null:
 		return
-	var below: bool = not _hole.has_area() or _hole.get_center().y < view.y * 0.5
+	_card.size = Vector2(width, 0.0)  # encolhe para a altura do conteúdo, na largura do card
+	_card.position.x = (view.x - _card.size.x) * 0.5
+	var margin: float = Params.tip_card_screen_margin
 	if not _hole.has_area():
 		_card.position.y = (view.y - _card.size.y) * 0.5
-	elif below:
-		_card.position.y = minf(_hole.end.y + Params.tip_card_gap, view.y - _card.size.y - 60.0)
+	elif _hole.get_center().y < view.y * 0.5:
+		_card.position.y = _hole.end.y + Params.tip_card_gap
 	else:
-		_card.position.y = maxf(_hole.position.y - Params.tip_card_gap - _card.size.y, 120.0)
+		_card.position.y = _hole.position.y - Params.tip_card_gap - _card.size.y
+	_card.position.y = clampf(_card.position.y, margin, view.y - _card.size.y - margin)
 	_root.modulate.a = 0.0
 	create_tween().tween_property(_root, "modulate:a", 1.0, 0.18)
 	Audio.play(&"ui_click")

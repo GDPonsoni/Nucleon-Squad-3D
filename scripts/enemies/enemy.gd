@@ -399,7 +399,9 @@ func _start_telegraph(seconds: float) -> void:
 	_tele_total = maxf(seconds, 0.01)
 	_tele_left = seconds
 	_tele_dirs = _attack_dirs()
-	Tutorial.notify(&"enemy_telegraph", "", self)
+	# Dica só com o inimigo já dentro da tela (não colado na borda de cima)
+	if position.y > get_viewport_rect().size.y * Params.tip_min_target_y:
+		Tutorial.notify(&"enemy_telegraph", "", self)
 	if data.telegraph_sound:
 		Audio.play(&"boss_warning", Params.telegraph_sound_db, 1.5)
 

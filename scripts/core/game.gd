@@ -219,7 +219,14 @@ func _setup_tutorial() -> void:
 	tip_spotlight.highlight_rect = _tip_highlight_rect
 	add_child(tip_spotlight)
 	Tutorial.attach(Tutorial.MATCH, tip_spotlight)
-	touch_input.touch_ended.connect(func() -> void: Tutorial.notify(&"touch_released", "", player))
+	var held_since := [-1]
+	touch_input.touch_started.connect(func(_pos: Vector2) -> void: held_since[0] = Time.get_ticks_msec())
+	touch_input.touch_ended.connect(func() -> void:
+		var held: float = (Time.get_ticks_msec() - held_since[0]) / 1000.0 if held_since[0] >= 0 else 0.0
+		held_since[0] = -1
+		# A pausa também solta o dedo: só conta o soltar de verdade, depois de mover a nave
+		if not get_tree().paused and held >= Params.tip_slowmo_after_hold_seconds:
+			Tutorial.notify(&"touch_released", "", player))
 	Tutorial.notify(&"match_start", String(_stage().id), player)
 	if companion != null:
 		Tutorial.notify(&"companion_active", "", companion)
