@@ -4,20 +4,26 @@ extends VBoxContainer
 ## nível de cada arma em tracinhos embaixo. Usado na pausa e na tela de subir de nível.
 
 var _progress: RunProgress
+var compact: bool = false  # versão menor, sem nomes (câmera lenta)
 
 
-static func build(progress: RunProgress) -> RunLoadoutView:
+static func build(progress: RunProgress, is_compact: bool = false) -> RunLoadoutView:
 	var view := RunLoadoutView.new()
 	view._progress = progress
+	view.compact = is_compact
 	return view
 
 
 func _ready() -> void:
 	alignment = BoxContainer.ALIGNMENT_CENTER
 	add_theme_constant_override("separation", 10)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var caption := UiFactory.make_subtitle("")
 	caption.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	caption.text = tr("RUN_SLOTS") % [_progress.slots_used(), _progress.mode.weapon_slots]
+	if compact:
+		caption.text = "%s · %s" % [tr("RUN_LEVEL") % _progress.level, caption.text]
+		caption.add_theme_font_size_override("font_size", Params.run_card_detail_font_size)
 	add_child(caption)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -31,16 +37,17 @@ func _ready() -> void:
 func _slot(ship: BodyData) -> Control:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 8)
+	var slot_size: float = Params.run_slot_compact_size if compact else Params.run_slot_size
 	var icon := ShipIcon.new()
-	icon.custom_minimum_size = Vector2.ONE * Params.run_slot_size
+	icon.custom_minimum_size = Vector2.ONE * slot_size
 	icon.body = ship
 	column.add_child(icon)
 	var pips := Control.new()
-	pips.custom_minimum_size = Vector2(Params.run_slot_size, Params.run_slot_pip_size.y + 4.0)
+	pips.custom_minimum_size = Vector2(slot_size, Params.run_slot_pip_size.y + 4.0)
 	pips.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	pips.draw.connect(func() -> void: _draw_pips(pips, ship))
 	column.add_child(pips)
-	if ship != null:
+	if ship != null and not compact:
 		var name_label := UiFactory.make_subtitle(ship.name_key)
 		name_label.add_theme_font_size_override("font_size", Params.run_card_detail_font_size)
 		column.add_child(name_label)

@@ -7,7 +7,7 @@ signal chosen(choice: RunChoice)
 
 var progress: RunProgress
 var choices: Array[RunChoice] = []
-var first_pick: bool = false  # início da partida: "escolha sua arma"
+var first_pick: bool = false  # 1ª arma da partida: "escolha sua arma"
 
 
 static func open_choices(parent: Node, run_progress: RunProgress, options: Array[RunChoice], is_first: bool) -> LevelUpMenu:
@@ -23,12 +23,11 @@ static func open_choices(parent: Node, run_progress: RunProgress, options: Array
 
 func _build_body() -> void:
 	back_handler = func() -> void: pass  # Voltar não fecha: a escolha é obrigatória
-	if not first_pick:
-		var level := UiFactory.make_subtitle("")
-		level.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
-		level.text = tr("RUN_LEVEL") % progress.level
-		level.add_theme_color_override("font_color", Params.run_xp_color)
-		body.add_child(level)
+	var level := UiFactory.make_subtitle("")
+	level.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	level.text = tr("RUN_LEVEL") % progress.level
+	level.add_theme_color_override("font_color", Params.run_xp_color)
+	body.add_child(level)
 	body.add_child(RunLoadoutView.build(progress))
 	for choice in choices:
 		body.add_child(_card(choice))

@@ -11,8 +11,8 @@ extends Resource
 
 @export_group("XP")
 @export var xp_per_point: float = 0.1  # XP por ponto de pontuação do inimigo destruído
-@export var xp_first_level: float = 20.0  # XP para o 1º nível
-@export var xp_growth: float = 1.22  # cada nível pede isso vezes o anterior
+@export var xp_first_level: float = 120.0  # XP para o 1º nível (~30 s nas ondas iniciais)
+@export var xp_growth: float = 1.3  # cada nível pede isso vezes o anterior (calibrar com a escala da etapa c)
 
 @export_group("Recompensa sem arma para subir")
 ## Quando faltam armas para completar as opções (ou todas estão no máximo).

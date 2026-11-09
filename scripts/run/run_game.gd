@@ -2,6 +2,7 @@ extends "res://scripts/core/game.gd"
 ## Modo roguelike (nome provisório): nave branca única com ataque frontal e até 3 armas
 ## escolhidas ao subir de nível com o XP dos orbes. Estende a partida da campanha pelos
 ## ganchos de modo. Regras em data/run/run_mode.tres (RunModeData).
+## Começa só com o ataque frontal; a 1ª arma vem no 1º nível.
 ## Etapa (a): ondas provisórias (uma fase da campanha em laço), sem chefes nem escala.
 
 var mode: RunModeData
@@ -11,7 +12,6 @@ var run_hud: RunHud
 var _rng := RandomNumberGenerator.new()
 var _clock: float = 0.0
 var _choosing: bool = false
-var _first_pick_done: bool = false
 var _equipped: Dictionary = {}  # id do corpo -> Weapon montada na nave
 
 
@@ -88,7 +88,7 @@ func _on_mode_ready() -> void:
 	results_menu.title_text = tr("RUN_MODE_NAME")
 	results_menu.restart_path = ScenePaths.RUN
 	results_menu.back_path = ScenePaths.MENU
-	_open_choices.call_deferred(true)
+	run_hud.time_controller = time_controller
 
 
 func _on_enemy_killed(killed: Enemy) -> void:
@@ -124,14 +124,16 @@ func _process(delta: float) -> void:
 	if _match_over:
 		return
 	_clock += delta
-	if progress.pending > 0 and not _choosing and _first_pick_done:
-		_open_choices(false)
+	if progress.pending > 0 and not _choosing:
+		_open_choices()
 
 
-func _open_choices(first: bool) -> void:
+## Até o 1º nível só o ataque frontal; a partir dele, 4 opções por nível.
+func _open_choices() -> void:
 	if _match_over:
 		return
-	var options: Array[RunChoice] = progress.roll_choices(_rng, _available(), not first)
+	var first: bool = progress.owned.is_empty()
+	var options: Array[RunChoice] = progress.roll_choices(_rng, _available())
 	if options.is_empty():
 		progress.pending = 0
 		return
@@ -139,15 +141,9 @@ func _open_choices(first: bool) -> void:
 	get_tree().paused = true
 	pause_menu.disable()
 	var menu := LevelUpMenu.open_choices(self, progress, options, first)
-	if first:
-		Audio.play(&"ui_confirm")
-	else:
-		Audio.play(&"weapon_levelup")
-		Haptics.play(&"nivel_arma")
+	Audio.play(&"weapon_levelup")
+	Haptics.play(&"nivel_arma")
 	var choice: RunChoice = await menu.chosen
-	if first:
-		progress.pending += 1  # a escolha inicial não gasta nível
-		_first_pick_done = true
 	progress.apply(choice)
 	if choice.kind == RunChoice.Kind.QUARKS:
 		state.quarks += choice.quarks

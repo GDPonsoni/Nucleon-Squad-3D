@@ -13,15 +13,32 @@ func _ready() -> void:
 	await _frames(5)
 	var progress: RunProgress = game.get("progress")
 	var player: Player = game.get("player")
-	# Começo: jogo pausado com a escolha da 1ª arma
+	# Começo: só o ataque frontal, sem escolha
+	_check(_menu(game) == null and not get_tree().paused and progress.owned.is_empty(), "começa sem escolha, só o ataque frontal")
+	await get_tree().create_timer(0.6).timeout
+	_check(player.mount.weapons().size() == 1, "só o ataque frontal montado")
+	# 1º nível: escolha da 1ª arma
+	progress.add_xp(progress.xp_needed() + 0.1)
+	await _frames(3)
 	var menu: LevelUpMenu = _menu(game)
-	_check(menu != null and get_tree().paused, "escolha inicial abre pausada")
-	_check(menu != null and menu.choices.size() == 4, "4 opções no começo")
+	_check(menu != null and get_tree().paused and menu.first_pick, "1º nível abre a escolha da 1ª arma")
+	_check(menu != null and menu.choices.size() == 4, "4 opções no 1º nível")
+	await _frames(2)
+	var time: TimeController = game.get("time_controller")
 	var first: RunChoice = menu.choices[0]
 	menu.chosen.emit(first)
 	menu.close()
 	await _frames(3)
 	_check(not get_tree().paused and progress.slots_used() == 1, "arma escolhida, jogo segue")
+	# Câmera lenta mostra os espaços de arma
+	var hud: RunHud = game.get("run_hud")
+	time._on_touch_started(player.position)
+	time.energy = 1.0
+	time._on_touch_ended()
+	await get_tree().create_timer(0.5, true, false, true).timeout
+	var slow_box: Control = hud.get("_loadout_box")
+	_check(slow_box.modulate.a > 0.9, "câmera lenta mostra as armas (%.2f)" % slow_box.modulate.a)
+	time._on_touch_started(player.position)
 	await get_tree().create_timer(0.6).timeout  # a nave termina de se montar
 	_check(player.mount.weapons().size() == 2, "ataque frontal + 1 arma montados (%d)" % player.mount.weapons().size())
 	# XP: sobe de nível e a escolha abre
