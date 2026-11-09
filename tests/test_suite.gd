@@ -167,12 +167,14 @@ func test_buy_upgrade_rules() -> void:
 func test_boosts_from_levels() -> void:
 	var boosts: PlayerBoosts = Session.upgrade_tree.boosts_for({
 		"damage": 3, "hull": 2, "collect": 1, "special": 2, "shield": 1, "head_start": 1, "overdrive": 5,
+		"repair": 2, "arsenal": 3,
 	})
 	check(is_equal_approx(boosts.damage, 1.0 + 0.08 * 3 + 0.02 * 5), "dano %.3f" % boosts.damage)
 	check(boosts.extra_hits == 2, "hits extras")
 	check(is_equal_approx(boosts.quarks, 1.1) and is_equal_approx(boosts.pickup_radius, 1.15), "coleta")
 	check(is_equal_approx(boosts.special_damage, 1.2) and is_equal_approx(boosts.special_charge, 0.9), "especial")
 	check(boosts.shields == 1 and boosts.start_level_bonus == 1, "escudo e arma inicial")
+	check(is_equal_approx(boosts.medkit_interval_cut, 0.2) and is_equal_approx(boosts.powerup_interval_cut, 0.24), "Reparo e Arsenal encurtam intervalos")
 	var neutral: PlayerBoosts = Session.upgrade_tree.boosts_for({})
 	check(neutral.damage == 1.0 and neutral.extra_hits == 0 and neutral.shields == 0, "sem evolução = neutro")
 
@@ -460,14 +462,25 @@ func test_unlock_notices() -> void:
 	SaveGame.tips_seen = save_seen
 
 
-## Power-ups por tempo: 15 em 75% da fase; o bônus do núcleo encurta, nunca abaixo de 40%.
+## Drops por tempo: 15 power-ups em 75% da fase, poucos kits e auxiliar rara; a evolução encurta com piso.
 func test_powerup_pacing() -> void:
 	var balance: BalanceData = Params.balance
 	var interval: float = balance.powerup_interval(120.0)
 	check(is_equal_approx(interval * balance.powerups_per_stage, 120.0 * balance.powerup_span), "15 power-ups cobrem 75% da fase")
-	check(balance.powerup_interval(120.0, 3) < interval, "bônus do núcleo encurta o intervalo")
-	check(balance.powerup_interval(120.0, 100) >= interval * 0.4 - 0.001, "intervalo tem piso")
+	check(balance.powerup_interval(120.0, 0.24) < interval, "Arsenal encurta o intervalo")
+	check(balance.powerup_interval(120.0, 5.0) >= interval * balance.drop_interval_floor - 0.001, "intervalo tem piso")
 	check(balance.powerups_per_stage >= 12, "dá para pôr 3 armas no nível 5 (4 power-ups cada)")
+	check(balance.medkits_per_stage <= 3, "kits médicos são poucos por fase")
+	check(balance.medkit_interval(300.0, 0.5) < balance.medkit_interval(300.0), "Reparo encurta o intervalo dos kits")
+	check(balance.companion_powerups_per_stage <= 2, "power-up da auxiliar é raro")
+	# O dropper solta pelo relógio, não pelos abates
+	var dropper := PowerUpDropper.new()
+	dropper.setup(null, PlayerBoosts.new(), 300.0)
+	dropper._process(balance.medkit_interval(300.0) + 0.01)
+	check(dropper.owed(PowerUp.Kind.HEAL) == 1, "um kit devido após um intervalo")
+	check(dropper.owed(PowerUp.Kind.COMPANION) == 0, "sem auxiliar, não acumula power-up dela")
+	check(dropper.owed(PowerUp.Kind.WEAPON) == PowerUpDropper.MAX_OWED, "power-ups de arma acumulam até o limite")
+	dropper.free()
 
 
 ## Chefes: cópia com mais vida e uma fase de fúria extra; o recurso original não muda.

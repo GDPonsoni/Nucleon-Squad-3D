@@ -11,9 +11,9 @@ enum Stat {
 	MAX_HITS,  ## hits a mais em cada corpo
 	INVULNERABILITY,  ## segundos a mais de invulnerabilidade após levar hit
 	SHIELD,  ## escudos por fase (cada um absorve um hit)
-	MEDKIT,  ## medkit N inimigos antes
+	MEDKIT,  ## intervalo entre kits médicos (-% por nível)
 	COLLECT,  ## quarks (+%) e alcance de coleta (+1,5x isso)
-	POWERUP,  ## power-up N inimigos antes
+	POWERUP,  ## intervalo entre power-ups de arma (-% por nível)
 	COMPANION,  ## dano da nave auxiliar (+%)
 	START_LEVEL,  ## níveis a mais nas armas ao começar a fase
 	OVERDRIVE,  ## dano geral (+%), sem limite de níveis
@@ -56,7 +56,7 @@ func value_text(level: int) -> String:
 		Stat.MAX_HITS, Stat.SHIELD, Stat.START_LEVEL:
 			return "+%d" % roundi(total)
 		Stat.MEDKIT, Stat.POWERUP:
-			return "-%d" % roundi(total)
+			return "-%d%%" % roundi(total * 100.0)
 		Stat.INVULNERABILITY:
 			return "+%s s" % _decimal(total)
 		_:

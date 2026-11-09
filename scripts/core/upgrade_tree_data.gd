@@ -46,12 +46,12 @@ func boosts_for(levels: Dictionary) -> PlayerBoosts:
 			UpgradeData.Stat.SHIELD:
 				boosts.shields += roundi(total)
 			UpgradeData.Stat.MEDKIT:
-				boosts.medkit_kills_bonus += roundi(total)
+				boosts.medkit_interval_cut += total
 			UpgradeData.Stat.COLLECT:
 				boosts.quarks += total
 				boosts.pickup_radius += total * 1.5
 			UpgradeData.Stat.POWERUP:
-				boosts.powerup_kills_bonus += roundi(total)
+				boosts.powerup_interval_cut += total
 			UpgradeData.Stat.COMPANION:
 				boosts.companion_damage += total
 			UpgradeData.Stat.START_LEVEL:

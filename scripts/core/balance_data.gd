@@ -13,21 +13,22 @@ extends Resource
 ## Curva por fase: cada fase do capítulo (0 a 8) soma esta fração à vida (1 + n x passo).
 @export_range(0.0, 0.5, 0.01) var enemy_hp_per_stage: float = 0.05
 
-@export_group("Drops (1 a cada N inimigos; maior = mais raro)")
-@export_range(1, 200) var medkit_every_kills: int = 30
-## Chance por inimigo abatido do power-up raro da auxiliar.
-@export_range(0.0, 1.0, 0.001) var companion_powerup_chance: float = 0.012
-## Multiplica todos os "a cada N" acima (2 = metade dos drops). Chance da auxiliar divide.
-@export_range(0.1, 10.0, 0.05) var drop_rarity_multiplier: float = 1.0
-
-@export_group("Power-ups de arma (por tempo de fase)")
-## Quantos power-ups de arma a fase solta ao longo de `powerup_span` da duração. 15 permite
-## 3 armas no nível 5 (4 power-ups cada = 12) com folga para os que o jogador perde.
+@export_group("Drops por tempo de fase")
+## Todos os drops seguem o relógio da fase (independem de quantos inimigos ela tem): ficam
+## "devidos" e caem no próximo abate. Cada tipo solta `N` itens ao longo de `span` da duração.
+## Power-ups de arma: 15 permite 3 armas no nível 5 (4 power-ups cada = 12) com folga.
 @export_range(1, 60) var powerups_per_stage: int = 15
-## Fração da duração da fase em que esses power-ups são soltos (0,75 = até 75% da fase).
 @export_range(0.2, 1.0, 0.05) var powerup_span: float = 0.75
-## Cada bônus da evolução do núcleo ("power-up N inimigos antes") encurta o intervalo nesta fração.
-@export_range(0.0, 0.2, 0.005) var powerup_bonus_step: float = 0.04
+## Kits médicos: poucos, para a vida dos corpos importar (o nó Reparo aumenta a frequência).
+@export_range(0, 20) var medkits_per_stage: int = 2
+@export_range(0.2, 1.0, 0.05) var medkit_span: float = 0.9
+## Power-up da auxiliar (raro): só conta enquanto ela pode subir de nível.
+@export_range(0, 10) var companion_powerups_per_stage: int = 2
+@export_range(0.2, 1.0, 0.05) var companion_powerup_span: float = 0.7
+## Multiplica todos os intervalos (2 = metade dos drops).
+@export_range(0.1, 10.0, 0.05) var drop_rarity_multiplier: float = 1.0
+## Menor fração do intervalo que os bônus da evolução podem deixar (0,4 = no máximo 2,5x mais drops).
+@export_range(0.1, 1.0, 0.05) var drop_interval_floor: float = 0.4
 
 @export_group("Chefes")
 ## Multiplicador da vida do chefe de capítulo e do intermediário (sobre BossData.max_hp).
@@ -59,18 +60,25 @@ func enemy_hp_factor(chapter_index: int, stage_index: int) -> float:
 	return enemy_hp_multiplier * chapter * (1.0 + enemy_hp_per_stage * stage_index)
 
 
-## Segundos de jogo entre power-ups de arma numa fase de `stage_seconds`.
-func powerup_interval(stage_seconds: float, kills_bonus: int = 0) -> float:
-	var base: float = stage_seconds * powerup_span / maxf(powerups_per_stage, 1) * drop_rarity_multiplier
-	return base * maxf(1.0 - powerup_bonus_step * kills_bonus, 0.4)
+## Segundos de jogo entre drops de um tipo: `count` itens em `span` da fase de `stage_seconds`.
+## `cut` = fração encurtada pela evolução do núcleo (0,2 = intervalo 20% menor), com piso.
+func drop_interval(stage_seconds: float, count: int, span: float, cut: float = 0.0) -> float:
+	if count <= 0:
+		return INF
+	var base: float = stage_seconds * span / count * drop_rarity_multiplier
+	return base * maxf(1.0 - cut, drop_interval_floor)
 
 
-func medkit_kills(bonus: int = 0) -> int:
-	return maxi(roundi(medkit_every_kills * drop_rarity_multiplier) - bonus, 1)
+func powerup_interval(stage_seconds: float, cut: float = 0.0) -> float:
+	return drop_interval(stage_seconds, powerups_per_stage, powerup_span, cut)
 
 
-func companion_chance() -> float:
-	return companion_powerup_chance / drop_rarity_multiplier
+func medkit_interval(stage_seconds: float, cut: float = 0.0) -> float:
+	return drop_interval(stage_seconds, medkits_per_stage, medkit_span, cut)
+
+
+func companion_powerup_interval(stage_seconds: float) -> float:
+	return drop_interval(stage_seconds, companion_powerups_per_stage, companion_powerup_span)
 
 
 ## Lista de ajustes para um painel: {name, value, group, hint}. Só propriedades @export.

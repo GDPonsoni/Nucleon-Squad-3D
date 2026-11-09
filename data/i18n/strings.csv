@@ -91,11 +91,11 @@ UPG_REFLEX_DESC,invulnerability after a hit %s,invulnerabilidade após levar hit
 UPG_SHIELD_NAME,Shield,Escudo,Escudo
 UPG_SHIELD_DESC,shields per stage %s (each one blocks a hit),escudos por fase %s (cada um bloqueia um hit),escudos por fase %s (cada uno bloquea un golpe)
 UPG_REPAIR_NAME,Repair,Reparo,Reparación
-UPG_REPAIR_DESC,enemies per medkit %s,inimigos por medkit %s,enemigos por botiquín %s
+UPG_REPAIR_DESC,time between medkits %s,tempo entre kits médicos %s,tiempo entre botiquines %s
 UPG_COLLECT_NAME,Collector,Coleta,Recolección
 UPG_COLLECT_DESC,"quarks earned %s, pickup range %s","quarks ganhos %s, alcance de coleta %s","quarks ganados %s, alcance de recolección %s"
 UPG_ARSENAL_NAME,Arsenal,Arsenal,Arsenal
-UPG_ARSENAL_DESC,enemies per power-up %s,inimigos por power-up %s,enemigos por power-up %s
+UPG_ARSENAL_DESC,time between power-ups %s,tempo entre power-ups %s,tiempo entre power-ups %s
 UPG_HEADSTART_NAME,Head start,Arma inicial,Arma inicial
 UPG_HEADSTART_DESC,weapon level when a stage starts %s,nível das armas ao começar a fase %s,nivel de las armas al empezar la fase %s
 UPG_WINGMAN_NAME,Wingman,Auxiliar,Auxiliar
