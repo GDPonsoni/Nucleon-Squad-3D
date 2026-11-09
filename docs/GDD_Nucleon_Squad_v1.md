@@ -1,199 +1,214 @@
-# GDD — Nucleon Squad (nome provisório) — v1
+# GDD — Nucleon Squad (nome provisório)
 
-> Documento de requisitos / design para iniciar o desenvolvimento. Tudo marcado como **[PARÂMETRO]** é valor inicial a ser ajustado em teste no celular. Tudo em **[EM ABERTO]** ainda não foi decidido.
-> Data: 01/11/2026 · Autor: Gabriel · Status: v1 (pré-protótipo)
+> Documento de requisitos e design. Tudo marcado como **[PARÂMETRO]** é valor ajustável em `scripts/core/params.gd` ou `data/balance.tres` e deve ser confirmado em teste no celular. Tudo em **[EM ABERTO]** ainda não foi decidido.
+> Criado em 01/11/2026 (v1, pré-protótipo) · Revisado em 09/11/2026 (v2, alinhado ao jogo atual) · Autor: Gabriel
 
 ---
 
 ## 1. Visão geral
 
 - **Gênero:** shoot 'em up (shmup) vertical, bullet hell, controle por toque, 2D.
-- **Plataforma inicial:** Android (teste local em Galaxy S24). iOS e Play Store ficam para depois.
+- **Plataforma inicial:** Android (teste local em Galaxy S24). iOS fica para depois.
 - **Orientação:** retrato (vertical) fixo, 100%.
 - **Referência principal:** *Squadron – Bullet Hell Shooter* (sucessor espiritual; o original é 32 bits e não roda na maioria dos celulares atuais).
 - **Público/uso:** projeto pessoal; renda passiva futura por anúncios não invasivos.
-- **Offline:** 100% offline e salvamento local na v1.
-- **Idiomas:** português e inglês (espanhol opcional depois).
+- **Offline:** 100% offline e salvamento local.
+- **Idiomas:** português, inglês e espanhol.
 
 ### Pilares de design
-1. **Troca de corpo sob câmera lenta:** soltar o dedo desacelera o jogo e permite escolher outro corpo da formação.
+1. **Troca de corpo sob câmera lenta:** soltar o dedo desacelera o jogo e permite escolher outro corpo do esquadrão.
 2. **Núcleo fixo, corpos descartáveis:** o núcleo persiste e os corpos (formato e arma) são perdidos ao morrer.
-3. **Arcade legível:** visual de meio-termo (nem pixel art puro, nem realista), com contraste forte entre naves e inimigos.
-4. **Iteração rápida:** o primeiro objetivo é rodar no celular o quanto antes e evoluir em ciclos curtos.
+3. **Arcade legível:** visual de meio-termo (nem pixel art puro, nem realista), com contraste forte entre naves e inimigos. Todo ataque inimigo tem aviso (telegrafia).
+4. **Iteração rápida:** rodar no celular o quanto antes e evoluir em ciclos curtos.
 
-### Fora de escopo (v1)
-Árvore de upgrades, online (contas, ranking, nuvem), 3D, mudança visual da nave por nível de arma, compras dentro do app, publicação na Play Store.
+### Fora de escopo (por enquanto)
+Online (contas, ranking, nuvem), 3D, mudança visual da nave por nível de arma, compras dentro do app.
 
 ---
 
 ## 2. Tecnologia
 
-- **Engine candidata:** Godot 4 (2D). Alternativa se não funcionar: Unity.
-- **Flutter/Flame:** descartado para este jogo.
-- **Marco 0 (decisão da engine):** 1–2 dias com tutorial 2D oficial do Godot + protótipo mínimo (nave seguindo o dedo de forma relativa + câmera lenta ao soltar). Critério: se o fluxo de trabalho e a sensação no S24 forem bons, segue com Godot; senão, reavalia Unity.
-- **Alvo de desempenho:** 60 FPS estáveis no S24; desejável rodar em celulares intermediários (mid-range). Orçamento de projéteis e partículas definido no Marco 1 por medição.
+- **Engine:** Godot 4 (2D), GDScript tipado.
+- **Alvo de desempenho:** 60 FPS estáveis no S24; desejável rodar em celulares intermediários.
 - **Pontos de atenção:** pooling de objetos (projéteis, inimigos, efeitos), colisão simples (círculos), sem física pesada.
-- **Anúncios:** AdMob (plugin Godot) ou equivalente; integrar só depois do Marco 2.
+- **Anúncios:** AdMob (plugin Godot) ou equivalente. Hoje são simulados (`AdService`); plano em `docs/PUBLICACAO.md`.
 
 ---
 
 ## 3. Controles
 
-- **Movimento relativo:** a nave se move conforme o deslocamento do dedo a partir do ponto onde ele tocou, independentemente de onde a nave esteja. Não há "a nave vai para o dedo".
+- **Movimento relativo:** a nave se move conforme o deslocamento do dedo a partir do ponto onde ele tocou, independentemente de onde a nave esteja.
 - **Tiro:** automático enquanto o jogo roda.
-- **Botão de especial:** fixo em um canto da tela, alcançável pelo polegar. [EM ABERTO: posição exata e se aparece só quando carregado]
+- **Botão de especial:** fixo no canto, alcançável pelo polegar; pulsa quando está carregado.
 - **Botão de pausa/configurações:** sempre visível; acessível durante a câmera lenta.
 - **Soltar o dedo:** ativa a **câmera lenta** (seção 4).
+- **Troca de nave:** toque curto num corpo da barra fixa na base da tela.
 
 ---
 
 ## 4. Câmera lenta e troca de corpo
 
-1. Dedo solto → o jogo passa para **30% da velocidade** (time scale 0,3) [PARÂMETRO].
-2. Aparecem ao lado da nave os ícones dos **outros corpos** da formação.
+1. Dedo solto → o jogo passa para **30% da velocidade** [PARÂMETRO], com moldura azul.
+2. A barra de troca na base da tela fica nítida (translúcida enquanto o dedo move a nave).
 3. Opções durante a câmera lenta:
-   - Tocar em **um ícone de corpo** → troca para aquele corpo (animação: núcleo fecha e o corpo se reconstrói) e o jogo retoma.
-   - Tocar em **qualquer outro lugar da tela** → retoma o jogo com o corpo atual (já pré-selecionado).
-   - Tocar em **configurações/pausa** → abre o menu; ao sair, o jogo retoma.
-4. **Invulnerabilidade:** 2 s ao trocar de corpo [PARÂMETRO].
-5. **Limite de uso da câmera lenta:** *sem limite na v1*, mas tratar como mecânica a equilibrar. Risco conhecido: o jogador pode soltar o dedo a qualquer sinal de perigo. Parâmetros a testar: duração máxima, energia/cooldown, custo. [EM ABERTO]
+   - Toque curto em **um corpo** → troca para ele (o corpo recolhe no núcleo e o novo nasce dele).
+   - Tocar e arrastar em **qualquer outro lugar** → retoma o jogo com o corpo atual.
+   - **Pausa/configurações** → abre o menu; ao sair, o jogo retoma.
+4. **Invulnerabilidade:** 1,0 s ao trocar de corpo e 1,0 s após levar hit [PARÂMETRO].
+5. **Recarga entre trocas voluntárias:** 4 s [PARÂMETRO], mostrada como setor escuro nos ícones. Trocas forçadas (corpo destruído) não esperam.
+6. **Limite de uso da câmera lenta:** sem limite. Risco conhecido: o jogador pode soltar o dedo a qualquer sinal de perigo. Alternativas em estudo: as armas param de atirar na câmera lenta, uma energia que esvazia na câmera lenta e enche com o dedo na tela, ou um tempo máximo por uso. [EM ABERTO]
 
 ---
 
-## 5. Núcleo, corpos e formação
+## 5. Núcleo, corpos e esquadrão
 
-- **Núcleo:** estático e comum a todos os corpos. Cada vez que um corpo morre, o núcleo racha (efeito visual e narrativo; sem efeito de gameplay na v1 [EM ABERTO: pode virar mecânica depois]).
-- **Corpo:** formato + arma. Um corpo ativo por vez; os outros ficam em reserva.
-- **Formação (preset):** 4 corpos escolhidos antes da partida. Estrutura de código deve suportar de 4 até N corpos desbloqueáveis.
-- **Fim de partida:** perde-se quando morre o **último corpo** (4º). Ao morrer um corpo, o jogador escolhe outro corpo vivo (reconstrução do núcleo).
-- **Vida do corpo:** 3 hits [PARÂMETRO]. Ataques grandes podem tirar 2 de uma vez. Hits recebidos aparecem em um indicador na tela.
-- **Morte do corpo:** perde-se o corpo e os **power-ups acumulados** da arma dele.
-- **Marco 1:** apenas 2 corpos jogáveis, mas toda a estrutura já preparada para 4+.
+- **Núcleo:** comum a todos os corpos e é a hitbox. Rachar o núcleo a cada corpo perdido continua só como ideia. [EM ABERTO]
+- **Corpo:** formato + arma + especial. Um corpo ativo por vez; os outros ficam em reserva.
+- **Esquadrão:** de **1 a 4 corpos** escolhidos antes da partida [PARÂMETRO: `squad_size` = máximo]. Esquadrão menor tem menos vidas, mas cada vaga vazia dá **+25% no bônus de quarks** da fase [PARÂMETRO]. O código suporta N corpos.
+- **Fim de partida:** perde-se quando morre o último corpo. Ao morrer um corpo, o jogador escolhe outro corpo vivo.
+- **Vida do corpo:** 3 hits [PARÂMETRO], mais com o Casco da evolução. Hits aparecem na barra de troca.
+- **Morte do corpo:** perde-se o corpo e os níveis de arma dele.
+- **Nave auxiliar:** versão pequena de uma nave fora do esquadrão. Acompanha a principal, não leva dano e atira uma versão fraca da arma (3 níveis). Cada arma tem um papel como auxiliar (foco, flancos, caça-grandões, escudo, perfuração, área, defesa próxima, enxame). O espaço libera ao concluir o **capítulo 2**, quando já há naves sobrando para ela.
 
 ---
 
 ## 6. Armas (1 por corpo, 5 níveis cada)
 
-Evolução de nível: **apenas efeito da arma** (e variação de cor); a nave não muda visualmente por nível. Cada arma tem uma cor própria.
+Evolução de nível: **apenas efeito da arma** (e variação de cor); a nave não muda visualmente por nível. Cada arma tem cor, especial e fraquezas próprias (inimigos fracos ou resistentes a ela).
 
-| # | Arma | Nível 1 → 5 (esboço) | Especial (esboço) |
-|---|------|----------------------|-------------------|
-| 1 | **Raio** | 1 raio → 2 → 3 → 4 → raio grande | Raio gigante à frente que se abre e limpa em volta |
-| 2 | **Leque** | tiro espalhado: mais projéteis e mais ângulo por nível | Rajada de 360° que limpa projéteis ao redor |
-| 3 | **Mísseis teleguiados** (os "triângulos") | 1 míssil → mais mísseis, mais tracking | Chuva de mísseis que busca todos os inimigos na tela |
-| 4 | **Órbita** | 1 orbital → 2 → 3 → 4 → anel completo | Anel de energia que expande e limpa projéteis |
+| Nave/arma | Especial | Liberada |
+|---|---|---|
+| Raio | raio gigante + anel que limpa tiros | início |
+| Leque | rajada 360° + anel | início |
+| Mísseis | chuva de mísseis em todos | início |
+| Órbita | anel de energia | início |
+| Lança | leque de lanças gigantes | capítulo 1 |
+| Artilharia | bombardeio | capítulo 2 |
+| Tesla | tempestade de raios em todos | capítulo 3 |
+| Ricochete | 16 orbes que ricocheteiam | capítulo 4 |
 
-Os especiais 2–4 são genéricos (efeito de limpar a tela/área) para não travar o design; refinar depois do protótipo.
-
-Nomes e detalhes dos níveis são esboços; fechar no balanceamento.
+O capítulo 5 é o último por enquanto. A próxima atualização traz novos capítulos e recompensas; até lá, o seletor mostra uma página de "novos capítulos em breve".
 
 ### Especial por arma
-- Carrega por **tempo** [PARÂMETRO]; o jogador aciona pelo botão lateral quando estiver cheio.
-- Cada arma terá um especial próprio, com efeito de limpar/dar dano em área.
+- Carrega por **tempo** [PARÂMETRO]; o jogador aciona pelo botão quando estiver cheio.
+- **Momentos de especial:** no clímax da fase 8 e na última fase dos chefes de capítulo, os alvos ficam blindados até o jogador usar o especial.
 
 ### Bomba global
-- Item de drop que limpa a tela. Máximo de **2 por fase**, dropadas por volta de 30% e 60% da fase [PARÂMETRO].
-- [EM ABERTO: se existe também um "especial global" que carrega por tempo, separado da bomba]
+- Prevista no v1 (item que limpa a tela, até 2 por fase), mas **não implementada**: os especiais e os momentos de especial cobrem esse papel. O som `bomb_global.wav` está guardado. [EM ABERTO: implementar ou retirar do design]
 
 ---
 
-## 7. Power-ups e progressão dentro da partida
+## 7. Itens e progressão dentro da partida
 
-- Power-ups sobem o nível da **arma do corpo ativo** (nível máximo 5).
-- Morreu o corpo → perde os níveis daquela arma. Cada corpo começa a partida no nível 1.
-- **Princípio de balanceamento de drops:** dropar o suficiente para que seja possível levar pelo menos **2 armas** ao nível máximo na fase, mas com punição real: se o jogador morrer no fim da fase, pode ficar com corpos sem evolução.
-- Balanceamento fino (dano, taxa de drop) é só por teste. [PARÂMETRO]
-- Outros itens previstos: bomba global (seção 6). [EM ABERTO: itens de cura, escudo, moedas]
+Todos os drops seguem o **relógio da fase** (não o número de abates): ficam "devidos" no horário e caem no próximo inimigo destruído.
 
----
-
-## 8. Estrutura de fases
-
-- **Planetas** → cada um com várias **fases** → cada fase termina com um **chefe**.
-- **Duração da fase:** ~3 minutos até o chefe [PARÂMETRO].
-- **Quantidade de planetas e fases por planeta:** [EM ABERTO]
-- **Inimigos:** muitos tipos, com padrões de tiro (bullet hell). Lista e comportamentos definidos por marco. [EM ABERTO]
-- **Chefes:** um por fase, com fases de ataque. [EM ABERTO]
-- **Marco 1:** 1 fase, 1 tipo de inimigo, sem chefe obrigatório.
+- **Power-ups de arma:** 15 por fase, ao longo de 75% da duração [PARÂMETRO]. Sobem o nível da arma do corpo ativo (máximo 5). Dá para levar 3 armas ao nível 5 com folga, mas perder um corpo no fim da fase ainda pesa.
+- **Kits médicos:** 2 por fase [PARÂMETRO]; recuperam 1 hit do corpo ativo.
+- **Power-up da auxiliar (raro, lilás):** 2 por fase, só enquanto ela pode subir de nível.
+- **Excedente:** power-up com a arma no nível máximo e kit com o corpo sem dano viram pontos.
+- A evolução do núcleo encurta esses intervalos (Arsenal e Reparo), com piso.
 
 ---
 
-## 9. Anúncios e monetização
+## 8. Estrutura de fases e dificuldade
 
-- **Revive por anúncio:** disponível apenas no **game over** (quando os 4 corpos morreram), **1 vez por partida**. O jogador volta com os mesmos power-ups que tinha. [EM ABERTO: qual corpo volta e com quantos hits]
-- **Sem anúncios** no início da partida ou entre fases na v1.
-- **Futuro (fora da v1):** recompensas por anúncio opcional (bônus, desbloqueios), a avaliar.
+- **Campanha:** 5 planetas (capítulos) × 9 fases = 45 fases, geradas por `scripts/tools/campaign_builder.gd`.
+- **Fase 5:** chefe intermediário. **Fase 9:** chefe do capítulo. **Fase 7:** campo de meteoros. **Fase 8:** clímax com momento de especial.
+- **Duração:** fases comuns com 5 min de ondas; fase 5 com 3,5 min antes do chefe; fase 9 com ondas mais curtas e luta longa [PARÂMETRO]. Os 5 min são uma aposta inicial, a revisar com dados de jogo.
+- **Inimigos:** 9 tipos que atiram, 5 "counters" (Faísca, Enxame, Colosso, Escudeiro, Serpente) e rochas que bloqueiam tiros. Todo ataque tem aviso.
+- **Ritmo:** motivos de onda em ciclo, mais uma camada de ação (ondas que não atiram) e um surto a cada minuto.
+- **Curva de dificuldade:** sobe de fase em fase dentro do capítulo e recua um pouco no começo do seguinte (respiro depois do chefe).
+- **Vida dos inimigos alinhada à progressão:** vida = poder esperado do jogador × resistência do capítulo (`BalanceData`). O poder esperado segue o que a renda de quarks compra até aquele capítulo; a resistência sobe devagar (1,4 → 1,8). Os testes conferem esse alinhamento, e o simulador mede a dificuldade com a evolução esperada (`--expected`).
+
+---
+
+## 9. Progressão fora da partida
+
+- **Quarks:** moeda da evolução. Vêm sobretudo de **concluir fases** (bônus por capítulo, dobrado na 1ª vez), de **estrelas novas** e de vagas vazias no esquadrão; abates rendem só um extra pequeno.
+- **Meta de ritmo:** 1º nível de vários nós no capítulo 1 e a árvore com limite completa por volta do fim do capítulo 4. A Sobrecarga (sem limite) fica para o fim.
+- **Evolução do núcleo:** 12 nós com limite em 3 ramos (Ataque, Defesa, Suporte) + Sobrecarga sem limite.
+- **Estrelas:** 1 por concluir, 2 e 3 por pontuação.
+- **Desbloqueios por capítulo:** uma nave por capítulo (1 a 4) e o espaço da auxiliar no capítulo 2.
+
+---
+
+## 10. Anúncios e monetização
+
+- **Revive por anúncio:** só no **game over**, **1 vez por partida**. O jogador volta com os mesmos power-ups que tinha.
+- **Quarks por anúncio:** opcional, até 5 por dia, cerca de uma fase concluída de recompensa.
+- **Banner:** só no menu inicial.
+- **Sem anúncios** no início da partida ou entre fases.
 - **Privacidade:** consentimento/LGPD para anúncios ao integrar o SDK.
 - **Expectativa realista:** receita baixa no início; tratar como renda passiva futura, não custeio.
 
 ---
 
-## 10. Interface
+## 11. Interface
 
-- **HUD:** pontuação, hits do corpo atual (indicador), barra do especial, ícones dos corpos em reserva, botão de pausa.
-- **Telas:** menu principal, seleção de formação (4 corpos), seleção de planeta/fase, partida, game over (com opção de revive), configurações (idioma, áudio).
-- **Idiomas:** PT-BR e EN desde o início (textos fora do código, em tabela de tradução).
-
----
-
-## 11. Arte e áudio
-
-- **Estilo:** meio-termo entre arcade simples e detalhado. Naves **minimalistas** (inspiração Squadron), inimigos **coloridos e de alto contraste**, fundo intermediário (nem realista, nem plano).
-- **Efeito de inclinação:** a nave inclina ao mover lateralmente, feito em 2D (sprites por ângulo ou simulação por código). Testar no Marco 1.
-- **Produção:** assets gerados com IA (imagem) + ajustes manuais. Definir pipeline de consistência (paleta, tamanho, prompts-base) no Marco 1.
-- **Áudio:** música e efeitos gerados por IA (ex.: Suno); implementar áudio depois do Marco 1.
-- **Estilo:** mantido como descrito acima (decisão de 01/11/2026). Refinar após o protótipo.
-- **Placeholders:** no Marco 0–1, naves, inimigos e projéteis podem ser formas geométricas desenhadas por código (sem depender de arte pronta).
+- **HUD:** pontuação, barra do especial, barra de troca com hits e nível de cada corpo, botão de pausa.
+- **Telas:** menu principal, esquadrão (vagas, auxiliar, inspeção com demo da arma), evolução do núcleo, seletor de fases (mapa de um planeta por página + "em breve"), partida, resultado, configurações (volumes, vibração, efeitos reduzidos, estatísticas, contador de dano, idioma, rever tutorial).
+- **Tutorial:** dicas contextuais que não pausam e só aparecem em momento seguro; avisos de desbloqueio ao fim da fase.
+- **Idiomas:** PT-BR, EN e ES (textos em tabela de tradução).
 
 ---
 
-## 12. Dados e salvamento
+## 12. Arte e áudio
 
-- Local no aparelho: formação de 4 corpos, corpos desbloqueados, progresso de fases, configurações.
-- Sem contas e sem nuvem na v1. Estrutura de dados pensada para sincronização futura.
+- **Estilo:** meio-termo entre arcade simples e detalhado. Naves **minimalistas**, inimigos **coloridos e de alto contraste**, fundo intermediário.
+- **Inclinação:** pseudo-3D por código (inclinação, achatamento, sombra).
+- **Produção:** assets gerados com IA + ajustes manuais, com pipeline de consistência (paleta, tamanho, prompts-base). Hoje tudo são placeholders desenhados por código.
+- **Áudio:** efeitos e músicas sintetizados como placeholder; versões definitivas pendentes.
+- **Vibração:** padrões nomeados, com intensidade configurável.
 
 ---
 
-## 13. Arquitetura (diretrizes para o desenvolvimento)
+## 13. Dados e salvamento
 
-- **Data-driven:** armas, níveis, corpos, inimigos, padrões de tiro e fases definidos em dados (recursos/JSON), não em código.
+- Local no aparelho (`user://save.json`, versionado e com migração): fases concluídas, recordes, esquadrão, auxiliar, quarks, evolução, capítulos concluídos, dicas vistas e configurações.
+- Sem contas e sem nuvem. Estrutura pensada para sincronização futura.
+
+---
+
+## 14. Arquitetura (diretrizes para o desenvolvimento)
+
+- **Data-driven:** armas, níveis, corpos, inimigos, padrões de tiro, fases e evolução em recursos (`data/`), não em código.
 - **Corpos desacoplados:** lógica de arma separada da nave; trocar de corpo = trocar a arma e o formato, mantendo o núcleo.
-- **Estado de partida centralizado:** corpos vivos, hits, nível da arma por corpo, tempo/especial.
-- **Pooling** de projéteis/inimigos/efeitos desde o início.
-- **Parâmetros expostos** (câmera lenta, hits, i-frames, drops, duração) em um único lugar, para ajustar rápido.
-- **Suporte a N corpos:** código não deve assumir exatamente 2 nem exatamente 4.
+- **Estado de partida centralizado** (`MatchState`).
+- **Pooling** de projéteis, inimigos e efeitos.
+- **Parâmetros expostos** num só lugar (`Params` e `BalanceData`).
+- **Suporte a N corpos:** o código não assume exatamente 2 nem exatamente 4.
 
 ---
 
-## 14. Marcos
+## 15. Marcos
 
-| Marco | Objetivo | Critério de pronto |
-|-------|----------|--------------------|
-| **0** | Decidir engine | Protótipo mínimo no S24 (nave relativa + câmera lenta) |
-| **1** | Jogável mínimo | 2 corpos, troca de corpo, câmera lenta, 1 inimigo, 1 fase, 3 hits, tudo rodando no S24 |
-| **2** | Núcleo completo | 4 corpos, 4 armas com 5 níveis, especial e bomba, 1 chefe, salvamento local |
-| **3** | Conteúdo | Vários inimigos/chefes, 1º planeta completo, áudio, anúncio de revive |
-| **4** | Polimento e publicação | Estilo final de arte, balanceamento, Play Store (teste fechado exigido pela Play Console) |
+| Marco | Objetivo | Situação |
+|-------|----------|----------|
+| **0** | Decidir engine | Concluído (Godot) |
+| **1** | Jogável mínimo | Concluído |
+| **2** | Núcleo completo | Concluído (8 naves, especiais, chefes, save); a bomba global ficou de fora |
+| **3** | Conteúdo, áudio e anúncio de revive | Em andamento: 5 capítulos, sons e anúncio simulado; faltam áudio definitivo e SDK real |
+| **4** | Polimento e publicação | Pendente: arte final, balanceamento no aparelho, Play Store (teste fechado) |
 
 ---
 
-## 15. Riscos
+## 16. Riscos
 
-- **Câmera lenta sem custo** pode quebrar a dificuldade. Testar cedo.
-- **Escopo grande para primeiro jogo:** seguir os marcos, nada de adicionar conteúdo antes do núcleo funcionar.
-- **Arte por IA:** inconsistência entre sprites e frames de inclinação. Definir pipeline no Marco 1.
+- **Câmera lenta sem custo** pode quebrar a dificuldade (seção 4).
+- **Fases de 5 min** podem ser longas para sessões no celular. Medir retenção e revisar.
+- **Escopo grande para primeiro jogo:** seguir os marcos.
+- **Arte por IA:** inconsistência entre sprites. Definir o pipeline antes da arte final.
 - **Semelhança com o Squadron:** manter nome, silhuetas e identidade próprios para evitar remoção na loja.
-- **Desempenho:** muitos projéteis na tela. Medir desde o Marco 1.
+- **Desempenho:** muitos projéteis na tela. Medir no aparelho com carga máxima.
 
 ---
 
-## 16. Pendências (resumo)
+## 17. Pendências (resumo)
 
 1. Nome final do jogo (hoje provisório).
-2. Estilo final de arte (referências: protótipo definido; final em aberto).
-3. Limite/custo da câmera lenta.
-4. Existência de "especial global" além da bomba (especiais das armas 2–4 já definidos de forma genérica).
-5. Revive: qual corpo volta e com quantos hits.
-6. Invulnerabilidade após levar hit (hoje só definida para troca de corpo).
-7. Quantidade de planetas, fases, tipos de inimigos e chefes.
-8. Posição do botão de especial.
+2. Estilo final de arte.
+3. Limite ou custo da câmera lenta.
+4. Bomba global: implementar ou retirar.
+5. Revive: qual corpo volta e com quantos hits (hoje volta o último, com a vida cheia).
+6. Núcleo rachando como mecânica.
+7. Conteúdo da próxima atualização: novos capítulos e as recompensas do capítulo 5 em diante.
