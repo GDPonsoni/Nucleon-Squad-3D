@@ -6,7 +6,7 @@
 [sub_resource type="Resource" id="WeaponLevel_lv1"]
 script = ExtResource("2_level")
 damage = 1
-fire_rate = 5.0
+fire_rate = 7.0
 projectile_speed = 1900.0
 projectile_size = Vector2(8, 26)
 projectile_shape = 0

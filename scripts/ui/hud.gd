@@ -24,6 +24,7 @@ var _special: SpecialButton
 var _shown_quarks: int = -1
 var progress_ratio: Callable = Callable()  # barra do topo (padrão: progresso da fase)
 var progress_color: Color = Params.ui_accent_color
+var special_body: Callable = Callable()  # nave mostrada no botão do especial (padrão: o corpo ativo)
 
 
 func _ready() -> void:
@@ -203,7 +204,8 @@ func _process(_delta: float) -> void:
 	_canvas.queue_redraw()
 	if _state != null:
 		var alive: bool = _state.is_alive(_state.current)
-		_special.body = _state.current_body() if alive else null
+		var shown: BodyData = special_body.call() if special_body.is_valid() else _state.current_body()
+		_special.body = shown if alive else null
 		_special.charge = _state.special_ratio() if alive else 0.0
 		var quarks: int = int(_state.quarks)
 		if quarks != _shown_quarks:

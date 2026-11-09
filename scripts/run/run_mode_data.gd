@@ -11,8 +11,10 @@ extends Resource
 
 @export_group("XP")
 @export var xp_per_point: float = 0.1  # XP por ponto de pontuação do inimigo destruído
-@export var xp_first_level: float = 40.0  # XP para o 1º nível (~1 min só com o ataque frontal)
-@export var xp_growth: float = 1.4  # cada nível pede isso vezes o anterior
+## XP para passar de cada nível (índice 0 = do 1 para o 2). Os primeiros são baratos para
+## sair logo do ataque frontal; depois da tabela, o último valor cresce xp_growth por nível.
+@export var xp_table: PackedFloat32Array = [15, 25, 35, 50, 70, 100, 140, 190, 250, 330, 430, 550, 700, 880, 1100]
+@export var xp_growth: float = 1.25
 
 @export_group("Recompensa sem arma para subir")
 ## Quando faltam armas para completar as opções (ou todas estão no máximo).
@@ -29,7 +31,7 @@ extends Resource
 @export_group("Diretor de ondas")
 ## Ondas sorteadas pelo peso entre as ativas no minuto atual.
 @export var waves: Array[RunWaveEntry] = []
-@export var wave_gap_start: float = 2.4  # segundos entre ondas no começo
+@export var wave_gap_start: float = 2.0  # segundos entre ondas no começo
 @export var wave_gap_end: float = 0.6  # ... e aos duration_seconds (interpolação linear)
 @export var count_growth_per_minute: float = 0.08  # membros por onda: count x (1 + isso x minuto)
 @export var surge_every: float = 60.0  # surto de ondas de horda

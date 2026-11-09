@@ -141,8 +141,10 @@ func _report(partial: bool) -> void:
 ## XP total já ganho na partida (níveis completos + o que falta).
 func _total_xp(progress: RunProgress) -> float:
 	var total: float = progress.xp
+	var probe := RunProgress.new(progress.mode)
 	for level in range(1, progress.level):
-		total += progress.mode.xp_first_level * pow(progress.mode.xp_growth, level - 1)
+		probe.level = level
+		total += probe.xp_needed()
 	return total
 
 

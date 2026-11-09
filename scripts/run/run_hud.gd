@@ -2,7 +2,8 @@ class_name RunHud
 extends CanvasLayer
 ## HUD extra do modo roguelike: tempo de partida embaixo do botão de pausa. A barra de XP é a
 ## barra fina do topo do Hud e o nível fica embaixo da pontuação (RunGame liga os dois).
-## Na câmera lenta voluntária, mostra os espaços de arma (compactos) acima da barra de energia.
+## Na câmera lenta voluntária, mostra os espaços de arma (compactos) na faixa da base da tela,
+## onde a nave não entra.
 
 var progress: RunProgress
 var clock: Callable  # devolve os segundos de partida
@@ -66,4 +67,4 @@ func _process(_delta: float) -> void:
 	_loadout_alpha = move_toward(_loadout_alpha, 1.0 if wanted else 0.0, real_delta / Params.run_slow_loadout_fade_seconds)
 	_loadout_box.modulate.a = _loadout_alpha
 	_loadout_box.size = Vector2(_canvas.size.x, 0.0)
-	_loadout_box.position = Vector2(0.0, _canvas.size.y - Params.no_switcher_bottom_margin - Params.run_slow_loadout_bottom)
+	_loadout_box.position = Vector2(0.0, _canvas.size.y - Params.run_slow_loadout_bottom)

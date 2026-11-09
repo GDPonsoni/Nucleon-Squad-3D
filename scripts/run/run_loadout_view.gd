@@ -21,10 +21,8 @@ func _ready() -> void:
 	var caption := UiFactory.make_subtitle("")
 	caption.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	caption.text = tr("RUN_SLOTS") % [_progress.slots_used(), _progress.mode.weapon_slots]
-	if compact:
-		caption.text = "%s · %s" % [tr("RUN_LEVEL") % _progress.level, caption.text]
-		caption.add_theme_font_size_override("font_size", Params.run_card_detail_font_size)
-	add_child(caption)
+	if not compact:  # na câmera lenta só os ícones (o nível já está no HUD)
+		add_child(caption)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 26)

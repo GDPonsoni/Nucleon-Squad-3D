@@ -664,9 +664,12 @@ func test_run_progress() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 7
 	# XP: um nível por limiar; sobra passa para o próximo
-	progress.add_xp(progress.xp_needed() * 2.5)
+	progress.add_xp(mode.xp_table[0] + mode.xp_table[1] + 1.0)
 	check(progress.level == 3 and progress.pending == 2, "XP sobe vários níveis (%d, %d)" % [progress.level, progress.pending])
-	check(mode.xp_growth > 1.0 and progress.xp_needed() > mode.xp_first_level, "cada nível pede mais XP")
+	check(mode.xp_growth > 1.0 and progress.xp_needed() > mode.xp_table[0], "cada nível pede mais XP")
+	var probe := RunProgress.new(mode)
+	probe.level = mode.xp_table.size() + 3
+	check(probe.xp_needed() > mode.xp_table[mode.xp_table.size() - 1], "depois da tabela continua crescendo")
 	# Começo: 4 armas novas, sem quarks
 	var first: Array[RunChoice] = progress.roll_choices(rng, roster, false)
 	check(first.size() == mode.choices_per_level, "4 opções no começo")

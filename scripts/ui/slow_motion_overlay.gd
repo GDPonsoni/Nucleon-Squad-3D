@@ -21,6 +21,7 @@ void fragment() {
 """
 
 var time_controller: TimeController  # dono da energia (null = sem barra)
+var bar_bottom: float = -1.0  # distância da base da tela ao centro da barra (< 0 = acima da barra de troca)
 
 var _material: ShaderMaterial
 var _bar: Control
@@ -69,7 +70,8 @@ func _draw_bar() -> void:
 		return
 	var size: Vector2 = Params.slowmo_bar_size
 	var screen: Vector2 = _bar.size
-	var center := Vector2(screen.x * 0.5, screen.y - Params.switch_strip_bottom - Params.slowmo_bar_gap)
+	var from_bottom: float = bar_bottom if bar_bottom >= 0.0 else Params.switch_strip_bottom + Params.slowmo_bar_gap
+	var center := Vector2(screen.x * 0.5, screen.y - from_bottom)
 	var rect := Rect2(center - size * 0.5, size)
 	var low: bool = time_controller.energy < Params.slowmo_min_energy
 	var color: Color = Params.slowmo_bar_low_color if low else Params.slowmo_bar_color

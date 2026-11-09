@@ -24,6 +24,7 @@ var revive_offer: ReviveOffer
 var tip_balloon: TipBalloon
 var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
+var slow_overlay: SlowMotionOverlay
 var companion: Companion  # null = sem nave auxiliar
 var _special_was_ready: bool = false
 var _special_moment: bool = false
@@ -174,7 +175,7 @@ func _ready() -> void:
 		Audio.play(&"missile_explode")
 		_explode(pos, radius * 0.5, color))
 
-	var slow_overlay := SlowMotionOverlay.new()
+	slow_overlay = SlowMotionOverlay.new()
 	slow_overlay.name = "SlowMotionOverlay"
 	slow_overlay.time_controller = time_controller
 	add_child(slow_overlay)

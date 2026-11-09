@@ -103,6 +103,11 @@ func _on_mode_ready() -> void:
 	results_menu.restart_path = ScenePaths.RUN
 	results_menu.back_path = ScenePaths.MENU
 	run_hud.time_controller = time_controller
+	slow_overlay.bar_bottom = Params.run_energy_bar_bottom
+	# O botão do especial mostra a arma dona dele
+	hud.special_body = func() -> BodyData:
+		var best: BodyData = progress.best_weapon()
+		return best if best != null else mode.ship
 	director = RunDirector.new()
 	director.name = "RunDirector"
 	add_child(director)

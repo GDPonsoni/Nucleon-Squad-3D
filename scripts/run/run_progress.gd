@@ -23,7 +23,11 @@ func _init(run_mode: RunModeData) -> void:
 
 ## XP para passar do nível atual ao próximo.
 func xp_needed() -> float:
-	return mode.xp_first_level * pow(mode.xp_growth, level - 1)
+	var table: PackedFloat32Array = mode.xp_table
+	var index: int = level - 1
+	if index < table.size():
+		return table[index]
+	return table[table.size() - 1] * pow(mode.xp_growth, index - table.size() + 1)
 
 
 func add_xp(amount: float) -> void:
