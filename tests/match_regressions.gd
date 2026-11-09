@@ -201,8 +201,14 @@ func _check_tip_spotlight(game: Node) -> int:
 	var dropper: PowerUpDropper = game.get("dropper")
 	var spot := Vector2(540, 900)
 	dropper.drop_now(spot, PowerUp.Kind.HEAL)
-	for i in 6:
-		await get_tree().process_frame
+	var kit: PowerUp = (game.get("power_ups") as NodePool).active.back()
+	# A dica espera um pouco depois do evento (dá tempo de ver o kit)
+	await get_tree().create_timer(0.3, true, false, true).timeout
+	if spotlight.is_showing():
+		printerr("FALHOU: dica apareceu no mesmo instante do evento")
+		failures += 1
+	await get_tree().create_timer(Tutorial.event_delay(Tutorial.tip_by_id("tip_medkit")) + 0.3, true, false, true).timeout
+	spot = kit.position
 	if not (spotlight.is_showing() and get_tree().paused):
 		printerr("FALHOU: dica do kit não pausou com destaque")
 		failures += 1

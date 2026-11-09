@@ -43,10 +43,11 @@ var damage_number_font_size: int = 34
 var damage_number_font_bonus: int = 22  # quanto o número cresce com dano alto, no máximo
 # Tutorial e avisos (tempo real)
 var tips_path: String = "res://data/tutorial/tips.json"
-var tip_gap_match_seconds: float = 4.0  # intervalo mínimo entre dicas na partida (cada uma na 1ª vez do evento)
+var tip_gap_match_seconds: float = 10.0  # intervalo mínimo entre dicas na partida (cada uma na 1ª vez do evento)
 var tip_gap_screen_seconds: float = 1.2  # idem nas telas
 var tip_first_delay_seconds: float = 2.5  # espera antes da 1ª dica de uma tela
-var tip_first_delay_match_seconds: float = 2.5  # na partida: nenhuma dica nos primeiros segundos
+var tip_first_delay_match_seconds: float = 4.0  # na partida: nenhuma dica nos primeiros segundos
+var tip_event_delay_seconds: float = 1.5  # na partida: espera entre o evento e a dica (tempo real)
 var tip_spotlight_layer: int = 55  # acima da pausa (50), abaixo do resultado (60)
 var tip_spot_padding: float = 1.7  # recorte em volta de um elemento: raio dele x isso
 var tip_spot_min_radius: float = 70.0

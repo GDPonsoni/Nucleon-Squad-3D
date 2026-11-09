@@ -140,6 +140,9 @@ func _try_present(context: StringName) -> void:
 	if tip.is_empty() or SaveGame.is_tip_seen(tip["id"]):
 		items.pop_front()
 		return
+	# Na partida, a dica espera um pouco depois do evento: dá tempo de ver o que aconteceu
+	if context == MATCH and _now() - int(items[0]["at"]) < int(event_delay(tip) * 1000.0):
+		return
 	if not presenter.can_show(tip):
 		return
 	var item: Dictionary = items.pop_front()
@@ -158,6 +161,11 @@ func _drop_stale(context: StringName, items: Array) -> void:
 	for i in range(items.size() - 1, -1, -1):
 		if _now() - int(items[i]["at"]) > limit:
 			items.remove_at(i)
+
+
+## Segundos entre o evento e a dica aparecer ("delay" na dica ou o padrão).
+func event_delay(tip: Dictionary) -> float:
+	return float(tip.get("delay", Params.tip_event_delay_seconds))
 
 
 func _target_alive(target: Variant) -> bool:
