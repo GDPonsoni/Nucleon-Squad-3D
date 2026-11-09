@@ -1,6 +1,6 @@
 # Estado atual e guia de retomada
 
-Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **04/11/2026**, com a `main` publicada no GitHub.
+Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **09/11/2026** (revisão de progressão, branch `feat/revisao-progressao`). A `main` no GitHub está em `f35ba59` (duração de 5 min).
 
 > **Para o Claude Code:** leia este arquivo, o `CLAUDE.md` e o GDD antes de começar. Depois de cada entrega relevante, atualize as seções "O que existe" e "Pendências" daqui.
 
@@ -10,7 +10,7 @@ Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pess
 
 | Item | Onde |
 |---|---|
-| Projeto (repo git) | `~/Documentos/outros/Nucleon Squad/nucleon-squad` |
+| Projeto (repo git) | `~/Documentos/outros/PROJETOS/Nucleon Squad/nucleon-squad` |
 | Godot 4.7.2 (não está no PATH) | `../Godot_v4.7.2-stable_linux.x86_64` (pasta acima do repo) |
 | adb | `~/Android/Sdk/platform-tools/adb` |
 | Android SDK / build-tools | `~/Android/Sdk` (build-tools 35.0.1) |
@@ -53,7 +53,7 @@ $G --headless --path . --fixed-fps 60 -s res://scripts/tools/simulate_stages.gd 
 $G --headless --path . -s res://scripts/tools/build_campaign.gd
 ```
 
-O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`, `--upgrades dano=3,...`, `--mode survival` e `--boss-only`. Depois de criar scripts ou recursos novos, rode `--import` uma vez para gerar os `.uid`. Scripts de ferramenta que usam os autoloads precisam de um arquivo `-s` mínimo que só carrega o resto no primeiro quadro (veja `simulate_stages.gd`).
+O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`, `--upgrades damage=3,...`, `--expected` (Dano e Cadência no poder esperado de cada capítulo: é a medida de dificuldade "alinhada"), `--mode survival` e `--boss-only`. Depois de criar scripts ou recursos novos, rode `--import` uma vez para gerar os `.uid`. Scripts de ferramenta que usam os autoloads precisam de um arquivo `-s` mínimo que só carrega o resto no primeiro quadro (veja `simulate_stages.gd`).
 
 ---
 
@@ -72,13 +72,13 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 **Interface:** botões com relevo e variação de ação principal (`PrimaryButton`); a nave auxiliar é escolhida numa fileira própria no Esquadrão (não pode repetir uma nave do esquadrão) e não tem núcleo.
 
-**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações; sair pelo Voltar do Android) → `stage_select.tscn` (mapa de um planeta por página; cabeçalho fixo; deslizar troca de planeta) → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
+**Fluxo de telas:** `menu.tscn` (Jogar / Esquadrão / Núcleo / Configurações; sair pelo Voltar do Android) → `stage_select.tscn` (mapa de um planeta por página; cabeçalho fixo; deslizar troca de planeta; depois do último planeta, uma página "novos capítulos em breve") → `game.tscn`. Também `squad.tscn`, `upgrades.tscn` e `settings.tscn`. Caminhos em `scripts/core/scene_paths.gd`.
 
 **Partida:**
 - Controle relativo por toque/mouse. Soltar o dedo ativa a câmera lenta (0,3) com moldura azul.
 - **Barra de troca de nave** fixa na base, translúcida enquanto o dedo move a nave e nítida na câmera lenta. A troca é um **toque curto** num corpo; se o dedo andar ou demorar mais que 0,35 s, vira arraste normal (evita trocas sem querer). A nave não desce além da barra. Hits e nível de cada corpo aparecem na própria barra. **Recarga entre trocas** voluntárias (`switch_cooldown_seconds`, 4 s) com setor escuro nos ícones; invulnerabilidade da troca de 1,0 s. As duas contam em tempo de jogo (escalam com a câmera lenta).
 - Esquadrão de 1 a 4 corpos (`Params.squad_size` = máximo; `SaveGame.set_squad` guarda só as escolhidas), 3 hits cada (mais com o Casco da evolução). O núcleo é a hitbox.
-- **Nave auxiliar** (opcional, espaço liberado ao concluir o capítulo 1): versão pequena de uma nave que acompanha a principal ao lado, não leva dano e atira uma versão fraca da arma (`WeaponData.companion_levels`, 3 níveis). Cada arma tem um papel como auxiliar: Raio foco, Leque flancos, Mísseis caça-grandões, Órbita escudo em volta da nave principal, Lança perfuração, Artilharia área, Tesla defesa próxima (360°), Ricochete enxame. Power-up raro lilás (`companion_powerup_chance`) sobe o nível dela na partida, com aviso na tela.
+- **Nave auxiliar** (opcional, espaço liberado ao concluir o capítulo 2, quando já há 2 naves fora do esquadrão): versão pequena de uma nave que acompanha a principal ao lado, não leva dano e atira uma versão fraca da arma (`WeaponData.companion_levels`, 3 níveis). Cada arma tem um papel como auxiliar: Raio foco, Leque flancos, Mísseis caça-grandões, Órbita escudo em volta da nave principal, Lança perfuração, Artilharia área, Tesla defesa próxima (360°), Ricochete enxame. Power-up raro lilás (2 por fase, por tempo, só enquanto ela pode subir) sobe o nível dela na partida, com aviso na tela.
 - **Tela de esquadrão:** 4 vagas + vaga da auxiliar no topo e grade de naves (ícone, nome e ⓘ). Tocar põe na 1ª vaga livre; com o esquadrão cheio, vira a auxiliar; tocar de novo (ou na vaga) tira. A nave voa animada entre grade e vaga. O ⓘ abre a inspeção (`ShipInspect`): nave grande, demo ao vivo da arma (`WeaponDemo`, alvos `TrainingTarget`) na versão principal (níveis 1–5) ou auxiliar (1–3), descrição curta e botões de esquadrão/auxiliar.
 - **8 naves:**
 
@@ -88,28 +88,40 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
   | Leque | SPREAD | rajada 360° + anel | início |
   | Mísseis | HOMING | chuva de mísseis em todos | início |
   | Órbita | ORBIT | anel de energia | início |
-  | Lança | PIERCE | leque de lanças gigantes | cap. 2 |
-  | Artilharia | BLAST | bombardeio | cap. 3 |
-  | Tesla | CHAIN | tempestade de raios em todos | cap. 4 |
-  | Ricochete | BOUNCE | 16 orbes que ricocheteiam | cap. 5 |
+  | Lança | PIERCE | leque de lanças gigantes | cap. 1 |
+  | Artilharia | BLAST | bombardeio | cap. 2 |
+  | Tesla | CHAIN | tempestade de raios em todos | cap. 3 |
+  | Ricochete | BOUNCE | 16 orbes que ricocheteiam | cap. 4 |
 
-  "Liberada" = concluir o capítulo (fase 9). Está em `BodyData.unlock_chapter`.
-- 5 níveis de arma por power-up, kits médicos, especial que carrega com o tempo (`special_charge_multiplier`, hoje 1,5), revive por anúncio simulado (`AdService`).
-- **Quarks:** 10% da pontuação de cada inimigo/chefe, mais bônus ao concluir a fase (dobrado na 1ª vez). Guardados ao fim da partida, mesmo ao perder ou sair.
-- **Evolução do núcleo** (`upgrades.tscn`, `data/upgrade_tree.tres`, `data/upgrades/*.tres`): 12 nós em 3 ramos (Ataque, Defesa, Suporte) + **Sobrecarga**, sem limite de níveis (custo linear). Bônus calculados em `UpgradeTreeData.boosts_for` → `PlayerBoosts` (no `CombatContext` e no `MatchState`).
+  "Liberada" = concluir o capítulo (fase 9). Está em `BodyData.unlock_chapter`; a auxiliar em `Params.companion_unlock_chapter` (2). O cap. 5 não libera nada até virem novos capítulos.
+- 5 níveis de arma por power-up, kits médicos (poucos, por tempo), excedente vira pontos (`powerup_overflow_points`, `medkit_overflow_points`), especial que carrega com o tempo (`special_charge_multiplier`, hoje 1,5), revive por anúncio simulado (`AdService`).
+- **Quarks:** a renda vem de concluir fases (`quarks_stage_clear` por capítulo, dobrado na 1ª vez), de estrelas novas (`quarks_per_new_star`) e de vagas vazias no esquadrão (+25% cada, `quarks_empty_slot_bonus`); abates dão só 1% da pontuação (`quarks_per_point`). Cálculo em `SaveGame.clear_bonus`. Guardados ao fim da partida, mesmo ao perder ou sair. Meta: árvore com limite completa por volta do fim do cap. 4 (`test_quark_economy`).
+- **Evolução do núcleo** (`upgrades.tscn`, `data/upgrade_tree.tres`, `data/upgrades/*.tres`): 12 nós com limite de níveis em 3 ramos (Ataque, Defesa, Suporte) + **Sobrecarga**, a única sem limite (custo linear). Árvore com limite: 16.515 quarks. Reparo e Arsenal encurtam o intervalo de kits e power-ups (em %). Bônus calculados em `UpgradeTreeData.boosts_for` → `PlayerBoosts` (no `CombatContext` e no `MatchState`).
 - **Áudio** (`Audio`, autoload): 28 efeitos em `assets/audio/sfx`, com ganho por som em `Params.sfx_gain_db` e intervalo mínimo em `Params.sfx_min_gap`. **Músicas** em `assets/audio/music` (menu e um tema por capítulo, em laço, com troca suave), geradas por `python3 scripts/tools/gen_music.py` (Python puro). Barramentos SFX e Música.
-- **Anúncios (simulados, `AdService`):** janela "Ganhar quarks" (`AdOfferPopup`) ao tocar no saldo (menu inicial e Núcleo) ou ao tentar comprar sem saldo (5 por dia, 120 + 60 por capítulo concluído). Banner reservado no rodapé do menu inicial com 90 dp de altura (cabe o padrão de 50 dp e o adaptativo do AdMob), em `make_banner_placeholder`, a trocar pelo SDK.
+- **Anúncios (simulados, `AdService`):** janela "Ganhar quarks" (`AdOfferPopup`) ao tocar no saldo (menu inicial e Núcleo) ou ao tentar comprar sem saldo (5 por dia, 80 + 40 por capítulo concluído). Banner reservado no rodapé do menu inicial com 90 dp de altura (cabe o padrão de 50 dp e o adaptativo do AdMob), em `make_banner_placeholder`, a trocar pelo SDK.
 - **Configurações** (menu e pausa): volume geral/música/efeitos, vibração, efeitos visuais reduzidos, estatísticas na tela (FPS e contadores, para esconder ao mostrar a demo), idioma (lista: automático, português, inglês, espanhol). Salvas em `SaveGame.settings`.
 
 **Contador de dano:** `DamageNumbers` (`scripts/weapons/damage_numbers.gd`, em `CombatContext.damage_numbers`) mostra números que sobem onde o inimigo foi atingido (`DamageNumber`, pooled). Acertos no mesmo alvo em `damage_number_window` (0,2 s) viram um número com a soma (Raio e rajadas não enchem a tela). Cor: branco normal, dourado fraqueza, cinza resistência. Configurações: ícone de estrela "Dano" (`SaveGame.settings.damage_numbers`, ligado por padrão). Params `damage_number_*`.
 
 **Balanceamento v2 (06/11/2026, branch `feat/balanceamento-v2`):**
-- **Power-ups por tempo:** `PowerUpDropper` segue o relógio da fase: `powerups_per_stage` (15) em `powerup_span` (75%) da duração, caindo no próximo abate (acumula até 2). Dá 3 armas no nível 5 (12 power-ups) com folga. O bônus de coleta da evolução encurta o intervalo (`powerup_bonus_step`, piso 40%). Medkit e auxiliar ficam como antes.
+- **Drops por tempo:** `PowerUpDropper` segue o relógio da fase para tudo: power-ups de arma (`powerups_per_stage` 15 em 75% da duração), kits (`medkits_per_stage` 2 em 90%) e auxiliar (`companion_powerups_per_stage` 2 em 70%), caindo no próximo abate (acumula até 2). Arsenal e Reparo encurtam o intervalo, com piso `drop_interval_floor` (40%).
 - **Armas:** `WeaponData.damage_scale` (só armas, não especiais). Raio 0,7, Lança 0,65, Leque 1,15, Artilharia 1,25, Ricochete 1,4, Mísseis 2,0, Órbita 1,2, Tesla 1,0. Medido com `--boss-only` (nível 5, 3-9): chefe cai em 77 a 112 s nas armas que o piloto automático usa bem (Órbita e Tesla ele não mede, ficam de fora).
 - **Chefes** (`Boss._tuned`, `BalanceData`): vida ×1,6 (intermediários ×1,5), ataques com intervalo ≥ 1 s mais rápidos por capítulo (`boss_interval_by_chapter`) e uma fase final de fúria (últimos 25% da vida: ataques ×0,7 de intervalo, tiros ×1,12, balanço ×1,2, sem rearmar o momento de especial).
 - **Duração (alvo 5 min por partida):** fases comuns 300 s, intermediário 210 s e chefe 200 − 25·capítulo s de ondas; a luta do chefe completa (medido: 1-9 ≈ 4,1 min, 3-9 ≈ 4,7, 5-9 ≈ 6,5 no piloto automático). `SAFETY_SECONDS` do simulador subiu para 1000.
 - **Camada de ação** (`_add_action_waves` no `campaign_builder`): ondas que não atiram (kamikazes, faíscas, enxames, serpentes, conforme o capítulo) a cada ~3,4 a 4,4 s entre os motivos, e um surto de 3 ondas a cada 60 s. Mais movimento e abates sem mais tiros. Medido (piloto automático): abates por fase 2 a 4× maiores (ex.: 3-4 de ~190 para ~790); hits/min subiram pouco (3-4: 8,8 → 12,2; 1-3: 2,9 → 4,3). A 5-8 já era a mais pesada (≈ 24 → 29 hits/min, tiros inimigos 354 em média, pool de inimigos cheio): revisar se o teste no aparelho pedir.
-- **Dificuldade** (piloto automático, nível 1, sem evolução nem troca; hits/min): cap.1 1,8 · cap.2 3,3 · cap.3 6,6 · cap.4 5,6 · cap.5 9,3. Os números antigos deste documento estavam defasados (a base já media assim). Cap. 4 fica abaixo do 3: ajustar se o teste no aparelho pedir.
+- Os números de dificuldade desse bloco ficaram defasados: veja "Revisão de progressão" abaixo.
+
+**Revisão de progressão (09/11/2026, branch `feat/revisao-progressao`):**
+- **Drops por tempo para tudo:** 2 kits e 2 power-ups da auxiliar por fase (antes: 1 kit a cada 30 abates e 1,2% por abate, o que dava ~20 kits e ~7 power-ups por fase com a camada de ação). Excedente (arma no máximo, corpo sem dano) vira 50 pontos, com o número na tela.
+- **Quarks:** a 1-1 rendia ~825 (metade da árvore saía no cap. 1). Agora ~250 na 1ª vez (bônus 2×60 + estrelas + 1% da pontuação). Anúncio: 80 + 40 por capítulo. `test_quark_economy` confere a meta (cap. 1 ≤ 15% da árvore; caps. 1 a 4 entre 70% e 105%).
+- **Desbloqueios:** Lança no cap. 1, Artilharia e auxiliar no cap. 2, Tesla no 3, Ricochete no 4. O cap. 5 não libera nada; o seletor tem uma página "novos capítulos em breve" depois do último planeta (`StageSelect._build_soon_page`).
+- **Esquadrão menor:** cada vaga vazia dá +25% no bônus de conclusão.
+- **Vida dos inimigos:** uma escala só, `BalanceData.expected_power_by_chapter` (1,0 a 2,4) × `toughness_by_chapter` (1,4 a 1,8), mais 5% por fase. O `HP_SCALE` do gerador saiu (empilhava). `test_hp_follows_player_power` confere que o poder esperado cabe no que a renda compra em Dano e Cadência.
+- **Curva:** `DIFFICULTY_BOOST` [0,5; 0,8; 0,35; 0,2; 0], `DIFFICULTY_PER_STAGE` 0,2, `CYCLE_LEVEL_CAP_BY_STAGE` (ondas crescem menos nas primeiras fases do capítulo), `DANGER_MAX` 17 e no máximo 2 motivos pesados.
+- **Estrelas:** 2 = 75% e 3 = 100% da pontuação possível (`STAR2_RATIO`, `STAR3_RATIO`).
+- **Dificuldade medida** (`--expected`, média de 3 sementes, hits/min nas fases 1, 4 e 8): cap. 1: 2,6 · 2,9 · 5,2; cap. 2: 3,3 · 3,5 · 5,3; cap. 3: 4,8 · 6,5 · 9,4; cap. 4: 5,5 · 8,7 · 9,1; cap. 5: 7,5 · 9,3 · 12,4 (5-6: 12,6). A 2-1 foi medida antes de subir o `DIFFICULTY_BOOST` do cap. 2 de 0,5 para 0,8, e a 4-8 antes do `DANGER_MAX`. Uma semente só varia muito (a 1-1 deu de 1,2 a 3,0): meça com 3 ou mais.
+- **Pool de inimigos cheio** (64) nas fases finais do cap. 5: os inimigos que não cabem não entram. Medir o FPS no aparelho antes de aumentar.
+- **Testes:** `pager_regressions` tem 4 falhas que já existiam na `main` (gesto rápido, página acompanha o dedo, cancelar, toque no botão da fase). Os outros testes passam.
 
 **Tutorial e avisos (06/11/2026, branch `feat/tutorial-avisos`):** `Tutorial` (autoload, `scripts/tutorial/tutorial.gd`) lê `data/tutorial/tips.json` (dicas por gatilho/fase/`requires`, contexto `match` | `screen` | `end`, `highlight` opcional). O jogo chama `Tutorial.notify(evento, fase)`; a fila respeita intervalo (`tip_gap_*`), expira na partida (`tip_expire_seconds`) e só mostra o balão (`TipBalloon`, não pausa, só os botões pegam toque) após `tip_safe_seconds` sem tiro/inimigo perto da nave (`Game._tip_is_safe`). Telas usam `Tutorial.open_screen(self, evento)` (janela `TipDialog`). Dica mostrada = vista (`SaveGame.tips_seen`, nunca repete). "Pular" fecha; "Não mostrar mais" desliga (`tips_enabled`); Configurações > "Rever tutorial" (`SaveGame.reset_tips`) esquece as dicas e religa. Avisos de desbloqueio (`UnlockNotice`, nave/auxiliar/próximo planeta) saem só ao fim da fase, antes do resultado, e nunca se repetem (ids `unlock_*`). Textos: chaves `TIP_*`/`UNLOCK_*` no CSV (pt, en, es).
 
@@ -140,7 +152,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | 4-9 | Hidra (1800 de vida) |
 | 5-9 | Corona (2600 de vida, 4 fases) |
 
-**Campanha:** 5 planetas (Aurora, Vulcânia, Abismo, Singularidade, Eclipse) × 9 fases = 45, ids `p1_s1`…`p5_s9`, de 1:15 a 3:15. Gerada por `scripts/tools/build_campaign.gd`. Cada fase usa 3 ou 4 padrões de onda (motivos) repetidos em ritmo fixo, com orçamento de perigo crescente. A 1ª fase de cada capítulo está sempre liberada; as outras liberam ao concluir a anterior.
+**Campanha:** 5 planetas (Aurora, Vulcânia, Abismo, Singularidade, Eclipse) × 9 fases = 45, ids `p1_s1`…`p5_s9`. Fases comuns com 300 s de ondas, intermediário 210 s, chefe 200 − 25·capítulo s mais a luta. Gerada por `scripts/tools/build_campaign.gd`. Cada fase usa 3 ou 4 padrões de onda (motivos) repetidos em ritmo fixo, com orçamento de perigo crescente. A 1ª fase de cada capítulo está sempre liberada; as outras liberam ao concluir a anterior.
 
 **Save** (`user://save.json`, versão 3): fases concluídas, recordes, esquadrão, auxiliar, quarks, evolução, capítulos concluídos e configurações. Saves 1 e 2 são migrados: o avanço vira fases concluídas e cada chefe antigo vencido conta como capítulo concluído (libera nave e auxiliar). Para liberar tudo, toque 5× no título do seletor (build de debug).
 
@@ -151,7 +163,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Quero mudar… | Arquivo |
 |---|---|
 | Qualquer número de tuning, sons e configurações padrão | `scripts/core/params.gd` (autoload `Params`) |
-| Ritmo e economia (vida dos inimigos, drops, duração da fase, carga do especial) | `data/balance.tres` (`BalanceData`, em `Params.balance`; `tunables()` lista os ajustes para um painel futuro) |
+| Ritmo e economia (vida dos inimigos, drops, duração da fase, carga do especial) | `data/balance.tres` (`BalanceData`, em `Params.balance`) |
 | Montagem da partida, chefe, revive, especial, kits | `scripts/core/game.gd` |
 | Estado da partida (hits, níveis, carga, pontuação) | `scripts/core/match_state.gd` |
 | Colisão (círculos) | `scripts/core/combat_system.gd`, `combat_context.gd` |
@@ -176,7 +188,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 | Diálogos (pausa, revive, resultado, ganhar quarks, configurações na pausa) | `scripts/ui/dialog.gd` (`Dialog`): X de 144 px, Voltar/Esc fecham só o do topo da pilha, corpo com quebra de linha e rolagem. Params `dialog_*` |
 | UI | `scripts/ui/*`. Tema em `ui_theme.gd` / `ui_factory.gd` |
 
-**Autoloads:** `Params`, `Session`, `SaveGame`, `SceneTransition`, `AdService`, `Audio`.
+**Autoloads:** `Params`, `Session`, `SaveGame`, `SceneTransition`, `AdService`, `Audio`, `Haptics`, `Tutorial`.
 
 **Camadas de CanvasLayer:**
 
@@ -217,25 +229,24 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 ## 6. Pendências e ideias
 
-**A testar no S24 (última build instalada = branch `feat/capitulo-5-e-progressao`):** veja `docs/MARCO2_TESTE.md`.
-
-**Balanceamento (04/11/2026):** a dificuldade dos capítulos 1 a 3 subiu (`DIFFICULTY_BOOST` em `campaign_builder.gd`, mais vida dos chefes dos capítulos 1 a 3). Piloto automático, média de 3 sementes, hits/min: cap. 1 ≈ 1,3; cap. 2 ≈ 2,0; cap. 3 ≈ 2,2; cap. 4 ≈ 2,0; cap. 5 ≈ 3,1. Falta confirmar no aparelho. Músicas de batalha refeitas (mais rápidas) e `music_volume_db` em -14. O botão Voltar fica no canto superior esquerdo (`UiFactory.add_corner_back`, agora uma seta desenhada por código). O `ui_smoke` confere textos apertados ou cortados em botões e rótulos (PT, EN e ES); `UiFactory.fit_button_text` reduz a fonte de botões com texto dinâmico longo.
+**A testar no S24:** a build da branch `feat/revisao-progressao` (ver "Revisão de progressão" na seção 3).
 
 **Observações de balanceamento (piloto automático, sem troca de nave):**
 - Mísseis sofre muito no capítulo 5 (muito mais hits que Raio e Leque). Vale revisar se o teste no aparelho confirmar.
-- 4-8, 3-8 e 5-8 são as fases mais pesadas de cada capítulo.
-- Os quarks começam em 0 mesmo para quem já jogou (sem retroativo).
+- A fase 8 de cada capítulo é a mais pesada (clímax).
+- O piloto automático não lê avisos nem usa a câmera lenta: os hits/min servem para comparar fases, não como dificuldade absoluta.
+- Saves antigos: quem já tinha concluído o cap. 1 perde o acesso à auxiliar até concluir o cap. 2 (a escolha fica guardada e volta sozinha).
 
 **Ofertas feitas e ainda não confirmadas pelo Gabriel:**
 - trocar a tela de boot (splash) do Godot
 - medir o FPS no aparelho com carga máxima
-- mesclar a branch na `main` e dar `push` (depende do "pode mesclar na main")
+- limite da câmera lenta (opções no GDD, seção 4)
 
 **Diálogos (05/11/2026):** todos usam `Dialog`. Telas que tratam o Voltar (menu, seletor, esquadrão, evolução, configurações) ignoram o Voltar enquanto `Dialog.is_open()`. A janela de ganhar quarks não fecha durante o anúncio (senão a recompensa se perde). Revive: X e Voltar recusam. Resultado: sem X; o Voltar vai ao seletor de fases. O `ui_smoke` confere os diálogos em 20:9, 19,5:9 e 16:9.
 
 **Ainda não feito:**
 - músicas definitivas (as atuais são sintetizadas)
-- `bomb_global.wav` não usado (a bomba global do GDD ainda não existe)
+- bomba global do GDD (não implementada; `bomb_global.wav` guardado): decidir se fica ou sai
 - especial global carregável por tempo: engavetado pelo Gabriel (05/11/2026)
 - anúncio real (SDK)
 - arte final (hoje tudo são placeholders desenhados por código)
