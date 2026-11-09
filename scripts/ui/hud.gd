@@ -22,6 +22,7 @@ var _moment_label: Label  # "use o especial" acima do botão, enquanto houver al
 var _toast_tween: Tween
 var _special: SpecialButton
 var _shown_quarks: int = -1
+var progress_ratio: Callable = Callable()  # barra do topo (padrão: progresso da fase)
 
 
 func _ready() -> void:
@@ -229,7 +230,8 @@ func _draw_progress() -> void:
 	var rect := Rect2(left, Params.hud_progress_y, right - left, Params.hud_progress_height)
 	var radius: float = Params.hud_progress_height * 0.5
 	_draw_round_rect(rect, Params.hud_panel_color, radius)
-	var filled := Rect2(rect.position, Vector2(rect.size.x * _spawner.progress(), rect.size.y))
+	var ratio: float = float(progress_ratio.call()) if progress_ratio.is_valid() else _spawner.progress()
+	var filled := Rect2(rect.position, Vector2(rect.size.x * ratio, rect.size.y))
 	if filled.size.x > 0.0:
 		_draw_round_rect(filled, Params.ui_accent_color, radius)
 

@@ -8,6 +8,11 @@ extends CanvasLayer
 var _dialog: Dialog
 
 
+var title_text: String = ""  # vazio = fase atual da campanha
+var restart_path: String = ScenePaths.GAME
+var back_path: String = ScenePaths.STAGE_SELECT  # Voltar do Android e botão do mapa
+
+
 func _ready() -> void:
 	# Funciona com a árvore pausada
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -19,12 +24,12 @@ func show_stage_clear(state: MatchState, seconds: float, record: bool, summary: 
 	if Session.has_next():
 		main = _icon(IconButton.Icon.PLAY, Params.results_main_size, "RESULT_CAPTION_NEXT", _on_next_pressed, true)
 	else:
-		main = _icon(IconButton.Icon.RESTART, Params.results_main_size, "PAUSE_CAPTION_RESTART", _go.bind(ScenePaths.GAME), true)
+		main = _icon(IconButton.Icon.RESTART, Params.results_main_size, "PAUSE_CAPTION_RESTART", _go.bind(restart_path), true)
 	_open("STAGE_CLEAR_TITLE", state, seconds, record, summary, main)
 
 
 func show_game_over(state: MatchState, seconds: float, summary: Dictionary) -> void:
-	var main := _icon(IconButton.Icon.RESTART, Params.results_main_size, "PAUSE_CAPTION_RESTART", _go.bind(ScenePaths.GAME), true)
+	var main := _icon(IconButton.Icon.RESTART, Params.results_main_size, "PAUSE_CAPTION_RESTART", _go.bind(restart_path), true)
 	_open("GAMEOVER_TITLE", state, seconds, false, summary, main)
 
 
@@ -32,11 +37,11 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, s
 	get_tree().paused = true
 	# Sem X: o resultado já foi salvo, e o Voltar do Android leva ao seletor de fases
 	_dialog = Dialog.open(self, title_key, false, layer)
-	_dialog.back_handler = _go.bind(ScenePaths.STAGE_SELECT)
+	_dialog.back_handler = _go.bind(back_path)
 	var column: VBoxContainer = _dialog.body
 	column.add_theme_constant_override("separation", Params.results_spacing)
 	var stage_name := UiFactory.make_subtitle("")
-	stage_name.text = "%s  %s" % [tr(Session.planet().name_key), Session.stage_label(Session.planet_index, Session.stage_index)]
+	stage_name.text = title_text if not title_text.is_empty() else "%s  %s" % [tr(Session.planet().name_key), Session.stage_label(Session.planet_index, Session.stage_index)]
 	column.add_child(stage_name)
 	if summary.has("stars"):
 		var stars_row := HBoxContainer.new()
@@ -50,7 +55,10 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, s
 	column.add_child(stats)
 	_add_stat(stats, "RESULT_SCORE", str(state.score))
 	_add_stat(stats, "RESULT_KILLS", str(state.kills))
-	_add_stat(stats, "RESULT_POWERUPS", str(state.powerups_collected))
+	if summary.has("level"):
+		_add_stat(stats, "RESULT_LEVEL", str(summary["level"]))
+	else:
+		_add_stat(stats, "RESULT_POWERUPS", str(state.powerups_collected))
 	_add_stat(stats, "RESULT_MEDKITS", str(state.medkits_collected))
 	_add_stat(stats, "RESULT_TIME", "%d:%02d" % [int(seconds) / 60, int(seconds) % 60])
 	var kills_quarks: int = int(summary.get("quarks_kills", 0))
@@ -85,10 +93,11 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, s
 	main_row.add_child(main)
 	column.add_child(main_row)
 	var row := HBoxContainer.new()
-	row.add_child(_icon(IconButton.Icon.MAP, Params.results_action_size, "RESULT_CAPTION_STAGES", _go.bind(ScenePaths.STAGE_SELECT)))
-	row.add_child(_expander())
+	if back_path == ScenePaths.STAGE_SELECT:
+		row.add_child(_icon(IconButton.Icon.MAP, Params.results_action_size, "RESULT_CAPTION_STAGES", _go.bind(ScenePaths.STAGE_SELECT)))
+		row.add_child(_expander())
 	row.add_child(_icon(IconButton.Icon.UPGRADE, Params.results_action_size, "RESULT_CAPTION_UPGRADE", func() -> void:
-		Session.upgrades_return_path = ScenePaths.STAGE_SELECT
+		Session.upgrades_return_path = back_path
 		_go(ScenePaths.UPGRADES)))
 	row.add_child(_expander())
 	row.add_child(_icon(IconButton.Icon.HOME, Params.results_action_size, "PAUSE_CAPTION_EXIT", _go.bind(ScenePaths.MENU)))

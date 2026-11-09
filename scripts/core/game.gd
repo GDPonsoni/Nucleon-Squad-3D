@@ -563,9 +563,9 @@ func _on_game_over() -> void:
 				return
 	var kills_quarks: int = int(state.quarks)
 	_bank_quarks(0)
-	results_menu.show_game_over(state, spawner.elapsed(), {
+	results_menu.show_game_over(state, _elapsed_seconds(), _result_summary({
 		"quarks_kills": kills_quarks, "quarks_bonus": 0, "rewards": PackedStringArray(),
-	})
+	}))
 
 
 ## O último corpo usado volta com vida cheia, de onde parou, com os tiros inimigos limpos.
@@ -664,6 +664,16 @@ func _special_weapon() -> WeaponData:
 
 func _hud_label() -> String:
 	return "%s  %s" % [tr(Session.planet().name_key), Session.stage_label(Session.planet_index, Session.stage_index)]
+
+
+## Tempo de partida mostrado no resultado.
+func _elapsed_seconds() -> float:
+	return spawner.elapsed()
+
+
+## Dados extras para a tela de resultado.
+func _result_summary(summary: Dictionary) -> Dictionary:
+	return summary
 
 
 ## Fim da montagem da cena.

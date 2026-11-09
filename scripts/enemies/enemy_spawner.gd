@@ -27,6 +27,14 @@ func setup(stage: StageData, enemies: NodePool) -> void:
 		spawn_wave(wave, wave.time_seconds * Params.balance.stage_duration_scale)
 
 
+## Recomeça a fase do zero (modos que repetem as ondas). Inimigos na tela continuam.
+func restart(stage: StageData) -> void:
+	_elapsed = 0.0
+	_finished = false
+	_pending.clear()
+	setup(stage, _enemies)
+
+
 ## Segundos de jogo desde o início da fase.
 func elapsed() -> float:
 	return _elapsed

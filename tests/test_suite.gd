@@ -651,3 +651,46 @@ func test_slowmo_energy() -> void:
 	time.forced_slow = false
 	time.free()
 	touch.free()
+
+
+## Modo roguelike: XP sobe de nível, 4 opções, 3 espaços, só armas próprias quando cheio,
+## quarks completam as opções e o especial é o da arma de maior nível.
+func test_run_progress() -> void:
+	var mode := load(Params.run_mode_path) as RunModeData
+	var progress := RunProgress.new(mode)
+	var roster: Array[BodyData] = []
+	for body in (load(Params.roster_path) as FormationData).bodies:
+		roster.append(body)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	# XP: um nível por limiar; sobra passa para o próximo
+	progress.add_xp(progress.xp_needed() * 2.5)
+	check(progress.level == 3 and progress.pending == 2, "XP sobe vários níveis (%d, %d)" % [progress.level, progress.pending])
+	check(mode.xp_growth > 1.0 and progress.xp_needed() > mode.xp_first_level, "cada nível pede mais XP")
+	# Começo: 4 armas novas, sem quarks
+	var first: Array[RunChoice] = progress.roll_choices(rng, roster, false)
+	check(first.size() == mode.choices_per_level, "4 opções no começo")
+	for choice in first:
+		check(choice.kind == RunChoice.Kind.NEW_WEAPON, "começo só com armas novas")
+	# Enche os 3 espaços
+	for i in mode.weapon_slots:
+		progress.apply(RunChoice.weapon(roster[i], 1))
+	check(progress.is_full() and progress.slots_used() == 3, "3 espaços cheios")
+	var full: Array[RunChoice] = progress.roll_choices(rng, roster)
+	for choice in full:
+		check(choice.kind != RunChoice.Kind.NEW_WEAPON, "cheio: nenhuma arma nova aparece")
+		if choice.body != null:
+			check(progress.owned.has(choice.body), "cheio: só armas que já tem")
+	check(full.size() == mode.choices_per_level, "com 3 armas subindo, completa com quarks (%d)" % full.size())
+	# Escolher a mesma arma sobe o nível dela; o especial segue a de maior nível
+	progress.apply(RunChoice.weapon(roster[1], 2))
+	check(progress.weapon_level(roster[1]) == 2 and progress.best_weapon() == roster[1], "arma repetida sobe; especial da maior")
+	# Tudo no máximo: só a recompensa
+	for i in mode.weapon_slots:
+		progress.apply(RunChoice.weapon(roster[i], roster[i].weapon.max_level()))
+	var maxed: Array[RunChoice] = progress.roll_choices(rng, roster)
+	check(maxed.size() == 1 and maxed[0].kind == RunChoice.Kind.QUARKS, "tudo no máximo: quarks")
+	progress.apply(maxed[0])
+	check(progress.quarks_from_levels == mode.quarks_per_extra_level, "recompensa em quarks guardada")
+	check(mode.ship.weapon.max_level() >= 1 and mode.max_hits == 5, "nave branca com 5 hits")
+

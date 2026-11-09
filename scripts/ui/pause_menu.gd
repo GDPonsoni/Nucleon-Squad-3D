@@ -9,6 +9,11 @@ var _settings_dialog: Dialog
 var _enabled: bool = true
 
 
+var title_text: String = ""  # vazio = fase atual da campanha
+var restart_path: String = ScenePaths.GAME
+var extra_content: Callable = Callable()  # monta um Control a mais (ex.: armas do modo roguelike)
+
+
 func _ready() -> void:
 	# Continua recebendo toques com a árvore pausada
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -60,11 +65,13 @@ func open() -> void:
 	get_tree().paused = true
 	_pause_button.visible = false
 	# A fase atual vai no título; continuar grande no meio, ações menores nos cantos de baixo
-	var stage_label: String = Session.stage_label(Session.planet_index, Session.stage_index)
+	var stage_label: String = title_text if not title_text.is_empty() else Session.stage_label(Session.planet_index, Session.stage_index)
 	_dialog = Dialog.open(self, stage_label, true, layer)
 	_dialog.closed.connect(_on_dialog_closed)
 	var body: VBoxContainer = _dialog.body
 	body.add_theme_constant_override("separation", Params.pause_spacing)
+	if extra_content.is_valid():
+		body.add_child(extra_content.call())
 	body.add_child(_centered(_icon(IconButton.Icon.PLAY, Params.pause_resume_size, tr("PAUSE_CAPTION_RESUME"), _dialog.close, true)))
 	var row := HBoxContainer.new()
 	row.add_child(_icon(IconButton.Icon.RESTART, Params.pause_action_size, tr("PAUSE_CAPTION_RESTART"), _restart_stage))
@@ -143,7 +150,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## Recomeça a fase atual do zero (a fase escolhida continua em Session).
 func _restart_stage() -> void:
-	SceneTransition.go_to(ScenePaths.GAME)
+	SceneTransition.go_to(restart_path)
 
 
 func _exit_to_menu() -> void:

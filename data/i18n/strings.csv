@@ -205,3 +205,15 @@ SETTINGS_SHORT_DAMAGE,Damage,Dano,Daño
 STAGE_SOON_CAPTION,Coming soon,Em breve,Próximamente
 STAGE_SOON_TITLE,New chapters,Novos capítulos,Nuevos capítulos
 STAGE_SOON_TEXT,New planets are on the way. Keep evolving your Core and chasing stars!,Novos planetas estão a caminho. Continue evoluindo o núcleo e buscando estrelas!,Nuevos planetas están en camino. ¡Sigue mejorando el núcleo y buscando estrellas!
+MENU_RUN,Incursion,Incursão,Incursión
+RUN_MODE_NAME,Incursion,Incursão,Incursión
+RUN_LOCKED,Clear chapter %d to unlock this mode.,Conclua o capítulo %d para liberar este modo.,Completa el capítulo %d para desbloquear este modo.
+RUN_SHIP_NAME,Core,Núcleo,Núcleo
+RUN_FIRST_PICK,Choose your weapon,Escolha sua arma,Elige tu arma
+RUN_LEVEL_UP,Level up!,Subiu de nível!,¡Subiste de nivel!
+RUN_LEVEL,Lv %d,Nv %d,Nv %d
+RUN_SLOTS,Weapons %d/%d,Armas %d/%d,Armas %d/%d
+RUN_NEW_WEAPON,New weapon,Arma nova,Arma nueva
+RUN_WEAPON_LEVEL,Level %d → %d,Nível %d → %d,Nivel %d → %d
+RUN_QUARKS_REWARD,Quarks,Quarks,Quarks
+RESULT_LEVEL,Level,Nível,Nivel

@@ -5,7 +5,7 @@ extends Node
 
 const SCENES: PackedStringArray = [
 	"res://scenes/menu.tscn", "res://scenes/settings.tscn", "res://scenes/stage_select.tscn",
-	"res://scenes/squad.tscn", "res://scenes/upgrades.tscn", "res://scenes/game.tscn",
+	"res://scenes/squad.tscn", "res://scenes/upgrades.tscn", "res://scenes/game.tscn", "res://scenes/run.tscn",
 ]
 
 
