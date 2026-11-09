@@ -25,7 +25,7 @@ func _ready() -> void:
 		add_child(caption)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	row.add_theme_constant_override("separation", 26)
+	row.add_theme_constant_override("separation", Params.run_slot_gap)
 	add_child(row)
 	for i in _progress.mode.weapon_slots:
 		var ship: BodyData = _progress.owned[i] if i < _progress.owned.size() else null
@@ -60,7 +60,8 @@ func _draw_pips(canvas: Control, ship: BodyData) -> void:
 		return
 	var total: int = ship.weapon.max_level()
 	var level: int = _progress.weapon_level(ship)
-	var w: float = Params.run_slot_pip_size.x
+	# Cabe na largura do espaço (5 tracinhos e 4 vãos de meio tracinho)
+	var w: float = minf(Params.run_slot_pip_size.x, canvas.size.x * 0.9 / (total * 1.5 - 0.5))
 	var gap: float = w * 0.5
 	var width: float = total * w + (total - 1) * gap
 	var x: float = (canvas.size.x - width) * 0.5

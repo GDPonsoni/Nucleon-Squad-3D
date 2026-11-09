@@ -219,7 +219,7 @@ func _setup_tutorial() -> void:
 	add_child(tip_balloon)
 	Tutorial.attach(Tutorial.MATCH, tip_balloon)
 	touch_input.touch_ended.connect(Tutorial.notify.bind(&"touch_released"))
-	Tutorial.notify(&"match_start", String(Session.stage().id))
+	Tutorial.notify(&"match_start", String(_stage().id))
 	if companion != null:
 		Tutorial.notify(&"companion_active")
 
@@ -308,7 +308,9 @@ func _finish_stage_clear() -> void:
 	var first_time: bool = not SaveGame.is_completed(stage.id)
 	var stars_before: int = SaveGame.stage_stars(stage)
 	var chapter_cleared_before: bool = SaveGame.is_chapter_cleared(Session.planet_index)
-	var record: bool = SaveGame.complete_stage(stage.id, state.score)
+	var record: bool = SaveGame.complete_stage(stage.id, state.score, {
+		"time": spawner.elapsed(), "kills": state.kills, "hits": state.hits_taken, "medkits": state.medkits_collected,
+	})
 	var kills_quarks: int = int(state.quarks)
 	var bonus: int = _clear_bonus(first_time, SaveGame.stage_stars(stage) - stars_before)
 	_bank_quarks(bonus)

@@ -35,6 +35,7 @@ var kills: int = 0
 var powerups_collected: int = 0
 var medkits_collected: int = 0
 var shields_used: int = 0
+var hits_taken: int = 0  # hits que tiraram vida (escudo não conta)
 var quarks: float = 0.0  # quarks ganhos com os inimigos nesta partida (ainda não guardados)
 
 
@@ -102,6 +103,7 @@ func switch_cooldown_ratio() -> float:
 func damage_current(amount: int) -> void:
 	if not is_alive(current):
 		return
+	hits_taken += amount
 	hits_left[current] = maxi(hits_left[current] - amount, 0)
 	hits_changed.emit(current, hits_left[current])
 	if is_alive(current):

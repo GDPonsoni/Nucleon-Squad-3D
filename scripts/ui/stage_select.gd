@@ -233,6 +233,16 @@ func _open_stage_sheet(planet_index: int, stage_index: int) -> void:
 	best.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
 	best.text = tr("STAGE_BEST") % SaveGame.best_score(stage.id)
 	body.add_child(best)
+	var run: Dictionary = SaveGame.best_run(stage.id)
+	if not run.is_empty():
+		var seconds: int = int(run.get("time", 0.0))
+		var hits: int = int(run.get("hits", 0))
+		var stats := UiFactory.make_subtitle("")
+		stats.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+		stats.text = tr("STAGE_BEST_RUN") % ["%d:%02d" % [seconds / 60, seconds % 60], int(run.get("kills", 0)),
+			tr("STAGE_NO_DAMAGE") if hits == 0 else tr("STAGE_HITS") % hits]
+		stats.add_theme_font_size_override("font_size", Params.results_detail_font_size)
+		body.add_child(stats)
 	var next_score: int = stage.next_star_score(stars)
 	if next_score > 0:
 		var goal := UiFactory.make_subtitle("")

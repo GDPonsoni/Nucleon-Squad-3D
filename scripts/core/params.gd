@@ -551,6 +551,7 @@ var run_card_detail_font_size: int = 38
 var run_slot_size: float = 130.0  # espaços de arma (pausa e tela de nível)
 var run_slot_compact_size: float = 96.0  # espaços na câmera lenta
 var run_slot_touch_margin: float = 24.0  # área de toque um pouco maior que o ícone
+var run_slot_gap: int = 40  # entre os espaços de arma
 var elite_color: Color = Color(1.0, 0.75, 0.25)
 var boss_drop_accel: float = 3200.0  # px/s² do chefe que despenca na entrada
 var boss_impact_seconds: float = 0.7  # onda de impacto (entrada e investida)

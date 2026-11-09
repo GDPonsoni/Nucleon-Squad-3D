@@ -1,6 +1,8 @@
 {
-	"_doc": "kind: tip | unlock. context (tip): match (balao na partida), screen (janela na tela), end (janela ao fim da fase). trigger: event + stage opcional (id da fase) + requires opcional (companion_unlocked). highlight (match): special | switcher. Textos em data/i18n/strings.csv (chaves TIP_*, UNLOCK_*). A ordem do arquivo é a prioridade.",
+	"_doc": "kind: tip | unlock. context (tip): match (balao na partida), screen (janela na tela), end (janela ao fim da fase). trigger: event + stage opcional (id da fase) + requires opcional (companion_unlocked). highlight (match): special | switcher | run_slots. Textos em data/i18n/strings.csv (chaves TIP_*, UNLOCK_*). A ordem do arquivo é a prioridade.",
 	"tips": [
+		{"id": "tip_run_start", "context": "match", "event": "match_start", "stage": "run", "text_key": "TIP_RUN_START"},
+		{"id": "tip_run_special", "context": "match", "event": "run_second_weapon", "text_key": "TIP_RUN_SPECIAL", "highlight": "run_slots"},
 		{"id": "tip_move", "context": "match", "event": "match_start", "stage": "p1_s1", "text_key": "TIP_MOVE"},
 		{"id": "tip_slowmo", "context": "match", "event": "touch_released", "text_key": "TIP_SLOWMO"},
 		{"id": "tip_powerup", "context": "match", "event": "powerup_collected", "text_key": "TIP_POWERUP"},

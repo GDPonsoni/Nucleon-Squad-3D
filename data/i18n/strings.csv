@@ -222,3 +222,10 @@ MODE_SELECT_TITLE,Choose a mode,Escolha o modo,Elige el modo
 MODE_CAMPAIGN,Campaign,Campanha,Campaña
 MODE_CAMPAIGN_DESC,"Five planets, bosses and stars. Unlock ships for your squad.","Cinco planetas, chefes e estrelas. Libere naves para o esquadrão.","Cinco planetas, jefes y estrellas. Desbloquea naves para tu escuadrón."
 MODE_RUN_DESC,"One ship, three weapons, 30 minutes. Level up and survive.","Uma nave, três armas, 30 minutos. Evolua e sobreviva.","Una nave, tres armas, 30 minutos. Evoluciona y sobrevive."
+STAGE_BEST_RUN,Best run: %s · %d kills · %s,Melhor partida: %s · %d abates · %s,Mejor partida: %s · %d bajas · %s
+STAGE_NO_DAMAGE,no damage!,sem dano!,¡sin daño!
+STAGE_HITS,%d hits taken,%d hits levados,%d golpes recibidos
+RUN_RECORD,Record: %s · Lv %d,Recorde: %s · Nv %d,Récord: %s · Nv %d
+RUN_RECORD_VICTORY,Completed! Best: %s · Lv %d,Concluída! Melhor: %s · Nv %d,¡Completada! Mejor: %s · Nv %d
+TIP_RUN_START,"Destroy enemies and grab the green orbs to level up. Each level lets you pick a weapon (up to 3) or upgrade one you have.","Destrua inimigos e pegue os orbes verdes para subir de nível. A cada nível, escolha uma arma (até 3) ou suba uma que já tem.","Destruye enemigos y recoge los orbes verdes para subir de nivel. En cada nivel, elige un arma (hasta 3) o mejora una que ya tienes."
+TIP_RUN_SPECIAL,"Two weapons! Lift your finger and tap a weapon in the bottom bar to choose which special you will use.","Duas armas! Solte o dedo e toque numa arma na barra de baixo para escolher qual especial usar.","¡Dos armas! Suelta el dedo y toca un arma en la barra de abajo para elegir qué especial usar."

@@ -8,6 +8,11 @@ const VERSION: int = 3
 
 var completed: Dictionary = {}  # id da fase -> true (fases concluídas)
 var best_scores: Dictionary = {}  # id da fase -> melhor pontuação
+## id da fase -> estatísticas da partida do recorde: {score, time, kills, hits, medkits}
+var best_runs: Dictionary = {}
+## Recorde da Incursão (maior tempo; empate, maior pontuação):
+## {time, level, score, kills, victory, weapons: [{id, level}]}. Vazio = nunca jogou.
+var run_record: Dictionary = {}
 var unlock_everything: bool = false  # atalho de debug do seletor
 var squad: PackedStringArray = PackedStringArray()  # ids dos corpos escolhidos, em ordem
 var companion: String = ""  # id do corpo da nave auxiliar ("" = nenhuma)
@@ -97,12 +102,31 @@ static func clear_bonus(chapter: int, first_time: bool, new_stars: int, empty_sl
 
 ## Marca a fase como concluída (libera a próxima do capítulo) e guarda o recorde.
 ## Retorna true se for recorde novo.
-func complete_stage(stage_id: StringName, score: int) -> bool:
+func complete_stage(stage_id: StringName, score: int, stats: Dictionary = {}) -> bool:
 	completed[String(stage_id)] = true
 	var record: bool = score > best_score(stage_id)
 	if record:
 		best_scores[String(stage_id)] = score
+		var run: Dictionary = stats.duplicate()
+		run["score"] = score
+		best_runs[String(stage_id)] = run
 	save()
+	return record
+
+
+## Estatísticas da partida do recorde da fase (vazio = sem registro, ex.: saves antigos).
+func best_run(stage_id: StringName) -> Dictionary:
+	return best_runs.get(String(stage_id), {})
+
+
+## Partida da Incursão terminada (morte, vitória ou saída). Retorna true se for recorde novo.
+func submit_run(result: Dictionary) -> bool:
+	var time: float = float(result.get("time", 0.0))
+	var best: float = float(run_record.get("time", -1.0))
+	var record: bool = time > best + 0.5 or (absf(time - best) <= 0.5 and int(result.get("score", 0)) > int(run_record.get("score", 0)))
+	if record:
+		run_record = result.duplicate(true)
+		save()
 	return record
 
 
@@ -259,6 +283,7 @@ func set_progress_count(count: int) -> void:
 	count = clampi(count, 0, order.size())
 	completed.clear()
 	best_scores.clear()
+	best_runs.clear()
 	cleared_chapters = PackedStringArray()
 	unlock_everything = false
 	for i in count:
@@ -273,6 +298,7 @@ func reset_all() -> void:
 	quarks = 0
 	quarks_earned_total = 0
 	upgrades.clear()
+	run_record = {}
 	squad = PackedStringArray()
 	companion = ""
 	ad_day = ""
@@ -308,6 +334,8 @@ func to_dict() -> Dictionary:
 		"version": VERSION,
 		"completed": completed.keys(),
 		"best_scores": best_scores,
+		"best_runs": best_runs,
+		"run_record": run_record,
 		"unlock_everything": unlock_everything,
 		"squad": squad,
 		"companion": companion,
@@ -346,6 +374,14 @@ func from_dict(data: Dictionary) -> void:
 	if typeof(scores) == TYPE_DICTIONARY:
 		for id in scores:
 			best_scores[String(id)] = int(scores[id])
+	var runs: Variant = data.get("best_runs", {})
+	if typeof(runs) == TYPE_DICTIONARY:
+		for id in runs:
+			if typeof(runs[id]) == TYPE_DICTIONARY:
+				best_runs[String(id)] = runs[id]
+	var record: Variant = data.get("run_record", {})
+	if typeof(record) == TYPE_DICTIONARY:
+		run_record = record
 	companion = String(data.get("companion", ""))
 	quarks = maxi(int(data.get("quarks", 0)), 0)
 	quarks_earned_total = maxi(int(data.get("quarks_earned_total", quarks)), quarks)

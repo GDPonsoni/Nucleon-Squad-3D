@@ -70,7 +70,7 @@ func _open(title_key: String, state: MatchState, seconds: float, record: bool, s
 		detail.add_theme_font_size_override("font_size", Params.results_detail_font_size)
 		column.add_child(detail)
 
-	if record:
+	if record or bool(summary.get("record", false)):
 		var record_label := UiFactory.make_subtitle("RESULT_NEW_RECORD")
 		record_label.add_theme_color_override("font_color", Params.powerup_color)
 		column.add_child(record_label)

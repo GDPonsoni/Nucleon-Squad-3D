@@ -129,6 +129,10 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 **Chefes arrojados (campanha e Incursão):** `BossData` ganhou entrada (`entry`: DESCEND, WARP = surge do espaço crescendo com anéis convergindo, DROP = despenca e freia com onda de impacto; nome grande na tela ao terminar, `Hud.show_boss_title`), visual por dados (`accent_color`, `plates` girando, `spikes`, `turrets` que miram, olho que segue a nave e fica vermelho na fúria, rachaduras pela vida) e ataques únicos (`signature`, somados às fases a partir de `signature_from_phase`). Padrões novos em `BossAttack`: CHARGE (investida avisada por faixa, anel de tiros no impacto), SWEEP (raio que gira a partir do chefe, conta em `hazard_hits`) e TROOPS (tropas saem do corpo com `troop_path`, via `Game._spawn_troops`). Os 10 chefes têm combinações próprias (tabela no histórico do commit). Teste: `tests/boss_regressions_run.gd` (cada chefe entra e usa os ataques únicos).
 
+**Recordes:** `SaveGame.best_runs` (por fase: tempo, abates, hits levados e kits da partida do recorde; aparece na ficha da fase concluída) e `SaveGame.run_record` (Incursão: maior tempo, empate pela pontuação; nível, abates, armas, vitória; aparece no card do modo e como "Novo recorde!" no resultado). Gravado ao morrer, vencer ou sair da partida. `MatchState.hits_taken` conta os hits que tiraram vida.
+
+**Dicas da Incursão:** `tip_run_start` (ao entrar no modo) e `tip_run_special` (ao ganhar a 2ª arma, destaca a faixa de baixo: `highlight` `run_slots`). As dicas gerais da partida (câmera lenta, especial, kits) também valem no modo.
+
 **Outras mudanças desta rodada:**
 - Jogar abre `mode_select.tscn` (cards ilustrados `ModeCard`: Campanha e Incursão, esta travada até o cap. 1). O seletor de fases volta para essa tela.
 - Campanha: dificuldade cresce ao longo da fase (`BalanceData.stage_ramp_hp` 0,35 e `stage_ramp_fire` 0,3 no fim; `StageData.difficulty_ramp`).

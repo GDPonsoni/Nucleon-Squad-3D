@@ -777,3 +777,23 @@ func test_run_special_choice() -> void:
 	check(progress.special_weapon() == roster[0], "escolha vale mesmo com nível menor")
 	progress.choose_special(roster[5])
 	check(progress.special_weapon() == roster[0], "arma que a nave não carrega é ignorada")
+
+
+## Recordes: melhor partida de cada fase (só quando bate a pontuação) e recorde da Incursão
+## (tempo; empate, pontuação), salvos e lidos de volta.
+func test_records() -> void:
+	var save := _fresh_save()
+	save.complete_stage(&"p1_s1", 500, {"time": 90.0, "kills": 40, "hits": 2, "medkits": 1})
+	save.complete_stage(&"p1_s1", 300, {"time": 60.0, "kills": 10, "hits": 9, "medkits": 0})
+	var run: Dictionary = save.best_run(&"p1_s1")
+	check(int(run["score"]) == 500 and int(run["kills"]) == 40, "melhor partida é a do recorde")
+	check(save.submit_run({"time": 300.0, "level": 8, "score": 1000}), "primeira Incursão é recorde")
+	check(not save.submit_run({"time": 200.0, "level": 12, "score": 9000}), "menos tempo não é recorde")
+	check(save.submit_run({"time": 300.2, "level": 8, "score": 2000}), "mesmo tempo, mais pontos: recorde")
+	check(save.submit_run({"time": 900.0, "level": 15, "score": 10}), "mais tempo: recorde")
+	var copy := _fresh_save()
+	copy.from_dict(JSON.parse_string(JSON.stringify(save.to_dict())))
+	check(int(copy.best_run(&"p1_s1")["hits"]) == 2, "melhor partida salva")
+	check(int(copy.run_record["level"]) == 15 and is_equal_approx(float(copy.run_record["time"]), 900.0), "recorde da Incursão salvo")
+	save.free()
+	copy.free()

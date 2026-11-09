@@ -19,6 +19,7 @@ var _run_stage: StageData  # fase "infinita" da partida (o diretor ajusta as esc
 var _won: bool = false
 var _boss_minute: float = 0.0
 var _bosses_killed: int = 0
+var _record_submitted: bool = false
 
 
 func _ready() -> void:
@@ -77,9 +78,13 @@ func _hud_label() -> String:
 	return tr("RUN_MODE_NAME")
 
 
-func _setup_tutorial() -> void:
-	super()
-	Tutorial.detach(Tutorial.MATCH, tip_balloon)  # dicas da campanha não valem aqui
+## Dicas: as gerais da partida (câmera lenta, especial...) e as do modo (stage "run").
+func _tip_highlight_rect(name: String) -> Rect2:
+	if name == "run_slots":
+		var view: Vector2 = get_viewport_rect().size
+		var top: float = view.y - Params.run_slow_loadout_bottom - 12.0
+		return Rect2(0.0, top, view.x, view.y - top)
+	return super(name)
 
 
 func _on_mode_ready() -> void:
@@ -149,7 +154,27 @@ func _elapsed_seconds() -> float:
 
 func _result_summary(summary: Dictionary) -> Dictionary:
 	summary["level"] = progress.level
+	summary["record"] = _submit_record()
 	return summary
+
+
+## Guarda o recorde da partida (uma vez): ao morrer, vencer ou sair.
+func _submit_record() -> bool:
+	if _record_submitted or progress == null:
+		return false
+	_record_submitted = true
+	var weapons: Array = []
+	for ship in progress.owned:
+		weapons.append({"id": String(ship.id), "level": progress.weapon_level(ship)})
+	return SaveGame.submit_run({
+		"time": _clock, "level": progress.level, "score": state.score, "kills": state.kills,
+		"victory": _won, "weapons": weapons,
+	})
+
+
+func _exit_tree() -> void:
+	_submit_record()
+	super()
 
 
 ## O spawner da partida não termina sozinho (dura o dobro da meta); nada a fazer.
@@ -243,7 +268,10 @@ func _open_choices() -> void:
 	Audio.play(&"weapon_levelup")
 	Haptics.play(&"nivel_arma")
 	var choice: RunChoice = await menu.chosen
+	var had: int = progress.owned.size()
 	progress.apply(choice)
+	if had == 1 and progress.owned.size() == 2:
+		Tutorial.notify(&"run_second_weapon")
 	if choice.kind == RunChoice.Kind.QUARKS:
 		state.quarks += choice.quarks
 	_choosing = false

@@ -10,6 +10,7 @@ var title_key: String = ""
 var description: String = ""  # já traduzida
 var locked: bool = false
 var accent: Color = Params.ui_accent_color
+var record_text: String = ""  # linha de destaque sobre a ilustração (recorde)
 var _clock: float = 0.0
 
 
@@ -48,6 +49,17 @@ func _draw() -> void:
 	draw_multiline_string(font, Vector2(Params.ui_panel_padding * 0.6, title_y + Params.mode_card_text_size * 1.3), description,
 		HORIZONTAL_ALIGNMENT_LEFT, rect.size.x - Params.ui_panel_padding * 1.2, Params.mode_card_text_size, 2,
 		Params.ui_muted_text_color)
+	if not record_text.is_empty():
+		var badge_size: Vector2 = font.get_string_size(record_text, HORIZONTAL_ALIGNMENT_LEFT, -1, Params.mode_card_text_size)
+		var badge := Rect2(art_rect.position + Vector2(16, 16), badge_size + Vector2(28, 16))
+		var bg := StyleBoxFlat.new()
+		bg.bg_color = Color(0, 0, 0, 0.55)
+		bg.border_color = accent
+		bg.set_border_width_all(2)
+		bg.set_corner_radius_all(14)
+		draw_style_box(bg, badge)
+		draw_string(font, badge.position + Vector2(14, 8 + Params.mode_card_text_size * 0.85), record_text,
+			HORIZONTAL_ALIGNMENT_LEFT, -1, Params.mode_card_text_size, accent)
 	if locked:
 		draw_rect(rect, Color(0, 0, 0, 0.45))
 		_draw_lock(art_rect.get_center(), art_rect.size.y * 0.16)

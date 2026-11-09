@@ -26,6 +26,11 @@ func _ready() -> void:
 	run.accent = Params.xp_orb_color
 	run.description = tr("RUN_LOCKED") % Params.run_unlock_chapter if run.locked else tr("MODE_RUN_DESC")
 	run.pressed.connect(_open_run.bind(run.locked))
+	var record: Dictionary = SaveGame.run_record
+	if not run.locked and not record.is_empty():
+		var seconds: int = int(record.get("time", 0.0))
+		var key: String = "RUN_RECORD_VICTORY" if bool(record.get("victory", false)) else "RUN_RECORD"
+		run.record_text = tr(key) % ["%d:%02d" % [seconds / 60, seconds % 60], int(record.get("level", 1))]
 	column.add_child(run)
 	var center := UiFactory.make_centered(column)
 	add_child(center)
