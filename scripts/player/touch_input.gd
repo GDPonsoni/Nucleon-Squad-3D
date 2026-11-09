@@ -32,10 +32,6 @@ func is_touching() -> bool:
 	return _index != NO_TOUCH and not _pending
 
 
-func is_tap_pending() -> bool:
-	return _pending
-
-
 func _process(_delta: float) -> void:
 	# Tempo real: na câmera lenta o limite do toque curto não se estende
 	if _pending and (Time.get_ticks_usec() - _pending_usec) / 1_000_000.0 > Params.tap_max_seconds:

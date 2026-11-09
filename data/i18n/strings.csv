@@ -1,17 +1,13 @@
 keys,en,pt_BR,es
 GAME_TITLE,Nucleon Squad,Nucleon Squad,Nucleon Squad
 MENU_PLAY,Play,Jogar,Jugar
-MENU_QUIT,Quit,Sair,Salir
-PAUSE_TITLE,Paused,Pausado,Pausa
 PAUSE_RESUME,Resume,Continuar,Continuar
-PAUSE_EXIT_TO_MENU,Back to menu,Voltar ao menu,Volver al menú
 GAMEOVER_TITLE,Game over,Fim de jogo,Fin del juego
 GAMEOVER_RETRY,Play again,Jogar de novo,Jugar de nuevo
 PLANET_1_NAME,Aurora,Aurora,Aurora
 PLANET_2_NAME,Vulcania,Vulcânia,Vulcania
 STAGE_CLEAR_TITLE,Stage clear,Fase concluída,Fase completada
 STAGE_NEXT,Next stage,Próxima fase,Siguiente fase
-STAGE_SELECT_TITLE,Select stage,Escolha a fase,Elige la fase
 STAGE_BEST,Best %d,Recorde %d,Récord %d
 MENU_BACK,Back,Voltar,Volver
 RESULT_SCORE,Score,Pontos,Puntos
@@ -19,7 +15,6 @@ RESULT_KILLS,Enemies destroyed,Inimigos destruídos,Enemigos destruidos
 RESULT_POWERUPS,Power-ups,Power-ups,Power-ups
 RESULT_TIME,Time,Tempo,Tiempo
 RESULT_NEW_RECORD,New record!,Novo recorde!,¡Nuevo récord!
-RESULT_STAGE_SELECT,Select stage,Escolher fase,Elegir fase
 SPECIAL_MOMENT,USE YOUR SPECIAL!,USE O ESPECIAL!,¡USA EL ESPECIAL!
 SPECIAL_MOMENT_HINT,Armored! Special,Blindado! Especial,¡Blindado! Especial
 BOSS_WARNING,WARNING: BOSS AHEAD,ALERTA: CHEFE À FRENTE,ALERTA: JEFE EN CAMINO
@@ -27,7 +22,6 @@ BOSS_1_NAME,Sentinel,Sentinela,Centinela
 BOSS_2_NAME,Forge,Forja,Forja
 BOSS_3_NAME,Umbra,Umbra,Umbra
 PLANET_3_NAME,Abyss,Abismo,Abismo
-PAUSE_RESTART,Restart,Reiniciar,Reiniciar
 RESULT_MEDKITS,Medkits,Medkits,Botiquines
 REVIVE_TITLE,Continue?,Continuar?,¿Continuar?
 REVIVE_INFO,Watch an ad and your last ship returns with full health.,Assista a um anúncio e sua última nave volta com a vida cheia.,Mira un anuncio y tu última nave vuelve con la vida llena.
@@ -57,12 +51,10 @@ SWITCH_CHOOSE,Choose your next ship,Escolha a próxima nave,Elige tu próxima na
 MENU_UPGRADES,Core,Núcleo,Núcleo
 RESULT_QUARKS,Quarks,Quarks,Quarks
 RESULT_QUARKS_DETAIL,enemies +%d · stage +%d,inimigos +%d · fase +%d,enemigos +%d · fase +%d
-RESULT_UPGRADES,Upgrade core (%d quarks),Evoluir núcleo (%d quarks),Mejorar núcleo (%d quarks)
 RESULT_CHAPTER_CLEAR,Chapter clear!,Capítulo concluído!,¡Capítulo completado!
 REWARD_COMPANION_SLOT,Wingman slot unlocked,Espaço da nave auxiliar liberado,Espacio de nave auxiliar desbloqueado
 REWARD_SHIP,New ship: %s,Nova nave: %s,Nueva nave: %s
 UPGRADES_TITLE,Core,Núcleo,Núcleo
-UPGRADES_BALANCE,%d quarks,%d quarks,%d quarks
 UPGRADES_BRANCH_ATTACK,Attack,Ataque,Ataque
 UPGRADES_BRANCH_DEFENSE,Defense,Defesa,Defensa
 UPGRADES_BRANCH_SUPPORT,Support,Suporte,Apoyo
@@ -117,37 +109,19 @@ MINI_5_NAME,Flare,Labareda,Llamarada
 BOSS_5_NAME,Corona,Corona,Corona
 PLANET_5_NAME,Eclipse,Eclipse,Eclipse
 STAGE_CHAPTER,Chapter %d,Capítulo %d,Capítulo %d
-STAGE_PROGRESS,%d of %d stages cleared,%d de %d fases concluídas,%d de %d fases completadas
-STAGE_REWARD,Clear the chapter to unlock: %s,Conclua o capítulo para liberar: %s,Completa el capítulo para desbloquear: %s
-STAGE_REWARD_DONE,Chapter reward unlocked: %s,Recompensa do capítulo liberada: %s,Recompensa del capítulo desbloqueada: %s
 STAGE_REWARD_COMPANION,wingman slot,espaço da nave auxiliar,espacio de nave auxiliar
 MENU_SETTINGS,Settings,Configurações,Ajustes
-SETTINGS_TITLE,Settings,Configurações,Ajustes
-SETTINGS_MASTER,Master volume,Volume geral,Volumen general
-SETTINGS_MUSIC,Music,Música,Música
-SETTINGS_SFX,Sound effects,Efeitos sonoros,Efectos de sonido
-SETTINGS_VIBRATION,Vibration,Vibração,Vibración
-SETTINGS_HAPTIC_LEVEL,Strength,Intensidade,Intensidad
 HAPTIC_LOW,Low,Baixa,Baja
 HAPTIC_MEDIUM,Medium,Média,Media
 HAPTIC_HIGH,High,Alta,Alta
-SETTINGS_EFFECTS,Visual effects,Efeitos visuais,Efectos visuales
-SETTINGS_EFFECTS_REDUCED,Reduced,Reduzidos,Reducidos
-SETTINGS_EFFECTS_FULL,Full,Completos,Completos
-SETTINGS_LANGUAGE,Language,Idioma,Idioma
-SETTINGS_ON,On,Ligada,Activada
-SETTINGS_OFF,Off,Desligada,Desactivada
 LANGUAGE_AUTO,Automatic,Automático,Automático
 LANGUAGE_PT_BR,Português,Português,Português
 LANGUAGE_EN,English,English,English
 LANGUAGE_ES,Español,Español,Español
-SQUAD_SLOTS_TITLE,Squad,Esquadrão,Escuadrón
-SETTINGS_PICK_LANGUAGE,Choose the language,Escolha o idioma,Elige el idioma
 ADS_EARN_BUTTON,Watch ad: +%d quarks,Ver anúncio: +%d quarks,Ver anuncio: +%d quarks
 ADS_EARN_LEFT,%d of %d left today,%d de %d restantes hoje,%d de %d restantes hoy
 ADS_EARN_DONE,Come back tomorrow for more,Volte amanhã para mais,Vuelve mañana por más
 BANNER_PLACEHOLDER,Banner ad space (simulated),Espaço do banner (simulado),Espacio del banner (simulado)
-SETTINGS_STATS,On-screen stats,Estatísticas na tela,Estadísticas en pantalla
 ADS_EARN_TITLE,Earn quarks,Ganhar quarks,Ganar quarks
 ADS_EARN_HINT,Watch a short ad to earn quarks for upgrading the core.,Assista a um anúncio curto para ganhar quarks e evoluir o núcleo.,Mira un anuncio corto para ganar quarks y mejorar el núcleo.
 UPGRADES_NO_QUARKS,Not enough quarks: you need %d more.,Saldo insuficiente: faltam %d quarks.,Saldo insuficiente: faltan %d quarks.
