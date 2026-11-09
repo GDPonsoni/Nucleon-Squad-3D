@@ -1,5 +1,5 @@
 {
-	"_doc": "kind: tip | unlock. context (tip): match (destaque com pausa na partida, na 1a vez que o evento acontece), screen (janela na tela), end (janela ao fim da fase). trigger: event + stage opcional (id da fase) + requires opcional (companion_unlocked). Na partida, o evento pode trazer o elemento envolvido (power-up, inimigo...), que fica destacado; highlight (opcional) troca por um elemento fixo: player | energy | special | switcher | run_slots. Textos em data/i18n/strings.csv (chaves TIP_*, UNLOCK_*). delay (opcional): segundos entre o evento e a dica na partida (padrão Params.tip_event_delay_seconds). A ordem do arquivo é a prioridade.",
+	"_doc": "kind: tip | unlock. context (tip): match (destaque com pausa na partida, na 1a vez que o evento acontece), screen (janela na tela), end (janela ao fim da fase). trigger: event + stage opcional (id da fase) + requires opcional (companion_unlocked). Na partida, o evento pode trazer o elemento envolvido (power-up, inimigo...), que fica destacado; highlight (opcional) troca por um elemento fixo: player | energy | special | switcher | run_slots. Textos em data/i18n/strings.csv (chaves TIP_*, UNLOCK_*). intro (opcional): dica de abertura, aparece já, sem esperar intervalo nem atraso. gap (opcional): segundos até a próxima dica (padrão Params.tip_gap_match_seconds). delay (opcional): segundos entre o evento e a dica na partida (padrão Params.tip_event_delay_seconds). A ordem do arquivo é a prioridade.",
 	"tips": [
 		{
 			"id": "tip_move",
@@ -7,7 +7,19 @@
 			"event": "match_start",
 			"stage": "p1_s1",
 			"text_key": "TIP_MOVE",
-			"highlight": "player"
+			"highlight": "player",
+			"intro": true,
+			"gap": 0.5
+		},
+		{
+			"id": "tip_switch",
+			"context": "match",
+			"event": "match_start",
+			"stage": "p1_s1",
+			"text_key": "TIP_SWITCH",
+			"highlight": "switcher",
+			"intro": true,
+			"gap": 2.5
 		},
 		{
 			"id": "tip_run_start",
@@ -15,22 +27,26 @@
 			"event": "match_start",
 			"stage": "run",
 			"text_key": "TIP_RUN_START",
-			"highlight": "player"
+			"highlight": "player",
+			"intro": true,
+			"gap": 2.5
 		},
 		{
 			"id": "tip_slowmo",
 			"context": "match",
 			"event": "touch_released",
 			"text_key": "TIP_SLOWMO",
-			"highlight": "energy"
+			"highlight": "energy",
+			"delay": 0.3,
+			"gap": 3.0
 		},
 		{
-			"id": "tip_switch",
+			"id": "tip_telegraph",
 			"context": "match",
-			"event": "match_start",
-			"stage": "p1_s2",
-			"text_key": "TIP_SWITCH",
-			"highlight": "switcher"
+			"event": "enemy_telegraph",
+			"text_key": "TIP_TELEGRAPH",
+			"delay": 0.35,
+			"gap": 6.0
 		},
 		{
 			"id": "tip_powerup",
@@ -52,13 +68,6 @@
 			"event": "xp_orb_spawned",
 			"text_key": "TIP_XP_ORB",
 			"delay": 1.0
-		},
-		{
-			"id": "tip_telegraph",
-			"context": "match",
-			"event": "enemy_telegraph",
-			"text_key": "TIP_TELEGRAPH",
-			"delay": 0.35
 		},
 		{
 			"id": "tip_hits",

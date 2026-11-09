@@ -134,14 +134,18 @@ func _try_present(context: StringName) -> void:
 		return
 	var items: Array = _queue.get(context, [])
 	_drop_stale(context, items)
-	if items.is_empty() or _now() < int(_next_at.get(context, 0)):
+	if items.is_empty():
 		return
 	var tip: Dictionary = tip_by_id(items[0]["id"])
+	# Dicas de abertura ("intro") aparecem já, uma atrás da outra; as outras respeitam o intervalo
+	var intro: bool = bool(tip.get("intro", false))
+	if not intro and _now() < int(_next_at.get(context, 0)):
+		return
 	if tip.is_empty() or SaveGame.is_tip_seen(tip["id"]):
 		items.pop_front()
 		return
 	# Na partida, a dica espera um pouco depois do evento: dá tempo de ver o que aconteceu
-	if context == MATCH and _now() - int(items[0]["at"]) < int(event_delay(tip) * 1000.0):
+	if context == MATCH and not intro and _now() - int(items[0]["at"]) < int(event_delay(tip) * 1000.0):
 		return
 	if not presenter.can_show(tip):
 		return
@@ -175,12 +179,14 @@ func _target_alive(target: Variant) -> bool:
 func _begin(context: StringName, tip: Dictionary, presenter: Object, target: Variant = null) -> void:
 	SaveGame.mark_tip_seen(tip["id"])
 	_showing[context] = true
-	presenter.present(tip, _finished.bind(context), target)
+	presenter.present(tip, _finished.bind(context, tip), target)
 
 
-func _finished(context: StringName) -> void:
+func _finished(context: StringName, tip: Dictionary = {}) -> void:
 	_showing[context] = false
 	var gap: float = Params.tip_gap_match_seconds if context == MATCH else Params.tip_gap_screen_seconds
+	if tip.has("gap"):
+		gap = float(tip["gap"])  # a dica diz quanto esperar até a próxima
 	_next_at[context] = _now() + int(gap * 1000.0)
 
 
