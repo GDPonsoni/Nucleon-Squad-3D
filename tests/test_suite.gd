@@ -64,9 +64,10 @@ func test_migrates_phone_save_v2() -> void:
 	check(save.cleared_chapters == PackedStringArray(["planet_1", "planet_2"]), "capítulos: %s" % save.cleared_chapters)
 	check(save.is_chapter_cleared(0) and save.is_chapter_cleared(1), "capítulos 1 e 2 concluídos")
 	check(not save.is_chapter_cleared(2) and not save.is_chapter_cleared(3), "capítulos 3 e 4 não concluídos")
-	check(save.is_companion_unlocked(), "espaço auxiliar liberado pelo capítulo 1")
-	check(save.is_ship_unlocked(_body("lance_body")), "Lança liberada pelo capítulo 2")
-	check(not save.is_ship_unlocked(_body("artillery_body")), "Artilharia ainda bloqueada")
+	check(save.is_companion_unlocked(), "espaço auxiliar liberado pelo capítulo 2")
+	check(save.is_ship_unlocked(_body("lance_body")), "Lança liberada pelo capítulo 1")
+	check(save.is_ship_unlocked(_body("artillery_body")), "Artilharia liberada pelo capítulo 2")
+	check(not save.is_ship_unlocked(_body("tesla_body")), "Tesla ainda bloqueada")
 	check(save.best_score(&"p4_s3") == 13390, "recorde preservado")
 	check(save.quarks == 0 and save.upgrades.is_empty(), "sem quarks nem evolução")
 	var squad: Array[BodyData] = save.squad_formation().bodies
@@ -127,10 +128,12 @@ func test_debug_progress_rewind() -> void:
 func test_companion_needs_unlocked_slot() -> void:
 	var save := _fresh_save()
 	save.companion = "spread_body"
-	check(save.companion_body() == null, "sem capítulo 1 concluído, sem auxiliar")
+	check(save.companion_body() == null, "sem capítulo 2 concluído, sem auxiliar")
 	save.cleared_chapters = PackedStringArray(["planet_1"])
+	check(save.companion_body() == null, "o capítulo 1 libera uma nave, não a auxiliar")
+	save.cleared_chapters = PackedStringArray(["planet_1", "planet_2"])
 	check(save.companion_body() != null and String(save.companion_body().id) == "spread_body", "auxiliar liberada")
-	save.companion = "artillery_body"
+	save.companion = "tesla_body"
 	check(save.companion_body() == null, "nave bloqueada não vira auxiliar")
 	save.free()
 
@@ -444,22 +447,53 @@ func test_tutorial_tips() -> void:
 	SaveGame.tips_seen = save_seen
 
 
-## Avisos de desbloqueio: cap. 1 libera o espaço auxiliar e o planeta 2; nunca repetem.
+## Avisos de desbloqueio: cap. 1 libera a Lança e o planeta 2; cap. 2, a Artilharia e o espaço
+## auxiliar (com naves sobrando para ela); nunca repetem.
 func test_unlock_notices() -> void:
 	var save_seen: PackedStringArray = SaveGame.tips_seen
 	SaveGame.tips_seen = PackedStringArray()
 	var first: Array[Dictionary] = Tutorial.unlock_notices(0)
-	check(first.size() == 2, "capítulo 1: auxiliar + planeta (%d)" % first.size())
+	check(first.size() == 2, "capítulo 1: nave + planeta (%d)" % first.size())
+	check(_notice_ships(first) == 1, "capítulo 1 libera 1 nave")
 	for notice in first:
 		SaveGame.mark_tip_seen(notice["id"])
 	check(Tutorial.unlock_notices(0).is_empty(), "aviso de desbloqueio não repete")
 	var second: Array[Dictionary] = Tutorial.unlock_notices(1)
+	check(second.size() == 3 and _notice_ships(second) == 1, "capítulo 2: nave + auxiliar + planeta (%d)" % second.size())
+	# Quando a auxiliar libera, já há naves fora do esquadrão de 4 para ela
+	var free_ships: int = 0
+	for body in (load(Params.roster_path) as FormationData).bodies:
+		if body.unlock_chapter <= Params.companion_unlock_chapter:
+			free_ships += 1
+	check(free_ships - Params.squad_size >= 2, "naves sobrando para a auxiliar: %d" % (free_ships - Params.squad_size))
+	SaveGame.tips_seen = save_seen
+
+
+func _notice_ships(notices: Array[Dictionary]) -> int:
 	var ships: int = 0
-	for notice in second:
+	for notice in notices:
 		if notice["body"] != null:
 			ships += 1
-	check(ships == 1, "capítulo 2 libera 1 nave")
-	SaveGame.tips_seen = save_seen
+	return ships
+
+
+## Economia: a renda vem de concluir fases e de estrelas; com 2 estrelas em média, a 1ª
+## passada até o fim do cap. 4 paga quase toda a árvore com limite (o resto vem de anúncios
+## e de repetir fases). O cap. 1 sozinho não passa de ~15% dela.
+func test_quark_economy() -> void:
+	var tree: UpgradeTreeData = Session.upgrade_tree
+	var total_cost: int = tree.finite_total_cost()
+	var kills_points: int = 7000  # pontuação típica de uma fase (piloto automático)
+	var income: Array[int] = []
+	for chapter in 5:
+		var stage_income: int = SaveGame.clear_bonus(chapter, true, 2, 0) + int(kills_points * Params.quarks_per_point)
+		income.append(stage_income * Session.campaign.planets[chapter].stages.size())
+	var through_four: int = income[0] + income[1] + income[2] + income[3]
+	check(income[0] <= total_cost * 0.15, "cap. 1 rende %d de %d" % [income[0], total_cost])
+	check(through_four >= total_cost * 0.7 and through_four <= total_cost * 1.05, "caps. 1 a 4 rendem %d de %d" % [through_four, total_cost])
+	check(SaveGame.clear_bonus(0, false, 0, 0) < SaveGame.clear_bonus(0, true, 0, 0), "1ª vez rende mais")
+	check(SaveGame.clear_bonus(0, false, 0, 2) > SaveGame.clear_bonus(0, false, 0, 0), "vagas vazias rendem mais")
+	check(SaveGame.clear_bonus(0, false, 1, 0) - SaveGame.clear_bonus(0, false, 0, 0) == Params.quarks_per_new_star[0], "estrela nova rende")
 
 
 ## Drops por tempo: 15 power-ups em 75% da fase, poucos kits e auxiliar rara; a evolução encurta com piso.
