@@ -4,6 +4,8 @@
 [ext_resource type="Script" path="res://scripts/enemies/boss_phase.gd" id="2_phase"]
 [ext_resource type="Script" path="res://scripts/enemies/boss_attack.gd" id="3_attack"]
 [ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="4_wave"]
+[ext_resource type="Script" path="res://scripts/enemies/move_step.gd" id="sig_step"]
+[ext_resource type="Resource" path="res://data/enemies/kamikaze.tres" id="sig_kamikaze"]
 
 [sub_resource type="Resource" id="Attack_p0_a0"]
 script = ExtResource("3_attack")
@@ -100,6 +102,44 @@ hp_ratio = 0.5
 sway_speed_scale = 1.3
 attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_new_5")])
 
+[sub_resource type="Resource" id="SigAttack_0"]
+script = ExtResource("3_attack")
+pattern = 8
+interval = 6.0
+first_delay = 2.5
+telegraph_seconds = 1.0
+count = 12
+bullet_speed = 420.0
+bullet_radius = 13.0
+bullet_color = Color(1, 0.4, 0.3, 1)
+charge_speed = 1500.0
+
+[sub_resource type="Resource" id="SigStep_1_0"]
+script = ExtResource("sig_step")
+seconds = 0.6
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+fire = false
+
+[sub_resource type="Resource" id="SigStep_1_1"]
+script = ExtResource("sig_step")
+seconds = 5.0
+turn_degrees = 0.0
+speed_scale = 1.5
+home_degrees = 150.0
+fire = false
+
+[sub_resource type="Resource" id="SigAttack_1"]
+script = ExtResource("3_attack")
+pattern = 10
+interval = 10.0
+first_delay = 1.5
+telegraph_seconds = 0.8
+count = 4
+troop = ExtResource("sig_kamikaze")
+troop_path = Array[ExtResource("sig_step")]([SubResource("SigStep_1_0"), SubResource("SigStep_1_1")])
+
 [resource]
 script = ExtResource("1_script")
 id = &"boss_1"
@@ -115,3 +155,11 @@ hold_y_ratio = 0.2
 sway_amplitude = 260.0
 sway_speed = 0.6
 phases = Array[ExtResource("2_phase")]([SubResource("Phase_0"), SubResource("Phase_1")])
+entry = 1
+entry_seconds = 1.8
+accent_color = Color(0.5, 0.9, 1, 1)
+plates = 4
+spikes = 6
+turrets = 2
+signature = Array[ExtResource("3_attack")]([SubResource("SigAttack_0"), SubResource("SigAttack_1")])
+signature_from_phase = 1

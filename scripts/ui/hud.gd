@@ -170,6 +170,30 @@ func show_warning(text_key: String) -> void:
 
 
 ## Texto curto que aparece, fica um pouco e some (tempo real, mesmo na câmera lenta).
+## Nome do chefe grande no meio da tela (entrada do chefe).
+func show_boss_title(text: String, color: Color) -> void:
+	var title := UiFactory.make_title("")
+	title.auto_translate_mode = Node.AUTO_TRANSLATE_MODE_DISABLED
+	title.text = text.to_upper()
+	title.add_theme_font_size_override("font_size", Params.boss_title_font_size)
+	title.add_theme_color_override("font_color", color)
+	title.set_anchors_preset(Control.PRESET_CENTER)
+	title.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	title.grow_vertical = Control.GROW_DIRECTION_BOTH
+	title.offset_top = -Params.boss_title_font_size * 2.0
+	title.scale = Vector2.ONE * 1.4
+	title.modulate.a = 0.0
+	_canvas.add_child(title)
+	title.pivot_offset = title.size * 0.5
+	var tween := create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(title, "modulate:a", 1.0, 0.25)
+	tween.tween_property(title, "scale", Vector2.ONE, 0.35).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.chain().tween_interval(Params.boss_title_seconds)
+	tween.chain().tween_property(title, "modulate:a", 0.0, 0.4)
+	tween.chain().tween_callback(title.queue_free)
+
+
 func show_toast(text: String, color: Color) -> void:
 	_toast.text = text
 	_toast.add_theme_color_override("font_color", color)

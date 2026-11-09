@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scripts/enemies/boss_attack.gd" id="3_attack"]
 [ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="4_wave"]
 [ext_resource type="Resource" path="res://data/enemies/aimer.tres" id="5_aimer"]
+[ext_resource type="Script" path="res://scripts/enemies/move_step.gd" id="sig_step"]
 
 [sub_resource type="Resource" id="Attack_p0_a0"]
 script = ExtResource("3_attack")
@@ -95,6 +96,18 @@ movement = 1
 chase_speed = 240.0
 attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_new_4")])
 
+[sub_resource type="Resource" id="SigAttack_0"]
+script = ExtResource("3_attack")
+pattern = 9
+interval = 6.0
+first_delay = 3.5
+telegraph_seconds = 1.0
+aimed = true
+sweep_degrees = 90.0
+laser_seconds = 1.6
+laser_width = 70.0
+bullet_color = Color(1, 0.3, 0.6, 1)
+
 [resource]
 script = ExtResource("1_script")
 id = &"mini_3"
@@ -110,3 +123,11 @@ hold_y_ratio = 0.2
 sway_amplitude = 260.0
 sway_speed = 0.6
 phases = Array[ExtResource("2_phase")]([SubResource("Phase_0"), SubResource("Phase_1")])
+entry = 1
+entry_seconds = 1.8
+accent_color = Color(0.75, 0.6, 1, 1)
+plates = 0
+spikes = 4
+turrets = 0
+signature = Array[ExtResource("3_attack")]([SubResource("SigAttack_0")])
+signature_from_phase = 1

@@ -127,6 +127,13 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - Testes: `tests/run_regressions_run.gd` e `test_run_progress`/`test_run_director` em `run_tests`.
 - **Próximas etapas:** (c) eventos e combo, calibrar no aparelho; (d) árvore (ímã de drops, XP) e recompensa nova do modo; (e) guardar o conquistado ao sair, morrer ou o app fechar (sem retomar a partida).
 
+**Chefes arrojados (campanha e Incursão):** `BossData` ganhou entrada (`entry`: DESCEND, WARP = surge do espaço crescendo com anéis convergindo, DROP = despenca e freia com onda de impacto; nome grande na tela ao terminar, `Hud.show_boss_title`), visual por dados (`accent_color`, `plates` girando, `spikes`, `turrets` que miram, olho que segue a nave e fica vermelho na fúria, rachaduras pela vida) e ataques únicos (`signature`, somados às fases a partir de `signature_from_phase`). Padrões novos em `BossAttack`: CHARGE (investida avisada por faixa, anel de tiros no impacto), SWEEP (raio que gira a partir do chefe, conta em `hazard_hits`) e TROOPS (tropas saem do corpo com `troop_path`, via `Game._spawn_troops`). Os 10 chefes têm combinações próprias (tabela no histórico do commit). Teste: `tests/boss_regressions_run.gd` (cada chefe entra e usa os ataques únicos).
+
+**Outras mudanças desta rodada:**
+- Jogar abre `mode_select.tscn` (cards ilustrados `ModeCard`: Campanha e Incursão, esta travada até o cap. 1). O seletor de fases volta para essa tela.
+- Campanha: dificuldade cresce ao longo da fase (`BalanceData.stage_ramp_hp` 0,35 e `stage_ramp_fire` 0,3 no fim; `StageData.difficulty_ramp`).
+- Incursão: especial escolhido tocando num espaço na câmera lenta (`RunProgress.choose_special`, anel no escolhido); entradas por lateral e por baixo (cerco, cruzado, rasante, subidas; `RunWaveEntry.both_sides`), entradas por cima em arrancada; vida inicial 0,65 × 1,14^min; kits a cada 120 s, 25% nas elites, 1 por chefe; sem aviso de elite.
+
 **Revisão de progressão (09/11/2026, branch `feat/revisao-progressao`):**
 - **Drops por tempo para tudo:** 2 kits e 2 power-ups da auxiliar por fase (antes: 1 kit a cada 30 abates e 1,2% por abate, o que dava ~20 kits e ~7 power-ups por fase com a camada de ação). Excedente (arma no máximo, corpo sem dano) vira 50 pontos, com o número na tela.
 - **Quarks:** a 1-1 rendia ~825 (metade da árvore saía no cap. 1). Agora ~250 na 1ª vez (bônus 2×60 + estrelas + 1% da pontuação). Anúncio: 80 + 40 por capítulo. `test_quark_economy` confere a meta (cap. 1 ≤ 15% da árvore; caps. 1 a 4 entre 70% e 105%).

@@ -1,13 +1,16 @@
 class_name Boss
 extends Enemy
-## Chefe do fim do capítulo: entra pelo topo, balança de um lado para o outro e
-## troca de padrão de ataque conforme a vida cai (BossData.phases).
+## Chefe do fim do capítulo: entra (descendo, surgindo do espaço ou despencando), balança de um
+## lado para o outro e troca de padrão de ataque conforme a vida cai (BossData.phases). Os
+## ataques únicos (signature) entram nas fases finais: investida, varredura e tropas.
 ## Não vem de pool: é criado pela partida e entra na colisão por CombatContext.boss.
 
 signal phase_changed(index: int)
 
 var boss_data: BossData
 var spawn_wave: Callable  # (WaveData) -> void, para os ataques SUMMON
+var spawn_troops: Callable  # (EnemyData, origem, quantidade, trajetória) -> void, para TROOPS
+signal entered  # terminou a entrada (a partida mostra o nome e começa a luta)
 
 var _phase: int = -1
 var _timers := PackedFloat32Array()
@@ -23,6 +26,11 @@ var _clock: float = 0.0
 var _entering: bool = true
 var _center_x: float = 0.0
 var _hold_y: float = 0.0
+var _entry_t: float = 0.0
+var _drop_speed: float = 0.0
+var _impact_left: float = 0.0  # onda de impacto ao terminar a entrada
+var _charge: Dictionary = {}  # {target, back, speed, attack}
+var _sweeps: Array[Dictionary] = []  # {angle, rate, left, width, color}
 
 
 func _ready() -> void:
@@ -41,6 +49,13 @@ func setup(data: BossData, bullet_pool: NodePool, combat_context: CombatContext,
 	_center_x = rect.get_center().x
 	_hold_y = rect.position.y + rect.size.y * data.hold_y_ratio
 	position = Vector2(_center_x, rect.position.y - radius)
+	match data.entry:
+		BossData.Entry.WARP:
+			position = Vector2(_center_x, _hold_y)
+			scale = Vector2.ONE * 0.05
+			modulate.a = 0.0
+		BossData.Entry.DROP:
+			position = Vector2(_center_x, rect.position.y - radius * 3.0)
 	queue_redraw()
 	_set_active()
 
@@ -55,10 +70,11 @@ static func _tuned(data: BossData) -> BossData:
 	var chapter: int = clampi(Session.planet_index, 0, balance.boss_interval_by_chapter.size() - 1)
 	var interval_scale: float = balance.boss_interval_by_chapter[chapter] if not balance.boss_interval_by_chapter.is_empty() else 1.0
 	var phases: Array[BossPhase] = []
-	for phase in data.phases:
+	for i in data.phases.size():
+		var phase: BossPhase = _with_signature(data, data.phases[i], i)
 		phases.append(_scaled_phase(phase, interval_scale, 1.0, 1.0, phase.special_moment))
 	if balance.boss_enrage_ratio > 0.0 and not data.phases.is_empty():
-		var last: BossPhase = data.phases.back()
+		var last: BossPhase = _with_signature(data, data.phases.back(), data.phases.size() - 1)
 		if last.hp_ratio > balance.boss_enrage_ratio:
 			var enrage := _scaled_phase(last, interval_scale * balance.boss_enrage_interval_scale,
 					balance.boss_enrage_bullet_speed_scale, balance.boss_enrage_sway_scale, false)
@@ -66,6 +82,17 @@ static func _tuned(data: BossData) -> BossData:
 			phases.append(enrage)
 	tuned.phases = phases
 	return tuned
+
+
+## Fase com os ataques únicos do chefe somados (a partir de signature_from_phase).
+static func _with_signature(data: BossData, phase: BossPhase, index: int) -> BossPhase:
+	if data.signature.is_empty() or index < data.signature_from_phase:
+		return phase
+	var copy: BossPhase = phase.duplicate()
+	var attacks: Array[BossAttack] = phase.attacks.duplicate()
+	attacks.append_array(data.signature)
+	copy.attacks = attacks
+	return copy
 
 
 static func _scaled_phase(phase: BossPhase, interval_scale: float, speed_scale: float, sway_scale: float, moment: bool) -> BossPhase:
@@ -129,18 +156,20 @@ func _damage_multiplier(_source: int) -> float:
 func _process(delta: float) -> void:
 	_clock += delta
 	_update_flash(delta)
+	_impact_left = maxf(_impact_left - delta, 0.0)
 	if _entering:
-		position.y = move_toward(position.y, _hold_y, boss_data.entry_speed * delta)
-		if position.y >= _hold_y:
-			_entering = false
-			_clock = 0.0
+		_update_entry(delta)
 		queue_redraw()
 		return
 
 	_update_phase()
 	_update_lasers(delta)
+	_update_sweeps(delta)
 	var phase: BossPhase = boss_data.phases[_phase]
-	_move(phase, delta)
+	if _charge.is_empty():
+		_move(phase, delta)
+	else:
+		_update_charge(delta)
 	for i in phase.attacks.size():
 		_timers[i] -= delta
 		var attack: BossAttack = phase.attacks[i]
@@ -161,6 +190,73 @@ func _process(delta: float) -> void:
 			_timers[i] += attack.interval
 			_locked[i] = {}
 	queue_redraw()
+
+
+## Entrada: descendo, surgindo do espaço (cresce e aparece) ou despencando (acelera e freia).
+func _update_entry(delta: float) -> void:
+	match boss_data.entry:
+		BossData.Entry.WARP:
+			_entry_t = minf(_entry_t + delta / maxf(boss_data.entry_seconds, 0.1), 1.0)
+			scale = Vector2.ONE * maxf(_ease_back(_entry_t), 0.05)
+			modulate.a = minf(_entry_t * 2.0, 1.0)
+			if _entry_t >= 1.0:
+				_finish_entry()
+		BossData.Entry.DROP:
+			_drop_speed += Params.boss_drop_accel * delta
+			position.y = minf(position.y + _drop_speed * delta, _hold_y)
+			if position.y >= _hold_y:
+				_finish_entry()
+		_:
+			position.y = move_toward(position.y, _hold_y, boss_data.entry_speed * delta)
+			if position.y >= _hold_y:
+				_finish_entry()
+
+
+func _finish_entry() -> void:
+	_entering = false
+	_clock = 0.0
+	scale = Vector2.ONE
+	modulate.a = 1.0
+	if boss_data.entry != BossData.Entry.DESCEND:
+		_impact_left = Params.boss_impact_seconds
+		Audio.play(&"bomb_global", -4.0)
+		Haptics.play(&"explosao_grande")
+	entered.emit()
+
+
+## Passa um pouco do tamanho final e volta (surgimento com "estalo").
+static func _ease_back(t: float) -> float:
+	var c: float = 1.7
+	var u: float = t - 1.0
+	return 1.0 + (c + 1.0) * u * u * u + c * u * u
+
+
+## Investida: vai até o alvo, solta o anel do impacto e volta para a altura de sempre.
+func _update_charge(delta: float) -> void:
+	var target: Vector2 = _charge["target"]
+	position = position.move_toward(target, float(_charge["speed"]) * delta)
+	if position.distance_to(target) > 1.0:
+		return
+	if not _charge["back"]:
+		var attack: BossAttack = _charge["attack"]
+		for i in attack.count:
+			_shoot_bullet(Vector2.from_angle(TAU * i / maxf(attack.count, 1.0)), attack)
+		_impact_left = Params.boss_impact_seconds
+		Audio.play(&"boss_explode", -8.0, 1.6)
+		Haptics.play(&"explosao_grande")
+		_charge["back"] = true
+		_charge["target"] = Vector2(position.x, _hold_y)
+		_charge["speed"] = float(_charge["speed"]) * 0.5
+	else:
+		_charge = {}
+
+
+func _update_sweeps(delta: float) -> void:
+	for i in range(_sweeps.size() - 1, -1, -1):
+		_sweeps[i]["angle"] += float(_sweeps[i]["rate"]) * delta
+		_sweeps[i]["left"] -= delta
+		if _sweeps[i]["left"] <= 0.0:
+			_sweeps.remove_at(i)
 
 
 func _move(phase: BossPhase, delta: float) -> void:
@@ -246,6 +342,19 @@ func _lock(index: int, attack: BossAttack) -> Dictionary:
 			for i in attack.count:
 				xs.append(randf_range(rect.position.x + 60.0, rect.end.x - 60.0))
 			return {"xs": xs}
+		BossAttack.Pattern.CHARGE:
+			var player: Player = context.player
+			var x: float = player.position.x if player != null else position.x
+			x = clampf(x, rect.position.x + radius, rect.end.x - radius)
+			var y: float = rect.position.y + rect.size.y * Params.boss_charge_depth
+			return {"x": x, "charge_y": y}
+		BossAttack.Pattern.SWEEP:
+			var player: Player = context.player
+			var aim: float = PI * 0.5
+			if attack.aimed and player != null:
+				aim = (player.position - position).angle()
+			var direction: float = 1.0 if randf() < 0.5 else -1.0
+			return {"angle": aim - deg_to_rad(attack.sweep_degrees) * 0.5 * direction, "direction": direction}
 	return {"dirs": _boss_attack_dirs(index, attack)}
 
 
@@ -269,7 +378,7 @@ func _boss_attack_dirs(index: int, attack: BossAttack) -> PackedVector2Array:
 
 func _attack(index: int, attack: BossAttack) -> void:
 	var locked: Dictionary = _locked[index]
-	if not (locked.has("dirs") or locked.has("x") or locked.has("xs")):
+	if not (locked.has("dirs") or locked.has("x") or locked.has("xs") or locked.has("angle")):
 		locked = _lock(index, attack)
 	var top: float = get_viewport_rect().position.y + 10.0
 	match attack.pattern:
@@ -295,6 +404,19 @@ func _attack(index: int, attack: BossAttack) -> void:
 		BossAttack.Pattern.SUMMON:
 			if attack.wave != null and spawn_wave.is_valid():
 				spawn_wave.call(attack.wave)
+		BossAttack.Pattern.CHARGE:
+			if _charge.is_empty():
+				_charge = {"target": Vector2(locked["x"], locked["charge_y"]), "back": false,
+					"speed": attack.charge_speed, "attack": attack}
+				Audio.play(&"shot_missile", 2.0, 0.5)
+		BossAttack.Pattern.SWEEP:
+			var arc: float = deg_to_rad(attack.sweep_degrees)
+			_sweeps.append({"angle": locked["angle"], "rate": arc / maxf(attack.laser_seconds, 0.1) * float(locked["direction"]),
+				"left": attack.laser_seconds, "width": attack.laser_width, "color": attack.bullet_color})
+			Audio.play(&"shot_beam", 2.0, 0.5)
+		BossAttack.Pattern.TROOPS:
+			if attack.troop != null and spawn_troops.is_valid():
+				spawn_troops.call(attack.troop, position, attack.count, attack.troop_path)
 
 
 func _shoot_bullet(direction: Vector2, attack: BossAttack) -> Bullet:
@@ -326,6 +448,11 @@ func hazard_hits(point: Vector2, r: float) -> bool:
 	for laser in _lasers:
 		if point.y > position.y and absf(point.x - float(laser["x"])) <= float(laser["width"]) * 0.5 + r:
 			return true
+	for sweep in _sweeps:
+		var dir := Vector2.from_angle(float(sweep["angle"]))
+		var rel: Vector2 = point - position
+		if rel.dot(dir) > radius * 0.5 and absf(rel.cross(dir)) <= float(sweep["width"]) * 0.5 + r:
+			return true
 	return false
 
 
@@ -343,22 +470,111 @@ func laser_bands() -> Array[Vector2]:
 
 
 func _draw() -> void:
-	var color: Color = Color.WHITE if _flash_left > 0.0 else boss_data.color
+	var flash: bool = _flash_left > 0.0
+	var color: Color = Color.WHITE if flash else boss_data.color
+	var accent: Color = Color.WHITE if flash else boss_data.accent_color
+	var fury: float = clampf(float(_phase) / maxf(boss_data.phases.size() - 1, 1.0), 0.0, 1.0)
+	var pulse: float = 0.5 + 0.5 * sin(_clock * (3.0 + fury * 6.0))
+	_draw_entry_fx()
+	# Aura
+	draw_circle(Vector2.ZERO, radius * (1.35 + 0.06 * pulse), Color(color, 0.12 + 0.08 * fury))
+	# Espinhos (giram devagar ao contrário das placas)
+	for i in boss_data.spikes:
+		var a: float = TAU * i / boss_data.spikes - _clock * 0.25
+		var dir := Vector2.from_angle(a)
+		var side := dir.orthogonal() * radius * 0.16
+		draw_colored_polygon(PackedVector2Array([dir * radius * 0.8 + side, dir * radius * 1.38, dir * radius * 0.8 - side]), color.darkened(0.3))
+	# Placas de blindagem em volta
+	for i in boss_data.plates:
+		var a0: float = TAU * i / boss_data.plates + _clock * (0.6 + fury)
+		var a1: float = a0 + TAU / boss_data.plates * 0.62
+		var plate := PackedVector2Array([
+			Vector2.from_angle(a0) * radius * 0.92, Vector2.from_angle(a0) * radius * 1.18,
+			Vector2.from_angle(a1) * radius * 1.18, Vector2.from_angle(a1) * radius * 0.92])
+		draw_colored_polygon(plate, accent.darkened(0.35))
+		draw_polyline(plate, accent, 3.0)
+	# Casco
 	var outer := PackedVector2Array()
 	var inner := PackedVector2Array()
-	var spin: float = _clock * 0.8
 	for i in boss_data.sides:
 		var angle: float = PI * 0.5 + TAU * i / boss_data.sides
 		outer.append(Vector2.from_angle(angle) * radius)
-		inner.append(Vector2.from_angle(angle + spin) * radius * 0.55)
+		inner.append(Vector2.from_angle(angle + _clock * 0.8) * radius * 0.6)
 	draw_colored_polygon(outer, color)
 	draw_colored_polygon(inner, color.darkened(0.45))
-	# Núcleo do chefe pulsa mais rápido nas fases finais
-	var pulse: float = 0.5 + 0.5 * sin(_clock * (4.0 + _phase * 3.0))
-	draw_circle(Vector2.ZERO, radius * 0.22, color.lightened(0.3 + pulse * 0.4))
+	_draw_cracks()
+	# Torretas que miram na nave
+	var player: Player = context.player if context != null else null
+	for i in boss_data.turrets:
+		var spot := Vector2.from_angle(PI * 0.5 + TAU * (i + 0.5) / boss_data.turrets) * radius * 0.72
+		var aim := Vector2.DOWN
+		if player != null:
+			aim = (to_local(player.global_position) - spot).normalized()
+		draw_line(spot, spot + aim * radius * 0.3, accent.darkened(0.2), radius * 0.09)
+		draw_circle(spot, radius * 0.12, accent)
+	# Olho central: segue a nave e fica vermelho na fúria
+	var eye_r: float = radius * 0.26
+	draw_circle(Vector2.ZERO, eye_r * (1.15 + 0.1 * pulse), Color(accent, 0.5))
+	draw_circle(Vector2.ZERO, eye_r, Color.WHITE)
+	var look := Vector2.ZERO
+	if player != null:
+		look = to_local(player.global_position).normalized() * eye_r * 0.45
+	draw_circle(look, eye_r * 0.45, Color(0.1, 0.05, 0.1).lerp(Color(0.9, 0.1, 0.15), fury))
+	_draw_charge_telegraph()
+	_draw_sweeps()
 	_draw_lasers()
 	_draw_armor()
 	_draw_boss_telegraphs()
+
+
+## Rachaduras no casco conforme a vida cai.
+func _draw_cracks() -> void:
+	var damage: float = 1.0 - health_ratio()
+	var count: int = int(damage * 6.0)
+	for i in count:
+		var a: float = TAU * i / 6.0 + 0.4
+		var p0 := Vector2.from_angle(a) * radius * 0.35
+		var p1 := Vector2.from_angle(a + 0.25) * radius * 0.65
+		var p2 := Vector2.from_angle(a - 0.1) * radius * 0.95
+		draw_polyline(PackedVector2Array([p0, p1, p2]), Color(0.05, 0.02, 0.05, 0.85), 4.0)
+
+
+## Surgimento do espaço (anéis convergindo) e onda de impacto ao terminar a entrada.
+func _draw_entry_fx() -> void:
+	if _entering and boss_data.entry == BossData.Entry.WARP:
+		var inv: float = 1.0 / maxf(scale.x, 0.05)
+		for k in 3:
+			var t: float = fmod(_entry_t * 1.5 + k / 3.0, 1.0)
+			draw_arc(Vector2.ZERO, radius * lerpf(4.0, 1.0, t) * inv, 0.0, TAU, 48, Color(boss_data.accent_color, (1.0 - t) * 0.8), 6.0 * inv)
+	if _impact_left > 0.0:
+		var t: float = 1.0 - _impact_left / Params.boss_impact_seconds
+		draw_arc(Vector2.ZERO, radius * lerpf(1.0, 4.5, t), 0.0, TAU, 64, Color(boss_data.accent_color, 1.0 - t), 10.0 * (1.0 - t) + 2.0)
+		draw_circle(Vector2.ZERO, radius * 1.5, Color(1, 1, 1, 0.35 * (1.0 - t)))
+
+
+## Investida avisada: faixa da largura do chefe até onde ele vai bater.
+func _draw_charge_telegraph() -> void:
+	if _phase < 0:
+		return
+	var attacks: Array[BossAttack] = boss_data.phases[_phase].attacks
+	for i in mini(attacks.size(), _attack_tele_left.size()):
+		if attacks[i].pattern != BossAttack.Pattern.CHARGE or _attack_tele_left[i] < 0.0 or not _locked[i].has("x"):
+			continue
+		var t: float = 1.0 - clampf(_attack_tele_left[i] / _attack_tele_total[i], 0.0, 1.0)
+		var x: float = to_local(Vector2(_locked[i]["x"], 0.0)).x
+		var bottom: float = to_local(Vector2(0.0, float(_locked[i]["charge_y"]) + radius)).y
+		Telegraph.draw_band(self, x, radius * 2.0, 0.0, bottom, attacks[i].bullet_color, t)
+
+
+func _draw_sweeps() -> void:
+	for sweep in _sweeps:
+		var w: float = sweep["width"]
+		var length: float = 3000.0
+		var c: Color = sweep["color"]
+		draw_set_transform(Vector2.ZERO, float(sweep["angle"]))
+		draw_rect(Rect2(radius * 0.5, -w * 0.5, length, w), Color(c, 0.45))
+		draw_rect(Rect2(radius * 0.5, -w * 0.2, length, w * 0.4), Color(c.lightened(0.6), 0.95))
+		draw_set_transform(Vector2.ZERO, 0.0)
 
 
 func _draw_lasers() -> void:
@@ -385,8 +601,17 @@ func _draw_boss_telegraphs() -> void:
 		match attack.pattern:
 			BossAttack.Pattern.RING:
 				Telegraph.draw_ring(self, Vector2.ZERO, radius, attack.bullet_color, t)
-			BossAttack.Pattern.SUMMON:
+			BossAttack.Pattern.SUMMON, BossAttack.Pattern.TROOPS:
 				Telegraph.draw_ring(self, Vector2.ZERO, radius * 1.2, boss_data.color.lightened(0.4), t)
+			BossAttack.Pattern.CHARGE:
+				pass  # faixa desenhada em _draw_charge_telegraph
+			BossAttack.Pattern.SWEEP:
+				if _locked[i].has("angle"):
+					var start := PackedVector2Array([Vector2.from_angle(float(_locked[i]["angle"]))])
+					Telegraph.draw_lines(self, Vector2.ZERO, start, radius * 0.8, attack.bullet_color, t)
+					var arc: float = deg_to_rad(attack.sweep_degrees) * float(_locked[i]["direction"])
+					var a0: float = float(_locked[i]["angle"])
+					draw_arc(Vector2.ZERO, radius * 1.6, minf(a0, a0 + arc), maxf(a0, a0 + arc), 32, Color(attack.bullet_color, Telegraph.alpha(t)), 4.0)
 			BossAttack.Pattern.LASER:
 				if _locked[i].has("x"):
 					var top_local: float = to_local(Vector2(0.0, get_viewport_rect().position.y)).y

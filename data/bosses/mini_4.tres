@@ -4,6 +4,8 @@
 [ext_resource type="Script" path="res://scripts/enemies/boss_phase.gd" id="2_phase"]
 [ext_resource type="Script" path="res://scripts/enemies/boss_attack.gd" id="3_attack"]
 [ext_resource type="Script" path="res://scripts/enemies/wave_data.gd" id="4_wave"]
+[ext_resource type="Script" path="res://scripts/enemies/move_step.gd" id="sig_step"]
+[ext_resource type="Resource" path="res://data/enemies/serpent.tres" id="sig_serpent"]
 
 [sub_resource type="Resource" id="Attack_p0_a0"]
 script = ExtResource("3_attack")
@@ -88,6 +90,56 @@ movement = 2
 chase_speed = 180.0
 attacks = Array[ExtResource("3_attack")]([SubResource("Attack_p1_a0"), SubResource("Attack_p1_a1"), SubResource("Attack_new_4")])
 
+[sub_resource type="Resource" id="SigStep_0_0"]
+script = ExtResource("sig_step")
+seconds = 0.5
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+fire = false
+
+[sub_resource type="Resource" id="SigStep_0_1"]
+script = ExtResource("sig_step")
+seconds = 0.6
+turn_degrees = -90.0
+speed_scale = 1.0
+home_degrees = 0.0
+fire = false
+
+[sub_resource type="Resource" id="SigStep_0_2"]
+script = ExtResource("sig_step")
+seconds = 0.6
+turn_degrees = 120.0
+speed_scale = 1.0
+home_degrees = 0.0
+fire = false
+
+[sub_resource type="Resource" id="SigStep_0_3"]
+script = ExtResource("sig_step")
+seconds = 0.6
+turn_degrees = -120.0
+speed_scale = 1.0
+home_degrees = 0.0
+fire = false
+
+[sub_resource type="Resource" id="SigStep_0_4"]
+script = ExtResource("sig_step")
+seconds = 4.0
+turn_degrees = 0.0
+speed_scale = 1.0
+home_degrees = 0.0
+fire = false
+
+[sub_resource type="Resource" id="SigAttack_0"]
+script = ExtResource("3_attack")
+pattern = 10
+interval = 8.0
+first_delay = 1.5
+telegraph_seconds = 0.8
+count = 6
+troop = ExtResource("sig_serpent")
+troop_path = Array[ExtResource("sig_step")]([SubResource("SigStep_0_0"), SubResource("SigStep_0_1"), SubResource("SigStep_0_2"), SubResource("SigStep_0_3"), SubResource("SigStep_0_4")])
+
 [resource]
 script = ExtResource("1_script")
 id = &"mini_4"
@@ -103,3 +155,11 @@ hold_y_ratio = 0.2
 sway_amplitude = 260.0
 sway_speed = 0.55
 phases = Array[ExtResource("2_phase")]([SubResource("Phase_0"), SubResource("Phase_1")])
+entry = 1
+entry_seconds = 1.8
+accent_color = Color(0.4, 1, 0.85, 1)
+plates = 8
+spikes = 0
+turrets = 0
+signature = Array[ExtResource("3_attack")]([SubResource("SigAttack_0")])
+signature_from_phase = 1

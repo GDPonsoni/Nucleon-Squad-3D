@@ -11,6 +11,9 @@ enum Pattern {
 	CURTAIN,  ## fileira de count tiros caindo do topo, com uma brecha de gap_width
 	RAIN,  ## count tiros caindo do topo em x sorteados (marcados no aviso)
 	MINES,  ## leque de tiros que freiam (mine_drag), param e explodem em anel (split_*)
+	CHARGE,  ## investida: avisa a faixa e avança até a altura da nave; no impacto, anel de count tiros
+	SWEEP,  ## varredura: raio saindo do chefe que gira sweep_degrees em laser_seconds
+	TROOPS,  ## tropas: count inimigos (troop) saem do corpo do chefe com a trajetória troop_path
 }
 
 @export var pattern: Pattern = Pattern.FAN
@@ -31,6 +34,10 @@ enum Pattern {
 @export var laser_seconds: float = 0.6  # LASER: quanto tempo o raio fica ligado
 @export var gap_width: float = 300.0  # CURTAIN: largura da brecha
 @export var mine_drag: float = 2.2  # MINES: frenagem (1/s)
+@export var charge_speed: float = 1500.0  # CHARGE: px/s
+@export var sweep_degrees: float = 120.0  # SWEEP: arco total varrido
+@export var troop: EnemyData  # TROOPS
+@export var troop_path: Array[MoveStep] = []  # TROOPS: trajetória das tropas (vazia = a do inimigo)
 
 @export_group("Tiros especiais")
 @export var split_time: float = 0.0  # > 0: os tiros se dividem após esse tempo

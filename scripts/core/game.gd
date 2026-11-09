@@ -420,10 +420,30 @@ func _spawn_boss(boss_data: BossData) -> void:
 	add_child(boss)
 	# Desenhado junto dos inimigos, abaixo da nave e dos tiros
 	move_child(boss, enemies.get_index() + 1)
+	boss.spawn_troops = _spawn_troops
 	boss.setup(boss_data, enemy_bullets, context, spawner.spawn_wave)
 	boss.killed.connect(_on_boss_killed)
+	boss.entered.connect(func() -> void: hud.show_boss_title(tr(boss_data.name_key), boss_data.accent_color))
 	context.boss = boss
 	hud.set_boss(boss, tr(boss_data.name_key))
+
+
+## Tropas do chefe: saem do corpo dele, metade para cada lado, seguindo a trajetória dada.
+func _spawn_troops(data: EnemyData, origin: Vector2, count: int, path: Array[MoveStep]) -> void:
+	for i in count:
+		var enemy := enemies.acquire() as Enemy
+		if enemy == null:
+			return
+		var side: float = -1.0 if i % 2 == 0 else 1.0
+		var rank: int = i / 2 + 1
+		var dir := Vector2(side * 0.55, 1.0).normalized()
+		enemy.activate(data, origin + Vector2(side * 50.0 * rank, 30.0), dir * data.speed)
+		var wave := WaveData.new()
+		wave.enemy = data
+		wave.path = path
+		wave.mirror = side > 0.0
+		enemy.set_motion(wave, i)
+		enemy.apply_stage(_stage(), spawner.progress())
 
 
 ## Chefe destruído: explosões em sequência, tiros inimigos somem e a fase termina.

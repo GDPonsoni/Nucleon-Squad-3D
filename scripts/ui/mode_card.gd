@@ -17,6 +17,7 @@ func _ready() -> void:
 	custom_minimum_size = Vector2(0.0, Params.mode_card_height)
 	focus_mode = Control.FOCUS_NONE
 	flat = true
+	clip_contents = true
 	UiFactory._add_press_feedback(self)
 
 
@@ -58,16 +59,21 @@ func _draw_campaign(r: Rect2) -> void:
 	for i in 40:
 		var p := Vector2(fmod(i * 97.3, r.size.x), fmod(i * 53.1 + _clock * (20.0 + i % 3 * 25.0), r.size.y))
 		draw_circle(r.position + p, 1.5 + i % 2, Color(1, 1, 1, 0.5))
-	var planet_c := r.position + Vector2(r.size.x * 0.78, r.size.y * 0.75)
-	var pr: float = r.size.y * 0.55
+	var planet_c := r.position + Vector2(r.size.x * 0.76, r.size.y * 0.52)
+	var pr: float = r.size.y * 0.3
 	draw_circle(planet_c, pr, Color(0.35, 0.25, 0.75))
-	draw_circle(planet_c + Vector2(-pr * 0.25, -pr * 0.25), pr * 0.8, Color(0.5, 0.38, 0.95))
-	draw_arc(planet_c, pr * 1.35, PI * 1.05, PI * 1.95, 32, Color(1.0, 0.85, 0.5, 0.8), 6.0)
+	draw_circle(planet_c + Vector2(-pr * 0.18, -pr * 0.18), pr * 0.78, Color(0.5, 0.38, 0.95))
+	# Anel inclinado: elipse achatada passando na frente do planeta
+	var ring := PackedVector2Array()
+	for k in 33:
+		var a: float = TAU * k / 32.0
+		ring.append(planet_c + Vector2(cos(a) * pr * 1.6, sin(a) * pr * 0.35).rotated(-0.35))
+	draw_polyline(ring, Color(1.0, 0.85, 0.5, 0.85), 5.0)
 	var colors: Array[Color] = [Color(0.45, 0.9, 1.0), Color(1.0, 0.6, 0.3), Color(0.6, 1.0, 0.5), Color(1.0, 0.45, 0.8)]
-	var lead := r.position + Vector2(r.size.x * 0.33, r.size.y * 0.42 + sin(_clock * 2.0) * 8.0)
-	var offsets: Array[Vector2] = [Vector2.ZERO, Vector2(-90, 70), Vector2(90, 70), Vector2(0, 140)]
+	var lead := r.position + Vector2(r.size.x * 0.3, r.size.y * 0.3 + sin(_clock * 2.0) * 8.0)
+	var offsets: Array[Vector2] = [Vector2.ZERO, Vector2(-110, 95), Vector2(110, 95), Vector2(0, 190)]
 	for i in offsets.size():
-		_draw_ship(lead + offsets[i], 34.0, colors[i])
+		_draw_ship(lead + offsets[i], 46.0, colors[i])
 
 
 ## Incursão: nave branca com três armas em órbita, orbes de XP e uma onda de inimigos.
