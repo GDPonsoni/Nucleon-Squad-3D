@@ -21,6 +21,10 @@ var _fx_hulls: Dictionary = {}
 var _fx_pieces: Dictionary = {}
 # Inimigos do pool: item -> vista
 var _enemy_views: Dictionary = {}
+# Chefe (fora do pool): conjunto de peças montado quando ele entra
+var _boss: Boss
+var _boss_root: Node3D
+var _boss_parts: Dictionary = {}
 
 
 func setup(game: Node2D, rig: CameraRig) -> void:
@@ -40,6 +44,7 @@ func _process(_delta: float) -> void:
 	_sync_companion()
 	_sync_body_fx()
 	_sync_enemies()
+	_sync_boss()
 
 
 ## Cria um modelo escondido com o material comum.
@@ -57,7 +62,7 @@ func _make(node_name: String, mesh: Mesh = null) -> MeshInstance3D:
 ## Cor, clarão (a = força), brilho próprio e opacidade de um modelo.
 func _paint(instance: MeshInstance3D, tint: Color, flash: Color = NO_FLASH, glow: float = 0.0, opacity: float = 1.0) -> void:
 	instance.set_instance_shader_parameter(&"tint", tint)
-	instance.set_instance_shader_parameter(&"flash", flash)
+	instance.set_instance_shader_parameter(&"flash", Color(flash, flash.a * Params.flash_strength_3d))
 	instance.set_instance_shader_parameter(&"glow", glow)
 	instance.set_instance_shader_parameter(&"opacity", opacity)
 
@@ -186,3 +191,107 @@ func _sync_enemies() -> void:
 		# O raio de colisão dá o tamanho (elites já vêm com o raio maior)
 		view.transform = Transform3D(_yaw(enemy.rotation).scaled(Vector3.ONE * enemy.radius * _scale), _at(enemy.position))
 		_paint(view, enemy.tint(), enemy.flash_color(), Params.elite_glow_3d if enemy.elite else 0.0)
+
+
+# --- Chefe: casco, miolo girando, espinhos, placas, torretas, olho e rachaduras ---
+
+func _sync_boss() -> void:
+	var boss: Boss = _game.get("boss")
+	if boss != null and not is_instance_valid(boss):
+		boss = null
+	if boss != _boss:
+		if _boss_root != null:
+			_boss_root.queue_free()
+			_boss_root = null
+		_boss_parts.clear()
+		_boss = boss
+		if boss != null and boss.boss_data != null:
+			_build_boss(boss.boss_data)
+	if _boss == null or _boss_root == null:
+		return
+	var data: BossData = _boss.boss_data
+	_boss_root.visible = _boss.visible
+	if not _boss.visible:
+		return
+	# Raio 1 nas peças: o raio de colisão e a escala da entrada (surgimento) dão o tamanho
+	var size: float = _boss.radius * _boss.scale.x * _scale
+	_boss_root.transform = Transform3D(_yaw(_boss.rotation).scaled(Vector3.ONE * maxf(size, 0.0001)), _at(_boss.position))
+	var opacity: float = _boss.modulate.a
+	var flash: Color = _boss.flash_color()
+	var fury: float = _boss.fury()
+	var h: float = Params.model_height_ratio_3d
+	_paint(_boss_parts["hull"], data.color, flash, 0.0, opacity)
+	var core: MeshInstance3D = _boss_parts["core"]
+	core.basis = _yaw(_boss.core_angle())
+	_paint(core, data.color.darkened(0.45), flash, 0.0, opacity)
+	var spikes: Array = _boss_parts["spikes"]
+	for i in spikes.size():
+		(spikes[i] as MeshInstance3D).basis = _yaw(_boss.spike_angle(i))
+		_paint(spikes[i], data.color.darkened(0.3), flash, 0.0, opacity)
+	var plates: Array = _boss_parts["plates"]
+	for i in plates.size():
+		(plates[i] as MeshInstance3D).basis = _yaw(_boss.plate_angle(i))
+		_paint(plates[i], data.accent_color.darkened(0.2), flash, 0.0, opacity)
+	var player: Player = _game.get("player")
+	var turrets: Array = _boss_parts["turrets"]
+	for i in turrets.size():
+		var turret := turrets[i] as MeshInstance3D
+		var spot: Vector2 = _boss.turret_spot(i)
+		var aim: float = PI * 0.5
+		if player != null:
+			aim = (player.position - (_boss.position + spot)).angle()
+		# O cano do modelo aponta para +Z (ângulo 90° no 2D)
+		turret.transform = Transform3D(_yaw(aim - PI * 0.5), Vector3(spot.x, 0.0, spot.y) / maxf(_boss.radius, 1.0))
+		_paint(turret, data.accent_color, flash, 0.0, opacity)
+	# Olho: segue a nave e fica vermelho na fúria
+	var eye: MeshInstance3D = _boss_parts["eye"]
+	var eye_r: float = 0.26
+	var pulse: float = _boss.eye_pulse()
+	eye.transform = Transform3D(Basis.from_scale(Vector3(eye_r, eye_r * 0.5, eye_r) * (1.0 + 0.04 * pulse)), Vector3(0.0, h * 0.7, 0.0))
+	_paint(eye, Color.WHITE, flash, 0.35 + 0.25 * pulse, opacity)
+	var look := Vector2.ZERO
+	if player != null:
+		look = (player.position - _boss.position).normalized() * eye_r * 0.45
+	var pupil: MeshInstance3D = _boss_parts["pupil"]
+	pupil.transform = Transform3D(Basis.from_scale(Vector3.ONE * eye_r * 0.45), Vector3(look.x, h * 0.7 + eye_r * 0.42, look.y))
+	_paint(pupil, Color(0.1, 0.05, 0.1).lerp(Color(0.9, 0.1, 0.15), fury), NO_FLASH, fury * 0.8, opacity)
+	var cracks: Array = _boss_parts["cracks"]
+	var count: int = _boss.crack_count()
+	for i in cracks.size():
+		(cracks[i] as MeshInstance3D).visible = i < count
+		if i < count:
+			_paint(cracks[i], Params.boss_crack_color_3d, NO_FLASH, Params.boss_crack_glow_3d * (0.7 + 0.3 * pulse), opacity)
+
+
+func _build_boss(data: BossData) -> void:
+	_boss_root = Node3D.new()
+	_boss_root.name = "Boss"
+	add_child(_boss_root)
+	_boss_parts["hull"] = _boss_part("Hull", ModelLibrary.boss_hull(data.sides))
+	_boss_parts["core"] = _boss_part("Core", ModelLibrary.boss_core(data.sides))
+	_boss_parts["eye"] = _boss_part("Eye", MeshFactory.icosphere_low())
+	_boss_parts["pupil"] = _boss_part("Pupil", ModelLibrary.boss_pupil())
+	var spikes: Array = []
+	for i in data.spikes:
+		spikes.append(_boss_part("Spike", ModelLibrary.boss_spike()))
+	_boss_parts["spikes"] = spikes
+	var plates: Array = []
+	for i in data.plates:
+		plates.append(_boss_part("Plate", ModelLibrary.boss_plate(data.plates)))
+	_boss_parts["plates"] = plates
+	var turrets: Array = []
+	for i in data.turrets:
+		turrets.append(_boss_part("Turret", ModelLibrary.boss_turret()))
+	_boss_parts["turrets"] = turrets
+	var cracks: Array = []
+	for i in 6:
+		cracks.append(_boss_part("Crack", ModelLibrary.boss_crack(i)))
+	_boss_parts["cracks"] = cracks
+
+
+func _boss_part(node_name: String, mesh: Mesh) -> MeshInstance3D:
+	var part := _make(node_name, mesh)
+	remove_child(part)
+	_boss_root.add_child(part)
+	part.visible = true
+	return part

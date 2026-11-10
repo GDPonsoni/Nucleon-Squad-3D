@@ -655,3 +655,6 @@ var elite_glow_3d: float = 0.25  # brilho próprio dos elites (além da aura no 
 var bullet_core_white_3d: float = 0.85  # quanto o topo dos projéteis clareia (núcleo claro, leitura)
 var ground_star_strength_3d: float = 0.3  # brilho das estrelas do chão (fracas: não podem parecer tiros)
 var ground_star_density_3d: float = 0.5  # células de estrela por unidade do mundo
+var boss_crack_color_3d: Color = Color(1.0, 0.45, 0.15)  # rachaduras do chefe acendem conforme a vida cai
+var boss_crack_glow_3d: float = 1.4
+var flash_strength_3d: float = 0.7  # força do clarão de acerto nos modelos (1 = cor chapada, como no 2D)

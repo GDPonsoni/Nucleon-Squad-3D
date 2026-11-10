@@ -473,20 +473,68 @@ func _draw() -> void:
 	var flash: bool = _flash_left > 0.0
 	var color: Color = Color.WHITE if flash else boss_data.color
 	var accent: Color = Color.WHITE if flash else boss_data.accent_color
-	var fury: float = clampf(float(_phase) / maxf(boss_data.phases.size() - 1, 1.0), 0.0, 1.0)
-	var pulse: float = 0.5 + 0.5 * sin(_clock * (3.0 + fury * 6.0))
+	var rage: float = fury()
+	var pulse: float = eye_pulse()
 	_draw_entry_fx()
 	# Aura
-	draw_circle(Vector2.ZERO, radius * (1.35 + 0.06 * pulse), Color(color, 0.12 + 0.08 * fury))
+	draw_circle(Vector2.ZERO, radius * (1.35 + 0.06 * pulse), Color(color, 0.12 + 0.08 * rage))
+	# Na visão 3D o corpo é um conjunto de modelos (EntityViews); avisos e perigos seguem no plano
+	if not Renderer3D.active:
+		_draw_body(color, accent, rage, pulse)
+	_draw_charge_telegraph()
+	_draw_sweeps()
+	_draw_lasers()
+	_draw_armor()
+	_draw_boss_telegraphs()
+
+
+# --- Leitura para o desenho (2D e visão 3D usam os mesmos valores) ---
+
+## 0 na primeira fase, 1 na última (fúria): acelera as placas e avermelha o olho.
+func fury() -> float:
+	return clampf(float(_phase) / maxf(boss_data.phases.size() - 1, 1.0), 0.0, 1.0)
+
+
+## Ângulo do espinho i (giram devagar ao contrário das placas).
+func spike_angle(index: int) -> float:
+	return TAU * index / boss_data.spikes - _clock * 0.25
+
+
+## Ângulo onde começa a placa i (giram mais rápido na fúria).
+func plate_angle(index: int) -> float:
+	return TAU * index / boss_data.plates + _clock * (0.6 + fury())
+
+
+## Giro do miolo em cima do casco.
+func core_angle() -> float:
+	return _clock * 0.8
+
+
+## Posição da torreta i em relação ao centro (px).
+func turret_spot(index: int) -> Vector2:
+	return Vector2.from_angle(PI * 0.5 + TAU * (index + 0.5) / boss_data.turrets) * radius * 0.72
+
+
+## Rachaduras no casco conforme a vida cai (0 a 6).
+func crack_count() -> int:
+	return int((1.0 - health_ratio()) * 6.0)
+
+
+func eye_pulse() -> float:
+	return 0.5 + 0.5 * sin(_clock * (3.0 + fury() * 6.0))
+
+
+## Corpo do chefe no desenho 2D: espinhos, placas, casco, rachaduras, torretas e olho.
+func _draw_body(color: Color, accent: Color, rage: float, pulse: float) -> void:
 	# Espinhos (giram devagar ao contrário das placas)
 	for i in boss_data.spikes:
-		var a: float = TAU * i / boss_data.spikes - _clock * 0.25
+		var a: float = spike_angle(i)
 		var dir := Vector2.from_angle(a)
 		var side := dir.orthogonal() * radius * 0.16
 		draw_colored_polygon(PackedVector2Array([dir * radius * 0.8 + side, dir * radius * 1.38, dir * radius * 0.8 - side]), color.darkened(0.3))
 	# Placas de blindagem em volta
 	for i in boss_data.plates:
-		var a0: float = TAU * i / boss_data.plates + _clock * (0.6 + fury)
+		var a0: float = plate_angle(i)
 		var a1: float = a0 + TAU / boss_data.plates * 0.62
 		var plate := PackedVector2Array([
 			Vector2.from_angle(a0) * radius * 0.92, Vector2.from_angle(a0) * radius * 1.18,
@@ -499,14 +547,14 @@ func _draw() -> void:
 	for i in boss_data.sides:
 		var angle: float = PI * 0.5 + TAU * i / boss_data.sides
 		outer.append(Vector2.from_angle(angle) * radius)
-		inner.append(Vector2.from_angle(angle + _clock * 0.8) * radius * 0.6)
+		inner.append(Vector2.from_angle(angle + core_angle()) * radius * 0.6)
 	draw_colored_polygon(outer, color)
 	draw_colored_polygon(inner, color.darkened(0.45))
 	_draw_cracks()
 	# Torretas que miram na nave
 	var player: Player = context.player if context != null else null
 	for i in boss_data.turrets:
-		var spot := Vector2.from_angle(PI * 0.5 + TAU * (i + 0.5) / boss_data.turrets) * radius * 0.72
+		var spot: Vector2 = turret_spot(i)
 		var aim := Vector2.DOWN
 		if player != null:
 			aim = (to_local(player.global_position) - spot).normalized()
@@ -519,19 +567,12 @@ func _draw() -> void:
 	var look := Vector2.ZERO
 	if player != null:
 		look = to_local(player.global_position).normalized() * eye_r * 0.45
-	draw_circle(look, eye_r * 0.45, Color(0.1, 0.05, 0.1).lerp(Color(0.9, 0.1, 0.15), fury))
-	_draw_charge_telegraph()
-	_draw_sweeps()
-	_draw_lasers()
-	_draw_armor()
-	_draw_boss_telegraphs()
+	draw_circle(look, eye_r * 0.45, Color(0.1, 0.05, 0.1).lerp(Color(0.9, 0.1, 0.15), rage))
 
 
 ## Rachaduras no casco conforme a vida cai.
 func _draw_cracks() -> void:
-	var damage: float = 1.0 - health_ratio()
-	var count: int = int(damage * 6.0)
-	for i in count:
+	for i in crack_count():
 		var a: float = TAU * i / 6.0 + 0.4
 		var p0 := Vector2.from_angle(a) * radius * 0.35
 		var p1 := Vector2.from_angle(a + 0.25) * radius * 0.65
