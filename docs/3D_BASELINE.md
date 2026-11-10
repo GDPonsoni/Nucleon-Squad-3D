@@ -110,3 +110,41 @@ TOTAL | 9 fases | 46.3 min | 808 hits | 17.44 hits/min
 ```
 
 Tempo de parede: capítulo 1 ≈ 92 s, capítulo 5 ≈ 268 s.
+
+## Prova de equivalência (T11) — 2026-11-10
+
+Com a visão 3D completa (T0 a T10, commit da T10), o mesmo comando da tabela D:
+
+`$G --headless --path . --fixed-fps 60 -s res://scripts/tools/simulate_stages.gd -- --chapter N --level 1 --seed 1 --deterministic`
+
+**Resultado: as 18 fases (capítulos 1 e 5) saíram idênticas à referência D, linha por linha** (`diff` sem diferenças): mesmo tempo, hits, abates, pontuação, tiros e inimigos. A visão 3D não mudou a simulação.
+
+```
+stage | result | time | boss_s | hits | hits/min | kills | score | bullets avg/max | enemies max | pool_full | levels
+p1_s1 | clear | 304 | -1 | 16 | 3.2 | 611 | 8230 | 6/28 | 16 | 0 | [5, 1, 1, 1]
+p1_s2 | clear | 304 | -1 | 12 | 2.4 | 592 | 8730 | 7/30 | 13 | 0 | [5, 1, 1, 1]
+p1_s3 | clear | 304 | -1 | 11 | 2.2 | 649 | 9990 | 5/23 | 17 | 0 | [5, 1, 1, 1]
+p1_s4 | clear | 304 | -1 | 18 | 3.6 | 668 | 9575 | 7/28 | 18 | 0 | [5, 1, 1, 1]
+p1_s5 | clear | 257 | 39 | 20 | 4.7 | 509 | 8240 | 10/38 | 20 | 0 | [5, 1, 1, 1]
+p1_s6 | clear | 304 | -1 | 19 | 3.7 | 743 | 11630 | 5/30 | 21 | 0 | [5, 1, 1, 1]
+p1_s7 | clear | 310 | -1 | 22 | 4.3 | 726 | 9213 | 6/29 | 29 | 0 | [5, 1, 1, 1]
+p1_s8 | clear | 305 | -1 | 29 | 5.7 | 911 | 12797 | 8/34 | 28 | 0 | [5, 1, 1, 1]
+p1_s9 | clear | 266 | 57 | 28 | 6.3 | 537 | 9070 | 20/74 | 25 | 0 | [5, 1, 1, 1]
+TOTAL | 9 fases | 44.3 min | 175 hits | 3.95 hits/min
+```
+
+```
+stage | result | time | boss_s | hits | hits/min | kills | score | bullets avg/max | enemies max | pool_full | levels
+p5_s1 | clear | 310 | -1 | 82 | 15.9 | 360 | 6749 | 59/134 | 58 | 0 | [5, 1, 1, 1]
+p5_s2 | clear | 306 | -1 | 102 | 20.0 | 403 | 6601 | 74/170 | 56 | 0 | [5, 1, 1, 1]
+p5_s3 | clear | 310 | -1 | 77 | 14.9 | 336 | 4987 | 79/185 | 64 | 0 | [5, 1, 1, 1]
+p5_s4 | clear | 310 | -1 | 106 | 20.5 | 327 | 5758 | 76/169 | 60 | 0 | [5, 1, 1, 1]
+p5_s5 | clear | 286 | 68 | 53 | 11.1 | 257 | 5481 | 24/102 | 51 | 0 | [5, 1, 1, 1]
+p5_s6 | clear | 310 | -1 | 96 | 18.6 | 362 | 8238 | 68/146 | 64 | 0 | [5, 1, 1, 1]
+p5_s7 | clear | 310 | -1 | 85 | 16.4 | 220 | 4683 | 128/300 | 64 | 0 | [5, 1, 1, 1]
+p5_s8 | clear | 310 | -1 | 111 | 21.5 | 378 | 5494 | 198/355 | 64 | 0 | [5, 1, 1, 1]
+p5_s9 | clear | 326 | 214 | 96 | 17.6 | 197 | 8427 | 66/175 | 64 | 0 | [5, 1, 1, 1]
+TOTAL | 9 fases | 46.3 min | 808 hits | 17.44 hits/min
+```
+
+O que a prova cobre: lógica, sorteios e colisão. O que ela não cobre: visual, controle e desempenho no aparelho (headless não desenha). Para isso, `docs/3D_TESTE.md`.
