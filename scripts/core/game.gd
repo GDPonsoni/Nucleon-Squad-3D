@@ -225,6 +225,8 @@ func _setup_tutorial() -> void:
 	tip_spotlight.can_pause = func() -> bool:
 		return not _match_over and not get_tree().paused and not Dialog.is_open() and player.body != null
 	tip_spotlight.highlight_rect = _tip_highlight_rect
+	if renderer != null:
+		tip_spotlight.world_rect = renderer.project_rect
 	add_child(tip_spotlight)
 	Tutorial.attach(Tutorial.MATCH, tip_spotlight)
 	var held_since := [-1]
@@ -248,6 +250,8 @@ func _tip_highlight_rect(name: String) -> Rect2:
 			return slow_overlay.bar_rect()
 		"player":
 			var r: float = Params.ship_size.y * 0.9
+			if renderer != null:
+				return renderer.project_rect(player.position, r)
 			return Rect2(player.position - Vector2.ONE * r, Vector2.ONE * r * 2.0)
 		"switcher" when switcher != null:
 			var view: Vector2 = get_viewport_rect().size

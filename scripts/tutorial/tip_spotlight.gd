@@ -6,6 +6,9 @@ extends CanvasLayer
 
 var can_pause: Callable  # () -> bool: a partida pode ser pausada agora (sem outra janela aberta)
 var highlight_rect: Callable  # (String) -> Rect2: retângulo de um elemento da tela pelo nome
+## Opcional: (centro no jogo, raio) -> retângulo na tela. Usado na visão 3D, onde a posição do
+## jogo não é a posição de tela.
+var world_rect: Callable
 
 const SHADER_CODE: String = """
 shader_type canvas_item;
@@ -70,6 +73,9 @@ func _target_rect(tip: Dictionary, target: Variant) -> Rect2:
 	if node != null and node.is_inside_tree() and node.visible:
 		var r: float = float(node.get("radius")) if node.get("radius") != null else Params.tip_spot_default_radius
 		r = maxf(r * Params.tip_spot_padding, Params.tip_spot_min_radius)
+		# Visão 3D: a posição do jogo passa pela câmera para virar posição de tela
+		if world_rect.is_valid():
+			return world_rect.call(node.global_position, r)
 		return Rect2(node.global_position - Vector2.ONE * r, Vector2.ONE * r * 2.0)
 	return Rect2()
 

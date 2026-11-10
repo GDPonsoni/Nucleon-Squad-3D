@@ -51,6 +51,21 @@ func _ready() -> void:
 	_check(renderer.camera.global_transform.is_equal_approx(renderer.rig.camera_transform(offset)), "a Camera3D usa a conta do CameraRig")
 	player.place_at(Vector2(view.size.x * 0.5, player.bottom_limit - 200.0))
 
+	# Destaque do tutorial: o recorte segue a projeção 3D, não a posição 2D crua
+	var spot: Rect2 = game.call("_tip_highlight_rect", "player")
+	_check(spot.get_center().distance_to(renderer.project_to_screen(player.position)) < 1.0, "destaque da nave no lugar onde ela aparece")
+	var tips: TipSpotlight = game.get("tip_spotlight")
+	_check(tips.world_rect.is_valid(), "o destaque das dicas usa a projeção 3D")
+	var far := Node2D.new()
+	far.position = Vector2(120.0, 260.0)
+	game.add_child(far)
+	var far_rect: Rect2 = tips.call("_target_rect", {}, far)
+	_check(far_rect.get_center().distance_to(renderer.project_to_screen(far.position)) < 1.0, "destaque de um alvo do jogo cai na posição de tela dele")
+	_check(far_rect.get_center().distance_to(far.position) > 5.0, "longe do centro, a posição de tela difere da posição do jogo")
+	var flat_r: float = maxf(Params.tip_spot_default_radius * Params.tip_spot_padding, Params.tip_spot_min_radius)
+	_check(far_rect.size.x < flat_r * 2.0, "alvo no fundo aparece menor, e o recorte acompanha (%.0f x %.0f)" % [far_rect.size.x, flat_r * 2.0])
+	far.queue_free()
+
 	# Jogador e auxiliar
 	var views: EntityViews = renderer.entities
 	var hull: MeshInstance3D = views.get("_hull")
