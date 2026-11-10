@@ -13,6 +13,7 @@ var rig := CameraRig.new()
 var camera: Camera3D
 var ground: MeshInstance3D
 var ground_fx: GroundFx
+var scenery: Scenery3D  # null com Params.scenery_enabled_3d desligado
 var entities: EntityViews
 var bullets: BulletView
 
@@ -66,6 +67,13 @@ func setup(game: Node2D, reserved_bottom: float) -> void:
 	camera.current = true
 
 	_build_ground(planet)
+
+	if Params.scenery_enabled_3d:
+		scenery = Scenery3D.new()
+		scenery.name = "Scenery"
+		add_child(scenery)
+		var view: Vector2 = _view_size()
+		scenery.setup(planet, String(game.call("_stage").id), Vector3(view.x, 0.0, view.y) * 0.5 * Params.world_scale_3d)
 
 	ground_fx = GroundFx.new()
 	ground_fx.name = "GroundFx"

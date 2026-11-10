@@ -253,3 +253,31 @@ static func icosphere_low(plain: bool = false) -> ArrayMesh:
 			var mid: Vector3 = (a + c + d).normalized()
 			b.tri(a, c, d, mid, 1.0, Vector2(clampf(mid.y * 0.5 + 0.5, 0.0, 1.0), 0.0))
 		return b.commit())
+
+
+## Esfera facetada de raio 1: icosaedro subdividido (0 = 20 faces, 1 = 80, 2 = 320).
+static func icosphere(subdivisions: int) -> ArrayMesh:
+	return cached("icosphere_sub|%d" % subdivisions, func() -> ArrayMesh:
+		var source: PackedVector3Array = icosphere_low().surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+		var triangles: Array[PackedVector3Array] = []
+		for k in range(0, source.size(), 3):
+			triangles.append(PackedVector3Array([source[k], source[k + 1], source[k + 2]]))
+		for step in subdivisions:
+			var next: Array[PackedVector3Array] = []
+			for t in triangles:
+				var ab: Vector3 = ((t[0] + t[1]) * 0.5).normalized()
+				var bc: Vector3 = ((t[1] + t[2]) * 0.5).normalized()
+				var ca: Vector3 = ((t[2] + t[0]) * 0.5).normalized()
+				next.append(PackedVector3Array([t[0], ab, ca]))
+				next.append(PackedVector3Array([ab, t[1], bc]))
+				next.append(PackedVector3Array([ca, bc, t[2]]))
+				next.append(PackedVector3Array([ab, bc, ca]))
+			triangles = next
+		var b := Builder.new()
+		var index: int = 0
+		for t in triangles:
+			# Tom varia por face (sem sorteio): reforça o facetado
+			var shade: float = 0.78 + 0.22 * (0.5 + 0.5 * sin(float(index) * 12.9898))
+			b.tri(t[0], t[1], t[2], (t[0] + t[1] + t[2]).normalized(), shade)
+			index += 1
+		return b.commit())

@@ -37,6 +37,9 @@ func _ready() -> void:
 	var hud_items: int = _count_layer(game.get("hud"), GroundFx.WORLD_LAYER)
 	_check(hud_items == 0, "o HUD continua na tela, fora do plano (%d dentro)" % hud_items)
 
+	_check(renderer.scenery != null and renderer.scenery.item_count() > 0, "cenário de fundo montado")
+	_check(_count_canvas_items(renderer) == 0, "a visão 3D não cria nós 2D soltos")
+
 	# Câmera: a nave fica dentro da tela e o seguimento respeita o limite
 	await _wait(game, 0.4)
 	var view: Rect2 = game.get_viewport_rect()
@@ -221,6 +224,15 @@ func _count_layer(node: Node, layer: int) -> int:
 		count += 1
 	for child in node.get_children():
 		count += _count_layer(child, layer)
+	return count
+
+
+func _count_canvas_items(node: Node) -> int:
+	if node is Viewport:
+		return 0
+	var count: int = 1 if node is CanvasItem else 0
+	for child in node.get_children():
+		count += _count_canvas_items(child)
 	return count
 
 

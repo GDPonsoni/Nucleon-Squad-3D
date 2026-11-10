@@ -60,3 +60,14 @@ Registro das decisões tomadas sem o Gabriel por perto (regra da seção 7 do `d
 ## Nota sobre a D5
 
 Só `bullet.gd` precisou do cuidado: a chama do míssil continua desenhada no plano, com o mesmo sorteio. `beam_weapon.gd` não foi tocado (o raio segue 2D no plano).
+
+## D10. Cenário gerado por código, sem dados novos (T13)
+
+- **Decisão:** rochas e planetoides de fundo são sorteados por código, com semente fixa pelo id da fase (`scripts/render3d/scenery_3d.gd`). Cores escuras puxadas do `PlanetData` (fundo misturado com um pouco da cor das estrelas). Tudo anda na velocidade do chão e fica entre o plano de jogo e o chão.
+- **Motivo:** `data/` não tem nada de cenário e o plano mandava não criar dados nesse caso. Contraste baixo de propósito: o cenário não pode disputar a leitura com os tiros.
+- **Descartado:** camadas de paralaxe com velocidades diferentes (a perspectiva já dá o paralaxe: o que está mais alto passa mais rápido) e planetas grandes (cobririam a grade e chamariam atenção demais).
+
+## D11. Correção de cor da camada 2D no plano
+
+- **Decisão:** o shader do plano separa a cor do alfa antes de converter de sRGB para linear.
+- **Motivo:** a textura do `SubViewport` vem com a cor já multiplicada pelo alfa; convertendo assim, tudo que é translúcido (avisos, brilho do raio, bola da explosão) saía escuro. Visto nas fotos e corrigido.

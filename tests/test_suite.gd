@@ -1024,3 +1024,46 @@ func test_meshes_are_deterministic() -> void:
 		check(ModelLibrary.ship(body).surface_get_arrays(0)[Mesh.ARRAY_VERTEX] == first[index], "nave %s igual nas duas gerações" % body.id)
 		index += 1
 	check(ModelLibrary.rock(0).surface_get_arrays(0)[Mesh.ARRAY_VERTEX] != ModelLibrary.rock(1).surface_get_arrays(0)[Mesh.ARRAY_VERTEX], "rochas diferentes entre si")
+
+
+# --- Visão 3D: cenário de fundo ---
+
+func _scenery(stage_id: String) -> Scenery3D:
+	var scenery := Scenery3D.new()
+	add_child(scenery)
+	scenery.setup(Session.campaign.planets[0], stage_id, Vector3(5.4, 0.0, 11.7))
+	return scenery
+
+
+## O cenário é só enfeite: mesmo resultado para a mesma fase, sem tocar no sorteio global,
+## sempre abaixo do plano de jogo e acima do chão, mesmo depois de muito tempo rolando.
+func test_scenery_is_deterministic_and_below_the_play_plane() -> void:
+	seed(777)
+	var expected: float = randf()
+	seed(777)
+	var a := _scenery("p1_s1")
+	var b := _scenery("p1_s1")
+	var c := _scenery("p2_s3")
+	for step in 600:
+		a._process(0.1)
+		b._process(0.1)
+		c._process(0.1)
+	check(randf() == expected, "o cenário não consome o sorteio global")
+	check(a.item_count() == Params.scenery_rock_count_3d + Params.scenery_planet_count_3d, "quantidade de itens pelos parâmetros")
+	var same: bool = true
+	var different: bool = false
+	for i in a.item_count():
+		var item: MeshInstance3D = a.get_child(i)
+		same = same and item.position.is_equal_approx((b.get_child(i) as Node3D).position)
+		different = different or not item.position.is_equal_approx((c.get_child(i) as Node3D).position)
+		var radius: float = maxf(item.scale.x, item.scale.y)
+		check(item.position.y + item.scale.x <= -Params.scenery_min_depth_3d + 0.001, "item %d abaixo do plano de jogo (topo em %.2f)" % [i, item.position.y + item.scale.x])
+		check(item.position.y > -Params.ground_depth_3d, "item %d acima do chão" % i)
+		check(item.position.z - 11.7 <= Params.scenery_near_z_3d + 6.0 and item.position.z - 11.7 >= Params.scenery_far_z_3d - 0.01, "item %d dentro do percurso" % i)
+		check(item.mesh != null and radius > 0.0, "item %d com malha" % i)
+	check(same, "mesma fase, mesmo cenário")
+	check(different, "fases diferentes, cenários diferentes")
+	check(MeshFactory.triangle_count(MeshFactory.icosphere(1)) == 80, "planetoide com 80 faces")
+	_check_faceted(MeshFactory.icosphere(1), "planetoide")
+	for scenery: Scenery3D in [a, b, c]:
+		scenery.queue_free()

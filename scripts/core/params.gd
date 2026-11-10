@@ -660,3 +660,15 @@ var boss_crack_glow_3d: float = 1.4
 var flash_strength_3d: float = 0.55  # força do clarão de acerto nos modelos (1 = cor chapada, como no 2D)
 var item_glow_3d: float = 0.45  # brilho próprio dos itens e orbes (têm de chamar atenção)
 var orb_spin_3d: float = 2.5  # rad/s de giro dos orbes de XP
+# Cenário de fundo (scenery_3d.gd): só enfeite, abaixo do plano de jogo, sem colisão
+var scenery_enabled_3d: bool = true
+var scenery_rock_count_3d: int = 14  # metade com "efeitos visuais reduzidos"
+var scenery_planet_count_3d: int = 2  # planetoides (esferas facetadas maiores)
+var scenery_rock_size_3d: Vector2 = Vector2(0.35, 1.0)  # raio mínimo e máximo (unidades do mundo)
+var scenery_planet_size_3d: Vector2 = Vector2(1.4, 2.3)
+var scenery_min_depth_3d: float = 1.2  # folga entre o plano de jogo e o topo de qualquer item
+var scenery_spread_x_3d: float = 13.0  # até onde se espalham para os lados do centro da arena
+var scenery_far_z_3d: float = -55.0  # nascem lá no fundo (relativo ao centro da arena)
+var scenery_near_z_3d: float = 32.0  # somem depois de passar da câmera
+var scenery_rock_tint_3d: float = 0.16  # quanto a cor puxa do fundo para a cor das estrelas (baixo = discreto)
+var scenery_planet_tint_3d: float = 0.3
