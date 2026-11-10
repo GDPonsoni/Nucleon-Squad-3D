@@ -20,6 +20,10 @@ extends Node
 ##   --expected       evolução esperada no capítulo de cada fase: Dano e Cadência até o
 ##                    BalanceData.expected_power_by_chapter (mede a dificuldade "alinhada")
 ##   --boss-only      pula direto para o chefe (fases com chefe)
+##   --deterministic  sem sons: o áudio usa o relógio real e consome o sorteio global, então
+##                    duas execuções com a mesma semente divergem. Com esta opção o resultado
+##                    é idêntico entre execuções (prova de equivalência 2D x 3D)
+##   --render2d       desliga a visão 3D (Params.render_3d = false) para comparar
 ## Não grava o save do aparelho.
 
 const LOOKAHEAD := [0.0, 0.12, 0.24, 0.38]
@@ -61,6 +65,10 @@ func _ready() -> void:
 			var parts: PackedStringArray = pair.split("=")
 			SaveGame.upgrades[parts[0]] = int(parts[1])
 	_boss_only = args.has("boss-only")
+	if args.has("deterministic"):
+		Audio.set("_streams", {})
+	if args.has("render2d"):
+		Params.set("render_3d", false)
 	_expected = args.has("expected")
 
 	var campaign: CampaignData = Session.campaign

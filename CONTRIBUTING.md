@@ -37,7 +37,7 @@ Todo commit segue o padrão [Conventional Commits](https://www.conventionalcommi
 
 ### Escopos
 
-Os escopos seguem as pastas: `core`, `player`, `weapons`, `enemies`, `ui`, `data`, `assets`, `android`.
+Os escopos seguem as pastas: `core`, `player`, `weapons`, `enemies`, `ui`, `data`, `assets`, `android`, `render3d` (visão 3D, `scripts/render3d/`), `tools` (ferramentas e simuladores).
 
 ### Exemplos
 
