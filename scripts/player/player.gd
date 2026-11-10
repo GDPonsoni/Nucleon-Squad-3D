@@ -144,10 +144,13 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
-	if body != null and _build > 0.0:
-		_draw_body()
-
-	_draw_nucleus()
+	# Na visão 3D o casco e o núcleo são modelos (EntityViews); aqui ficam só os efeitos planos
+	if not Renderer3D.active:
+		if body != null and _build > 0.0:
+			_draw_body()
+		_draw_nucleus()
+	elif body != null and _build > 0.0 and _build < 1.0:
+		_draw_entry_ring()
 	if body != null:
 		_draw_health()
 	if shield_charges > 0:
@@ -172,7 +175,7 @@ func _update_tilt(moved: Vector2, delta: float) -> void:
 ## Entrada do corpo: nasce do núcleo crescendo (com um leve excesso), com brilho e um anel que converge.
 func _draw_body() -> void:
 	var k: float = Params.anim_intensity
-	var grow: float = lerpf(Params.entry_start_scale, 1.0, _ease_out_back(_build)) if _build < 1.0 else 1.0
+	var grow: float = body_grow()
 	var points := PackedVector2Array()
 	for point in body.shape:
 		points.append(point * Params.ship_size * grow)
@@ -190,11 +193,47 @@ func _draw_body() -> void:
 	var tint: Color = body.color.lightened(shade) if shade >= 0.0 else body.color.darkened(-shade)
 	draw_colored_polygon(points, tint)
 	if _build < 1.0:
-		var glow: float = sin(_build * PI) * Params.entry_glow_alpha * minf(k, 1.0)
-		draw_colored_polygon(points, Color(1.0, 1.0, 1.0, glow))
-		var ring: float = Params.ship_size.y * lerpf(Params.entry_ring_scale, 0.5, ease(_build, 0.4))
-		draw_arc(Vector2.ZERO, ring, 0.0, TAU, 40, Color(body.color.lightened(0.4), sin(_build * PI) * 0.8 * minf(k, 1.0)), 5.0)
+		draw_colored_polygon(points, Color(1.0, 1.0, 1.0, entry_glow()))
+		_draw_entry_ring()
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+
+
+## Anel que converge para o núcleo enquanto o corpo novo se forma.
+func _draw_entry_ring() -> void:
+	var ring: float = Params.ship_size.y * lerpf(Params.entry_ring_scale, 0.5, ease(_build, 0.4))
+	draw_arc(Vector2.ZERO, ring, 0.0, TAU, 40, Color(body.color.lightened(0.4), sin(_build * PI) * 0.8 * minf(Params.anim_intensity, 1.0)), 5.0)
+
+
+# --- Leitura para o desenho (2D e visão 3D usam os mesmos valores) ---
+
+## Escala do corpo: nasce do núcleo e cresce com um leve excesso durante a entrada.
+func body_grow() -> float:
+	return lerpf(Params.entry_start_scale, 1.0, _ease_out_back(_build)) if _build < 1.0 else 1.0
+
+
+## 0 = só o núcleo, 1 = corpo completo.
+func build_progress() -> float:
+	return _build
+
+
+## Brilho branco do corpo durante a entrada (0 fora dela).
+func entry_glow() -> float:
+	if _build >= 1.0:
+		return 0.0
+	return sin(_build * PI) * Params.entry_glow_alpha * minf(Params.anim_intensity, 1.0)
+
+
+## Opacidade do desenho (pisca enquanto invulnerável).
+func draw_opacity() -> float:
+	return self_modulate.a
+
+
+## Anel do núcleo: x = raio (px), y = opacidade. Mais forte na câmera lenta; pulsa em tempo real.
+func nucleus_ring() -> Vector2:
+	var slow: float = clampf((1.0 - Engine.time_scale) / (1.0 - Params.slow_time_scale), 0.0, 1.0)
+	var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.001 * Params.nucleus_pulse_speed)
+	var alpha: float = lerpf(Params.nucleus_ring_alpha, Params.nucleus_ring_alpha_slow, slow) * (0.55 + 0.45 * pulse)
+	return Vector2(Params.nucleus_radius * lerpf(Params.nucleus_ring_scale, Params.nucleus_ring_scale * 1.15, pulse), alpha)
 
 
 func _ease_out_back(x: float) -> float:
@@ -207,12 +246,8 @@ func _ease_out_back(x: float) -> float:
 ## O anel fica mais forte na câmera lenta, quando o jogador planeja o desvio.
 func _draw_nucleus() -> void:
 	var radius: float = Params.nucleus_radius
-	var slow: float = clampf((1.0 - Engine.time_scale) / (1.0 - Params.slow_time_scale), 0.0, 1.0)
-	# Pulso em tempo real, para continuar vivo na câmera lenta
-	var pulse: float = 0.5 + 0.5 * sin(Time.get_ticks_msec() * 0.001 * Params.nucleus_pulse_speed)
-	var ring_alpha: float = lerpf(Params.nucleus_ring_alpha, Params.nucleus_ring_alpha_slow, slow) * (0.55 + 0.45 * pulse)
-	var ring_radius: float = radius * lerpf(Params.nucleus_ring_scale, Params.nucleus_ring_scale * 1.15, pulse)
-	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 32, Color(Params.nucleus_color, ring_alpha), Params.nucleus_ring_width)
+	var ring: Vector2 = nucleus_ring()
+	draw_arc(Vector2.ZERO, ring.x, 0.0, TAU, 32, Color(Params.nucleus_color, ring.y), Params.nucleus_ring_width)
 	draw_circle(Vector2.ZERO, radius + Params.nucleus_outline_width, Params.nucleus_outline_color)
 	draw_circle(Vector2.ZERO, radius, Params.nucleus_color)
 	for i in cracks:

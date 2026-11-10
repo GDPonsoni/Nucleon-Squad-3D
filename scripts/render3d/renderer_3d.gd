@@ -13,6 +13,7 @@ var rig := CameraRig.new()
 var camera: Camera3D
 var ground: MeshInstance3D
 var ground_fx: GroundFx
+var entities: EntityViews
 
 var _game: Node2D
 var _reserved_bottom: float = 0.0
@@ -71,6 +72,11 @@ func setup(game: Node2D, reserved_bottom: float) -> void:
 
 	_refit()
 	ground_fx.setup(game, rig)
+
+	entities = EntityViews.new()
+	entities.name = "EntityViews"
+	add_child(entities)
+	entities.setup(game, rig)
 
 	game.get_viewport().size_changed.connect(_on_view_resized)
 	_sync_camera()

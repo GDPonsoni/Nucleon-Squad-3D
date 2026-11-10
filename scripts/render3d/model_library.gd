@@ -10,7 +10,8 @@ const BODY_SHADE: float = 0.72
 const DARK_SHADE: float = 0.5
 
 
-## Nave: contorno do corpo extrudado em dois degraus, topo afunilado e cockpit claro.
+## Nave: contorno do corpo extrudado em dois degraus, com o topo afunilado e mais claro.
+## O "cockpit" é o núcleo (ModelLibrary.nucleus), que fica no centro e é a hitbox.
 static func ship(body: BodyData) -> ArrayMesh:
 	return MeshFactory.cached("ship|%s" % body.id, func() -> ArrayMesh:
 		return _ship_builder(body.shape).commit())
@@ -27,16 +28,22 @@ static func _ship_builder(shape: PackedVector2Array) -> MeshFactory.Builder:
 	for p in points:
 		waist.append(center + (p - center) * 0.84)
 	b.extrusion(points, 0.0, height * 0.5, 0.84, 0.6, 1.0, center, false)
+	b.whiten = 0.18
 	b.extrusion(waist, height * 0.5, height, 0.55, 0.82, 1.0, center)
-	# Cockpit: pequena pirâmide clara, um pouco à frente do centro
-	var cw: float = Params.ship_size.x * 0.1
-	var cl: float = Params.ship_size.y * 0.16
-	var cc: Vector2 = center + Vector2(0.0, -Params.ship_size.y * 0.06)
-	b.whiten = 0.7
-	b.cone(PackedVector2Array([cc + Vector2(0, -cl), cc + Vector2(cw, 0), cc + Vector2(0, cl * 0.7), cc + Vector2(-cw, 0)]),
-		height, Vector3(cc.x, height * 1.45, cc.y), 1.0)
 	b.whiten = 0.0
 	return b
+
+
+## Núcleo (hitbox da nave), raio 1: colar escuro que o separa do casco e domo claro facetado.
+static func nucleus() -> ArrayMesh:
+	return MeshFactory.cached("nucleus", func() -> ArrayMesh:
+		var b := MeshFactory.Builder.new()
+		var outline: float = 1.0 + Params.nucleus_outline_width / maxf(Params.nucleus_radius, 1.0)
+		b.extrusion(MeshFactory.regular_polygon(10, outline), 0.0, 0.2, 1.0, 0.05, 0.05)
+		var ring: PackedVector2Array = MeshFactory.regular_polygon(8)
+		b.extrusion(ring, 0.2, 0.62, 0.72, 0.82, 1.0, Vector2.ZERO, false)
+		b.cone(MeshFactory.regular_polygon(8, 0.72), 0.62, Vector3(0.0, 0.9, 0.0), 1.0)
+		return b.commit())
 
 
 ## Pedaço i da nave quebrada (BodyFx): fatia do contorno, do centro até a aresta i, em volta

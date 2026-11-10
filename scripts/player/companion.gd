@@ -70,17 +70,16 @@ func _goal() -> Vector2:
 ## Corpo pequeno com contorno escuro e sem núcleo: só a nave principal tem núcleo (e hitbox).
 func _draw() -> void:
 	var size: Vector2 = Params.ship_size * Params.companion_scale
-	# Inclina durante o voo de saída/retorno e encolhe ao recolher
-	var roll: float = sin(_away * PI) * Params.companion_roll * Params.anim_intensity * -_side
-	roll += _player.bank * Params.tilt_max_roll * Params.tilt_intensity * Params.companion_tilt_share
-	draw_set_transform(Vector2.ZERO, roll, Vector2.ONE * lerpf(1.0, Params.companion_retreat_scale, _away))
-	var points := PackedVector2Array()
-	for point in body.shape:
-		points.append(point * size)
-	var outline := points.duplicate()
-	outline.append(points[0])
-	draw_colored_polygon(points, body.color)
-	draw_polyline(outline, Params.nucleus_outline_color, 3.0)
+	draw_set_transform(Vector2.ZERO, draw_roll(), Vector2.ONE * draw_scale())
+	# Na visão 3D o casco é um modelo (EntityViews); nível e pulsos seguem no plano
+	if not Renderer3D.active:
+		var points := PackedVector2Array()
+		for point in body.shape:
+			points.append(point * size)
+		var outline := points.duplicate()
+		outline.append(points[0])
+		draw_colored_polygon(points, body.color)
+		draw_polyline(outline, Params.nucleus_outline_color, 3.0)
 	_draw_level(size)
 	if _arrive_left > 0.0:
 		var u: float = 1.0 - _arrive_left / Params.companion_arrive_pulse_seconds
@@ -89,6 +88,17 @@ func _draw() -> void:
 		var t: float = 1.0 - _pulse_left / Params.level_up_pulse_seconds
 		draw_arc(Vector2.ZERO, size.y * (0.5 + t * Params.level_up_pulse_growth), 0.0, TAU, 40,
 			Color(Params.companion_powerup_color, 1.0 - t), Params.level_up_pulse_width * (1.0 - t * 0.5))
+
+
+## Inclinação do desenho: durante o voo de saída/retorno e acompanhando a nave principal.
+func draw_roll() -> float:
+	var roll: float = sin(_away * PI) * Params.companion_roll * Params.anim_intensity * -_side
+	return roll + _player.bank * Params.tilt_max_roll * Params.tilt_intensity * Params.companion_tilt_share
+
+
+## Escala do desenho: encolhe ao recolher junto do núcleo.
+func draw_scale() -> float:
+	return lerpf(1.0, Params.companion_retreat_scale, _away)
 
 
 ## Nível da auxiliar em pequenos segmentos embaixo dela (cheios até o nível atual).
