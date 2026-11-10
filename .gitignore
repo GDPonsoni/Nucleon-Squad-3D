@@ -17,3 +17,6 @@ builds/
 *.tmp
 .DS_Store
 Thumbs.db
+
+# Claude Code (permissões locais)
+.claude/settings.local.json
