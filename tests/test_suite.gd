@@ -889,3 +889,138 @@ func test_camera_matches_godot_camera() -> void:
 		var own: Vector2 = rig.project(point, offset)
 		check(godot.distance_to(own) < 0.5, "ponto %s: Godot %s x CameraRig %s" % [point, godot, own])
 	sub.queue_free()
+
+
+# --- Visão 3D: malhas low poly ---
+
+func _roster() -> Array[BodyData]:
+	return (load(Params.roster_path) as FormationData).bodies
+
+
+func _resources_in(folder: String) -> Array[Resource]:
+	var list: Array[Resource] = []
+	for file in DirAccess.get_files_at(folder):
+		if file.ends_with(".tres"):
+			list.append(load(folder.path_join(file)))
+	return list
+
+
+## Cada triângulo tem uma normal só (flat shading), unitária e igual à da geometria, e a face
+## da frente segue o sentido do Godot (horário).
+func _check_faceted(mesh: Mesh, label: String) -> void:
+	check(mesh.get_surface_count() == 1, "%s: uma superfície" % label)
+	if mesh.get_surface_count() == 0:
+		return
+	var arrays: Array = mesh.surface_get_arrays(0)
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	check(vertices.size() % 3 == 0 and vertices.size() == normals.size(), "%s: vértices em trios, com normal" % label)
+	var bad: int = 0
+	for i in range(0, vertices.size(), 3):
+		var n: Vector3 = normals[i]
+		var geometric: Vector3 = (vertices[i + 2] - vertices[i]).cross(vertices[i + 1] - vertices[i]).normalized()
+		if not (n.is_equal_approx(normals[i + 1]) and n.is_equal_approx(normals[i + 2]) and absf(n.length() - 1.0) < 0.001 and n.dot(geometric) > 0.999):
+			bad += 1
+	check(bad == 0, "%s: %d faces com normal errada" % [label, bad])
+
+
+func test_mesh_primitives_are_faceted() -> void:
+	MeshFactory.clear_cache()
+	_check_faceted(MeshFactory.prism(6, 0.4, 0.8), "prisma")
+	_check_faceted(MeshFactory.pyramid(3, 0.5), "pirâmide")
+	_check_faceted(MeshFactory.bipyramid(4, 0.7), "octaedro")
+	_check_faceted(MeshFactory.ring(0.8, 12), "anel")
+	_check_faceted(MeshFactory.quad(), "quadrado")
+	_check_faceted(MeshFactory.icosphere_low(), "icosfera")
+	_check_faceted(MeshFactory.extrude_polygon(PackedVector2Array([Vector2(0, -1), Vector2(0.3, 0.2), Vector2(1, 1), Vector2(0, 0.5), Vector2(-1, 1), Vector2(-0.3, 0.2)]), 0.5), "contorno côncavo")
+	check(MeshFactory.triangle_count(MeshFactory.icosphere_low()) == 20, "icosfera tem 20 faces")
+	check(MeshFactory.triangle_count(MeshFactory.prism(6, 0.4)) == 16, "prisma de 6 lados: 12 de lado + 4 de tampa")
+	check(MeshFactory.triangle_count(MeshFactory.pyramid(3, 0.5)) == 3, "pirâmide de 3 lados (sem base)")
+	check(MeshFactory.triangle_count(MeshFactory.quad()) == 2, "quadrado tem 2 triângulos")
+
+
+func test_mesh_cache_reuses_meshes() -> void:
+	MeshFactory.clear_cache()
+	var first: ArrayMesh = MeshFactory.prism(5, 0.4)
+	check(MeshFactory.prism(5, 0.4) == first, "mesma forma devolve a mesma malha")
+	check(MeshFactory.prism(6, 0.4) != first, "forma diferente, malha diferente")
+	var size: int = MeshFactory.cache_size()
+	for body in _roster():
+		ModelLibrary.ship(body)
+		ModelLibrary.ship(body)
+	check(MeshFactory.cache_size() == size + _roster().size(), "uma malha por nave")
+
+
+## Orçamento de triângulos: naves, inimigos, rochas, chefes, itens e projéteis.
+func test_model_triangle_budgets() -> void:
+	MeshFactory.clear_cache()
+	for body in _roster():
+		var mesh: ArrayMesh = ModelLibrary.ship(body)
+		var count: int = MeshFactory.triangle_count(mesh)
+		check(count > 0 and count <= Params.triangle_budget_ship_3d, "nave %s: %d triângulos (máx %d)" % [body.id, count, Params.triangle_budget_ship_3d])
+		_check_faceted(mesh, "nave %s" % body.id)
+		for i in body.shape.size():
+			check(MeshFactory.triangle_count(ModelLibrary.ship_piece(body, i)) <= 12, "pedaço %d da nave %s" % [i, body.id])
+	var run_mode := load(Params.run_mode_path) as RunModeData
+	check(MeshFactory.triangle_count(ModelLibrary.ship(run_mode.ship)) <= Params.triangle_budget_ship_3d, "nave da Incursão no orçamento")
+	for resource in _resources_in("res://data/enemies"):
+		var data := resource as EnemyData
+		if data.look == EnemyData.Look.ROCK:
+			continue
+		var count: int = MeshFactory.triangle_count(ModelLibrary.enemy(data.sides))
+		check(count > 0 and count <= Params.triangle_budget_enemy_3d, "inimigo %s (%d lados): %d triângulos" % [data.id, data.sides, count])
+	_check_faceted(ModelLibrary.enemy(5), "inimigo de 5 lados")
+	for variant in Params.rock_variants_3d:
+		var rock: ArrayMesh = ModelLibrary.rock(variant)
+		check(MeshFactory.triangle_count(rock) <= Params.triangle_budget_enemy_3d, "rocha %d no orçamento" % variant)
+		_check_faceted(rock, "rocha %d" % variant)
+	for resource in _resources_in("res://data/bosses"):
+		var data := resource as BossData
+		var count: int = ModelLibrary.boss_triangles(data)
+		check(count > 0 and count <= Params.triangle_budget_boss_3d, "chefe %s: %d triângulos (máx %d)" % [data.id, count, Params.triangle_budget_boss_3d])
+		_check_faceted(ModelLibrary.boss_hull(data.sides), "casco do chefe %s" % data.id)
+		if data.plates > 0:
+			_check_faceted(ModelLibrary.boss_plate(data.plates), "placa do chefe %s" % data.id)
+	for mesh: ArrayMesh in [ModelLibrary.boss_spike(), ModelLibrary.boss_turret(), ModelLibrary.boss_core(8), ModelLibrary.boss_crack(2), ModelLibrary.boss_pupil()]:
+		_check_faceted(mesh, "peça de chefe")
+	for mesh: ArrayMesh in [ModelLibrary.bullet_orb(), ModelLibrary.bullet_box(), ModelLibrary.bullet_dart()]:
+		check(MeshFactory.triangle_count(mesh) <= Params.triangle_budget_bullet_3d, "projétil: %d triângulos (máx %d)" % [MeshFactory.triangle_count(mesh), Params.triangle_budget_bullet_3d])
+		_check_faceted(mesh, "projétil")
+	for mesh: ArrayMesh in [ModelLibrary.gem(), ModelLibrary.gem(0.7), ModelLibrary.medkit(), ModelLibrary.chest()]:
+		check(MeshFactory.triangle_count(mesh) <= Params.triangle_budget_enemy_3d, "item no orçamento")
+		_check_faceted(mesh, "item")
+
+
+## Os modelos ficam baixos: a colisão é um círculo plano e o visual não pode destoar dela.
+func test_models_stay_low() -> void:
+	for mesh: ArrayMesh in [ModelLibrary.enemy(6), ModelLibrary.rock(0), ModelLibrary.boss_hull(8), ModelLibrary.boss_core(8), ModelLibrary.boss_plate(4), ModelLibrary.boss_turret()]:
+		var box: AABB = mesh.get_aabb()
+		check(box.end.y <= Params.model_height_ratio_3d * 1.1 + 0.001, "modelo com altura %.2f (máx %.2f do raio)" % [box.end.y, Params.model_height_ratio_3d])
+	for body in _roster():
+		var box: AABB = ModelLibrary.ship(body).get_aabb()
+		check(box.end.y <= Params.ship_size.x * 0.5 * Params.model_height_ratio_3d * 2.0, "nave %s baixa (%.1f px)" % [body.id, box.end.y])
+		check(box.size.x <= Params.ship_size.x + 0.01 and box.size.z <= Params.ship_size.y * 1.11, "nave %s do tamanho do desenho 2D" % body.id)
+
+
+## Geração determinística e sem tocar no sorteio global (a simulação não pode mudar).
+func test_meshes_are_deterministic() -> void:
+	var first: Array[PackedVector3Array] = []
+	MeshFactory.clear_cache()
+	seed(4242)
+	var expected: float = randf()
+	seed(4242)
+	for variant in Params.rock_variants_3d:
+		first.append(ModelLibrary.rock(variant).surface_get_arrays(0)[Mesh.ARRAY_VERTEX])
+	for body in _roster():
+		first.append(ModelLibrary.ship(body).surface_get_arrays(0)[Mesh.ARRAY_VERTEX])
+	check(randf() == expected, "gerar malhas não consome o sorteio global")
+	MeshFactory.clear_cache()
+	seed(99)
+	var index: int = 0
+	for variant in Params.rock_variants_3d:
+		check(ModelLibrary.rock(variant).surface_get_arrays(0)[Mesh.ARRAY_VERTEX] == first[index], "rocha %d igual nas duas gerações" % variant)
+		index += 1
+	for body in _roster():
+		check(ModelLibrary.ship(body).surface_get_arrays(0)[Mesh.ARRAY_VERTEX] == first[index], "nave %s igual nas duas gerações" % body.id)
+		index += 1
+	check(ModelLibrary.rock(0).surface_get_arrays(0)[Mesh.ARRAY_VERTEX] != ModelLibrary.rock(1).surface_get_arrays(0)[Mesh.ARRAY_VERTEX], "rochas diferentes entre si")

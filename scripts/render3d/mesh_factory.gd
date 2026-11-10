@@ -12,9 +12,17 @@ class Builder:
 	var normals := PackedVector3Array()
 	var colors := PackedColorArray()
 	var uvs := PackedVector2Array()
+	## Quanto as próximas faces puxam para o branco (0 = cor da instância, 1 = branco).
+	var whiten: float = 0.0
+	## Cor de vértice branca pura (projéteis: a cor vem só da instância do MultiMesh).
+	var plain: bool = false
+	## UV das próximas faces quando a chamada não informa (projéteis: UV.x = brilho do topo).
+	var default_uv := Vector2.ZERO
 
 	## Triângulo com a normal apontando para o lado de `outward`.
-	func tri(a: Vector3, b: Vector3, c: Vector3, outward: Vector3, shade: float = 1.0, uv: Vector2 = Vector2.ZERO) -> void:
+	func tri(a: Vector3, b: Vector3, c: Vector3, outward: Vector3, shade: float = 1.0, uv: Vector2 = Vector2.INF) -> void:
+		if uv == Vector2.INF:
+			uv = default_uv
 		var normal: Vector3 = (b - a).cross(c - a)
 		if normal.length_squared() < 1e-12:
 			return
@@ -24,7 +32,8 @@ class Builder:
 			c = swap
 			normal = -normal
 		normal = normal.normalized()
-		var color := Color(shade, shade, shade, 1.0)
+		# r = tom da face, g = branco (lidos pelo shader das entidades)
+		var color := Color.WHITE if plain else Color(shade, whiten, 0.0, 1.0)
 		# (a, b, c) está anti-horário visto de fora; o Godot quer horário na face da frente
 		for v: Vector3 in [a, c, b]:
 			vertices.append(v)
@@ -32,13 +41,13 @@ class Builder:
 			colors.append(color)
 			uvs.append(uv)
 
-	func quad(a: Vector3, b: Vector3, c: Vector3, d: Vector3, outward: Vector3, shade: float = 1.0, uv: Vector2 = Vector2.ZERO) -> void:
+	func quad(a: Vector3, b: Vector3, c: Vector3, d: Vector3, outward: Vector3, shade: float = 1.0, uv: Vector2 = Vector2.INF) -> void:
 		tri(a, b, c, outward, shade, uv)
 		tri(a, c, d, outward, shade, uv)
 
 	## Contorno 2D extrudado de y0 até y1, com o topo encolhido por top_scale em volta do
 	## centro. Sem tampa de baixo (nunca aparece: a câmera olha de cima).
-	func extrusion(points: PackedVector2Array, y0: float, y1: float, top_scale: float, side_shade: float, top_shade: float, center: Vector2 = Vector2.INF) -> void:
+	func extrusion(points: PackedVector2Array, y0: float, y1: float, top_scale: float, side_shade: float, top_shade: float, center: Vector2 = Vector2.INF, cap: bool = true) -> void:
 		var n: int = points.size()
 		if n < 3:
 			return
@@ -57,7 +66,7 @@ class Builder:
 			# Tom varia um pouco por face: reforça o facetado mesmo com pouca luz
 			var shade: float = side_shade * (0.86 + 0.14 * (0.5 + 0.5 * sin(float(i) * 2.4)))
 			quad(a, b, c, d, Vector3(mid.x, 0.35, mid.y), shade)
-		if top_scale > 0.001:
+		if cap and top_scale > 0.001:
 			var indices: PackedInt32Array = Geometry2D.triangulate_polygon(top)
 			for k in range(0, indices.size(), 3):
 				tri(Vector3(top[indices[k]].x, y1, top[indices[k]].y),
@@ -85,13 +94,21 @@ class Builder:
 			var up := Vector3(0.0, y, 0.0)
 			quad(d0 * inner + up, d0 * outer + up, d1 * outer + up, d1 * inner + up, Vector3.UP, shade)
 
+	## Caixa alinhada aos eixos (sem a face de baixo).
+	func box(center: Vector3, size: Vector3, shade: float = 1.0) -> void:
+		var h: Vector3 = size * 0.5
+		var footprint := PackedVector2Array([
+			Vector2(center.x - h.x, center.z - h.z), Vector2(center.x + h.x, center.z - h.z),
+			Vector2(center.x + h.x, center.z + h.z), Vector2(center.x - h.x, center.z + h.z)])
+		extrusion(footprint, center.y - h.y, center.y + h.y, 1.0, shade * 0.72, shade)
+
 	## Malha transformada por xform e somada a este construtor (para compor modelos).
 	func append_builder(other: Builder, xform: Transform3D, shade_scale: float = 1.0) -> void:
 		for i in other.vertices.size():
 			vertices.append(xform * other.vertices[i])
 			normals.append((xform.basis * other.normals[i]).normalized())
 			var c: Color = other.colors[i]
-			colors.append(Color(c.r * shade_scale, c.g * shade_scale, c.b * shade_scale, 1.0))
+			colors.append(Color(c.r * shade_scale, c.g, c.b, 1.0))
 			uvs.append(other.uvs[i])
 
 	func triangle_count() -> int:
@@ -217,9 +234,10 @@ static func quad() -> ArrayMesh:
 
 ## Icosaedro de raio 1 (20 faces). O UV.x guarda o quanto a face olha para cima (0..1):
 ## o material dos projéteis usa isso para clarear o topo (núcleo claro).
-static func icosphere_low() -> ArrayMesh:
-	return cached("icosphere", func() -> ArrayMesh:
+static func icosphere_low(plain: bool = false) -> ArrayMesh:
+	return cached("icosphere|%s" % plain, func() -> ArrayMesh:
 		var b := Builder.new()
+		b.plain = plain
 		var t: float = (1.0 + sqrt(5.0)) * 0.5
 		var raw: Array[Vector3] = [
 			Vector3(-1, t, 0), Vector3(1, t, 0), Vector3(-1, -t, 0), Vector3(1, -t, 0),

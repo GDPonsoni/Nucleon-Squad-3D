@@ -635,3 +635,12 @@ var ground_fade_end_3d: float = 60.0
 # Camada 2D deitada no plano de jogo (avisos, feixes, escudos, explosões, números)
 var ground_fx_resolution: float = 1.0  # fração da resolução da tela (menor = mais leve)
 var ground_fx_height_3d: float = 0.0  # altura do plano dos efeitos (unidades do mundo)
+# Modelos low poly (gerados por código em scripts/render3d/model_library.gd)
+var model_height_ratio_3d: float = 0.4  # altura dos modelos em relação ao raio (visual perto da colisão, que é plana)
+var ship_height_3d: float = 22.0  # altura do casco das naves (px do jogo)
+var rock_variants_3d: int = 6  # formatos de rocha pré-gerados (sorteio próprio, fixo)
+var bullet_height_3d: float = 20.0  # altura em que os projéteis voam (px do jogo): ficam visíveis por cima dos cascos
+var triangle_budget_ship_3d: int = 60
+var triangle_budget_enemy_3d: int = 60
+var triangle_budget_boss_3d: int = 300
+var triangle_budget_bullet_3d: int = 24
