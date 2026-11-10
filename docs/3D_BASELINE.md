@@ -148,3 +148,5 @@ TOTAL | 9 fases | 46.3 min | 808 hits | 17.44 hits/min
 ```
 
 O que a prova cobre: lógica, sorteios e colisão. O que ela não cobre: visual, controle e desempenho no aparelho (headless não desenha). Para isso, `docs/3D_TESTE.md`.
+
+**Repetida depois da T14** (cenário e partículas, commit `bebf885`): capítulos 1 e 5 de novo idênticos à referência D. A primeira versão das partículas, com `GPUParticles3D`, tinha quebrado essa igualdade (D12 em `docs/3D_DECISOES.md`).
