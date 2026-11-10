@@ -672,3 +672,19 @@ var scenery_far_z_3d: float = -55.0  # nascem lá no fundo (relativo ao centro d
 var scenery_near_z_3d: float = 32.0  # somem depois de passar da câmera
 var scenery_rock_tint_3d: float = 0.16  # quanto a cor puxa do fundo para a cor das estrelas (baixo = discreto)
 var scenery_planet_tint_3d: float = 0.3
+# Partículas 3D (particle_view.gd): um MultiMesh com as partículas simuladas no script
+var particles_enabled_3d: bool = true
+var particle_budget_3d: int = 420  # teto rígido de partículas vivas (no teto, as novas substituem as mais antigas)
+var particle_explosion_amount_3d: int = 18  # estilhaços por explosão (metade com "efeitos visuais reduzidos")
+var particle_spark_amount_3d: int = 6  # fagulhas por acerto
+var particle_pickup_amount_3d: int = 16  # brilho ao coletar um item
+var particle_trail_amount_3d: int = 24  # partículas vivas no rastro do propulsor
+var particle_trail_seconds_3d: float = 0.35
+var particle_trail_speed_3d: float = 2.4  # o rastro fica para trás (unidades do mundo por segundo)
+var particle_explosion_seconds_3d: float = 0.6
+var particle_explosion_speed_3d: Vector2 = Vector2(2.2, 6.5)  # unidades do mundo por segundo, para o raio de referência
+var particle_spark_seconds_3d: float = 0.25
+var particle_spark_speed_3d: Vector2 = Vector2(1.6, 3.6)
+var particle_size_3d: float = 0.13  # tamanho do estilhaço (unidades do mundo), para o raio de referência
+var particle_gravity_3d: float = 5.0  # os estilhaços sobem e caem de volta para o plano
+var particle_damping_3d: float = 2.2  # freio das partículas (1/s)

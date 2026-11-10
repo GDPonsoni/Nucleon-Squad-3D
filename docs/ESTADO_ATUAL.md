@@ -88,6 +88,8 @@ O simulador aceita `--deterministic` (sem sons: só assim duas execuções com a
 | `mesh_factory.gd`, `model_library.gd` | Malhas facetadas com cache, geradas dos dados: naves (`BodyData.shape`), inimigos (`sides`), rochas, peças de chefe, itens, projéteis |
 | `entity_views.gd` (`EntityViews`) | Um `MeshInstance3D` reaproveitado por entidade: nave, núcleo, auxiliar, corpo que sai ou quebra, inimigos, chefe (peças), itens e orbes |
 | `bullet_view.gd` (`BulletView`) | Um `MultiMesh` por formato de tiro, alimentado pelos pools |
+| `scenery_3d.gd` (`Scenery3D`) | Cenário de fundo: rochas e planetoides escuros entre o plano de jogo e o chão, com semente fixa pela fase. Só enfeite (`scenery_*_3d`) |
+| `particle_view.gd` (`ParticleView`) | Partículas simuladas em script num `MultiMesh` só: estilhaços das explosões, fagulhas dos acertos, rastro do propulsor e coleta de item. Observa os pools `Explosion` e `HitSpark`; teto rígido em `particle_budget_3d` |
 | `shaders/` | `entity` (cor, clarão, brilho e transparência por instância), `bullet`, `ground`, `ground_fx` |
 
 **Regras para mexer:**
@@ -99,7 +101,9 @@ O simulador aceita `--deterministic` (sem sons: só assim duas execuções com a
 
 **Ajustes sem código:** `camera_pitch_deg` (70), `camera_fov_deg` (38), `camera_follow_factor/max_px/smooth`, `camera_fit_margin` (≥ `camera_follow_max_px`), `world_scale_3d`, `ground_fx_resolution` (baixe para 0,5 se pesar), `bullet_height_3d`, `bullet_core_white_3d`, `flash_strength_3d`.
 
-**Ainda plano (sem volume):** explosões, faíscas, raio, Tesla, órbita, especiais. Cenário e partículas 3D são as tarefas T13 e T14 do plano.
+**Ainda plano (sem volume):** clarão e anel das explosões, raio, Tesla, órbita, especiais, avisos, escudos e auras. Os estilhaços e as fagulhas já são partículas 3D.
+
+**Desempenho medido no PC** (Radeon integrada, janela de 540 px, `shot_3d.gd --no-shots --disable-vsync`): fase 5-8 a 143 quadros/s em 3D contra 174 em 2D; chefe 5-9 a 191. Partículas ligadas ou desligadas mudam o número em menos de 3%. **No S24 ainda não foi medido.**
 
 **Interface:** botões com relevo e variação de ação principal (`PrimaryButton`); a nave auxiliar é escolhida numa fileira própria no Esquadrão (não pode repetir uma nave do esquadrão) e não tem núcleo.
 
@@ -279,6 +283,8 @@ O simulador aceita `--deterministic` (sem sons: só assim duas execuções com a
 - **Intervalo mínimo de som:** tiros e acertos disparam muitas vezes por segundo; novos sons de alta frequência precisam entrar em `sfx_min_gap`.
 - **Campanha gerada:** editar `data/stages/*.tres` à mão se perde ao rodar o gerador de novo.
 - **Arquivos `.uid`:** versione-os junto com os scripts.
+- **`GPUParticles3D` e `CPUParticles3D` consomem o sorteio global** do motor ao serem criados (e no `restart()` sem semente fixa). Qualquer nó desses na partida muda a sequência de ondas e quebra a comparação do simulador. Por isso as partículas 3D são próprias (D12 em `docs/3D_DECISOES.md`).
+- **Simulador e sons:** sem `--deterministic`, duas execuções com a mesma semente divergem (o áudio usa o relógio real).
 - **O chefe é liberado da memória ao morrer** (não é pooled). Qualquer lista ou dicionário que guarde inimigos precisa checar `is_instance_valid` e não usar laço tipado (`for e: Enemy in ...`), senão dá "previously freed instance" a cada quadro (aconteceu na Órbita).
 - **Floats de 32 bits:** `PackedFloat32Array` guarda menos precisão que um `float` do GDScript (64 bits). Comparar um valor guardado nela com um calculado (`>=`) pode falhar por 0,0000001; foi o que travava o especial de algumas naves. Compare com folga (`special_ready_epsilon`).
 - **Erros no celular:** `adb logcat -d -s godot:*` mostra os SCRIPT ERROR da última partida.

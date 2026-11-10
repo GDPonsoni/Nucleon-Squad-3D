@@ -260,3 +260,14 @@ static func bullet_dart() -> ArrayMesh:
 		b.default_uv = Vector2(0.45, 0.0)
 		b.cone(PackedVector2Array([Vector2(0.0, -0.5), Vector2(0.5, 0.5), Vector2(-0.5, 0.5)]), -0.3, Vector3(0.0, 0.5, 0.25), 1.0)
 		return b.commit())
+
+
+## Estilhaço das partículas: dois tetraedros colados, raio 1, cor só da partícula.
+static func shard() -> ArrayMesh:
+	return MeshFactory.cached("shard", func() -> ArrayMesh:
+		var b := MeshFactory.Builder.new()
+		b.plain = true
+		var base: PackedVector2Array = MeshFactory.regular_polygon(3)
+		b.cone(base, 0.0, Vector3(0.0, 0.9, 0.0), 1.0)
+		b.cone(base, 0.0, Vector3(0.0, -0.9, 0.0), 1.0)
+		return b.commit())

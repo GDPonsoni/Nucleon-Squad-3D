@@ -60,9 +60,17 @@ Deixe as **estatísticas na tela** ligadas (Configurações) para ver o FPS.
 - [ ] FPS estável em 60 na 1-1.
 - [ ] FPS na **5-8** (a mais pesada: até ~450 tiros inimigos) e num chefe do capítulo 5.
 - [ ] Se cair: baixar `ground_fx_resolution` para 0,5 em `params.gd` e testar de novo. Anote os dois números.
+- [ ] Se ainda cair: `particles_enabled_3d = false` e `scenery_enabled_3d = false`, um de cada vez, para achar o culpado.
 - [ ] Aquecimento ou consumo de bateria fora do normal depois de 10 minutos?
 
-## 8. Tutorial e telas
+## 8. Cenário e partículas
+
+- [ ] Rochas e planetoides escuros passam por baixo do plano de jogo. **Eles atrapalham a leitura dos tiros?** (`scenery_rock_tint_3d` menor = mais discreto; `scenery_enabled_3d = false` desliga)
+- [ ] Explosão solta estilhaços na cor do inimigo, que sobem e caem. Acertos soltam fagulhas.
+- [ ] Rastro do propulsor atrás da nave, na cor do corpo. Coletar item solta um brilho na cor dele.
+- [ ] Com "efeitos visuais reduzidos" ligado nas Configurações: menos rochas e metade das partículas.
+
+## 9. Tutorial e telas
 
 - [ ] Com o save novo, as dicas da 1-1 aparecem e o **recorte iluminado cai em cima do alvo** (nave, inimigo que avisa, item).
 - [ ] Tela de esquadrão e inspeção de nave (ⓘ) seguem em 2D, com a nave e a demo da arma visíveis.
@@ -79,5 +87,7 @@ Tudo em `scripts/core/params.gd`, bloco "Visão 3D":
 | Câmera parada | `camera_follow_factor = 0` |
 | Jogo maior na tela | `camera_fit_margin` e `camera_follow_max_px` menores (a margem precisa ser ≥ o máximo) |
 | Tiros mais coloridos / mais claros | `bullet_core_white_3d` |
-| Mais leve | `ground_fx_resolution` |
+| Mais leve | `ground_fx_resolution`, `particles_enabled_3d`, `scenery_enabled_3d` |
+| Cenário mais discreto ou mais presente | `scenery_rock_tint_3d`, `scenery_rock_count_3d` |
+| Mais ou menos estilhaços | `particle_explosion_amount_3d`, `particle_budget_3d` (teto geral) |
 | Voltar ao 2D para comparar | `render_3d = false` |

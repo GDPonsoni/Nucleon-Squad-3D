@@ -71,3 +71,12 @@ Só `bullet.gd` precisou do cuidado: a chama do míssil continua desenhada no pl
 
 - **Decisão:** o shader do plano separa a cor do alfa antes de converter de sRGB para linear.
 - **Motivo:** a textura do `SubViewport` vem com a cor já multiplicada pelo alfa; convertendo assim, tudo que é translúcido (avisos, brilho do raio, bola da explosão) saía escuro. Visto nas fotos e corrigido.
+
+## D12. Partículas próprias num `MultiMesh`, sem `GPUParticles3D` (T14)
+
+- **Decisão:** as partículas (estilhaços das explosões, fagulhas dos acertos, rastro do propulsor, brilho da coleta) são simuladas em script e desenhadas por um único `MultiMesh` (`scripts/render3d/particle_view.gd`), com sorteio próprio de semente fixa. O teto `particle_budget_3d` (420) é rígido: no teto, as novas substituem as mais antigas. `ParticleView` percebe uma explosão ou faísca nova olhando os pools que já existem (a idade do item volta a zero), sem chamada nova na lógica do jogo. Com as partículas ligadas, o 2D deixa de desenhar só os estilhaços e as fagulhas; clarão e anel continuam no plano.
+- **Motivo:** o plano sugeria `GPUParticles3D` ou `CPUParticles3D`. A primeira versão usou `GPUParticles3D` e **quebrou a prova de equivalência**: a simulação do capítulo 1 mudou. Testado isoladamente: criar um `GPUParticles3D` ou um `CPUParticles3D` consome o sorteio global do motor, e `restart()` sem semente fixa também. Isso desloca a sequência de sorteios e muda as ondas da partida. A versão própria não toca no sorteio global (há teste para isso) e a simulação voltou a ser idêntica à do 2D.
+- **Descartado:** `GPUParticles3D`/`CPUParticles3D` (motivo acima) e chamar o emissor de dentro de `game.gd` (acoplaria a lógica ao 3D).
+- **Custo:** um draw call e uma atualização por partícula viva, em script. Sem transparência (as partículas encolhem até sumir).
+- **Medição (o plano pedia antes e depois, em chefe):** PC com Radeon integrada, janela de 540 px, sem vsync, `shot_3d.gd --no-shots --deterministic`. Chefe 5-9: 191 quadros/s com partículas, 195 sem. Fase 5-8 (até ~450 tiros inimigos): 143 com, 140 sem (diferença dentro do ruído), 174 no 2D. Longe do limite de 55; o teto não precisou baixar. **Falta medir no S24.**
+- **Sem rastro nos inimigos nem na auxiliar:** ficaria poluído com 60 inimigos na tela.

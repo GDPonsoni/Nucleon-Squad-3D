@@ -1067,3 +1067,50 @@ func test_scenery_is_deterministic_and_below_the_play_plane() -> void:
 	_check_faceted(MeshFactory.icosphere(1), "planetoide")
 	for scenery: Scenery3D in [a, b, c]:
 		scenery.queue_free()
+
+
+# --- Visão 3D: partículas ---
+
+func _particles() -> ParticleView:
+	var rig := _rig(Vector2(1080, 2340), 300.0, Params.camera_fit_margin)
+	var view := ParticleView.new()
+	add_child(view)
+	view.set_process(false)
+	view.setup(null, rig)
+	return view
+
+
+## Teto rígido de partículas vivas, vida limitada, sem tocar no sorteio global e com resultado
+## igual para a mesma sequência de rajadas.
+func test_particles_respect_budget_and_global_rng() -> void:
+	seed(4321)
+	var expected: float = randf()
+	seed(4321)
+	var a := _particles()
+	var b := _particles()
+	check(a.capacity() == Params.particle_budget_3d and a.alive_count() == 0, "começa vazio, com o teto dos parâmetros")
+	for view: ParticleView in [a, b]:
+		view.emit(30, Vector3(1, 0, 2), Color.RED, Vector2(1, 3), 0.1, 0.5, 0.9, 5.0)
+		view.step(0.1)
+	check(a.alive_count() == 30, "30 partículas vivas depois da rajada")
+	var multimesh_a: MultiMesh = (a.get_child(0) as MultiMeshInstance3D).multimesh
+	var multimesh_b: MultiMesh = (b.get_child(0) as MultiMeshInstance3D).multimesh
+	check(multimesh_a.visible_instance_count == 30, "uma instância por partícula viva")
+	var same: bool = true
+	for i in 30:
+		same = same and multimesh_a.get_instance_transform(i).is_equal_approx(multimesh_b.get_instance_transform(i))
+	check(same, "mesma sequência de rajadas, mesmas partículas")
+	check(multimesh_a.get_instance_transform(0).origin != Vector3(1, 0, 2), "as partículas se movem")
+	# Muito mais do que cabe: nunca passa do teto
+	for k in 40:
+		a.emit(100, Vector3.ZERO, Color.WHITE, Vector2(1, 3), 0.1, 0.5, 0.9, 5.0)
+		a.step(0.01)
+		check(a.alive_count() <= Params.particle_budget_3d, "vivas (%d) dentro do teto" % a.alive_count())
+	check(a.alive_count() == Params.particle_budget_3d, "no teto, as novas substituem as antigas")
+	for k in 20:
+		a.step(0.1)
+	check(a.alive_count() == 0 and multimesh_a.visible_instance_count == 0, "todas somem depois da vida delas")
+	check(randf() == expected, "as partículas não consomem o sorteio global")
+	check(MeshFactory.triangle_count(ModelLibrary.shard()) <= 8, "estilhaço com poucas faces")
+	a.queue_free()
+	b.queue_free()

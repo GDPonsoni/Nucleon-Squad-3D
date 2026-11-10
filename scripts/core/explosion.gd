@@ -55,10 +55,27 @@ func _draw() -> void:
 	var ring_radius: float = _radius * (0.5 + ease(t, 0.4) * Params.explosion_ring_growth)
 	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 48, Color(_color.lightened(0.15), fade), maxf(2.0, Params.explosion_ring_width * fade))
 
-	# Estilhaços voando para fora, desacelerando
+	# Estilhaços voando para fora, desacelerando (na visão 3D são partículas: ParticleView)
+	if Renderer3D.particles:
+		return
 	var shard_color := Color(_color.lightened(0.35), fade)
 	var travel: float = _age * (1.0 - t * 0.5)
 	var length: float = _radius * Params.explosion_shard_length * (0.4 + 0.6 * fade)
 	for i in _dirs.size():
 		var start: Vector2 = _dirs[i] * _speeds[i] * travel
 		draw_line(start, start + _dirs[i] * length, shard_color, Params.explosion_shard_width)
+
+
+# --- Leitura para a visão 3D ---
+
+## Segundos desde que explodiu (volta a 0 quando o item é reaproveitado).
+func age() -> float:
+	return _age
+
+
+func blast_radius() -> float:
+	return _radius
+
+
+func tint() -> Color:
+	return _color

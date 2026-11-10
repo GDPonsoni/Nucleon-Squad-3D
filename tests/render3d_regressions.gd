@@ -105,6 +105,22 @@ func _ready() -> void:
 	_check(renderer.bullets.visible_count() == player_bullets.active.size() + enemy_bullets.active.size(),
 		"uma instância por projétil (%d x %d)" % [renderer.bullets.visible_count(), player_bullets.active.size() + enemy_bullets.active.size()])
 
+	# Partículas: um MultiMesh só (nada criado durante a partida), disparadas pelas explosões
+	var particle_view: ParticleView = renderer.particle_view
+	_check(particle_view != null and Renderer3D.particles, "partículas 3D ligadas")
+	if particle_view != null:
+		var nodes: int = particle_view.get_child_count()
+		var before: int = particle_view.bursts
+		game.call("_explode", Vector2(500.0, 600.0), 48.0, Color.RED)
+		(game.get("context") as CombatContext).spark(Vector2(520.0, 620.0), Color.WHITE)
+		await _frames(3)
+		_check(particle_view.bursts == before + 2, "explosão e faísca disparam partículas (%d)" % (particle_view.bursts - before))
+		for i in 40:
+			game.call("_explode", Vector2(500.0, 600.0), 48.0, Color.RED)
+		await _frames(3)
+		_check(particle_view.get_child_count() == nodes and nodes == 1, "muitas explosões não criam nós (%d)" % particle_view.get_child_count())
+		_check(particle_view.alive_count() > 0 and particle_view.alive_count() <= Params.particle_budget_3d, "partículas vivas dentro do teto (%d)" % particle_view.alive_count())
+
 	# Itens
 	var power_ups: NodePool = game.get("power_ups")
 	var item_up := power_ups.acquire() as PowerUp
@@ -183,7 +199,7 @@ func _ready() -> void:
 	var flat: Node2D = (load("res://scenes/game.tscn") as PackedScene).instantiate()
 	get_tree().root.add_child(flat)
 	await _frames(5)
-	_check(flat.get("renderer") == null and not Renderer3D.active, "render_3d desligado: sem visão 3D")
+	_check(flat.get("renderer") == null and not Renderer3D.active and not Renderer3D.particles, "render_3d desligado: sem visão 3D")
 	_check(main.canvas_cull_mask == mask_before and _count_layer(flat, GroundFx.WORLD_LAYER) == 0, "render_3d desligado: desenho 2D normal")
 	flat.queue_free()
 	Params.render_3d = true

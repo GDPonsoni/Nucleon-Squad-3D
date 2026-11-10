@@ -7,6 +7,8 @@ extends Node3D
 
 ## Há uma visão 3D em cena: as entidades não desenham o próprio corpo em 2D.
 static var active: bool = false
+## As partículas 3D estão ligadas: explosões e faíscas não desenham os estilhaços em 2D.
+static var particles: bool = false
 static var _count: int = 0
 
 var rig := CameraRig.new()
@@ -16,6 +18,7 @@ var ground_fx: GroundFx
 var scenery: Scenery3D  # null com Params.scenery_enabled_3d desligado
 var entities: EntityViews
 var bullets: BulletView
+var particle_view: ParticleView  # null com Params.particles_enabled_3d desligado
 
 var _game: Node2D
 var _reserved_bottom: float = 0.0
@@ -32,6 +35,8 @@ func _enter_tree() -> void:
 func _exit_tree() -> void:
 	_count = maxi(_count - 1, 0)
 	active = _count > 0
+	if not active:
+		particles = false
 
 
 ## game = cena da partida; reserved_bottom = faixa da base ocupada pela barra de troca (px).
@@ -91,6 +96,13 @@ func setup(game: Node2D, reserved_bottom: float) -> void:
 	bullets.name = "BulletView"
 	add_child(bullets)
 	bullets.setup(game, rig)
+
+	particles = Params.particles_enabled_3d
+	if particles:
+		particle_view = ParticleView.new()
+		particle_view.name = "ParticleView"
+		add_child(particle_view)
+		particle_view.setup(game, rig)
 
 	game.get_viewport().size_changed.connect(_on_view_resized)
 	_sync_camera()

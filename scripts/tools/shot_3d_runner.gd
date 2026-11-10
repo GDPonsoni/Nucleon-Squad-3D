@@ -5,6 +5,8 @@ extends "res://scripts/tools/stage_simulator.gd"
 ##   --at a,b,c        segundos de jogo das fotos (padrão 5,12,20)
 ##   --out pasta       onde salvar (padrão user://shots)
 ##   --speed N         acelera o jogo entre as fotos (padrão 3)
+##   --no-particles    desliga as partículas 3D (para comparar o FPS)
+##   --no-shots        não salva imagens: só mede (imprime quadros por segundo de parede no fim)
 ##   --items N         além dos instantes, fotografa as N primeiras vezes em que há um item na tela
 ## Aceita também as opções do simulador (--boss-only, --squad, --companion, --level...).
 
@@ -15,6 +17,9 @@ var _next: int = 0
 var _capturing: bool = false
 var _items_left: int = 0
 var _item_gap: float = 0.0
+var _save: bool = true
+var _frames: int = 0
+var _started_ms: int = 0
 
 
 func _ready() -> void:
@@ -24,6 +29,10 @@ func _ready() -> void:
 	_out = String(args.get("out", _out))
 	_speed = float(args.get("speed", "3"))
 	_items_left = int(args.get("items", "0"))
+	_save = not args.has("no-shots")
+	if args.has("no-particles"):
+		Params.particles_enabled_3d = false
+	_started_ms = Time.get_ticks_msec()
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out))
 	Params.invulnerability_alpha = 1.0  # o piloto é invulnerável: não pisca nas fotos
 	super()
@@ -34,6 +43,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _capturing:
 		return
+	_frames += 1
 	super(delta)
 	if _game == null or _next >= _shots.size():
 		if _game == null:
@@ -61,12 +71,15 @@ func _item_on_screen() -> bool:
 func _capture(label: String, advance: bool) -> void:
 	_capturing = true
 	await RenderingServer.frame_post_draw
-	var image: Image = get_viewport().get_texture().get_image()
-	var path: String = "%s/%s_%s.png" % [_out, _stage_id, label]
-	image.save_png(path)
-	print("[shot] ", ProjectSettings.globalize_path(path))
+	if _save:
+		var image: Image = get_viewport().get_texture().get_image()
+		var path: String = "%s/%s_%s.png" % [_out, _stage_id, label]
+		image.save_png(path)
+		print("[shot] ", ProjectSettings.globalize_path(path))
 	if advance:
 		_next += 1
 	_capturing = false
 	if _next >= _shots.size():
+		var wall: float = (Time.get_ticks_msec() - _started_ms) / 1000.0
+		print("[perf] %s: %d quadros em %.1f s = %.0f quadros/s (partículas %s)" % [_stage_id, _frames, wall, _frames / maxf(wall, 0.001), "ligadas" if Params.particles_enabled_3d else "desligadas"])
 		get_tree().quit()
