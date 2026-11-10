@@ -1,6 +1,8 @@
 # Estado atual e guia de retomada
 
-Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **09/11/2026** (revisão de progressão, branch `feat/revisao-progressao`). A `main` no GitHub está em `f35ba59` (duração de 5 min).
+Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pessoa). Atualizado em **10/11/2026** (versão 3D, branch `feat/3d-render`).
+
+> **Este é o repositório da versão 3D** (`Nucleon-Squad-3D`), cópia do Nucleon Squad 2D com o histórico. A `main` daqui é igual à versão 2D (`73a6305`) mais o plano; todo o trabalho 3D está na branch `feat/3d-render`, **ainda sem merge**. Leia primeiro a seção **"Visão 3D"** (3.1). Plano em `docs/PLANO_3D.md`, decisões em `docs/3D_DECISOES.md`, o que falta em `docs/3D_PENDENCIAS.md`.
 
 > **Para o Claude Code:** leia este arquivo, o `CLAUDE.md` e o GDD antes de começar. Depois de cada entrega relevante, atualize as seções "O que existe" e "Pendências" daqui.
 
@@ -10,12 +12,12 @@ Documento para retomar o projeto em uma conversa nova (Claude Code ou outra pess
 
 | Item | Onde |
 |---|---|
-| Projeto (repo git) | `~/Documentos/outros/PROJETOS/Nucleon Squad/nucleon-squad` |
+| Projeto (repo git) | `~/Documentos/outros/PROJETOS/Nucleon Squad/nucleon-squad-3D` (o 2D original fica ao lado, em `nucleon-squad`) |
 | Godot 4.7.2 (não está no PATH) | `../Godot_v4.7.2-stable_linux.x86_64` (pasta acima do repo) |
 | adb | `~/Android/Sdk/platform-tools/adb` |
 | Android SDK / build-tools | `~/Android/Sdk` (build-tools 35.0.1) |
-| GitHub | <https://github.com/GDPonsoni/nucleon-squad> (público), branch `main` |
-| Pacote Android | `com.example.nucleonsquad` |
+| GitHub | <https://github.com/GDPonsoni/Nucleon-Squad-3D> (público), branch de trabalho `feat/3d-render` |
+| Pacote Android | `com.example.nucleonsquad3d` (diferente do 2D: os dois apps convivem no celular, cada um com o seu save) |
 | Celular de teste | Galaxy S24, por USB com depuração ativa |
 
 ### Comandos do dia a dia (rodar dentro do repo)
@@ -28,9 +30,9 @@ ADB=~/Android/Sdk/platform-tools/adb
 timeout 120 $G --headless --path . --quit
 
 # Exportar APK de debug, instalar e abrir no S24
-timeout 300 $G --headless --path . --export-debug "Android" builds/nucleon-squad.apk
-$ADB install -r builds/nucleon-squad.apk
-$ADB shell monkey -p com.example.nucleonsquad 1
+timeout 300 $G --headless --path . --export-debug "Android" builds/nucleon-squad-3d.apk
+$ADB install -r builds/nucleon-squad-3d.apk
+$ADB shell monkey -p com.example.nucleonsquad3d 1
 
 # Regerar os PNGs do ícone depois de editar os SVGs
 $G --headless --path . -s res://scripts/tools/render_icons.gd
@@ -49,11 +51,15 @@ $G --headless --path . -s res://tests/ui_smoke_run.gd
 $G --headless --path . -s res://tests/match_regressions_run.gd
 # Joga fases com piloto automático e mede dificuldade (hits que levaria, duração de chefe)
 $G --headless --path . --fixed-fps 60 -s res://scripts/tools/simulate_stages.gd -- --chapter 5 --level 1 --seed 1
+# Regressões da visão 3D (camada 2D no plano, vistas das entidades, projéteis, chefe, limpeza)
+$G --headless --path . -s res://tests/render3d_regressions_run.gd
+# Fotos da partida em 3D com o piloto automático (precisa de tela; salva PNGs)
+$G --path . --resolution 540x1170 --fixed-fps 60 -s res://scripts/tools/shot_3d.gd -- --stages p1_s1 --at 8,16 --out /tmp/fotos
 # Regera as 45 fases (sobrescreve data/stages, planets e campaign.tres)
 $G --headless --path . -s res://scripts/tools/build_campaign.gd
 ```
 
-O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`, `--upgrades damage=3,...`, `--expected` (Dano e Cadência no poder esperado de cada capítulo: é a medida de dificuldade "alinhada"), `--mode survival` e `--boss-only`. Depois de criar scripts ou recursos novos, rode `--import` uma vez para gerar os `.uid`. Scripts de ferramenta que usam os autoloads precisam de um arquivo `-s` mínimo que só carrega o resto no primeiro quadro (veja `simulate_stages.gd`).
+O simulador aceita `--deterministic` (sem sons: só assim duas execuções com a mesma semente dão o mesmo resultado, ver `docs/3D_BASELINE.md`), `--render2d` (desliga a visão 3D), `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`, `--upgrades damage=3,...`, `--expected` (Dano e Cadência no poder esperado de cada capítulo: é a medida de dificuldade "alinhada"), `--mode survival` e `--boss-only`. Depois de criar scripts ou recursos novos, rode `--import` uma vez para gerar os `.uid`. Scripts de ferramenta que usam os autoloads precisam de um arquivo `-s` mínimo que só carrega o resto no primeiro quadro (veja `simulate_stages.gd`).
 
 ---
 
@@ -69,6 +75,31 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 ---
 
 ## 3. O que existe (resumo do jogo)
+
+### 3.1 Visão 3D (10/11/2026, branch `feat/3d-render`)
+
+**Princípio: a simulação 2D é a fonte da verdade; o 3D só desenha.** Posições continuam em px, a colisão em círculos, e a arena é o retângulo da tela. Um ponto 2D `(x, y)` vira `(x·S, altura, y·S)` no mundo, com `S = Params.world_scale_3d`. A simulação com `--deterministic` dá o mesmo resultado com e sem 3D.
+
+| Arquivo (`scripts/render3d/`) | Papel |
+|---|---|
+| `renderer_3d.gd` (`Renderer3D`) | Entra em `game.gd` depois da lógica (vale para a Incursão, que estende a cena). Câmera, luz, ambiente, chão em grade rolando, seguimento leve. `project_to_screen(pos)` e `project_rect(centro, raio)` para o HUD. `Renderer3D.active` diz às entidades para não desenharem o corpo em 2D |
+| `camera_rig.gd` (`CameraRig`) | Matemática pura: enquadramento (a área jogável cabe na tela, encostada no topo da barra de troca), seguimento limitado e projeção. Testada em `run_tests` |
+| `ground_fx.gd` (`GroundFx`) | A camada 2D do jogo (avisos, feixes, escudos, auras, explosões, números de dano, efeitos das armas) é renderizada num `SubViewport` que compartilha o `World2D` e aplicada como textura no plano de jogo. Os nós 2D do jogo vão para a camada de visibilidade 2; a tela principal não a desenha |
+| `mesh_factory.gd`, `model_library.gd` | Malhas facetadas com cache, geradas dos dados: naves (`BodyData.shape`), inimigos (`sides`), rochas, peças de chefe, itens, projéteis |
+| `entity_views.gd` (`EntityViews`) | Um `MeshInstance3D` reaproveitado por entidade: nave, núcleo, auxiliar, corpo que sai ou quebra, inimigos, chefe (peças), itens e orbes |
+| `bullet_view.gd` (`BulletView`) | Um `MultiMesh` por formato de tiro, alimentado pelos pools |
+| `shaders/` | `entity` (cor, clarão, brilho e transparência por instância), `bullet`, `ground`, `ground_fx` |
+
+**Regras para mexer:**
+- Quer mudar como algo **aparece**? `Params` (bloco "Visão 3D": `camera_*`, `*_3d`) ou `scripts/render3d/`. Nunca leia nada de `render3d` na simulação nem use `randf` lá.
+- Entidade nova com corpo: guarde o desenho 2D do corpo com `if not Renderer3D.active` e crie a vista em `EntityViews`. Sem vista, ela continua aparecendo deitada no plano (não some).
+- Efeito plano novo (aviso, área de perigo): desenhe em 2D como sempre; ele aparece no plano sozinho.
+- Entidades expõem leituras de desenho (`body_grow`, `flash_color`, `spike_angle`...) usadas pelo 2D e pelo 3D: mude a regra num lugar só.
+- `Params.render_3d = false` volta ao desenho 2D antigo (comparação).
+
+**Ajustes sem código:** `camera_pitch_deg` (70), `camera_fov_deg` (38), `camera_follow_factor/max_px/smooth`, `camera_fit_margin` (≥ `camera_follow_max_px`), `world_scale_3d`, `ground_fx_resolution` (baixe para 0,5 se pesar), `bullet_height_3d`, `bullet_core_white_3d`, `flash_strength_3d`.
+
+**Ainda plano (sem volume):** explosões, faíscas, raio, Tesla, órbita, especiais. Cenário e partículas 3D são as tarefas T13 e T14 do plano.
 
 **Interface:** botões com relevo e variação de ação principal (`PrimaryButton`); a nave auxiliar é escolhida numa fileira própria no Esquadrão (não pode repetir uma nave do esquadrão) e não tem núcleo.
 
@@ -256,7 +287,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 
 ## 6. Pendências e ideias
 
-**A testar no S24:** a build da branch `feat/revisao-progressao` (ver "Revisão de progressão" na seção 3).
+**A testar no S24:** a build 3D (`builds/nucleon-squad-3d.apk`), pelo roteiro `docs/3D_TESTE.md`. A build da `feat/revisao-progressao` (2D) também segue sem teste no aparelho.
 
 **Observações de balanceamento (piloto automático, sem troca de nave):**
 - Mísseis sofre muito no capítulo 5 (muito mais hits que Raio e Leque). Vale revisar se o teste no aparelho confirmar.
@@ -286,6 +317,7 @@ O simulador aceita `--stages`, `--chapter`, `--squad a,b,c,d`, `--companion id`,
 - itens de escudo/moedas (parte coberta pelos quarks e pelo Escudo da evolução)
 
 **Documentos relacionados:**
+- `docs/PLANO_3D.md`, `docs/3D_DECISOES.md`, `docs/3D_BASELINE.md`, `docs/3D_PENDENCIAS.md`, `docs/3D_TESTE.md`, `docs/3D_RELATORIO_NOITE.md`: versão 3D
 - `docs/PUBLICACAO.md`: plano de anúncios reais (AdMob) e de publicação na Play Store (deixado para depois)
 - `docs/GDD_Nucleon_Squad_v1.md`: design
 - `docs/MARCO0_TESTE.md`, `docs/MARCO1_TESTE.md` e `docs/MARCO2_TESTE.md`: roteiros de teste

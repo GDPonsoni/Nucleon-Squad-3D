@@ -1,4 +1,4 @@
-# Nucleon Squad
+# Nucleon Squad 3D
 
 > Nome provisório.
 
@@ -7,9 +7,9 @@
 ![Android](https://img.shields.io/badge/plataforma-Android-3DDC84?logo=android&logoColor=white)
 ![Status](https://img.shields.io/badge/status-conte%C3%BAdo%20completo%20%C2%B7%20em%20polimento-brightgreen)
 
-Shoot 'em up vertical (bullet hell) para celular, em 2D, feito em **Godot 4** com **GDScript**. Você comanda um **esquadrão de naves com armas diferentes** em torno de um núcleo: troca de nave no meio da luta, leva uma nave auxiliar e evolui o núcleo com os quarks ganhos nas fases. São **5 capítulos de 9 fases**, com chefes, ondas em padrões reconhecíveis e 8 naves para liberar.
+Shoot 'em up vertical (bullet hell) para celular, feito em **Godot 4** com **GDScript**. Esta é a **versão 3D low poly** do [Nucleon Squad](https://github.com/GDPonsoni/nucleon-squad): a simulação continua 2D (posições em pixels, colisão por círculos) e a partida é vista por uma **câmera de perseguição inclinada**, com naves, inimigos, chefes, projéteis e itens em modelos gerados por código. Menus e HUD seguem 2D. Você comanda um **esquadrão de naves com armas diferentes** em torno de um núcleo: troca de nave no meio da luta, leva uma nave auxiliar e evolui o núcleo com os quarks ganhos nas fases. São **5 capítulos de 9 fases**, com chefes, ondas em padrões reconhecíveis e 8 naves para liberar.
 
-O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squad_v1.md).
+O design do jogo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squad_v1.md). O plano da versão 3D está em [`docs/PLANO_3D.md`](docs/PLANO_3D.md), as decisões em [`docs/3D_DECISOES.md`](docs/3D_DECISOES.md) e o roteiro de teste no celular em [`docs/3D_TESTE.md`](docs/3D_TESTE.md).
 
 ---
 
@@ -74,8 +74,8 @@ O design completo está em [`docs/GDD_Nucleon_Squad_v1.md`](docs/GDD_Nucleon_Squ
 ## Primeiros passos
 
 ```bash
-git clone https://github.com/GDPonsoni/nucleon-squad.git
-cd nucleon-squad
+git clone https://github.com/GDPonsoni/Nucleon-Squad-3D.git
+cd Nucleon-Squad-3D
 ```
 
 1. Baixe o Godot 4.7 em <https://godotengine.org/download> e extraia o executável.
@@ -127,11 +127,11 @@ godot --headless --path . --quit
 
 ```bash
 # exporta o APK de debug (o preset "Android" já está em export_presets.cfg)
-godot --headless --path . --export-debug "Android" builds/nucleon-squad.apk
+godot --headless --path . --export-debug "Android" builds/nucleon-squad-3d.apk
 
 # instala e abre
-adb install -r builds/nucleon-squad.apk
-adb shell monkey -p com.example.nucleonsquad 1
+adb install -r builds/nucleon-squad-3d.apk
+adb shell monkey -p com.example.nucleonsquad3d 1
 ```
 
 O overlay de FPS só aparece em builds de **debug**. Roteiros de teste: [`docs/MARCO0_TESTE.md`](docs/MARCO0_TESTE.md), [`docs/MARCO1_TESTE.md`](docs/MARCO1_TESTE.md) e [`docs/MARCO2_TESTE.md`](docs/MARCO2_TESTE.md). Referências de design: [`docs/REFERENCIAS_ESQUADRAO.md`](docs/REFERENCIAS_ESQUADRAO.md).
@@ -193,6 +193,7 @@ scripts/
   weapons/       armas (raio, projéteis, órbita), projéteis, WeaponData
   enemies/       inimigos, surgimento, EnemyData e StageData
   ui/            tema, menus, seletor, pausa, resultados, HUD, transições, debug
+  render3d/      visão 3D da partida: câmera, malhas low poly, vistas das entidades, shaders
 data/            campanha, planetas, fases, inimigos, armas, corpos e formações (.tres)
   i18n/          tabela de tradução strings.csv (chave, en, pt_BR)
 assets/          ícone, efeitos sonoros (audio/sfx) e músicas (audio/music)
