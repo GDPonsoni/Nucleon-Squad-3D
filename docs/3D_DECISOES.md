@@ -45,3 +45,18 @@ Registro das decisões tomadas sem o Gabriel por perto (regra da seção 7 do `d
 - **Decisão:** a guarda que desliga o desenho 2D de cada entidade entra junto com a vista 3D dela (T4 a T8), e não toda de uma vez na T1.
 - **Motivo:** com a camada `GroundFx` (D1), o que ainda não tem modelo aparece deitado no plano de jogo, no lugar certo. O jogo fica jogável em todos os commits, e se uma tarefa falhar a entidade dela continua aparecendo.
 - **Descartado:** desligar todo o desenho 2D na T1 (a partida ficaria invisível até a T8).
+
+## D8. O núcleo faz o papel do "cockpit claro"
+
+- **Decisão:** a nave não tem uma pirâmide de cockpit; o núcleo (domo claro com colar escuro, por cima do casco) fica no centro e é o ponto claro do modelo.
+- **Motivo:** o núcleo é a hitbox e precisa ser a coisa mais legível da nave. Um cockpit ao lado disputaria a leitura e cairia fora do topo nas naves de nariz fino.
+- **Descartado:** cockpit separado, como o plano sugeria.
+
+## D9. Rachaduras do núcleo viram cor
+
+- **Decisão:** no 2D cada corpo perdido risca o núcleo; no 3D o núcleo avermelha um pouco por corpo perdido (`nucleus_crack_heat_3d`).
+- **Descartado:** riscos em malha sobre um domo de 16 px (ilegível).
+
+## Nota sobre a D5
+
+Só `bullet.gd` precisou do cuidado: a chama do míssil continua desenhada no plano, com o mesmo sorteio. `beam_weapon.gd` não foi tocado (o raio segue 2D no plano).
