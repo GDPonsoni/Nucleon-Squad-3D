@@ -19,6 +19,8 @@ var _companion_hull: MeshInstance3D
 # Corpos que saem de cena (BodyFx): item do pool -> vistas
 var _fx_hulls: Dictionary = {}
 var _fx_pieces: Dictionary = {}
+# Inimigos do pool: item -> vista
+var _enemy_views: Dictionary = {}
 
 
 func setup(game: Node2D, rig: CameraRig) -> void:
@@ -37,6 +39,7 @@ func _process(_delta: float) -> void:
 	_sync_player()
 	_sync_companion()
 	_sync_body_fx()
+	_sync_enemies()
 
 
 ## Cria um modelo escondido com o material comum.
@@ -159,3 +162,27 @@ func _sync_body_fx() -> void:
 			piece.transform = Transform3D(basis.scaled(Vector3.ONE * _scale * fx.piece_scale()), _at(fx.position + fx.piece_position(i)))
 			# Borda quente que esfria (no 2D: contorno claro que some)
 			_paint(piece, fx.tint().lightened(0.2 * (1.0 - t)), Color(1.0, 0.9, 0.7, 0.35 * (1.0 - t)), 0.0, fx.fade_alpha())
+
+
+# --- Inimigos comuns, rochas e elites (pool) ---
+
+func _sync_enemies() -> void:
+	var pool: NodePool = _game.get("enemies")
+	if pool == null:
+		return
+	for child in pool.get_children():
+		var enemy := child as Enemy
+		if enemy == null:
+			continue
+		var view: MeshInstance3D = _enemy_views.get(enemy)
+		if view == null:
+			view = _make("Enemy")
+			_enemy_views[enemy] = view
+		view.visible = enemy.visible and enemy.data != null
+		if not view.visible:
+			continue
+		var data: EnemyData = enemy.data
+		view.mesh = ModelLibrary.rock(enemy.rock_variant()) if data.look == EnemyData.Look.ROCK else ModelLibrary.enemy(data.sides)
+		# O raio de colisão dá o tamanho (elites já vêm com o raio maior)
+		view.transform = Transform3D(_yaw(enemy.rotation).scaled(Vector3.ONE * enemy.radius * _scale), _at(enemy.position))
+		_paint(view, enemy.tint(), enemy.flash_color(), Params.elite_glow_3d if enemy.elite else 0.0)

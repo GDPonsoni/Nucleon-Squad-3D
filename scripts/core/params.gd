@@ -651,3 +651,4 @@ var nucleus_glow_3d: float = 0.7  # brilho próprio do núcleo
 var break_tumble_3d: float = 0.8  # quanto os pedaços da nave quebrada tombam em 3D (x giro do 2D)
 var nucleus_crack_heat_3d: float = 0.22  # quanto o núcleo avermelha por corpo perdido
 var companion_roll_gain_3d: float = 1.6  # a rolagem 2D da auxiliar, ampliada no modelo 3D
+var elite_glow_3d: float = 0.25  # brilho próprio dos elites (além da aura no plano)

@@ -458,23 +458,38 @@ func _find_player(_from: Vector2) -> Node2D:
 
 func _draw() -> void:
 	var color: Color = _flash_color if _flash_left > 0.0 else data.color
+	# Na visão 3D o corpo é um modelo (EntityViews); aura, blindagem, escudo e avisos seguem no plano
+	var flat: bool = not Renderer3D.active
 	if data.look == EnemyData.Look.ROCK:
-		_draw_rock(color)
+		if flat:
+			_draw_rock(color)
 		return
-	var outer := PackedVector2Array()
-	var inner := PackedVector2Array()
-	for i in data.sides:
-		# Vértice para baixo, apontando para o jogador
-		var dir := Vector2.from_angle(PI * 0.5 + TAU * i / data.sides)
-		outer.append(dir * radius)
-		inner.append(dir * radius * 0.45)
 	if elite:
 		_draw_elite_aura()
-	draw_colored_polygon(outer, color)
-	draw_colored_polygon(inner, color.darkened(0.5))
+	if flat:
+		var outer := PackedVector2Array()
+		var inner := PackedVector2Array()
+		for i in data.sides:
+			# Vértice para baixo, apontando para o jogador
+			var dir := Vector2.from_angle(PI * 0.5 + TAU * i / data.sides)
+			outer.append(dir * radius)
+			inner.append(dir * radius * 0.45)
+		draw_colored_polygon(outer, color)
+		draw_colored_polygon(inner, color.darkened(0.5))
 	_draw_armor()
 	_draw_defense()
 	_draw_telegraph()
+
+
+## Clarão de acerto para o desenho: a cor (branco, dourado = fraqueza, cinza = resistência)
+## com alfa 1 enquanto dura e 0 fora dele.
+func flash_color() -> Color:
+	return Color(_flash_color, 1.0 if _flash_left > 0.0 else 0.0)
+
+
+## Qual formato de rocha usar na visão 3D: sai do contorno sorteado, então cada rocha mantém o seu.
+func rock_variant() -> int:
+	return int(absf(_rock_shape[0].x) * 977.0) if not _rock_shape.is_empty() else 0
 
 
 ## Elite: aura girando e barra de vida embaixo.
