@@ -658,3 +658,5 @@ var ground_star_density_3d: float = 0.5  # células de estrela por unidade do mu
 var boss_crack_color_3d: Color = Color(1.0, 0.45, 0.15)  # rachaduras do chefe acendem conforme a vida cai
 var boss_crack_glow_3d: float = 1.4
 var flash_strength_3d: float = 0.7  # força do clarão de acerto nos modelos (1 = cor chapada, como no 2D)
+var item_glow_3d: float = 0.45  # brilho próprio dos itens e orbes (têm de chamar atenção)
+var orb_spin_3d: float = 2.5  # rad/s de giro dos orbes de XP

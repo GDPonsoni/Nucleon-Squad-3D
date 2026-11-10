@@ -44,6 +44,9 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius, Color(color, 0.25))
 	if companion:
 		draw_arc(Vector2.ZERO, radius * 1.3, 0.0, TAU, 32, Color(color, 0.8), 4.0)
+	# Na visão 3D o item é um modelo (EntityViews); o halo segue no plano
+	if Renderer3D.active:
+		return
 	var r: float = radius * 0.75
 	draw_colored_polygon(PackedVector2Array([
 		Vector2(0.0, -r), Vector2(r, 0.0), Vector2(0.0, r), Vector2(-r, 0.0),
@@ -58,6 +61,8 @@ func _draw() -> void:
 func _draw_medkit() -> void:
 	var radius: float = Params.powerup_radius
 	draw_circle(Vector2.ZERO, radius, Color(Params.medkit_color, 0.25))
+	if Renderer3D.active:
+		return
 	var box := StyleBoxFlat.new()
 	box.bg_color = Color.WHITE
 	box.set_corner_radius_all(int(radius * 0.3))
@@ -73,6 +78,8 @@ func _draw_medkit() -> void:
 func _draw_chest() -> void:
 	var radius: float = Params.powerup_radius * Params.chest_scale
 	draw_circle(Vector2.ZERO, radius, Color(Params.chest_color, 0.25))
+	if Renderer3D.active:
+		return
 	var w: float = radius * 1.3
 	var h: float = radius * 0.95
 	var box := Rect2(-w * 0.5, -h * 0.3, w, h * 0.75)

@@ -21,6 +21,10 @@ var _fx_hulls: Dictionary = {}
 var _fx_pieces: Dictionary = {}
 # Inimigos do pool: item -> vista
 var _enemy_views: Dictionary = {}
+# Itens (power-ups, kits, baús) e orbes de XP: item do pool -> vista
+var _item_views: Dictionary = {}
+var _orb_views: Dictionary = {}
+var _clock: float = 0.0  # tempo de jogo, só para giros decorativos
 # Chefe (fora do pool): conjunto de peças montado quando ele entra
 var _boss: Boss
 var _boss_root: Node3D
@@ -39,12 +43,15 @@ func setup(game: Node2D, rig: CameraRig) -> void:
 	_companion_hull = _make("CompanionHull")
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	_clock += delta
 	_sync_player()
 	_sync_companion()
 	_sync_body_fx()
 	_sync_enemies()
 	_sync_boss()
+	_sync_items()
+	_sync_orbs()
 
 
 ## Cria um modelo escondido com o material comum.
@@ -295,3 +302,74 @@ func _boss_part(node_name: String, mesh: Mesh) -> MeshInstance3D:
 	_boss_root.add_child(part)
 	part.visible = true
 	return part
+
+
+# --- Itens: power-up (octaedro girando), kit médico (caixa com cruz) e baú ---
+
+func _sync_items() -> void:
+	var pool: NodePool = _game.get("power_ups")
+	if pool == null:
+		return
+	for child in pool.get_children():
+		var item := child as PowerUp
+		if item == null:
+			continue
+		var view: MeshInstance3D = _item_views.get(item)
+		if view == null:
+			view = _make("Item")
+			_item_views[item] = view
+		view.visible = item.visible
+		if not view.visible:
+			continue
+		var radius: float = Params.powerup_radius * item.scale.x
+		var color: Color = Params.powerup_color
+		var basis: Basis = _yaw(item.rotation)
+		var lift: float = 0.0
+		match item.kind:
+			PowerUp.Kind.HEAL:
+				view.mesh = ModelLibrary.medkit()
+				color = Params.medkit_color
+				# O kit não gira no 2D: aqui balança de leve para chamar atenção
+				basis = Basis(Vector3.BACK, sin(_clock * 3.0) * 0.18)
+			PowerUp.Kind.CHEST:
+				view.mesh = ModelLibrary.chest()
+				color = Params.chest_color
+				radius *= Params.chest_scale
+				basis = Basis(Vector3.BACK, sin(_clock * 3.0) * 0.12)
+			PowerUp.Kind.COMPANION:
+				view.mesh = ModelLibrary.gem()
+				color = Params.companion_powerup_color
+				radius *= 0.95
+				lift = radius * 0.7
+			_:
+				view.mesh = ModelLibrary.gem()
+				radius *= 0.75
+				lift = radius * 0.7
+		view.transform = Transform3D(basis.scaled(Vector3.ONE * radius * _scale), _at(item.position, lift))
+		_paint(view, color, NO_FLASH, Params.item_glow_3d)
+
+
+# --- Orbes de XP (modo Incursão) ---
+
+func _sync_orbs() -> void:
+	var pool: NodePool = _game.get("orbs")
+	if pool == null:
+		return
+	for child in pool.get_children():
+		var orb := child as XpOrb
+		if orb == null:
+			continue
+		var view: MeshInstance3D = _orb_views.get(orb)
+		if not orb.visible:
+			if view != null:
+				view.visible = false
+			continue
+		if view == null:
+			view = _make("XpOrb", ModelLibrary.gem(0.7))
+			_orb_views[orb] = view
+		view.visible = true
+		var radius: float = orb.draw_radius()
+		# Cada orbe gira num ritmo um pouco diferente (pela posição no pool)
+		var spin: float = _clock * Params.orb_spin_3d + orb.get_index() * 0.7
+		view.transform = Transform3D(Basis(Vector3.UP, spin).scaled(Vector3.ONE * radius * _scale), _at(orb.position, radius * 0.7))
+		_paint(view, Params.xp_orb_color, NO_FLASH, Params.item_glow_3d)

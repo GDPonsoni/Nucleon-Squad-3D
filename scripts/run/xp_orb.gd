@@ -47,9 +47,18 @@ func _process(delta: float) -> void:
 	queue_redraw()
 
 
-func _draw() -> void:
+## Raio do desenho: orbes grandes (chefes, elites) são maiores; todos pulsam.
+func draw_radius() -> float:
 	var big: bool = value >= mode.orb_big_value
-	var r: float = Params.xp_orb_radius * (1.6 if big else 1.0) * (1.0 + 0.12 * sin(_clock * 6.0))
+	return Params.xp_orb_radius * (1.6 if big else 1.0) * (1.0 + 0.12 * sin(_clock * 6.0))
+
+
+func _draw() -> void:
+	var r: float = draw_radius()
+	# Na visão 3D o orbe é um modelo (EntityViews); o halo segue no plano
+	if Renderer3D.active:
+		draw_circle(Vector2.ZERO, r * 1.3, Color(Params.xp_orb_color, 0.25))
+		return
 	var points := PackedVector2Array([Vector2(0, -r), Vector2(r * 0.7, 0), Vector2(0, r), Vector2(-r * 0.7, 0)])
 	draw_circle(Vector2.ZERO, r * 1.3, Color(Params.xp_orb_color, 0.25))
 	draw_colored_polygon(points, Params.xp_orb_color)
