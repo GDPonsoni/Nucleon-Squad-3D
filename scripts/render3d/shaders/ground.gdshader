@@ -9,6 +9,7 @@ uniform float cell = 2.0;  // tamanho da célula da grade (unidades do mundo)
 uniform float scroll = 0.0;  // quanto o chão já andou (unidades do mundo)
 uniform float line_strength = 0.35;
 uniform float star_density = 0.5;  // células de estrela por unidade
+uniform float star_strength = 0.3;  // estrelas fracas: não podem parecer tiros
 uniform float fade_start = 8.0;
 uniform float fade_end = 40.0;
 
@@ -33,8 +34,8 @@ void fragment() {
 	vec2 id = floor(s);
 	vec2 f = fract(s) - 0.5;
 	vec2 jitter = vec2(hash(id), hash(id + 17.0)) - 0.5;
-	float size = 0.03 + 0.05 * hash(id + 5.0);
+	float size = 0.02 + 0.03 * hash(id + 5.0);
 	float star = smoothstep(size, size * 0.4, length(f - jitter * 0.7)) * step(0.45, hash(id + 9.0));
-	vec3 color = base_color.rgb + line_color.rgb * line * line_strength * fade + star_color.rgb * star * fade;
+	vec3 color = base_color.rgb + line_color.rgb * line * line_strength * fade + star_color.rgb * star * fade * star_strength;
 	ALBEDO = color;
 }

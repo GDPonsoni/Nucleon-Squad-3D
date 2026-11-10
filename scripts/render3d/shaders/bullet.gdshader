@@ -6,5 +6,7 @@ render_mode unshaded, cull_back;
 uniform float core_white = 0.85;
 
 void fragment() {
-	ALBEDO = mix(COLOR.rgb, vec3(1.0), UV.x * UV.x * core_white);
+	// Só as faces de cima clareiam: o tiro mantém a cor e ganha um núcleo claro
+	float top = UV.x * UV.x;
+	ALBEDO = mix(COLOR.rgb, vec3(1.0), top * top * core_white);
 }

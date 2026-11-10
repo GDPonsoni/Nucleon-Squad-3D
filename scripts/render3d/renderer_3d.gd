@@ -14,6 +14,7 @@ var camera: Camera3D
 var ground: MeshInstance3D
 var ground_fx: GroundFx
 var entities: EntityViews
+var bullets: BulletView
 
 var _game: Node2D
 var _reserved_bottom: float = 0.0
@@ -77,6 +78,11 @@ func setup(game: Node2D, reserved_bottom: float) -> void:
 	entities.name = "EntityViews"
 	add_child(entities)
 	entities.setup(game, rig)
+
+	bullets = BulletView.new()
+	bullets.name = "BulletView"
+	add_child(bullets)
+	bullets.setup(game, rig)
 
 	game.get_viewport().size_changed.connect(_on_view_resized)
 	_sync_camera()
@@ -160,6 +166,8 @@ func _build_ground(planet: PlanetData) -> void:
 	_ground_material.set_shader_parameter("star_color", planet.star_color)
 	_ground_material.set_shader_parameter("cell", Params.ground_cell_3d)
 	_ground_material.set_shader_parameter("line_strength", Params.ground_line_strength_3d)
+	_ground_material.set_shader_parameter("star_strength", Params.ground_star_strength_3d)
+	_ground_material.set_shader_parameter("star_density", Params.ground_star_density_3d)
 	_ground_material.set_shader_parameter("fade_start", Params.ground_fade_start_3d)
 	_ground_material.set_shader_parameter("fade_end", Params.ground_fade_end_3d)
 	ground.material_override = _ground_material

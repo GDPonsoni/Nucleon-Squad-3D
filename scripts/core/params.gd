@@ -652,3 +652,6 @@ var break_tumble_3d: float = 0.8  # quanto os pedaços da nave quebrada tombam e
 var nucleus_crack_heat_3d: float = 0.22  # quanto o núcleo avermelha por corpo perdido
 var companion_roll_gain_3d: float = 1.6  # a rolagem 2D da auxiliar, ampliada no modelo 3D
 var elite_glow_3d: float = 0.25  # brilho próprio dos elites (além da aura no plano)
+var bullet_core_white_3d: float = 0.85  # quanto o topo dos projéteis clareia (núcleo claro, leitura)
+var ground_star_strength_3d: float = 0.3  # brilho das estrelas do chão (fracas: não podem parecer tiros)
+var ground_star_density_3d: float = 0.5  # células de estrela por unidade do mundo

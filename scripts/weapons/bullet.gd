@@ -91,6 +91,15 @@ func color() -> Color:
 	return _color
 
 
+## Formato e tamanho do desenho (a visão 3D usa os mesmos do 2D).
+func shape() -> Shape:
+	return _shape
+
+
+func visual_size() -> Vector2:
+	return _size
+
+
 func already_pierced(enemy: Node) -> bool:
 	return _pierced.has(enemy)
 
@@ -175,13 +184,18 @@ func _split() -> void:
 
 
 func _draw() -> void:
+	# Na visão 3D o corpo do tiro é um modelo (BulletView); no plano ficam só o anel do orbe
+	# que vai se dividir e a chama do míssil (com o mesmo sorteio do 2D)
+	var flat: bool = not Renderer3D.active
 	match _shape:
 		Shape.RECT:
-			draw_rect(Rect2(-_size * 0.5, _size), _color)
+			if flat:
+				draw_rect(Rect2(-_size * 0.5, _size), _color)
 		Shape.CIRCLE:
-			# Núcleo claro para leitura em meio a muitos tiros
-			draw_circle(Vector2.ZERO, _size.x * 0.5, _color)
-			draw_circle(Vector2.ZERO, _size.x * 0.25, Color.WHITE)
+			if flat:
+				# Núcleo claro para leitura em meio a muitos tiros
+				draw_circle(Vector2.ZERO, _size.x * 0.5, _color)
+				draw_circle(Vector2.ZERO, _size.x * 0.25, Color.WHITE)
 			if _split_count > 0:
 				# Orbe que vai se dividir: anel externo
 				draw_arc(Vector2.ZERO, _size.x * 0.75, 0.0, TAU, 24, Color(_color, 0.8), 3.0)
@@ -192,6 +206,7 @@ func _draw() -> void:
 				var len: float = _size.y * Params.missile_flame_length * randf_range(0.7, 1.2)
 				draw_colored_polygon(PackedVector2Array([Vector2(-half.x * 0.6, half.y), Vector2(half.x * 0.6, half.y), Vector2(0.0, half.y + len)]), Color(1.0, 0.6, 0.2, 0.8))
 				draw_colored_polygon(PackedVector2Array([Vector2(-half.x * 0.3, half.y), Vector2(half.x * 0.3, half.y), Vector2(0.0, half.y + len * 0.55)]), Color(1.0, 0.95, 0.7, 0.95))
-			draw_colored_polygon(PackedVector2Array([
-				Vector2(0.0, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y),
-			]), _color)
+			if flat:
+				draw_colored_polygon(PackedVector2Array([
+					Vector2(0.0, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y),
+				]), _color)
