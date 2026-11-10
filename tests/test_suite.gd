@@ -798,3 +798,94 @@ func test_records() -> void:
 	check(int(copy.run_record["level"]) == 15 and is_equal_approx(float(copy.run_record["time"]), 900.0), "recorde da Incursão salvo")
 	save.free()
 	copy.free()
+
+
+# --- Visão 3D: câmera (matemática pura, sem tela) ---
+
+func _rig(view: Vector2, reserved: float, margin: float, pitch_deg: float = -1.0) -> CameraRig:
+	var rig := CameraRig.new()
+	rig.configure(view)
+	if pitch_deg > 0.0:
+		rig.pitch = deg_to_rad(pitch_deg)
+	var area := Rect2(0.0, 0.0, view.x, view.y - reserved)
+	rig.fit(area, area, margin)
+	return rig
+
+
+## O retângulo jogável cabe inteiro na tela, em várias telas e inclinações, mesmo com a
+## câmera no deslocamento máximo do seguimento.
+func test_camera_fits_playable_rect() -> void:
+	var margin: float = Params.camera_fit_margin
+	var reach: float = minf(Params.camera_follow_max_px, margin)
+	for view: Vector2 in [Vector2(1080, 2340), Vector2(1080, 1920), Vector2(1080, 2400), Vector2(1080, 1440), Vector2(1620, 2160)]:
+		for reserved: float in [0.0, 96.0, 320.0]:
+			for pitch: float in [70.0, 45.0, 89.0, 30.0]:
+				var rig := _rig(view, reserved, margin, pitch)
+				var area := Rect2(0.0, 0.0, view.x, view.y - reserved)
+				var label: String = "tela %s reserva %d pitch %d" % [view, int(reserved), int(pitch)]
+				for offset: Vector2 in [Vector2.ZERO, Vector2(reach, reach), Vector2(-reach, reach), Vector2(reach, -reach), Vector2(-reach, -reach)]:
+					for corner: Vector2 in [area.position, Vector2(area.end.x, area.position.y), area.end, Vector2(area.position.x, area.end.y)]:
+						check(rig.is_in_front(corner, offset), "%s: canto %s na frente da câmera" % [label, corner])
+						var at: Vector2 = rig.project(corner, offset)
+						check(area.grow(1.0).has_point(at), "%s: canto %s cai em %s com deslocamento %s" % [label, corner, at, offset])
+				# Sem deslocamento, a borda de baixo (com a margem) encosta na base da área
+				var bottom: Vector2 = rig.project(Vector2(view.x * 0.5, area.end.y + margin))
+				check(absf(bottom.y - area.end.y) < 2.0, "%s: base enquadrada em %.1f (esperado %.1f)" % [label, bottom.y, area.end.y])
+
+
+## O enquadramento usa bem a tela: na inclinação padrão, a borda de baixo ocupa quase toda a largura.
+func test_camera_uses_screen_width() -> void:
+	var view := Vector2(1080, 2340)
+	var rig := _rig(view, 300.0, Params.camera_fit_margin)
+	var area := Rect2(0.0, 0.0, view.x, view.y - 300.0)
+	var left: Vector2 = rig.project(Vector2(-Params.camera_fit_margin, area.end.y + Params.camera_fit_margin))
+	var top: Vector2 = rig.project(Vector2(view.x * 0.5, -Params.camera_fit_margin))
+	check(left.x < 4.0 or top.y < 4.0, "enquadramento encosta na largura ou na altura (esq %.1f, topo %.1f)" % [left.x, top.y])
+	check(Params.camera_fit_margin >= Params.camera_follow_max_px, "margem do enquadramento cobre o seguimento máximo")
+
+
+## Seguimento: proporcional à distância ao centro e nunca passa do máximo.
+func test_camera_follow_is_limited() -> void:
+	var center := Vector2(540, 1000)
+	var max_px: float = Params.camera_follow_max_px
+	check(CameraRig.follow_offset(center, center, 0.15, max_px) == Vector2.ZERO, "nave no centro: sem deslocamento")
+	var small: Vector2 = CameraRig.follow_offset(center + Vector2(100, -40), center, 0.15, max_px)
+	check(small.is_equal_approx(Vector2(15, -6)), "deslocamento proporcional (%s)" % small)
+	for ship: Vector2 in [Vector2(-5000, 0), Vector2(5000, 9000), Vector2(540, -9000), Vector2(0, 2340), Vector2(1080, 0)]:
+		var offset: Vector2 = CameraRig.follow_offset(ship, center, Params.camera_follow_factor, max_px)
+		check(absf(offset.x) <= max_px + 0.001 and absf(offset.y) <= max_px + 0.001, "deslocamento %s dentro do máximo" % offset)
+
+
+## Mapeamento 2D -> 3D e projeção: x cresce para a direita, y maior fica mais embaixo na tela e
+## mais perto da câmera (maior na tela).
+func test_camera_mapping() -> void:
+	var view := Vector2(1080, 2340)
+	var rig := _rig(view, 300.0, Params.camera_fit_margin)
+	check(rig.to_world(Vector2(200, 300)).is_equal_approx(Vector3(200, 0, 300) * Params.world_scale_3d), "(x, y) px vira (x·S, 0, y·S)")
+	var far: Vector2 = rig.project(Vector2(540, 200))
+	var near: Vector2 = rig.project(Vector2(540, 1800))
+	check(near.y > far.y, "y maior aparece mais embaixo")
+	check(absf(far.x - 540.0) < 0.01 and absf(near.x - 540.0) < 0.01, "o centro da arena fica no centro da tela")
+	check(rig.project(Vector2(900, 1000)).x > rig.project(Vector2(200, 1000)).x, "x maior aparece mais à direita")
+	check(rig.screen_scale_at(Vector2(540, 1800)) > rig.screen_scale_at(Vector2(540, 200)), "perto da câmera aparece maior")
+	# O seguimento desloca a imagem no sentido contrário
+	check(rig.project(Vector2(540, 1000), Vector2(50, 0)).x < rig.project(Vector2(540, 1000)).x, "câmera para a direita, imagem para a esquerda")
+
+
+## A conta própria da câmera bate com a Camera3D do Godot (mesma transformação e campo de visão).
+func test_camera_matches_godot_camera() -> void:
+	var view := Vector2(1080, 2340)
+	var rig := _rig(view, 300.0, Params.camera_fit_margin)
+	var sub := SubViewport.new()
+	sub.size = Vector2i(view)
+	add_child(sub)
+	var camera := Camera3D.new()
+	sub.add_child(camera)
+	camera.fov = rad_to_deg(rig.fov)
+	var offset := Vector2(30, -20)
+	camera.global_transform = rig.camera_transform(offset)
+	for point: Vector2 in [Vector2(0, 0), Vector2(1080, 2040), Vector2(540, 1000), Vector2(100, 1900), Vector2(1000, 150)]:
+		var godot: Vector2 = camera.unproject_position(rig.to_world(point))
+		var own: Vector2 = rig.project(point, offset)
+		check(godot.distance_to(own) < 0.5, "ponto %s: Godot %s x CameraRig %s" % [point, godot, own])
+	sub.queue_free()
