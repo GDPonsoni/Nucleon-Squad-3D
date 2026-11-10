@@ -26,6 +26,7 @@ var _revive_used: bool = false  # uma vez por partida
 var hud: Hud
 var slow_overlay: SlowMotionOverlay
 var companion: Companion  # null = sem nave auxiliar
+var renderer: Renderer3D  # visão 3D (null com Params.render_3d desligado)
 var _special_was_ready: bool = false
 var _special_moment: bool = false
 var _quarks_banked: bool = false
@@ -174,6 +175,13 @@ func _ready() -> void:
 	combat.splashed.connect(func(pos: Vector2, radius: float, color: Color) -> void:
 		Audio.play(&"missile_explode")
 		_explode(pos, radius * 0.5, color))
+
+	# Visão 3D: depois de toda a lógica, para desenhar o quadro já simulado
+	if Params.render_3d:
+		renderer = Renderer3D.new()
+		renderer.name = "Renderer3D"
+		add_child(renderer)
+		renderer.setup(self, reserved_bottom)
 
 	slow_overlay = SlowMotionOverlay.new()
 	slow_overlay.name = "SlowMotionOverlay"

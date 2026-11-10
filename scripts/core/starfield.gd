@@ -37,6 +37,9 @@ func _process(delta: float) -> void:
 
 
 func _draw() -> void:
+	# Na visão 3D o chão rolando faz esse papel (o sorteio do _process segue igual)
+	if Renderer3D.active:
+		return
 	for layer in _layers.size():
 		var size: float = Params.star_layer_sizes[layer]
 		var color: Color = star_color

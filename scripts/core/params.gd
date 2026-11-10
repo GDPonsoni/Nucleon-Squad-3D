@@ -608,3 +608,30 @@ var haptic_patterns: Dictionary = {
 	&"momento_especial": {"priority": 3, "cooldown": 1.0, "steps": [[32, 0.6], [48, 0.0], [32, 0.6], [48, 0.0], [64, 1.0]]},
 	&"fase_completa": {"priority": 3, "cooldown": 0.3, "steps": [[32, 0.6], [48, 0.0], [32, 0.8], [48, 0.0], [96, 1.0], [80, 0.4]]},
 }
+
+# --- Visão 3D (scripts/render3d). A simulação continua 2D; isto só muda o desenho ---
+var render_3d: bool = true  # false = desenho 2D antigo (comparação e testes)
+var world_scale_3d: float = 0.01  # unidades do mundo por px do jogo
+var camera_pitch_deg: float = 70.0  # inclinação abaixo da horizontal (90 = de cima)
+var camera_fov_deg: float = 38.0  # campo de visão vertical (baixo distorce menos)
+## Folga (px do jogo) em volta da área jogável no enquadramento. Precisa ser >= camera_follow_max_px,
+## senão o seguimento cortaria a área jogável (o renderer limita o seguimento a ela).
+var camera_fit_margin: float = 60.0
+var camera_follow_factor: float = 0.15  # quanto a câmera acompanha a nave (0 = parada)
+var camera_follow_max_px: float = 60.0  # deslocamento máximo da câmera (px do jogo)
+var camera_follow_smooth: float = 6.0  # suavização do seguimento (1/s)
+var ambient_color_3d: Color = Color(0.75, 0.8, 1.0)
+var ambient_energy_3d: float = 0.55
+var light_rotation_3d: Vector3 = Vector3(-52.0, 28.0, 0.0)  # graus (luz de cima, um pouco de lado)
+var light_energy_3d: float = 1.15
+# Chão distante (grade e estrelas rolando)
+var ground_depth_3d: float = 6.0  # distância abaixo do plano de jogo (unidades do mundo)
+var ground_size_3d: float = 220.0  # lado do chão (unidades do mundo)
+var ground_cell_3d: float = 2.5  # tamanho da célula da grade
+var ground_line_strength_3d: float = 0.3
+var ground_scroll_speed_3d: float = 520.0  # px do jogo por segundo (sensação de avanço)
+var ground_fade_start_3d: float = 14.0  # a grade some com a distância (unidades do mundo)
+var ground_fade_end_3d: float = 60.0
+# Camada 2D deitada no plano de jogo (avisos, feixes, escudos, explosões, números)
+var ground_fx_resolution: float = 1.0  # fração da resolução da tela (menor = mais leve)
+var ground_fx_height_3d: float = 0.0  # altura do plano dos efeitos (unidades do mundo)

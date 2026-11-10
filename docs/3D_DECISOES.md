@@ -39,3 +39,9 @@ Registro das decisões tomadas sem o Gabriel por perto (regra da seção 7 do `d
 - **Decisão:** enquadramento, seguimento e `project_to_screen` são calculados por uma classe sem nós (`scripts/render3d/camera_rig.gd`); a `Camera3D` só recebe o resultado.
 - **Motivo:** dá para testar em headless ("retângulo jogável sempre cabe", "deslocamento máximo respeitado") e o HUD usa exatamente a mesma conta da câmera.
 - **Descartado:** `Camera3D.unproject_position`, que depende do nó na árvore e do tamanho real da janela.
+
+## D7. Entidades continuam visíveis em 2D (no plano) até ganharem modelo 3D
+
+- **Decisão:** a guarda que desliga o desenho 2D de cada entidade entra junto com a vista 3D dela (T4 a T8), e não toda de uma vez na T1.
+- **Motivo:** com a camada `GroundFx` (D1), o que ainda não tem modelo aparece deitado no plano de jogo, no lugar certo. O jogo fica jogável em todos os commits, e se uma tarefa falhar a entidade dela continua aparecendo.
+- **Descartado:** desligar todo o desenho 2D na T1 (a partida ficaria invisível até a T8).
